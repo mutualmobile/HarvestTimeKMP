@@ -23,11 +23,11 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient): PraxisSpringB
     }
 
     override suspend fun putUser(): List<User> {
-        return httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$PUT_USER")
+        return httpClient.put("$SPRING_BOOT_BASE_URL$API_URL$PUT_USER")
     }
 
     override suspend fun refreshToken(): List<RefreshToken> {
-        return httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$REFRESH_TOKEN")
+        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$REFRESH_TOKEN")
     }
 
     override suspend fun signup(): List<SignUpData> {
@@ -43,7 +43,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient): PraxisSpringB
     }
 
     override suspend fun fcmToken(): List<FcmToken> {
-        return httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN")
+        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN")
     }
 
     override suspend fun changePassword(): List<ChangePassword> {
