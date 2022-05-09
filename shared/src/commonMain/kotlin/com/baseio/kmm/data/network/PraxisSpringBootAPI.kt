@@ -3,19 +3,21 @@ package com.baseio.kmm.data.network
 import com.baseio.kmm.domain.model.*
 
 interface PraxisSpringBootAPI {
-    suspend fun getUser(): List<User>
 
-    suspend fun putUser(): List<User>
+    suspend fun getUser(id: String): User
 
-    suspend fun refreshToken(): List<RefreshToken>
+    suspend fun putUser(id: String): User
 
-    suspend fun signup(): List<SignUpData>
+    suspend fun refreshToken(refreshToken: String): RefreshToken
 
-    suspend fun login(): List<LoginData>
+    suspend fun signup(firstName: String, lastName: String, email: String, password: String): SignUpData
 
-    suspend fun logout(): List<LogoutData>
+    suspend fun login(email: String, password: String): LoginData
 
-    suspend fun fcmToken(): List<FcmToken>
+    suspend fun logout(userId: String): LogoutData
 
-    suspend fun changePassword(): List<ChangePassword>
+    suspend fun fcmToken(): FcmToken
+
+    suspend fun changePassword(password: String, oldPassword: String): ChangePassword
+
 }
