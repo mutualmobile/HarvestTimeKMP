@@ -4,6 +4,36 @@ data class PraxisSpringBoot(
     val name: String
 )
 
+data class User(
+    val id: String,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val password: String,
+    val role: String,
+    val pushToken: String,
+    val profilePic: String,
+    val modifiedTime: String,
+    val platform: String
+)
+
+data class RefreshToken(
+    val refreshToken: String
+)
+
+data class SignUpData(
+    val id: String,
+    val firstName: String,
+    val lastName: String,
+    val email: String,
+    val password: String,
+    val role: String,
+    val pushToken: String,
+    val profilePic: String,
+    val modifiedTime: String,
+    val platform: String
+)
+
 data class LoginData(
     val id: String,
     val firstName: String,
@@ -22,7 +52,7 @@ data class LogoutData(
     val pushToken: String
 )
 
-data class SignUpData(
+data class FcmToken(
     val id: String,
     val firstName: String,
     val lastName: String,
@@ -38,17 +68,4 @@ data class SignUpData(
 data class ChangePassword(
     val password: String,
     val oldPassword: String
-)
-
-data class User(
-    val id: String,
-    val firstName: String,
-    val lastName: String,
-    val email: String,
-    val password: String,
-    val role: String,
-    val pushToken: String,
-    val profilePic: String,
-    val modifiedTime: String,
-    val platform: String
 )
