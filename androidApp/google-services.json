@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "877837074584",
+    "project_id": "harvestkmp",
+    "storage_bucket": "harvestkmp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:877837074584:android:3a143120825668dd68d0ed",
+        "android_client_info": {
+          "package_name": "com.mutualmobile.harvestKmp.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "877837074584-umpd654dsi42e9egbu7imtf7dj08gmtt.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mutualmobile.harvestKmp.android",
+            "certificate_hash": "21da2d04833ae238f535e36b4d0deafde0b15cc7"
+          }
+        },
+        {
+          "client_id": "877837074584-7vqc6jgk8l0u9o5jvrlcvqt1kuj02j2j.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCojwgIzRlP8PHNjUAKFZMN_Csk-_d4_p8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "877837074584-7vqc6jgk8l0u9o5jvrlcvqt1kuj02j2j.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

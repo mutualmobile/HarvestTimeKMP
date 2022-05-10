@@ -11,7 +11,7 @@ plugins {
 android {
     compileSdk = 31
     defaultConfig {
-        applicationId = "com.baseio.kmm.android"
+        applicationId = "com.mutualmobile.harvestKmp.android"
         minSdk = 21
         targetSdk = 31
         versionCode = 1
@@ -48,6 +48,9 @@ android {
 
 dependencies {
     implementation(project(":shared"))
+    AndroidDependencies.platforms.forEach { platformDependency ->
+        implementation(platform(platformDependency))
+    }
     AndroidDependencies.implementation.forEach(::implementation)
     AndroidDependencies.androidTestImplementation.forEach(::androidTestImplementation)
     AndroidDependencies.debugImplementation.forEach(::debugImplementation)

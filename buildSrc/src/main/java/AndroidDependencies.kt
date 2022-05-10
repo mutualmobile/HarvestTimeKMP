@@ -2,7 +2,8 @@ object AndroidPluginDependencyVersions
 object AndroidPluginDependencies {
   val plugins = listOf(
     "com.android.application" to "",
-    "kotlin-android" to ""
+    "kotlin-android" to "",
+    "com.google.gms.google-services" to "",
   )
 }
 
@@ -16,6 +17,7 @@ object AndroidDependencyVersions {
   const val lifecycleRuntime = "2.4.0"
   const val composeActivity = "1.4.0"
   const val ACCOMPANIST_VERSION = "0.24.1-alpha"
+  const val firebaseBom = "30.0.0"
 }
 
 object AndroidDependencies {
@@ -34,12 +36,16 @@ object AndroidDependencies {
     "androidx.compose.ui:ui-tooling-preview:${AndroidDependencyVersions.compose}",
     "androidx.lifecycle:lifecycle-runtime-ktx:${AndroidDependencyVersions.lifecycleRuntime}",
     "androidx.activity:activity-compose:${AndroidDependencyVersions.composeActivity}",
+    "com.google.firebase:firebase-auth-ktx"
   )
   val androidTestImplementation = listOf(
     "androidx.compose.ui:ui-test-junit4:${AndroidDependencyVersions.compose}"
   )
   val debugImplementation = listOf(
     "androidx.compose.ui:ui-tooling:${AndroidDependencyVersions.compose}"
+  )
+  val platforms = listOf(
+    "com.google.firebase:firebase-bom:${AndroidDependencyVersions.firebaseBom}"
   )
 }
 
