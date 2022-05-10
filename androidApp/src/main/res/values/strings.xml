@@ -2,4 +2,5 @@
     <string name="app_name">Harvest</string>
     <string name="title_activity_trending_repos_ui">TrendingReposUI</string>
     <string name="app_widget_description">Trending Github Repos</string>
+    <string name="title_activity_main">MainActivity</string>
 </resources>
