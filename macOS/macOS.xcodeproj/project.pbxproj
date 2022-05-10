@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8908FED9282A5EFF00E29D35 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FED8282A5EFF00E29D35 /* LaunchScreen.swift */; };
 		89D8421F277A218500D08BC0 /* macOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D8421E277A218500D08BC0 /* macOSApp.swift */; };
 		89D84223277A218600D08BC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89D84222277A218600D08BC0 /* Assets.xcassets */; };
 		89D84226277A218600D08BC0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89D84225277A218600D08BC0 /* Preview Assets.xcassets */; };
@@ -40,6 +41,7 @@
 		14536A7C63C12B806054769C /* Pods-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS.debug.xcconfig"; path = "Target Support Files/Pods-macOS/Pods-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		1EA38324EF8E940C0D06D4CE /* libPods-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		854FBFAB66BF3DF25604115C /* Pods-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS.release.xcconfig"; path = "Target Support Files/Pods-macOS/Pods-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		8908FED8282A5EFF00E29D35 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
 		89D8421B277A218500D08BC0 /* macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89D8421E277A218500D08BC0 /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		89D84222277A218600D08BC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -90,6 +92,14 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		8908FED7282A5EDA00E29D35 /* launch */ = {
+			isa = PBXGroup;
+			children = (
+				8908FED8282A5EFF00E29D35 /* LaunchScreen.swift */,
+			);
+			path = launch;
+			sourceTree = "<group>";
+		};
 		89D84212277A218500D08BC0 = {
 			isa = PBXGroup;
 			children = (
@@ -115,6 +125,7 @@
 		89D8421D277A218500D08BC0 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				8908FED7282A5EDA00E29D35 /* launch */,
 				89D8424D277A25D100D08BC0 /* githubtrending */,
 				89D8421E277A218500D08BC0 /* macOSApp.swift */,
 				89D84222277A218600D08BC0 /* Assets.xcassets */,
@@ -325,6 +336,7 @@
 			files = (
 				89D84253277A25D100D08BC0 /* GithubTrendingVM.swift in Sources */,
 				89D84251277A25D100D08BC0 /* GithubTrendingUI.swift in Sources */,
+				8908FED9282A5EFF00E29D35 /* LaunchScreen.swift in Sources */,
 				89D8421F277A218500D08BC0 /* macOSApp.swift in Sources */,
 				89D84252277A25D100D08BC0 /* UiRepo.swift in Sources */,
 			);
