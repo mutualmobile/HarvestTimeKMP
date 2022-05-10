@@ -13,7 +13,7 @@ object AndroidDependencyVersions {
   const val constraintLayout = "2.1.2"
   const val compose = "1.1.1"
   const val composeKotlinCompiler = compose
-  const val coil = "1.4.0"
+  const val coil = "2.0.0-rc03"
   const val lifecycleRuntime = "2.4.0"
   const val composeActivity = "1.4.0"
   const val ACCOMPANIST_VERSION = "0.24.7-alpha"

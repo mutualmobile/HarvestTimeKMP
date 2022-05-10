@@ -29,6 +29,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
+import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import kotlinx.coroutines.launch
 
@@ -69,8 +70,9 @@ fun LandingScreen() {
             )
         },
         drawerShape = landingScreenDrawerShape(),
-        drawerContent = {
-        },
+        drawerContent = { LandingScreenDrawer(
+            closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
+        ) },
         drawerBackgroundColor = DrawerBgColor,
         scaffoldState = scaffoldState,
         floatingActionButton = {
