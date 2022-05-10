@@ -11,11 +11,11 @@ import SwiftUI
 struct LaunchScreen : View{
     var body: some View{
         VStack(alignment:.center){
-            HStack{
-                Text("harvest").foregroundColor(Color.white).bold().font(.largeTitle)
-            }
+            Text("harvest").foregroundColor(Color.white).bold().font(.largeTitle)
+            SignInWithGoogle()
+            LoginForm().padding(EdgeInsets.init(top: 0, leading: 24, bottom: 0, trailing: 24))
         }
-            .frame(width: 300 , height: 550, alignment: .center)
+            .frame(width: 320 , height: 530, alignment: .top)
             .background(
                 LinearGradient(gradient: Gradient(colors: [
                     Color("appColor"),
