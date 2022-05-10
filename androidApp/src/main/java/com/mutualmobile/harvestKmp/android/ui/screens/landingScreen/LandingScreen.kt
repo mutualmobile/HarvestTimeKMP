@@ -70,9 +70,11 @@ fun LandingScreen() {
             )
         },
         drawerShape = landingScreenDrawerShape(),
-        drawerContent = { LandingScreenDrawer(
-            closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
-        ) },
+        drawerContent = {
+            LandingScreenDrawer(
+                closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } }
+            )
+        },
         drawerBackgroundColor = DrawerBgColor,
         scaffoldState = scaffoldState,
         floatingActionButton = {
