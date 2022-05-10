@@ -134,7 +134,7 @@ tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
 
 sqldelight {
     database("BaseIoDB") {
-        packageName = "com.baseio.kmm.db"
+        packageName = "com.mutualmobile.harvestKmp.db"
     }
 }
 

@@ -6,7 +6,7 @@ pluginManagement {
   }
 }
 
-rootProject.name = "BaseiOKMM"
+rootProject.name = "HarvestKMP"
 include(":androidApp")
 include(":shared")
 include(":watchApp")

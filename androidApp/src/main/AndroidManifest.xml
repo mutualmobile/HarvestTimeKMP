@@ -1,20 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.baseio.kmm.android">
+    package="com.mutualmobile.harvestKmp.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".PraxisApp"
+        android:name="com.mutualmobile.harvestKmp.android.HKMPApp"
         android:allowBackup="false"
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:targetApi="donut"
-        android:label="@string/title_activity_trending_repos_ui"
+        android:label="@string/app_name"
         tools:ignore="RtlEnabled">
         <activity
-            android:name=".TrendingReposUI"
+            android:name="com.mutualmobile.harvestKmp.android.TrendingReposUI"
             android:exported="true"
             android:theme="@style/AppTheme.NoActionBar" >
             <intent-filter>
