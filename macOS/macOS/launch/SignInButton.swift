@@ -11,11 +11,12 @@ import SwiftUI
 struct SignInButton : View{
     
     var title:String
-    
+    var onClick: (() -> Void)
+
     var body: some View{
         VStack{
             Button {
-                
+                onClick()
             } label: {
                 Text(title)
                     .foregroundColor(Color("appColor"))

@@ -20,7 +20,9 @@ struct macOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            LaunchScreen()
+            
+            RootView()
+   
         }.windowStyle(HiddenTitleBarWindowStyle())
     }
 }
