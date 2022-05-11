@@ -26,4 +26,10 @@
     <string name="landing_screen_dropdown_submit_week_option">Submit week for approval</string>
     <string name="landing_screen_dropdown_week_total_option">Week total: %s</string>
     <string name="reports_screen_app_bar_subtitle">My Time</string>
+    <string name="title_activity_new_entry">New Time Entry</string>
+    <string name="new_entry_screen_start_timer_btn_txt">START TIMER</string>
+    <string name="new_entry_screen_notes_et_hint">Notes (optional)</string>
+    <string name="new_entry_screen_end_view_text">Leave blank to start a timer</string>
+    <string name="dds_screen_duration_title">Duration</string>
+    <string name="dds_screen_date_title">Date</string>
 </resources>

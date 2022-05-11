@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.timeScreen
 
+import android.content.Intent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -20,10 +21,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryActivity
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekScroller
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentPageIndex
@@ -42,9 +45,12 @@ fun TimeScreen(
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
 ) {
+    val ctx = LocalContext.current
     Scaffold(
         floatingActionButton = {
-            FloatingActionButton(onClick = {}, modifier = Modifier.navigationBarsPadding()) {
+            FloatingActionButton(onClick = {
+                ctx.startActivity(Intent(ctx, NewEntryActivity::class.java))
+            }, modifier = Modifier.navigationBarsPadding()) {
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = null,

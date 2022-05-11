@@ -5,4 +5,10 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="CalenderViewCustom" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/calendarTextColor</item>
+        <item name="colorSurface">@color/calendarSurfaceColor</item>
+    </style>
+
 </resources>

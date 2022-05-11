@@ -2,4 +2,6 @@
 <resources>
     <color name="colorPrimary">#F06808</color>
     <color name="colorAccent">#609848</color>
+    <color name="calendarSurfaceColor">#FFFFFF</color>
+    <color name="calendarTextColor">#000000</color>
 </resources>
