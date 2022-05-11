@@ -9,10 +9,6 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -23,18 +19,18 @@ import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsAct
 
 @Composable
 fun LandingScreenDrawer(
-    closeDrawer: () -> Unit
+    currentDrawerScreen: LandingScreenDrawerItemType,
+    closeDrawer: () -> Unit,
+    onScreenChanged: (LandingScreenDrawerItemType) -> Unit,
 ) {
-    var currentSelectedItem by remember { mutableStateOf(LandingScreenDrawerItemType.Time) }
-
     UserInfoSection()
 
     LandingScreenDrawerItemType.values().forEach { drawerItem ->
         LandingScreenDrawerItem(
             itemType = drawerItem,
-            isSelected = currentSelectedItem == drawerItem
+            isSelected = currentDrawerScreen == drawerItem
         ) {
-            currentSelectedItem = drawerItem
+            onScreenChanged(drawerItem)
             closeDrawer()
         }
     }

@@ -16,9 +16,10 @@ object AndroidDependencyVersions {
   const val coil = "2.0.0-rc03"
   const val lifecycleRuntime = "2.4.0"
   const val composeActivity = "1.4.0"
-  const val ACCOMPANIST_VERSION = "0.24.7-alpha"
+  const val ACCOMPANIST_VERSION = "0.24.6-alpha"
   const val firebaseBom = "30.0.0"
   const val splashScreen = "1.0.0-beta02"
+  const val snapper = "0.2.1"
 }
 
 object AndroidDependencies {
@@ -26,6 +27,9 @@ object AndroidDependencies {
     "com.google.accompanist:accompanist-insets:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
     "com.google.accompanist:accompanist-systemuicontroller:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
     "com.google.accompanist:accompanist-insets-ui:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
+    "com.google.accompanist:accompanist-pager:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
+    "com.google.accompanist:accompanist-pager-indicators:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
+    "dev.chrisbanes.snapper:snapper:${AndroidDependencyVersions.snapper}",
     "com.google.android.material:material:${AndroidDependencyVersions.material}",
     "androidx.appcompat:appcompat:${AndroidDependencyVersions.appCompat}",
     "androidx.constraintlayout:constraintlayout:${AndroidDependencyVersions.constraintLayout}",
