@@ -22,4 +22,8 @@
     <string name="about_harvest_section_open_source_item_subtitle">License details for open source components</string>
     <string name="about_harvest_section_app_version_item_title">App version</string>
     <string name="about_harvest_section_app_version_item_subtitle">%s (build %s)</string>
+    <string name="landing_screen_dropdown_jump_to_date_option">Jump to date</string>
+    <string name="landing_screen_dropdown_submit_week_option">Submit week for approval</string>
+    <string name="landing_screen_dropdown_week_total_option">Week total: %s</string>
+    <string name="reports_screen_app_bar_subtitle">My Time</string>
 </resources>

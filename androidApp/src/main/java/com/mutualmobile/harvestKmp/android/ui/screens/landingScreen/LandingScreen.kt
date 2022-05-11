@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material.DrawerValue
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
@@ -33,10 +35,12 @@ import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
+import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
@@ -57,19 +61,32 @@ fun LandingScreen() {
     var currentDrawerScreen by remember { mutableStateOf(LandingScreenDrawerItemType.Time) }
     var currentWeekOffset by remember { mutableStateOf(0) }
     var currentDayOffset by remember { mutableStateOf(0) }
+    var isDropDownMenuShown by remember { mutableStateOf(false) }
 
     Scaffold(
         topBar = {
             TopAppBar(
                 title = {
                     Column {
-                        Text(text = "Time")
-                        Text(
-                            text = "WeekOffset$currentWeekOffset\nDaysOffset$currentDayOffset",
-                            style = MaterialTheme.typography.body2.copy(
-                                color = MaterialTheme.colors.surface.copy(alpha = 0.5f)
-                            )
-                        )
+                        Text(text = currentDrawerScreen.name)
+                        when (currentDrawerScreen) {
+                            LandingScreenDrawerItemType.Time -> {
+                                Text(
+                                    text = "WeekOffset: $currentWeekOffset, DaysOffset: $currentDayOffset",
+                                    style = MaterialTheme.typography.body2.copy(
+                                        color = MaterialTheme.colors.surface.copy(alpha = 0.5f)
+                                    )
+                                )
+                            }
+                            LandingScreenDrawerItemType.Reports -> {
+                                Text(
+                                    text = stringResource(R.string.reports_screen_app_bar_subtitle),
+                                    style = MaterialTheme.typography.body2.copy(
+                                        color = MaterialTheme.colors.surface.copy(alpha = 0.5f)
+                                    )
+                                )
+                            }
+                        }
                     }
                 },
                 contentPadding = WindowInsets.Companion.statusBars.asPaddingValues(),
@@ -83,12 +100,39 @@ fun LandingScreen() {
                     }
                 },
                 actions = {
-                    IconButton(onClick = {}) {
-                        Icon(
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = null,
-                            tint = MaterialTheme.colors.surface
-                        )
+                    when (currentDrawerScreen) {
+                        LandingScreenDrawerItemType.Time -> {
+                            IconButton(
+                                onClick = { isDropDownMenuShown = true },
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.MoreVert,
+                                    contentDescription = null,
+                                    tint = MaterialTheme.colors.surface
+                                )
+                            }
+                            DropdownMenu(
+                                expanded = isDropDownMenuShown,
+                                onDismissRequest = { isDropDownMenuShown = false },
+                            ) {
+                                DropdownMenuItem(onClick = {}) {
+                                    Text(text = stringResource(R.string.landing_screen_dropdown_jump_to_date_option))
+                                }
+                                DropdownMenuItem(onClick = {}) {
+                                    Text(text = stringResource(R.string.landing_screen_dropdown_submit_week_option))
+                                }
+                                DropdownMenuItem(onClick = {}, enabled = false) {
+                                    Text(
+                                        text = stringResource(
+                                            R.string.landing_screen_dropdown_week_total_option,
+                                            "0.00"
+                                        ),
+                                        color = MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
+                                    )
+                                }
+                            }
+                        }
+                        LandingScreenDrawerItemType.Reports -> Unit
                     }
                 }
             )
