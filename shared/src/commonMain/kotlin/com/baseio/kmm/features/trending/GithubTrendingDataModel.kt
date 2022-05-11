@@ -66,7 +66,6 @@ class GithubTrendingDataModel(
       val repos = useCasesComponent.provideFetchTrendingReposUseCase().perform(search)
       useCasesComponent.provideSaveTrendingReposUseCase().perform(repos)
     }
-
   }
 
   sealed class DataState

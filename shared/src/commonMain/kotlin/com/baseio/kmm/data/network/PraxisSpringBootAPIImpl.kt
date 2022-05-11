@@ -33,8 +33,6 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     }
 
     override suspend fun signup(
-        firstName: String,
-        lastName: String,
         email: String,
         password: String
     ): SignUpData {
