@@ -18,6 +18,21 @@ struct LaunchScreen : View{
             SignInButton(title:"Sign In").padding(EdgeInsets.init(top: 12, leading: 0, bottom: 0, trailing: 0))
             Spacer()
             NoAccountLearnMore().padding()
+            
+            
+            VStack(alignment: .trailing){
+                
+                Button {
+                    
+                } label: {
+                    Image(systemName: "gearshape").resizable().frame(width: 24, height: 24, alignment: .bottomTrailing).foregroundColor(Color.white.opacity(0.7))
+                }.buttonStyle(PlainButtonStyle())
+
+            }.padding().frame(
+                minWidth: 0,
+                maxWidth: .infinity,
+                alignment: .bottomTrailing
+              )
         }
             .frame(width: 320 , height: 530, alignment: .top)
             .background(
@@ -35,7 +50,7 @@ struct NoAccountLearnMore: View{
     var body: some View{
         HStack(spacing: 4){
             Text("Don't have an account?").foregroundColor(Color.white.opacity(0.6))
-            Text("Learn More").bold().foregroundColor(Color.white.opacity(0.8))
+            Text("Learn More").foregroundColor(Color.white)
             
         }
     }
