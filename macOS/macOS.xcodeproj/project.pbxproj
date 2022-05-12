@@ -15,6 +15,9 @@
 		8908FEEF282C001B00E29D35 /* DayNavigateButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEEE282C001B00E29D35 /* DayNavigateButtons.swift */; };
 		8908FEF1282CE8A100E29D35 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF0282CE8A100E29D35 /* CalendarHelper.swift */; };
 		8908FEF3282D05A200E29D35 /* NewEntryModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF2282D05A200E29D35 /* NewEntryModal.swift */; };
+		8908FEF5282D448000E29D35 /* NewEntryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF4282D448000E29D35 /* NewEntryButton.swift */; };
+		8908FEF8282D479100E29D35 /* ProjectSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF7282D479100E29D35 /* ProjectSelection.swift */; };
+		8908FEFB282D51DF00E29D35 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEFA282D51DF00E29D35 /* WeekView.swift */; };
 		89D8421F277A218500D08BC0 /* macOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D8421E277A218500D08BC0 /* macOSApp.swift */; };
 		89D84223277A218600D08BC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89D84222277A218600D08BC0 /* Assets.xcassets */; };
 		89D84226277A218600D08BC0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89D84225277A218600D08BC0 /* Preview Assets.xcassets */; };
@@ -56,6 +59,9 @@
 		8908FEEE282C001B00E29D35 /* DayNavigateButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayNavigateButtons.swift; sourceTree = "<group>"; };
 		8908FEF0282CE8A100E29D35 /* CalendarHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
 		8908FEF2282D05A200E29D35 /* NewEntryModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEntryModal.swift; sourceTree = "<group>"; };
+		8908FEF4282D448000E29D35 /* NewEntryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEntryButton.swift; sourceTree = "<group>"; };
+		8908FEF7282D479100E29D35 /* ProjectSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectSelection.swift; sourceTree = "<group>"; };
+		8908FEFA282D51DF00E29D35 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
 		89D8421B277A218500D08BC0 /* macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89D8421E277A218500D08BC0 /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		89D84222277A218600D08BC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -131,9 +137,10 @@
 		8908FEE2282B9E1C00E29D35 /* time */ = {
 			isa = PBXGroup;
 			children = (
+				8908FEF6282D449200E29D35 /* newentry */,
 				8908FEEE282C001B00E29D35 /* DayNavigateButtons.swift */,
 				8908FEF0282CE8A100E29D35 /* CalendarHelper.swift */,
-				8908FEF2282D05A200E29D35 /* NewEntryModal.swift */,
+				8908FEFA282D51DF00E29D35 /* WeekView.swift */,
 			);
 			path = time;
 			sourceTree = "<group>";
@@ -150,6 +157,16 @@
 			children = (
 			);
 			path = reports;
+			sourceTree = "<group>";
+		};
+		8908FEF6282D449200E29D35 /* newentry */ = {
+			isa = PBXGroup;
+			children = (
+				8908FEF2282D05A200E29D35 /* NewEntryModal.swift */,
+				8908FEF4282D448000E29D35 /* NewEntryButton.swift */,
+				8908FEF7282D479100E29D35 /* ProjectSelection.swift */,
+			);
+			path = newentry;
 			sourceTree = "<group>";
 		};
 		89D84212277A218500D08BC0 = {
@@ -395,13 +412,16 @@
 				89D84253277A25D100D08BC0 /* GithubTrendingVM.swift in Sources */,
 				8908FEED282BFF9500E29D35 /* DashHeader.swift in Sources */,
 				8908FEDE282A77DF00E29D35 /* LoginForm.swift in Sources */,
+				8908FEF8282D479100E29D35 /* ProjectSelection.swift in Sources */,
 				89D84251277A25D100D08BC0 /* GithubTrendingUI.swift in Sources */,
+				8908FEFB282D51DF00E29D35 /* WeekView.swift in Sources */,
 				8908FEEF282C001B00E29D35 /* DayNavigateButtons.swift in Sources */,
 				8908FED9282A5EFF00E29D35 /* LaunchScreen.swift in Sources */,
 				8908FEF1282CE8A100E29D35 /* CalendarHelper.swift in Sources */,
 				8908FEE0282A813300E29D35 /* SignInButton.swift in Sources */,
 				89D8421F277A218500D08BC0 /* macOSApp.swift in Sources */,
 				89D84252277A25D100D08BC0 /* UiRepo.swift in Sources */,
+				8908FEF5282D448000E29D35 /* NewEntryButton.swift in Sources */,
 				8908FEF3282D05A200E29D35 /* NewEntryModal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

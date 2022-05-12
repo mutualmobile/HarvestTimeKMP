@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 struct DayNavigateButtons : View{
-    @State var date:Date = Date.now
+    @Binding var date:Date
     var dateChanged: ((Date)->Void)
     
     var body: some View{

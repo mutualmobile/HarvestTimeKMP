@@ -19,13 +19,18 @@ struct NewTimeEntryModal : View{
         VStack(alignment:.leading){
             
             Text("New Time Entry for \(date.formattedAs(format:"EEEE, dd MMM"))")
-                .frame(minWidth:0,maxWidth: .infinity)
+                .frame(
+                      minWidth: 400,
+                      maxWidth: .infinity,
+                      alignment: .topLeading
+                    )
                 .padding(8)
-                .background(.gray.opacity(0.4))
+                .background(.gray.opacity(0.2))
+            
             Text("Project / Task").bold().padding(4)
             
-            Projects().frame(width: 400).padding()
-            Projects().frame(width: 400).padding()
+            Projects().frame(width:400).padding()
+            Projects().frame(width:400).padding()
 
             
             HStack{
@@ -58,36 +63,15 @@ struct NewTimeEntryModal : View{
                         .cornerRadius(6)
                 }.buttonStyle(PlainButtonStyle())
             }.padding()
-        }
+        }.frame(width: 450, alignment: .center)
+            
             .background(.white)
             .cornerRadius(4)
-            .padding()
+            
     }
 }
 
-struct Projects : View {
-    @State var selectedProject = ""
-    var projects = ["Project 1","Project 2"]
-    var body: some View{
-        Menu {
-            ForEach (projects, id: \.self) { project in
-                Button {
-                    selectedProject = project
-                } label: {
-                    Text(project)
-                    Image(systemName: "arrow.down.right.circle")
-                }
-            }
-        } label: {
-            if selectedProject.count == 0 {
-                Text("Please select a project").bold().padding()
-            } else{
-                Text("Project : \(selectedProject)").bold().padding()
-            }
-            Image(systemName: "tag.circle").padding()
-        }
-    }
-}
+
 
 
 extension Date{
