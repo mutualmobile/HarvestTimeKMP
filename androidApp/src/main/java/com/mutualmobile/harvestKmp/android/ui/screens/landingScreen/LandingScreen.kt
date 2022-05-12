@@ -46,6 +46,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.L
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
+import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
@@ -81,8 +82,8 @@ fun LandingScreen() {
                             LandingScreenDrawerItemType.Reports -> {
                                 Text(
                                     text = stringResource(R.string.reports_screen_app_bar_subtitle),
-                                    style = MaterialTheme.typography.body2.copy(
-                                        color = MaterialTheme.colors.surface.copy(alpha = 0.5f)
+                                    style = MaterialTheme.typography.body1.copy(
+                                        color = MaterialTheme.colors.surface.copy(alpha = 0.6f)
                                     )
                                 )
                             }
@@ -149,6 +150,7 @@ fun LandingScreen() {
         },
         drawerBackgroundColor = DrawerBgColor,
         scaffoldState = scaffoldState,
+        backgroundColor = SurfaceColor
     ) { bodyPadding ->
         AnimatedContent(
             targetState = currentDrawerScreen,

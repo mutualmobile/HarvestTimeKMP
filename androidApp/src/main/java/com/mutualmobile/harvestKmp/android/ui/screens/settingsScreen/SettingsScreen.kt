@@ -4,8 +4,11 @@ import android.app.Activity
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.Text
@@ -44,7 +47,12 @@ fun SettingsScreen() {
             )
         },
     ) { bodyPadding ->
-        Column(modifier = Modifier.padding(bodyPadding)) {
+        Column(
+            modifier = Modifier
+                .padding(bodyPadding)
+                .verticalScroll(rememberScrollState())
+                .navigationBarsPadding(),
+        ) {
             NotificationsSection()
             AccountSection()
             AboutHarvestSection()

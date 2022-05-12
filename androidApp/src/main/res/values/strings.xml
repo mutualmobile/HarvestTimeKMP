@@ -32,4 +32,8 @@
     <string name="new_entry_screen_end_view_text">Leave blank to start a timer</string>
     <string name="dds_screen_duration_title">Duration</string>
     <string name="dds_screen_date_title">Date</string>
+    <string name="reports_screen_total_hours_card_title">Total Hours</string>
+    <string name="reports_screen_billable_hours_title">Billable hours</string>
+    <string name="report_screen_billable_title">Billable</string>
+    <string name="report_screen_non_billable_title">Non-billable</string>
 </resources>
