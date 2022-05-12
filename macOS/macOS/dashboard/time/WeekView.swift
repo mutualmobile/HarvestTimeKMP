@@ -13,13 +13,33 @@ struct WeekView: View{
     var dateUpdate: ((Date)->Void)
 
     var body: some View{
-        HStack {
-            ForEach (getCurrentWeek(date: date), id: \.self) { loopDate in
-                CalendarDay(date: loopDate,selectedDate:$date) { date in
-                    dateUpdate(date)
+        ScrollView(Axis.Set.horizontal, showsIndicators: false) {
+            HStack(spacing:24) {
+                ForEach (getCurrentWeek(date: date), id: \.self) { loopDate in
+                    CalendarDay(date: loopDate,selectedDate:$date) { date in
+                        dateUpdate(date)
+                    }
                 }
+                Spacer().frame(width:12)
+                WeekTotal()
             }
         }
+    }
+}
+
+struct WeekTotal: View{
+    var body: some View{
+        
+        Button {
+            
+        } label: {
+            VStack{
+                Text("Week Total").padding(Edge.Set.bottom, 4)
+                Text("0.0").padding(Edge.Set.top, 4)
+                Rectangle().fill(Color.clear).frame(height: 3)
+            }
+        }.buttonStyle(PlainButtonStyle())
+
     }
 }
 
@@ -36,10 +56,10 @@ struct CalendarDay : View {
             dateUpdate(selectedDate)
         } label: {
             VStack{
-                Text(date.dayOfWeek()).padding(Edge.Set.bottom, 8).if(date.dayOfWeek() == selectedDate.dayOfWeek()) { View in
+                Text(date.dayOfWeek()).padding(Edge.Set.bottom, 4).if(date.dayOfWeek() == selectedDate.dayOfWeek()) { View in
                     View.font(Font.title3.weight(.bold))
                 }
-                Text("0.0").if(date.dayOfWeek() == selectedDate.dayOfWeek()) { View in
+                Text("0.0").padding(Edge.Set.top, 4).if(date.dayOfWeek() == selectedDate.dayOfWeek()) { View in
                     View.font(Font.title3.weight(.bold))
                 }
                 Rectangle().fill(date.dayOfWeek() == selectedDate.dayOfWeek() ? Color("appColor") : Color.clear)

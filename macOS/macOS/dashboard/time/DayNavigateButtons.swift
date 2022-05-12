@@ -94,7 +94,7 @@ struct PresentDay : View{
     
     var body: some View{
         VStack{
-            Text(formattedDate())
+            Text(formattedDate()).font(.title)
         }
     }
     

@@ -20,7 +20,7 @@ struct DashboardScreen : View{
             VStack{
                 DashHeader()
             
-                Content(date:$date,newEntry: {
+                MainContent(date:$date,newEntry: {
                     createNewEntry = true
                 },dateUpdate:{ Date in
                     date = Date
@@ -31,59 +31,29 @@ struct DashboardScreen : View{
                     maxHeight: .infinity,
                     alignment: .topLeading
                 ).background(.white)
-            }.frame(minWidth: 700 , minHeight: 500, alignment: .top)
+            }.frame(minWidth: 800 , minHeight: 500, alignment: .top)
             
             
+            NewTimeEntryOverlay(date:$date,createNewEntry:$createNewEntry)
             
-            if createNewEntry == true {
-                Color.black.opacity(0.4).edgesIgnoringSafeArea(.all).onTapGesture {
-                    createNewEntry = false
-                }
-                NewTimeEntryModal(date: $date) {
-                    createNewEntry = false
-                }
-            }
         }
                   
 
     }
 }
 
-
-struct Content : View{
+struct NewTimeEntryOverlay : View{
     @Binding var date:Date
-    var newEntry: (()->Void)
-    var dateUpdate: ((Date)->Void)
+    @Binding var createNewEntry:Bool
 
     var body: some View{
-        VStack{
-            DayNavigateButtons(date: $date) { Date in
-                self.date = Date
-                dateUpdate(Date)
+        if createNewEntry == true {
+            Color.black.opacity(0.4).edgesIgnoringSafeArea(.all).onTapGesture {
+                createNewEntry = false
             }
-            
-            HStack{
-                
-                NewEntryButton(newEntry: newEntry).padding(12)
-                VStack{
-                    WeekView(date:$date) { newDate in
-                        self.date = newDate
-                    }
-                    DayRecord(date:$date)
-                }
+            NewTimeEntryModal(date: $date) {
+                createNewEntry = false
             }
-        }
-       
-        
-    }
-}
-
-struct DayRecord: View{
-    @Binding var date:Date
-
-    var body: some View{
-        HStack {
-            
         }
     }
 }
