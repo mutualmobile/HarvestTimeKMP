@@ -10,13 +10,16 @@ import SwiftUI
 
 struct DayNavigateButtons : View{
     @State var date:Date = Date.now
-
+    var dateChanged: ((Date)->Void)
+    
     var body: some View{
         HStack{
             NavigateButtons {
                 self.date = Calendar.current.date(byAdding: .day, value: -1, to: date)!
+                dateChanged(date)
             } onRight: {
                 self.date = Calendar.current.date(byAdding: .day, value: 1, to: date)!
+                dateChanged(date)
             }
 
             PresentDay(date:$date)

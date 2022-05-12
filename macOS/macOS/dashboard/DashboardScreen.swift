@@ -12,13 +12,14 @@ struct DashboardScreen : View{
     var body: some View{
         VStack{
             DashHeader()
+        
             Content().frame(
                 minWidth: 0,
                 maxWidth: .infinity,
                 minHeight: 0,
                 maxHeight: .infinity,
                 alignment: .topLeading
-              )
+            ).background(.white)
             Footer()
         }            .frame(width: 800 , height: 600, alignment: .top)
 
@@ -27,17 +28,24 @@ struct DashboardScreen : View{
 
 
 struct Content : View{
+    @State var date:Date = Date.now
+
     var body: some View{
         VStack{
-            DayNavigateButtons()
+            DayNavigateButtons(date: date) { Date in
+                self.date = Date
+            }
+            
             HStack{
-                NewEntryButton()
+                NewEntryButton().padding(12)
                 VStack{
-                    WeekView()
+                    WeekView( date:$date)
                     DayRecord()
                 }
             }
         }
+       
+        
     }
 }
 
@@ -51,23 +59,52 @@ struct DayRecord: View{
 
 struct NewEntryButton: View{
     var body: some View{
-        HStack{
+        VStack{
+            HStack{
+                
+                Image(systemName: "plus")
+                    .resizable()
+                    .foregroundColor(Color.white)
+                    .frame(width: 30, height: 30, alignment: .center)
+                
+            }.padding().onTapGesture(perform: {
+                
+            })
+            .background(Color("greenColor")).cornerRadius(8)
             
+            Text("New Entry").padding(4)
         }
     }
 }
 
 struct WeekView: View{
+    @Binding var date:Date
+    
     var body: some View{
-        HStack{
-            
-            Image(systemName: "plus").resizable().frame(width: 40, height: 40, alignment: .center)
-            
-        }.overlay(
-            RoundedRectangle(cornerRadius: 25).background(Color("greenColor"))
-        ).padding().onTapGesture(perform: {
-            
-        })
+        ScrollView (.horizontal, showsIndicators: false) {
+            HStack {
+                ForEach (getCurrentWeek(date: date), id: \.self) { loopDate in
+                    CalendarDay (date: loopDate,selectedDate:$date)
+                }
+        }
+    }
+}
+}
+
+struct CalendarDay : View{
+    
+    @State var date:Date
+    @Binding var selectedDate : Date
+    
+    var body: some View{
+        VStack{
+            Text(date.dayOfWeek()).padding(Edge.Set.bottom, 8).if(date.dayOfWeek() == selectedDate.dayOfWeek()) { View in
+                View.font(Font.title3.weight(.bold))
+            }
+            Text("0.0").if(date.dayOfWeek() == selectedDate.dayOfWeek()) { View in
+                View.font(Font.title3.weight(.bold))
+            }
+        }.padding()
     }
 }
 
