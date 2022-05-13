@@ -2,9 +2,12 @@ package com.mutualmobile.harvestKmp.android.ui.screens.timeScreen
 
 import android.content.Intent
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.FloatingActionButton
@@ -21,18 +24,26 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.withStyle
+import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryActivity
+import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.TimeCard
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekScroller
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentPageIndex
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.floorMod
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberLazyListSnapperLayoutInfo
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -136,12 +147,40 @@ fun TimeScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
             ) { currentPageIndex ->
-                Text(
-                    text = WeekDays.values()[(currentPageIndex - startIndex).floorMod(numberOfDays)].name,
+                val currentIndex = (currentPageIndex - startIndex).floorMod(numberOfDays)
+                Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .background(SurfaceColor)
-                )
+                        .navigationBarsPadding()
+                        .background(SurfaceColor),
+                    contentAlignment = Alignment.Center
+                ) {
+                    if (currentIndex % 2 == 0) {
+                        LazyColumn(modifier = Modifier.fillMaxSize()) {
+                            item {
+                                TimeCard(
+                                    organisationName = "Mutual Mobile",
+                                    bucketName = "Android Department Work HYD",
+                                    time = 8.00f,
+                                    taskType = "Work"
+                                )
+                            }
+                            item { Spacer(modifier = Modifier.navigationBarsPadding()) }
+                        }
+                    } else {
+                        Text(
+                            text = buildAnnotatedString {
+                                append("\"All we have to decide is what to do with the time that is given us.\"")
+                                withStyle(SpanStyle(fontSize = 16.sp)) {
+                                    append("\n-- Gandalf")
+                                }
+                            },
+                            style = TimeScreenTypography.h1,
+                            modifier = Modifier.alpha(0.25f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
             }
         }
     }

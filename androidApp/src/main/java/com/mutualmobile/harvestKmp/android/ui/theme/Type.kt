@@ -65,3 +65,23 @@ val ReportCardTypography = Typography(
     fontSize = 11.sp
   ),
 )
+
+val TimeScreenTypography = Typography(
+  h1 = TextStyle(
+    fontSize = 20.sp,
+    fontWeight = FontWeight.Light,
+  ),
+  h2 = TextStyle(
+    fontSize = 17.sp,
+    fontWeight = FontWeight.SemiBold,
+  ),
+  body1 = TextStyle(
+    fontSize = 14.sp,
+    fontWeight = FontWeight.Normal,
+  ),
+  subtitle1 = TextStyle(
+    fontSize = 13.sp,
+    fontWeight = FontWeight.Light,
+    letterSpacing = 0.75.sp
+  ),
+)
