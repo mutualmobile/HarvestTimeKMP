@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.landingScreen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.ExperimentalAnimationApi
 import androidx.compose.animation.fadeIn
@@ -63,6 +64,10 @@ fun LandingScreen() {
     var currentWeekOffset by remember { mutableStateOf(0) }
     var currentDayOffset by remember { mutableStateOf(0) }
     var isDropDownMenuShown by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = scaffoldDrawerState.isOpen) {
+        coroutineScope.launch { scaffoldDrawerState.close() }
+    }
 
     Scaffold(
         topBar = {
