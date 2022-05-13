@@ -20,6 +20,7 @@ object AndroidDependencyVersions {
   const val firebaseBom = "30.0.0"
   const val splashScreen = "1.0.0-beta02"
   const val snapper = "0.2.1"
+  const val navigation = "2.4.2"
 }
 
 object AndroidDependencies {
@@ -40,7 +41,8 @@ object AndroidDependencies {
     "androidx.lifecycle:lifecycle-runtime-ktx:${AndroidDependencyVersions.lifecycleRuntime}",
     "androidx.activity:activity-compose:${AndroidDependencyVersions.composeActivity}",
     "com.google.firebase:firebase-auth-ktx",
-    "androidx.core:core-splashscreen:${AndroidDependencyVersions.splashScreen}"
+    "androidx.core:core-splashscreen:${AndroidDependencyVersions.splashScreen}",
+    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}"
   )
   val androidTestImplementation = listOf(
     "androidx.compose.ui:ui-test-junit4:${AndroidDependencyVersions.compose}"
