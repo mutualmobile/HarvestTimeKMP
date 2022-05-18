@@ -1,6 +1,7 @@
 package com.baseio.kmm.data.network
 
 import com.baseio.kmm.domain.model.*
+import com.baseio.kmm.features.NetworkResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -35,12 +36,22 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun signup(
         email: String,
         password: String
-    ): SignUpData {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP")
+    ): NetworkResponse<SuccessResponse> {
+        return try {
+            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP"))
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 
-    override suspend fun login(email: String, password: String): LoginData {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN")
+    override suspend fun login(email: String, password: String): NetworkResponse<SuccessResponse> {
+        return try {
+            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN"))
+        } catch (e: Exception){
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 
     override suspend fun logout(userId: String): LogoutData {

@@ -1,6 +1,7 @@
 package com.baseio.kmm.data.network
 
 import com.baseio.kmm.domain.model.*
+import com.baseio.kmm.features.NetworkResponse
 
 interface PraxisSpringBootAPI {
 
@@ -10,14 +11,9 @@ interface PraxisSpringBootAPI {
 
     suspend fun refreshToken(refreshToken: String): RefreshToken
 
-    suspend fun signup(
-//        firstName: String,
-//        lastName: String,
-        email: String,
-        password: String
-    ): SignUpData
+    suspend fun signup(email: String, password: String): NetworkResponse<SuccessResponse>
 
-    suspend fun login(email: String, password: String): LoginData
+    suspend fun login(email: String, password: String): NetworkResponse<SuccessResponse>
 
     suspend fun logout(userId: String): LogoutData
 
