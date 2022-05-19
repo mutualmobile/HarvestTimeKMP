@@ -4,6 +4,7 @@ import com.baseio.kmm.data.local.GithubTrendingLocal
 import com.baseio.kmm.data.local.GithubTrendingLocalImpl
 import com.baseio.kmm.data.network.GithubTrendingAPI
 import com.baseio.kmm.data.network.GithubTrendingAPIImpl
+import com.baseio.kmm.domain.usecases.praxisSpringBootAuth.*
 import com.baseio.kmm.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.baseio.kmm.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.baseio.kmm.domain.usecases.trendingrepos.SaveTrendingReposUseCase
@@ -48,6 +49,14 @@ class UseCasesComponent : KoinComponent {
     fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
     fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
     fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
+}
+
+class SpringBootAuthUseCasesComponent : KoinComponent {
+    fun provideLoginUseCase(): LoginUseCase = get()
+    fun provideLogoutUseCase(): LogoutUseCase = get()
+    fun provideSignUpUseCase(): SignUpUseCase = get()
+    fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
+    fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
