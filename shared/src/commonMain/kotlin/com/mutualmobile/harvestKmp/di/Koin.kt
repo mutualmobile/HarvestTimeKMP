@@ -49,6 +49,14 @@ class UseCasesComponent : KoinComponent {
     fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
 }
 
+class SpringBootAuthUseCasesComponent : KoinComponent {
+    fun provideLoginUseCase(): LoginUseCase = get()
+    fun provideLogoutUseCase(): LogoutUseCase = get()
+    fun provideSignUpUseCase(): SignUpUseCase = get()
+    fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
+    fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
+}
+
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
