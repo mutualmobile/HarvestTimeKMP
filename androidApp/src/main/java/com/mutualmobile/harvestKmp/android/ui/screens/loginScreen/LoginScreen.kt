@@ -27,7 +27,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Ico
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.OrDivider
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
-import com.mutualmobile.harvestKmp.datamodel.LoginDataModel
+import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 
 @Composable
 fun LoginScreen(

@@ -21,7 +21,6 @@ import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScree
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
-import com.mutualmobile.harvestKmp.datamodel.LoginDataModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
