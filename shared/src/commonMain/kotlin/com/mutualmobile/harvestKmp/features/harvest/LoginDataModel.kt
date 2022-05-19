@@ -1,9 +1,9 @@
-package com.baseio.kmm.features.harvest
+package com.mutualmobile.harvestKmp.features.harvest
 
-import com.baseio.kmm.datamodel.PraxisDataModel
-import com.baseio.kmm.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.baseio.kmm.features.NetworkResponse
+import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,28 +15,28 @@ class LoginDataModel : PraxisDataModel(), KoinComponent {
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
-    private val _loginState: MutableStateFlow<LoginDataModel.DataState> = MutableStateFlow(
-        LoginDataModel.EmptyState
+    private val _loginState: MutableStateFlow<DataState> = MutableStateFlow(
+        EmptyState
     )
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _loginState.value = LoginDataModel.ErrorState(throwable)
+        _loginState.value = ErrorState(throwable)
     }
 
     fun login(email:String,password:String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            _loginState.value = LoginDataModel.LoadingState
+            _loginState.value = LoadingState
             val loginResponse = useCasesComponent.provideLoginUseCase()
                 .perform(email, password)
             when (loginResponse) {
                 is NetworkResponse.Success -> {
                     _loginState.value =
-                        LoginDataModel.SuccessState(loginResponse.data)
+                        SuccessState(loginResponse.data)
                 }
                 is NetworkResponse.Failure -> {
                     _loginState.value =
-                        LoginDataModel.ErrorState(loginResponse.exception)
+                        ErrorState(loginResponse.exception)
                 }
             }
         }

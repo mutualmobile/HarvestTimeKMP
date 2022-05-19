@@ -5,6 +5,7 @@ import com.baseio.kmm.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.request.LoginData
 import com.mutualmobile.harvestKmp.domain.model.request.SignUpData
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow

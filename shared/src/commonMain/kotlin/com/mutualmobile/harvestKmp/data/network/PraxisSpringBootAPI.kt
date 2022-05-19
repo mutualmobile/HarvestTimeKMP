@@ -5,7 +5,7 @@ import com.mutualmobile.harvestKmp.domain.model.request.LogoutData
 import com.mutualmobile.harvestKmp.domain.model.request.RefreshToken
 import com.mutualmobile.harvestKmp.domain.model.request.User
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.baseio.kmm.features.NetworkResponse
+import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 interface PraxisSpringBootAPI {
 
