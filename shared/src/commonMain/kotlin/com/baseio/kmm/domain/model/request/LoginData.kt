@@ -1,9 +1,9 @@
-package com.baseio.kmm.domain.model
+package com.baseio.kmm.domain.model.request
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class FcmToken(
+data class LoginData(
     val id: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
@@ -13,5 +13,7 @@ data class FcmToken(
     val pushToken: String? = null,
     val profilePic: String? = null,
     val modifiedTime: String? = null,
-    val platform: String? = null
+    val platform: String? = null,
+    val orgId: String? = null,
+    val harvestOrganization: HarvestOrganization
 )

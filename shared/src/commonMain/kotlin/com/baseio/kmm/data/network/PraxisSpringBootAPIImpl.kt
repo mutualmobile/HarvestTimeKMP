@@ -1,11 +1,15 @@
 package com.baseio.kmm.data.network
 
-import com.baseio.kmm.domain.model.*
+import com.baseio.kmm.domain.model.request.ChangePassword
+import com.baseio.kmm.domain.model.request.LogoutData
+import com.baseio.kmm.domain.model.request.RefreshToken
+import com.baseio.kmm.domain.model.request.User
+import com.baseio.kmm.domain.model.response.SuccessResponse
 import com.baseio.kmm.features.NetworkResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-const val SPRING_BOOT_BASE_URL = "http://localhost:5001"
+const val SPRING_BOOT_BASE_URL = "http://mmharvestkmp.us-east-2.elasticbeanstalk.com"
 const val API_URL = "/api/v1"
 
 const val GET_USER = "/user"
@@ -45,7 +49,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         }
     }
 
-    override suspend fun login(email: String, password: String): NetworkResponse<SuccessResponse> {
+    override suspend fun login(
+        email: String,
+        password: String
+    ): NetworkResponse<SuccessResponse> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN"))
         } catch (e: Exception){
@@ -58,8 +65,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGOUT")
     }
 
-    override suspend fun fcmToken(): FcmToken {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN")
+    override suspend fun fcmToken(): NetworkResponse<SuccessResponse> {
+        return try {
+            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN"))
+        } catch (e: Exception){
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 
     override suspend fun changePassword(

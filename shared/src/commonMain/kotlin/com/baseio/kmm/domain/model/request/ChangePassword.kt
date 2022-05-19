@@ -1,4 +1,4 @@
-package com.baseio.kmm.domain.model
+package com.baseio.kmm.domain.model.request
 
 import kotlinx.serialization.Serializable
 

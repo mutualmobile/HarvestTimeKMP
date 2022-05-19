@@ -2,9 +2,9 @@ package com.baseio.kmm.features
 
 import com.baseio.kmm.datamodel.PraxisDataModel
 import com.baseio.kmm.di.SpringBootAuthUseCasesComponent
-import com.baseio.kmm.domain.model.LoginData
-import com.baseio.kmm.domain.model.SignUpData
-import com.baseio.kmm.domain.model.SuccessResponse
+import com.baseio.kmm.domain.model.request.LoginData
+import com.baseio.kmm.domain.model.request.SignUpData
+import com.baseio.kmm.domain.model.response.SuccessResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,6 +22,7 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
     private val _logoutStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
     private val _signUpStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
     private val _changePasswordStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
+    private val _fcmTokenStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         _loginStateFlow.value = ErrorState(throwable)
@@ -95,6 +96,25 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
             }
         }
     }
+
+    fun fcmToken(){
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
+            _fcmTokenStateFlow.value = LoadingState
+            val fcmTokenResponse = useCasesComponent.provideFcmTokenUseCase()
+                .perform()
+            when (fcmTokenResponse){
+                is NetworkResponse.Success -> {
+                    _loginStateFlow.value = SuccessState(fcmTokenResponse.data)
+                }
+                is NetworkResponse.Failure -> {
+                    _loginStateFlow.value = ErrorState(fcmTokenResponse.exception)
+                }
+            }
+        }
+    }
+
+
 
     sealed class DataState
     object LoadingState : DataState()

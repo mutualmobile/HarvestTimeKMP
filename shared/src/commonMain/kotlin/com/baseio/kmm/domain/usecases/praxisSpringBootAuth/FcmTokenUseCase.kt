@@ -4,8 +4,8 @@ import com.baseio.kmm.data.network.PraxisSpringBootAPI
 import com.baseio.kmm.domain.model.response.SuccessResponse
 import com.baseio.kmm.features.NetworkResponse
 
-class SignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(email: String, password: String): NetworkResponse<SuccessResponse> {
-        return praxisSpringBootAPI.signup(email, password)
+class FcmTokenUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
+    suspend fun perform(): NetworkResponse<SuccessResponse> {
+        return praxisSpringBootAPI.fcmToken()
     }
 }
