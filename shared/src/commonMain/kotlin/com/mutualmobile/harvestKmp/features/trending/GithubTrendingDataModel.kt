@@ -17,10 +17,10 @@ class GithubTrendingDataModel(
 
   private var currentLoadingJob: Job? = null
   private val useCasesComponent = UseCasesComponent()
-  private val _trendingStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
 
 
   override fun activate() {
+    listenState()
     readLocalRepositories()
     fetchTrendingRepos()
   }
@@ -36,7 +36,7 @@ class GithubTrendingDataModel(
   private fun readLocalRepositories() {
     dataModelScope.launch(exceptionHandler) {
       useCasesComponent.provideGetLocalReposUseCase().perform(input = null).collectLatest { list ->
-        _trendingStateFlow.value = SuccessState(list)
+        dataState.value = SuccessState(list)
       }
     }
   }
@@ -48,7 +48,7 @@ class GithubTrendingDataModel(
   private fun fetchTrendingRepos(search: String? = "kotlin") {
     currentLoadingJob?.cancel()
     currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-      _trendingStateFlow.value = LoadingState
+      dataState.value = LoadingState
       val repos = useCasesComponent.provideFetchTrendingReposUseCase().perform(search)
       useCasesComponent.provideSaveTrendingReposUseCase().perform(repos)
     }

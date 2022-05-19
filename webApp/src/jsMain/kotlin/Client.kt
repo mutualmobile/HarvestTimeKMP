@@ -8,7 +8,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 
 val sharedComponent = SharedComponent()
-val useCasesComponent = UseCasesComponent()
 
 fun main() {
   initSqlDelightExperimentalDependencies()

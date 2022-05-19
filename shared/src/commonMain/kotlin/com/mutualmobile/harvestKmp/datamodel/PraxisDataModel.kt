@@ -18,13 +18,8 @@ abstract class PraxisDataModel(private val onDataState: (DataState) -> Unit) {
   abstract fun destroy()
   abstract fun refresh()
 
-  init {
-      listenState()
-  }
-
-  private fun listenState() {
+  fun listenState() {
     dataModelScope.launch {
-      delay(500) // delay to avoid immediate setting of empty state
       dataState.collect {
         onDataState(it)
       }

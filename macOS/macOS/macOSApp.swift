@@ -9,11 +9,9 @@ import SwiftUI
 import shared
 import AppKit
 
-let sharedComponent = SharedComponent()
-let useCasesComponent = UseCasesComponent()
-
 @main
 struct macOSApp: App {
+    
     init() {
         KoinKt.doInitSharedDependencies()
     }

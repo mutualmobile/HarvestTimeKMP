@@ -29,6 +29,7 @@ struct RootView : View{
 }
 
 struct LaunchScreen : View{
+    
     var onSignIn: (() -> Void)
 
     
@@ -41,10 +42,7 @@ struct LaunchScreen : View{
             LabelledDivider(label: "or",color: Color.white.opacity(0.7))
             LoginForm().padding(EdgeInsets.init(top: 0, leading: 24, bottom: 0, trailing: 24))
             
-            SignInButton(title:"Sign In",onClick: {
-                onSignIn()
-            }).padding(EdgeInsets.init(top: 12, leading: 0, bottom: 0, trailing: 0))
-            
+           
           
             Spacer()
             NoAccountLearnMore().padding()

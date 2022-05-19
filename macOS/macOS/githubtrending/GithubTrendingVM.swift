@@ -26,7 +26,7 @@ class GithubTrendingVM : ObservableObject{
     
     func activate(){
         trendingDataModel = GithubTrendingDataModel { [weak self] dataState in
-            self?.loading = dataState is GithubTrendingDataModel.LoadingState
+            self?.loading = dataState is LoadingState
             if(dataState is GithubTrendingDataModel.SuccessState){
                 let listDataState =  dataState as! GithubTrendingDataModel.SuccessState
                 self?.repos = listDataState.trendingList.map({ item in
