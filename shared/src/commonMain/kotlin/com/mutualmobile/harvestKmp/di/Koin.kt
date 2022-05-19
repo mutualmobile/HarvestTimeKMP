@@ -1,9 +1,12 @@
 package com.mutualmobile.harvestKmp.di
 
+import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
+import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPIImpl
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
 import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPI
 import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPIImpl
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth.*
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
@@ -22,25 +25,32 @@ fun initSharedDependencies() = startKoin {
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
-    modules(jsModule, useCaseModule, platformModule())
+    modules(sqlDelightFixMeModule, useCaseModule, platformModule())
 }
 
 val commonModule = module {
     single { httpClient(get()) }
     single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
 }
 
-val jsModule = module {
+val sqlDelightFixMeModule = module {
     single { httpClient(get()) }
     single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
 }
 
 val useCaseModule = module {
     single { FetchTrendingReposUseCase(get()) }
     single { SaveTrendingReposUseCase(get()) }
     single { GetLocalReposUseCase(get()) }
+    single { LoginUseCase(get()) }
+    single { LogoutUseCase(get()) }
+    single { SignUpUseCase(get()) }
+    single { ChangePasswordUseCase(get()) }
+    single { FcmTokenUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {

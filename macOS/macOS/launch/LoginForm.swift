@@ -7,12 +7,20 @@
 
 import Foundation
 import SwiftUI
+import shared
 
 struct LoginForm : View{
     
     
     @State var workEmail:String = ""
     @State var password:String = ""
+    
+    let loginDataModel = LoginDataModel { DataState in
+        print(DataState)
+        if(DataState is ErrorState){
+            print((DataState as! ErrorState).throwable.message)
+        }
+    }
     
     var body: some View{
         VStack{
@@ -30,6 +38,15 @@ struct LoginForm : View{
                 .background(Color.white.opacity(0.2))
                 .foregroundColor(Color.white)
                 .cornerRadius(5)
+            
+            SignInButton(title:"Sign In",onClick: {
+                loginDataModel.login(email: workEmail, password: password)
+            }).padding(EdgeInsets.init(top: 12, leading: 0, bottom: 0, trailing: 0)).onAppear {
+                loginDataModel.activate()
+            }.onDisappear {
+                loginDataModel.destroy()
+            }
+            
 
         }
     }

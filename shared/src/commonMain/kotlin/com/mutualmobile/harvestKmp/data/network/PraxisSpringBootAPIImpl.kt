@@ -1,13 +1,12 @@
-package com.baseio.kmm.data.network
+package com.mutualmobile.harvestKmp.data.network
 
-import com.mutualmobile.harvestKmp.domain.model.request.ChangePassword
-import com.mutualmobile.harvestKmp.domain.model.request.LogoutData
-import com.mutualmobile.harvestKmp.domain.model.request.RefreshToken
-import com.mutualmobile.harvestKmp.domain.model.request.User
+import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 
 const val SPRING_BOOT_BASE_URL = "http://mmharvestkmp.us-east-2.elasticbeanstalk.com"
 const val API_URL = "/api/v1"
@@ -40,7 +39,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun signup(
         email: String,
         password: String
-    ): NetworkResponse<LoginResponse> {
+    ): NetworkResponse<SignUpResponse> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP"))
         } catch (e: Exception) {
@@ -54,8 +53,11 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         password: String
     ): NetworkResponse<LoginResponse> {
         return try {
-            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN"))
-        } catch (e: Exception){
+            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN") {
+                contentType(ContentType.Application.Json)
+                body = LoginData(email = email, password = password)
+            })
+        } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
         }
@@ -68,7 +70,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun fcmToken(): NetworkResponse<LoginResponse> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN"))
-        } catch (e: Exception){
+        } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
         }

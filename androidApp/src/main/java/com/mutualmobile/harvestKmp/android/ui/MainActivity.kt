@@ -35,6 +35,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
+                    val loginDataModel = LoginDataModel()
                     NavHost(
                         navController = navController,
                         startDestination = ScreenList.LoginScreen(),
@@ -47,7 +48,8 @@ class MainActivity : ComponentActivity() {
                                             inclusive = true
                                         }
                                     }
-                                }
+                                },
+                                loginDataModel = loginDataModel
                             )
                         }
                         composable(ScreenList.LandingScreen()) {

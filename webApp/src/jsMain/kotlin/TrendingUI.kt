@@ -1,3 +1,4 @@
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.GithubReposItem
 import com.mutualmobile.harvestKmp.features.trending.GithubTrendingDataModel
 import kotlinx.coroutines.*
@@ -17,26 +18,26 @@ external interface TrendingProps : Props
 val TrendingUI = fc<TrendingProps> {
   var trendingRepos: List<GithubReposItem> by useState(emptyList())
   var message: String by useState("")
-  var state by useState<GithubTrendingDataModel.DataState>()
+  var state by useState<DataState>()
   var search by useState("")
 
   val dataModel = GithubTrendingDataModel(onDataState = { stateNew ->
     state = stateNew
     when (stateNew) {
-      is GithubTrendingDataModel.LoadingState -> {
+      is LoadingState -> {
         message = "Loading..."
       }
       is GithubTrendingDataModel.SuccessState -> {
         trendingRepos = stateNew.trendingList
         message = "Found repos..."
       }
-      GithubTrendingDataModel.Complete -> {
+      Complete -> {
         message = "Completed loading!"
       }
-      GithubTrendingDataModel.EmptyState -> {
+      EmptyState -> {
         message = "Emty state"
       }
-      is GithubTrendingDataModel.ErrorState -> {
+      is ErrorState -> {
         message = stateNew.throwable.message ?: "Error"
       }
     }

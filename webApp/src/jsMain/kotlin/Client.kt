@@ -2,19 +2,19 @@ import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
+import harvest.LoginScreen
 import react.dom.render
 import kotlinx.browser.document
 import kotlinx.browser.window
 
 val sharedComponent = SharedComponent()
-val useCasesComponent = UseCasesComponent()
 
 fun main() {
   initSqlDelightExperimentalDependencies()
   window.onload = { _ ->
     val rootDiv = document.getElementById("root")
     render(rootDiv!!) {
-      child(TrendingUI)
+      child(LoginScreen)
     }
   }
 }
