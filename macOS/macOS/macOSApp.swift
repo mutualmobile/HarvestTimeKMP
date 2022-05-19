@@ -7,6 +7,7 @@
 
 import SwiftUI
 import shared
+import AppKit
 
 let sharedComponent = SharedComponent()
 let useCasesComponent = UseCasesComponent()
@@ -19,7 +20,9 @@ struct macOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            GithubTrendingScreen()
-        }
+            
+            RootView()
+   
+        }.windowStyle(HiddenTitleBarWindowStyle())
     }
 }
