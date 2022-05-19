@@ -1,10 +1,10 @@
 package com.baseio.kmm.data.network
 
-import com.baseio.kmm.domain.model.request.ChangePassword
-import com.baseio.kmm.domain.model.request.LogoutData
-import com.baseio.kmm.domain.model.request.RefreshToken
-import com.baseio.kmm.domain.model.request.User
-import com.baseio.kmm.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.request.ChangePassword
+import com.mutualmobile.harvestKmp.domain.model.request.LogoutData
+import com.mutualmobile.harvestKmp.domain.model.request.RefreshToken
+import com.mutualmobile.harvestKmp.domain.model.request.User
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.baseio.kmm.features.NetworkResponse
 
 interface PraxisSpringBootAPI {

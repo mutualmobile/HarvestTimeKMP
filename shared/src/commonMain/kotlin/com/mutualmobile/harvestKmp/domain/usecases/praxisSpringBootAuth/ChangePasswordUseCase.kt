@@ -1,7 +1,7 @@
-package com.baseio.kmm.domain.usecases.praxisSpringBootAuth
+package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth
 
 import com.baseio.kmm.data.network.PraxisSpringBootAPI
-import com.baseio.kmm.domain.model.request.ChangePassword
+import com.mutualmobile.harvestKmp.domain.model.request.ChangePassword
 
 class ChangePasswordUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
     suspend fun perform(password: String, oldPassword: String): ChangePassword {

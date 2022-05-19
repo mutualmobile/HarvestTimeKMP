@@ -1,9 +1,9 @@
-package com.baseio.kmm.domain.model.request
+package com.mutualmobile.harvestKmp.domain.model.request
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class User(
+data class LoginData(
     val id: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,

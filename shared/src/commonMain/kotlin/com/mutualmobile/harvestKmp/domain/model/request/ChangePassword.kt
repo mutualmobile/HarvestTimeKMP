@@ -1,4 +1,4 @@
-package com.baseio.kmm.domain.model.request
+package com.mutualmobile.harvestKmp.domain.model.request
 
 import kotlinx.serialization.Serializable
 

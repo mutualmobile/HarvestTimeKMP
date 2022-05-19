@@ -1,9 +1,9 @@
-package com.baseio.kmm.domain.model.request
+package com.mutualmobile.harvestKmp.domain.model.request
 
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class SignUpData(
+data class FcmToken(
     val id: String? = null,
     val firstName: String? = null,
     val lastName: String? = null,
@@ -17,4 +17,3 @@ data class SignUpData(
     val orgId: String? = null,
     val harvestOrganization: HarvestOrganization
 )
-

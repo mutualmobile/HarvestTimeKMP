@@ -1,7 +1,7 @@
-package com.baseio.kmm.domain.usecases.praxisSpringBootAuth
+package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth
 
 import com.baseio.kmm.data.network.PraxisSpringBootAPI
-import com.baseio.kmm.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.baseio.kmm.features.NetworkResponse
 
 class LoginUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {

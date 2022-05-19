@@ -2,9 +2,9 @@ package com.baseio.kmm.features
 
 import com.baseio.kmm.datamodel.PraxisDataModel
 import com.baseio.kmm.di.SpringBootAuthUseCasesComponent
-import com.baseio.kmm.domain.model.request.LoginData
-import com.baseio.kmm.domain.model.request.SignUpData
-import com.baseio.kmm.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.request.LoginData
+import com.mutualmobile.harvestKmp.domain.model.request.SignUpData
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
