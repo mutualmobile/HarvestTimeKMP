@@ -1,5 +1,5 @@
-import com.baseio.kmm.domain.model.GithubReposItem
-import com.baseio.kmm.features.trending.GithubTrendingDataModel
+import com.mutualmobile.harvestKmp.domain.model.GithubReposItem
+import com.mutualmobile.harvestKmp.features.trending.GithubTrendingDataModel
 import kotlinx.coroutines.*
 import kotlinx.css.Display
 import kotlinx.css.FlexDirection

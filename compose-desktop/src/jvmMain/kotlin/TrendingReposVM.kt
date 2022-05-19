@@ -1,7 +1,5 @@
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
-import com.baseio.kmm.features.trending.GithubTrendingDataModel
-import kotlinx.coroutines.flow.MutableStateFlow
+import com.mutualmobile.harvestKmp.features.trending.GithubTrendingDataModel
 
 class TrendingReposVM {
 

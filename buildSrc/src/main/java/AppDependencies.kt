@@ -4,6 +4,7 @@ object AppDependencyVersions {
     const val kotlinxSerialization = "1.6.10"
     const val sqlDelight = "1.5.3"
     const val nativeCoroutines = "0.11.1-new-mm"
+    const val googleServices = "4.3.10"
 }
 object AppDependencies {
     val plugins = listOf(
@@ -12,5 +13,6 @@ object AppDependencies {
         "org.jetbrains.kotlin:kotlin-serialization:${AppDependencyVersions.kotlinxSerialization}",
         "com.squareup.sqldelight:gradle-plugin:${AppDependencyVersions.sqlDelight}",
         "com.rickclephas.kmp:kmp-nativecoroutines-gradle-plugin:${AppDependencyVersions.nativeCoroutines}",
+        "com.google.gms:google-services:${AppDependencyVersions.googleServices}"
     )
 }

@@ -1,7 +1,7 @@
-import com.baseio.kmm.db.DriverFactory
-import com.baseio.kmm.di.SharedComponent
-import com.baseio.kmm.di.UseCasesComponent
-import com.baseio.kmm.di.initSqlDelightExperimentalDependencies
+import com.mutualmobile.harvestKmp.db.DriverFactory
+import com.mutualmobile.harvestKmp.di.SharedComponent
+import com.mutualmobile.harvestKmp.di.UseCasesComponent
+import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
 import react.dom.render
 import kotlinx.browser.document
 import kotlinx.browser.window

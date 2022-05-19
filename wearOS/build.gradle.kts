@@ -10,7 +10,7 @@ plugins {
 android {
     compileSdk = 31
     defaultConfig {
-        applicationId = "com.baseio.wearos"
+        applicationId = "com.mutualmobile.harvestKmp.wearos"
         minSdk = 30
         targetSdk = 31
         versionCode = 1
