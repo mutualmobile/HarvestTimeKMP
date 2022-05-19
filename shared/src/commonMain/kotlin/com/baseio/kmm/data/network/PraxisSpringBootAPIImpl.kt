@@ -4,7 +4,7 @@ import com.baseio.kmm.domain.model.request.ChangePassword
 import com.baseio.kmm.domain.model.request.LogoutData
 import com.baseio.kmm.domain.model.request.RefreshToken
 import com.baseio.kmm.domain.model.request.User
-import com.baseio.kmm.domain.model.response.SuccessResponse
+import com.baseio.kmm.domain.model.response.LoginResponse
 import com.baseio.kmm.features.NetworkResponse
 import io.ktor.client.*
 import io.ktor.client.request.*
@@ -40,7 +40,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun signup(
         email: String,
         password: String
-    ): NetworkResponse<SuccessResponse> {
+    ): NetworkResponse<LoginResponse> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP"))
         } catch (e: Exception) {
@@ -52,7 +52,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun login(
         email: String,
         password: String
-    ): NetworkResponse<SuccessResponse> {
+    ): NetworkResponse<LoginResponse> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN"))
         } catch (e: Exception){
@@ -65,7 +65,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGOUT")
     }
 
-    override suspend fun fcmToken(): NetworkResponse<SuccessResponse> {
+    override suspend fun fcmToken(): NetworkResponse<LoginResponse> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN"))
         } catch (e: Exception){

@@ -4,7 +4,7 @@ import com.baseio.kmm.datamodel.PraxisDataModel
 import com.baseio.kmm.di.SpringBootAuthUseCasesComponent
 import com.baseio.kmm.domain.model.request.LoginData
 import com.baseio.kmm.domain.model.request.SignUpData
-import com.baseio.kmm.domain.model.response.SuccessResponse
+import com.baseio.kmm.domain.model.response.LoginResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -121,7 +121,7 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
     object EmptyState : DataState()
     object Success : DataState()
     data class SuccessState(
-        val trendingList: SuccessResponse,
+        val trendingList: LoginResponse,
     ) : DataState()
 
     data class ErrorState(var throwable: Throwable) : DataState()
