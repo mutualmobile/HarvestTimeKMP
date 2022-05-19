@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,17 +21,20 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
+import com.google.accompanist.insets.systemBarsPadding
 import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.OrDivider
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
+import com.mutualmobile.harvestKmp.datamodel.LoginDataModel
 
 @Composable
 fun LoginScreen(
     initiateGoogleSignIn: () -> Unit,
     // TODO: Change this
     initiateEmailPasswordSignIn: () -> Unit = initiateGoogleSignIn,
+    loginDataModel: LoginDataModel
 ) {
     var currentWorkEmail by remember { mutableStateOf("") }
     var currentPassword by remember { mutableStateOf("") }
@@ -69,7 +71,10 @@ fun LoginScreen(
             )
             IconLabelButton(
                 label = stringResource(R.string.login_screen_signIn_btn_txt),
-                onClick = initiateEmailPasswordSignIn
+                onClick = {
+//                    initiateEmailPasswordSignIn
+                    loginDataModel.login(currentWorkEmail, currentPassword)
+                }
             )
             SurfaceTextButton(
                 text = buildAnnotatedString {

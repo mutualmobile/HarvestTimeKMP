@@ -4,6 +4,7 @@ import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
 import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPI
 import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPIImpl
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth.*
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
@@ -41,6 +42,7 @@ val useCaseModule = module {
     single { FetchTrendingReposUseCase(get()) }
     single { SaveTrendingReposUseCase(get()) }
     single { GetLocalReposUseCase(get()) }
+    single { LoginUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {

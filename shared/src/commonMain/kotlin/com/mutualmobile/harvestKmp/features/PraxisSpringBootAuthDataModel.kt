@@ -1,11 +1,8 @@
-package com.baseio.kmm.features
+package com.mutualmobile.harvestKmp.features
 
-import com.baseio.kmm.datamodel.PraxisDataModel
-import com.baseio.kmm.di.SpringBootAuthUseCasesComponent
-import com.mutualmobile.harvestKmp.domain.model.request.LoginData
-import com.mutualmobile.harvestKmp.domain.model.request.SignUpData
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,16 +14,12 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
-    var loginCredentials = MutableStateFlow(LoginData())
-    var signUpCredentials = MutableStateFlow(SignUpData())
-    private val _loginStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
     private val _logoutStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
-    private val _signUpStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
     private val _changePasswordStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
     private val _fcmTokenStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _loginStateFlow.value = ErrorState(throwable)
+        _logoutStateFlow.value = ErrorState(throwable)
     }
 
     override fun activate() {
@@ -39,40 +32,6 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
 
     override fun refresh() {
         TODO("Not yet implemented")
-    }
-
-    fun login() {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            _loginStateFlow.value = LoadingState
-            val loginResponse = useCasesComponent.provideLoginUseCase()
-                .perform(loginCredentials.value.email, loginCredentials.value.password)
-            when (loginResponse) {
-                is NetworkResponse.Success -> {
-                    _loginStateFlow.value = SuccessState(loginResponse.data)
-                }
-                is NetworkResponse.Failure -> {
-                    _loginStateFlow.value = ErrorState(loginResponse.exception)
-                }
-            }
-        }
-    }
-
-    fun signUp() {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            _signUpStateFlow.value = LoadingState
-            val signUpResponse = useCasesComponent.provideSignUpUseCase()
-                .perform(signUpCredentials.value.email, signUpCredentials.value.password)
-            when (signUpResponse) {
-                is NetworkResponse.Success -> {
-                    _loginStateFlow.value = SuccessState(signUpResponse.data)
-                }
-                is NetworkResponse.Failure -> {
-                    _loginStateFlow.value = ErrorState(signUpResponse.exception)
-                }
-            }
-        }
     }
 
     fun changePassword(password: String, oldPassword: String) {
@@ -92,7 +51,7 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             _logoutStateFlow.value = LoadingState
             val value = useCasesComponent.provideLogoutUseCase().perform(userId)
-            if (value.userId.isNotBlank()) {
+            if (value.userId?.isNotBlank() == true) {
                 _logoutStateFlow.value = Success
             }
         }
@@ -106,10 +65,10 @@ class PraxisSpringBootAuthDataModel() : PraxisDataModel(), KoinComponent {
                 .perform()
             when (fcmTokenResponse){
                 is NetworkResponse.Success -> {
-                    _loginStateFlow.value = SuccessState(fcmTokenResponse.data)
+                    _fcmTokenStateFlow.value = SuccessState(fcmTokenResponse.data)
                 }
                 is NetworkResponse.Failure -> {
-                    _loginStateFlow.value = ErrorState(fcmTokenResponse.exception)
+                    _fcmTokenStateFlow.value = ErrorState(fcmTokenResponse.exception)
                 }
             }
         }
