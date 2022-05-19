@@ -11,6 +11,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         tools:ignore="RtlEnabled"
+        android:usesCleartextTraffic="true"
         tools:targetApi="donut">
         <activity
             android:name=".ui.screens.newEntryScreen.NewEntryActivity"

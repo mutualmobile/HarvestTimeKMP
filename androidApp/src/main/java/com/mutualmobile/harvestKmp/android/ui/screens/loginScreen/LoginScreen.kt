@@ -36,8 +36,8 @@ fun LoginScreen(
     initiateEmailPasswordSignIn: () -> Unit = initiateGoogleSignIn,
     loginDataModel: LoginDataModel
 ) {
-    var currentWorkEmail by remember { mutableStateOf("") }
-    var currentPassword by remember { mutableStateOf("") }
+    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
+    var currentPassword by remember { mutableStateOf("password") }
     Box(
         modifier = Modifier
             .fillMaxSize()

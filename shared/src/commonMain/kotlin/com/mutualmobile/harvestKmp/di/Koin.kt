@@ -1,5 +1,7 @@
 package com.mutualmobile.harvestKmp.di
 
+import com.baseio.kmm.data.network.PraxisSpringBootAPI
+import com.baseio.kmm.data.network.PraxisSpringBootAPIImpl
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
 import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPI
@@ -36,6 +38,7 @@ val jsModule = module {
     single { httpClient(get()) }
     single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
 }
 
 val useCaseModule = module {
