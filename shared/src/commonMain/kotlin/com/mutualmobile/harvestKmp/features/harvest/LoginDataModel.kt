@@ -1,12 +1,6 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.CoroutineExceptionHandler
 import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
@@ -60,7 +54,7 @@ class LoginDataModel(onDataState: (DataState) -> Unit) :
 
 
     data class SuccessState(
-        val trendingList: LoginResponse,
+        val loginResponse: LoginResponse,
     ) : DataState()
 
     data class ErrorState(var throwable: Throwable) : DataState()

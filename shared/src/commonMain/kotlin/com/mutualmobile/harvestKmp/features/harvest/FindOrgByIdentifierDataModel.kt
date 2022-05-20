@@ -1,41 +1,35 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class FindOrgByIdentifierDataModel() : PraxisDataModel(), KoinComponent {
+class FindOrgByIdentifierDataModel(onDataState: (DataState) -> Unit) :
+    PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
-    private val _findOrgByIdentifierStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
-
-    private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _findOrgByIdentifierStateFlow.value = LoginDataModel.ErrorState(throwable)
-    }
-
     fun FindOrgByIdentifier(identifier: String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            _findOrgByIdentifierStateFlow.value = LoadingState
+            dataState.value = LoadingState
 
             val response = useCasesComponent.provideFindOrgByIdentifier()
                 .perform(identifier)
             when (response) {
                 is NetworkResponse.Success -> {
-                    _findOrgByIdentifierStateFlow.value = SuccessState(response.data)
+                    dataState.value = SuccessState(response.data)
                     println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    _findOrgByIdentifierStateFlow.value = ErrorState(response.exception)
+                    dataState.value = ErrorState(response.exception)
                     println("FAILED, ${response.exception.message}")
                 }
             }
@@ -43,15 +37,13 @@ class FindOrgByIdentifierDataModel() : PraxisDataModel(), KoinComponent {
     }
 
     override fun activate() {
-        TODO("Not yet implemented")
+        listenState()
     }
 
     override fun destroy() {
-        TODO("Not yet implemented")
     }
 
     override fun refresh() {
-        TODO("Not yet implemented")
     }
 
     data class SuccessState(

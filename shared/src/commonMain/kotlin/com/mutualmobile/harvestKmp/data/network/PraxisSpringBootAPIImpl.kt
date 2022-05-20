@@ -1,6 +1,5 @@
 package com.mutualmobile.harvestKmp.data.network
 
-import com.baseio.kmm.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
