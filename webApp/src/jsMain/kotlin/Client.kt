@@ -1,16 +1,13 @@
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
-import harvest.JSHomePage
-import harvest.JSLoginScreen
-import harvest.JSSignupScreen
-import react.dom.render
+import harvest.*
 import kotlinx.browser.document
 import kotlinx.browser.window
 import react.create
-import react.createElement
 import react.router.Route
 import react.router.Routes
+import react.dom.client.createRoot
 import react.router.dom.BrowserRouter
 
 
@@ -19,32 +16,30 @@ val sharedComponent = SharedComponent()
 fun main() {
     initSqlDelightExperimentalDependencies()
     window.onload = { _ ->
-        val rootDiv = document.getElementById("root")
-        render(rootDiv!!) {
-            BrowserRouter {
-                Routes {
-                    Route {
-                        attrs.index = true
-                        attrs.element = createElement {
-                            JSHomePage.create()
-                        }
-                    }
-                    Route {
-                        attrs.path = "/login"
-                        attrs.element = createElement {
-                            JSLoginScreen.create()
-                        }
-                    }
-                    Route {
-                        attrs.path = "/signup"
-                        attrs.element = createElement {
-                            JSSignupScreen.create()
-                        }
-                    }
+        createRoot(document.getElementById("root")!!).render(
+
+            JSLoginScreen.create())
+       /* BrowserRouter.apply {
+            react.router.Routes {
+                Route {
+                    attrs.index = true
+                    attrs.element = JSHomePage.create()
+                }
+                Route {
+                    attrs.path = "/login"
+                    attrs.element = JSLoginScreen.create()
+                }
+                Route {
+                    attrs.path = "/trendingui"
+                    attrs.element = TrendingUI.create()
+                }
+                Route {
+                    attrs.path = "/signup"
+                    attrs.element = JSSignupScreen.create()
                 }
             }
-            child(JSLoginScreen)
-        }
+        }.create())*/
+
     }
 }
 

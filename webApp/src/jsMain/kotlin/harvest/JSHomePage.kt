@@ -1,13 +1,12 @@
 package harvest
 
 import react.Props
+import react.VFC
 import react.dom.html.ReactHTML.h1
 import react.fc
 import react.router.dom.Link
 
-external interface HomeProps : Props
-
-val JSHomePage  = fc<HomeProps> {
+val JSHomePage  = VFC {
 
     h1 {
         +"Welcome to harvest clone!"
