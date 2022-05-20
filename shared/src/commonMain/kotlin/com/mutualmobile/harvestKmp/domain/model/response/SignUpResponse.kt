@@ -1,7 +1,8 @@
 package com.mutualmobile.harvestKmp.domain.model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class SignUpResponse(
-    val token : String,
-    val message : String,
-    val refreshToken : String
+    val message : String
 )

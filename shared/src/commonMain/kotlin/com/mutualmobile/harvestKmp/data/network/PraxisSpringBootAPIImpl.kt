@@ -1,6 +1,8 @@
-package com.baseio.kmm.data.network
+package com.mutualmobile.harvestKmp.data.network
 
+import com.baseio.kmm.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.request.*
+import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
@@ -19,6 +21,7 @@ const val LOGIN = "/public/login"
 const val LOGOUT = "/logout"
 const val FCM_TOKEN = "/fcmToken"
 const val CHANGE_PASSWORD = "/changePassword"
+const val FIND_ORGANIZATION_BY_IDENTIFIER = "/public/organization"
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpringBootAPI {
 
@@ -37,11 +40,23 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     }
 
     override suspend fun signup(
+        firstName: String,
+        lastName: String,
+        company: String,
         email: String,
         password: String
     ): NetworkResponse<SignUpResponse> {
         return try {
-            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP"))
+            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
+                contentType(ContentType.Application.Json)
+                body = LoginData(
+                    email = email,
+                    password = password,
+                    orgId = company,
+                    firstName = firstName,
+                    lastName = lastName
+                )
+            })
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -81,5 +96,14 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         oldPassword: String
     ): ChangePassword {
         return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD")
+    }
+
+    override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse> {
+        return try {
+            NetworkResponse.Success(httpClient.get("$BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier"))
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 }

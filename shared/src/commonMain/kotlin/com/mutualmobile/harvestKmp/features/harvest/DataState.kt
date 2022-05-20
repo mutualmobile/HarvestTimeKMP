@@ -1,6 +1,4 @@
-package com.mutualmobile.harvestKmp.datamodel
-
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+package com.mutualmobile.harvestKmp.features.harvest
 
 sealed class DataState
 object LoadingState : DataState()

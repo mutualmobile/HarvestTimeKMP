@@ -1,7 +1,8 @@
-package com.mutualmobile.harvestKmp.datamodel
+package com.mutualmobile.harvestKmp.features.harvest
 
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
@@ -9,15 +10,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class LoginDataModel() : PraxisDataModel(), KoinComponent {
+class SignUpDataModel() : PraxisDataModel(), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
-    private val _loginStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
+    private val _signUpStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
 
     private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        _loginStateFlow.value = ErrorState(throwable)
+        _signUpStateFlow.value = ErrorState(throwable)
     }
 
     override fun activate() {
@@ -32,29 +33,33 @@ class LoginDataModel() : PraxisDataModel(), KoinComponent {
         TODO("Not yet implemented")
     }
 
-    fun login(email: String, password: String) {
+    fun signUp(
+        firstName: String,
+        lastName: String,
+        company: String,
+        email: String,
+        password: String
+    ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            _loginStateFlow.value = LoadingState
-
-            val loginResponse = useCasesComponent.provideLoginUseCase()
-                .perform(email, password)
-            println("LOGIN")
-            when (loginResponse) {
+            _signUpStateFlow.value = LoadingState
+            val signUpResponse = useCasesComponent.provideSignUpUseCase()
+                .perform(firstName, lastName, company, email, password)
+            when (signUpResponse) {
                 is NetworkResponse.Success -> {
-                    _loginStateFlow.value = SuccessState(loginResponse.data)
-                    println(loginResponse.data.message + "TAP")
+                    _signUpStateFlow.value = SuccessState(signUpResponse.data)
+                    println("SUCCESS ${signUpResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    _loginStateFlow.value = ErrorState(loginResponse.exception)
-                    println("FAILED")
+                    _signUpStateFlow.value = ErrorState(signUpResponse.exception)
+                    println("FAILED, ${signUpResponse.exception.message}")
                 }
             }
         }
     }
 
     data class SuccessState(
-        val trendingList: LoginResponse,
+        val trendingList: SignUpResponse,
     ) : DataState()
 
     data class ErrorState(var throwable: Throwable) : DataState()
