@@ -1,6 +1,6 @@
 package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth
 
-import com.baseio.kmm.data.network.PraxisSpringBootAPI
+import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.request.LogoutData
 
 class LogoutUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {

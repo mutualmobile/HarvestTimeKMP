@@ -9,7 +9,6 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 val sharedComponent = SharedComponent()
-val useCasesComponent = UseCasesComponent()
 
 class HKMPApp : Application() {
     override fun onCreate() {

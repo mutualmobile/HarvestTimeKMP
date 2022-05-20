@@ -6,7 +6,11 @@ plugins {
 
 kotlin {
     js(IR) {
-        browser()
+        browser{
+            runTask {
+                devServer = devServer?.copy(port = 3000)
+            }
+        }
         binaries.executable()
     }
 

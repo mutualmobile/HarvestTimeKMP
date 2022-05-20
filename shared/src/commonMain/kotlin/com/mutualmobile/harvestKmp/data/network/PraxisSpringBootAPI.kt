@@ -1,4 +1,4 @@
-package com.baseio.kmm.data.network
+package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.ChangePassword
 import com.mutualmobile.harvestKmp.domain.model.request.LogoutData

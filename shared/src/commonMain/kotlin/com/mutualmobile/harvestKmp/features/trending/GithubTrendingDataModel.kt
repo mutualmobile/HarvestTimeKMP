@@ -1,8 +1,8 @@
 package com.mutualmobile.harvestKmp.features.trending
 
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.GithubReposItem
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -12,17 +12,12 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class GithubTrendingDataModel(
-  private val onDataState: (DataState) -> Unit
-) : PraxisDataModel(), KoinComponent {
+  onDataState: (DataState) -> Unit
+) : PraxisDataModel(onDataState), KoinComponent {
 
   private var currentLoadingJob: Job? = null
   private val useCasesComponent = UseCasesComponent()
 
-  private val _trendingStateFlow: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
-
-  private val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-    _trendingStateFlow.value = ErrorState(throwable)
-  }
 
   override fun activate() {
     listenState()
@@ -38,19 +33,10 @@ class GithubTrendingDataModel(
     fetchTrendingRepos()
   }
 
-
-  private fun listenState() {
-    dataModelScope.launch {
-      _trendingStateFlow.collectLatest {
-        onDataState(it)
-      }
-    }
-  }
-
   private fun readLocalRepositories() {
     dataModelScope.launch(exceptionHandler) {
       useCasesComponent.provideGetLocalReposUseCase().perform(input = null).collectLatest { list ->
-        _trendingStateFlow.value = SuccessState(list)
+        dataState.value = SuccessState(list)
       }
     }
   }
@@ -62,19 +48,13 @@ class GithubTrendingDataModel(
   private fun fetchTrendingRepos(search: String? = "kotlin") {
     currentLoadingJob?.cancel()
     currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-      _trendingStateFlow.value = LoadingState
+      dataState.value = LoadingState
       val repos = useCasesComponent.provideFetchTrendingReposUseCase().perform(search)
       useCasesComponent.provideSaveTrendingReposUseCase().perform(repos)
     }
   }
 
-  sealed class DataState
-  object LoadingState : DataState()
-  object EmptyState : DataState()
-  object Complete : DataState()
   data class SuccessState(
     val trendingList: List<GithubReposItem>,
   ) : DataState()
-
-  data class ErrorState(var throwable: Throwable) : DataState()
 }

@@ -24,6 +24,7 @@ import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
+
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         setupSplashScreen()
