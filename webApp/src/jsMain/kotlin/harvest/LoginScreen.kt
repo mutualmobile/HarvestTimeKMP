@@ -8,6 +8,9 @@ import kotlinx.css.FlexDirection
 import kotlinx.css.display
 import kotlinx.css.flexDirection
 import kotlinx.html.js.onChangeFunction
+import mui.material.*
+import mui.system.ResponsiveStyleValue
+import mui.system.responsive
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
@@ -58,47 +61,47 @@ val JSLoginScreen = fc<LoginProps> {
         +message
     }
 
-    styledDiv{
-        css {
-            display = Display.flex
-            flexDirection = FlexDirection.column
-        }
+    Box{
+        Card {
 
-        div{
-            input {
-                attrs{
-                    placeholder = "Enter email address"
-                    value = email
-                    onChangeFunction = {
+
+            Stack {
+                this.attrs.spacing = responsive(8)
+                TextField {
+                    this.attrs.variant = FormControlVariant.outlined
+                    this.attrs.value = email
+                    this.attrs.onChange = {
                         val target = it.target as HTMLInputElement
                         email = target.value
                     }
+                    this.attrs.placeholder = "Enter email address"
                 }
-            }
 
-            input {
-                attrs{
-                    placeholder = "Enter Password"
-                    value = password
-                    onChangeFunction = {
+
+                TextField {
+                    this.attrs.variant = FormControlVariant.outlined
+                    this.attrs.value = password
+                    this.attrs.onChange = {
                         val target = it.target as HTMLInputElement
                         password = target.value
                     }
+                    this.attrs.placeholder = "Enter Password"
                 }
-            }
 
-            button {
-                +"Login!"
+                if(state is LoadingState){
+                    CircularProgress()
+                }
 
-                attrs {
-                    onClick = {
+                Button {
+                    this.attrs.onClick = {
                         dataModel.login(email, password)
                     }
+                    +"Login"
                 }
             }
+
+
         }
-
-
     }
 
 }
