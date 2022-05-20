@@ -6,6 +6,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
@@ -25,17 +26,17 @@ const val FIND_ORGANIZATION_BY_IDENTIFIER = "/public/organization"
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpringBootAPI {
 
     override suspend fun getUser(id: String): User {
-        return httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$GET_USER")
+        return httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$GET_USER").body()
     }
 
     override suspend fun putUser(id: String): User {
-        return httpClient.put("$SPRING_BOOT_BASE_URL$API_URL$PUT_USER")
+        return httpClient.put("$SPRING_BOOT_BASE_URL$API_URL$PUT_USER").body()
     }
 
     override suspend fun refreshToken(
         refreshToken: String
     ): RefreshToken {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$REFRESH_TOKEN")
+        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$REFRESH_TOKEN").body()
     }
 
     override suspend fun signup(
@@ -48,14 +49,14 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
                 contentType(ContentType.Application.Json)
-                body = LoginData(
+                setBody(LoginData(
                     email = email,
                     password = password,
                     orgId = company,
                     firstName = firstName,
                     lastName = lastName
-                )
-            })
+                ))
+            }.body())
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -69,8 +70,8 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN") {
                 contentType(ContentType.Application.Json)
-                body = LoginData(email = email, password = password)
-            })
+                setBody(LoginData(email = email, password = password))
+            }.body())
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -78,12 +79,14 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     }
 
     override suspend fun logout(userId: String): LogoutData {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGOUT")
+        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGOUT").body()
     }
 
     override suspend fun fcmToken(): NetworkResponse<LoginResponse> {
         return try {
-            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN"))
+            NetworkResponse.Success(
+                httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN").body()
+            )
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -94,12 +97,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         password: String,
         oldPassword: String
     ): ChangePassword {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD")
+        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD").body()
     }
 
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse> {
         return try {
-            NetworkResponse.Success(httpClient.get("$BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier"))
+            NetworkResponse.Success(httpClient.get("$BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier").body())
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
