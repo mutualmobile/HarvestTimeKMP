@@ -2,59 +2,57 @@ package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-
+import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
+import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-
-class LoginDataModel(onDataState: (DataState) -> Unit) :
+class SignUpDataModel(onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-
-
-    fun login(email: String, password: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            dataState.value = LoadingState
-            val loginResponse = useCasesComponent.provideLoginUseCase()
-                .perform(email, password)
-            when (loginResponse) {
-                is NetworkResponse.Success -> {
-                    dataState.value =
-                        SuccessState(loginResponse.data)
-                }
-                is NetworkResponse.Failure -> {
-                    dataState.value =
-                        ErrorState(loginResponse.exception)
-                }
-            }
-        }
-    }
-
-
 
     override fun activate() {
         listenState()
     }
 
     override fun destroy() {
-
     }
 
     override fun refresh() {
-
     }
 
+    fun signUp(
+        firstName: String,
+        lastName: String,
+        company: String,
+        email: String,
+        password: String
+    ) {
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
+            dataState.value = LoadingState
+            val signUpResponse = useCasesComponent.provideSignUpUseCase()
+                .perform(firstName, lastName, company, email, password)
+            when (signUpResponse) {
+                is NetworkResponse.Success -> {
+                    dataState.value = SuccessState(signUpResponse.data)
+                    println("SUCCESS ${signUpResponse.data.message}")
+                }
+                is NetworkResponse.Failure -> {
+                    dataState.value = ErrorState(signUpResponse.exception)
+                    println("FAILED, ${signUpResponse.exception.message}")
+                }
+            }
+        }
+    }
 
     data class SuccessState(
-        val loginResponse: LoginResponse,
+        val trendingList: SignUpResponse,
     ) : DataState()
 
     data class ErrorState(var throwable: Throwable) : DataState()

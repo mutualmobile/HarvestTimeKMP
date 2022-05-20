@@ -1,17 +1,11 @@
-package com.mutualmobile.harvestKmp.android.ui.screens.loginScreen
+package com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen
 
-import android.app.Activity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -21,23 +15,20 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.systemBarsPadding
 import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.OrDivider
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
-import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
+import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
+import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
 @Composable
-fun LoginScreen(
-    initiateGoogleSignIn: () -> Unit,
-    // TODO: Change this
-    initiateEmailPasswordSignIn: () -> Unit = initiateGoogleSignIn,
-    loginDataModel: LoginDataModel
+fun SignUpScreen(
+    signUpDataModel: SignUpDataModel
 ) {
-    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
-    var currentPassword by remember { mutableStateOf("password") }
-
-    val activity = LocalContext.current as Activity
-
+    var currentWorkEmail by remember { mutableStateOf("") }
+    var currentPassword by remember { mutableStateOf("") }
+    var currentFirstName by remember { mutableStateOf("") }
+    var currentLastName by remember { mutableStateOf("") }
+    var currentCompanyName by remember { mutableStateOf("5186f350-1f0e-42b7-b07e-ab36eb460552") }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -52,28 +43,42 @@ fun LoginScreen(
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconLabelButton(
-                icon = R.drawable.google_logo,
-                label = stringResource(R.string.login_screen_google_btn_txt),
-                onClick = initiateGoogleSignIn
+            SignUpTextField(
+                value = currentFirstName,
+                onValueChange = { updatedString -> currentFirstName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_first_name_et_placeholder)
             )
-            OrDivider()
-            SignInTextField(
+            SignUpTextField(
+                value = currentLastName,
+                onValueChange = { updatedString -> currentLastName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_last_name_et_placeholder)
+            )
+            SignUpTextField(
+                value = currentCompanyName,
+                onValueChange = { updatedString -> currentCompanyName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_company_name_et_placeholder)
+            )
+            SignUpTextField(
                 value = currentWorkEmail,
                 onValueChange = { updatedString -> currentWorkEmail = updatedString },
-                placeholderText = stringResource(R.string.login_screen_email_et_placeholder)
+                placeholderText = stringResource(R.string.signup_screen_email_et_placeholder)
             )
-            SignInTextField(
+            SignUpTextField(
                 value = currentPassword,
                 onValueChange = { updatedString -> currentPassword = updatedString },
-                placeholderText = stringResource(R.string.login_screen_password_et_placeholder),
+                placeholderText = stringResource(R.string.signup_screen_password_et_placeholder),
                 isPasswordTextField = true
             )
             IconLabelButton(
-                label = stringResource(R.string.login_screen_signIn_btn_txt),
+                label = stringResource(R.string.signup_screen_signup_btn_txt),
                 onClick = {
-//                    initiateEmailPasswordSignIn
-                    loginDataModel.login(currentWorkEmail, currentPassword)
+                    signUpDataModel.signUp(
+                        currentFirstName,
+                        currentLastName,
+                        currentCompanyName,
+                        currentWorkEmail,
+                        currentPassword
+                    )
                 }
             )
             SurfaceTextButton(
@@ -88,4 +93,3 @@ fun LoginScreen(
         }
     }
 }
-

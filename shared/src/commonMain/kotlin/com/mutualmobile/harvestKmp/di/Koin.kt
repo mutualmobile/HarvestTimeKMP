@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.di
 
+
 import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPIImpl
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
@@ -48,8 +49,9 @@ val useCaseModule = module {
     single { SaveTrendingReposUseCase(get()) }
     single { GetLocalReposUseCase(get()) }
     single { LoginUseCase(get()) }
-    single { LogoutUseCase(get()) }
     single { SignUpUseCase(get()) }
+    single { FindOrgByIdentifierUseCase(get()) }
+    single { LogoutUseCase(get()) }
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
 }
@@ -62,8 +64,9 @@ class UseCasesComponent : KoinComponent {
 
 class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideLoginUseCase(): LoginUseCase = get()
-    fun provideLogoutUseCase(): LogoutUseCase = get()
     fun provideSignUpUseCase(): SignUpUseCase = get()
+    fun provideFindOrgByIdentifier(): FindOrgByIdentifierUseCase = get()
+    fun provideLogoutUseCase(): LogoutUseCase = get()
     fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
     fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
 }
