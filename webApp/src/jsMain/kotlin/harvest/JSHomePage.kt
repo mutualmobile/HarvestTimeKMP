@@ -1,24 +1,33 @@
 package harvest
 
-import react.Props
+import mui.material.Button
 import react.VFC
+import react.dom.html.ReactHTML.a
 import react.dom.html.ReactHTML.h1
-import react.fc
-import react.router.dom.Link
+import react.router.dom.NavLink
+import react.router.getToPathname
+import react.router.useLocation
+import react.router.useNavigate
 
 val JSHomePage  = VFC {
+
+    val navigator = useNavigate()
 
     h1 {
         +"Welcome to harvest clone!"
     }
 
-    Link {
-        to("/login")
+    Button{
+        onClick = {
+            navigator.invoke(to = "/login")
+        }
         +"Login"
     }
 
-    Link {
-        to("/signup")
+    Button{
+        onClick = {
+            navigator.invoke(to = "/signup")
+        }
         +"Signup"
     }
 }

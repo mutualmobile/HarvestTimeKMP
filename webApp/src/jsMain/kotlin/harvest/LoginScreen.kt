@@ -44,7 +44,8 @@ val JSLoginScreen = fc<LoginProps> {
     })
 
     useEffectOnce {
-        MainScope().launch {
+        val scope = MainScope()
+        scope.launch {
             dataModel.activate()
         }
     }
