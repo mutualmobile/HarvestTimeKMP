@@ -19,6 +19,10 @@ kotlin {
             dependencies {
                 implementation(project(":shared"))
                 WebAppDependencies.implementation.forEach(::implementation)
+
+                // Material Design Components for React
+                implementation(npm("@material-ui/core", "4.11.1"))
+
                 WebAppDependencies.kotlin.map { dependency ->
                     kotlin(dependency)
                 }.forEach(::implementation)
