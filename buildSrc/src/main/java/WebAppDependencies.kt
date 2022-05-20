@@ -19,6 +19,9 @@ object WebAppDependencies {
         "org.jetbrains.kotlinx:kotlinx-serialization-json:${WebAppDependencyVersions.kotlinxSerialization}",
         "org.jetbrains.kotlinx:kotlinx-html-js:${WebAppDependencyVersions.kotlinxHtmlJs}",
         "org.jetbrains.kotlin-wrappers:kotlin-styled:${WebAppDependencyVersions.wrappersKotlinStyled}",
+   //     "org.jetbrains.kotlin-wrappers:kotlin-mui:5.8.0-pre.338",
+     //   "org.jetbrains.kotlin-wrappers:kotlin-mui-icons:5.8.0-pre.338",
+        "org.jetbrains.kotlin-wrappers:kotlin-react-css:${WebAppDependencyVersions.wrappersKotlinReact}",
         "org.jetbrains.kotlin-wrappers:kotlin-react:${WebAppDependencyVersions.wrappersKotlinReact}",
         "org.jetbrains.kotlin-wrappers:kotlin-react-dom:${WebAppDependencyVersions.wrappersKotlinReact}",
     )

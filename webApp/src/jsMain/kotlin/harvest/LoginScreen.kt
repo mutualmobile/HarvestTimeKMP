@@ -16,7 +16,7 @@ import styled.styledDiv
 
 external interface LoginProps : Props
 
-val LoginScreen = fc<LoginProps> {
+val JSLoginScreen = fc<LoginProps> {
     var message by useState("")
     var state by useState<DataState>()
     var email by useState("")

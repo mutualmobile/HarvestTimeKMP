@@ -15,10 +15,13 @@ struct macOSApp: App {
     init() {
         KoinKt.doInitSharedDependencies()
     }
+
     
     var body: some Scene {
+     
         WindowGroup {
             
+          
             RootView()
    
         }.windowStyle(HiddenTitleBarWindowStyle())

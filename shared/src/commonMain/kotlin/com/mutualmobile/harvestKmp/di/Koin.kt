@@ -12,13 +12,14 @@ import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUs
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
 import io.ktor.client.*
 import io.ktor.client.engine.*
-import io.ktor.client.features.json.*
-import io.ktor.client.features.json.serializer.*
-import io.ktor.client.features.logging.*
+import io.ktor.client.plugins.logging.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.core.component.get
+import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.serialization.kotlinx.json.*
+import kotlinx.serialization.json.Json
 
 fun initSharedDependencies() = startKoin {
     modules(commonModule, useCaseModule, platformModule())
@@ -73,10 +74,11 @@ class SharedComponent : KoinComponent {
 }
 
 private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {
-    val json = kotlinx.serialization.json.Json { isLenient = true; ignoreUnknownKeys = true }
 
-    install(JsonFeature) {
-        serializer = KotlinxSerializer(json)
+    install(ContentNegotiation) {
+        json(Json {
+            isLenient = true; ignoreUnknownKeys = true; prettyPrint = true
+        })
     }
     install(Logging) {
         logger = Logger.DEFAULT

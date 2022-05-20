@@ -1,8 +1,7 @@
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
-import harvest.LoginScreen
+import harvest.JSLoginScreen
 import react.dom.render
 import kotlinx.browser.document
 import kotlinx.browser.window
@@ -14,7 +13,7 @@ fun main() {
   window.onload = { _ ->
     val rootDiv = document.getElementById("root")
     render(rootDiv!!) {
-      child(LoginScreen)
+      child(JSLoginScreen)
     }
   }
 }
