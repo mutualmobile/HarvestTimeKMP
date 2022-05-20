@@ -49,13 +49,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
                 contentType(ContentType.Application.Json)
-                body = LoginData(
+                setBody(LoginData(
                     email = email,
                     password = password,
                     orgId = company,
                     firstName = firstName,
                     lastName = lastName
-                )
+                ))
             }.body())
         } catch (e: Exception) {
             println(e)

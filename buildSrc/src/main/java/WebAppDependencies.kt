@@ -1,8 +1,10 @@
 object WebAppDependencyVersions {
+    private const val kotlinVersion = "1.6.21"
     const val kotlinxSerialization = "1.3.0"
     const val kotlinxHtmlJs = "0.7.3"
-    const val wrappersKotlinStyled = "5.3.3-pre.284-kotlin-1.6.10"
-    const val wrappersKotlinReact = "17.0.2-pre.284-kotlin-1.6.21"
+    private const val reactVersion = "18.0.0"
+    const val wrappersKotlinStyled = "5.3.5-pre.332-kotlin-${kotlinVersion}"
+    const val wrappersKotlinReact = "${reactVersion}-pre.332-kotlin-${kotlinVersion}"
     const val coroutines = CommonDependencyVersions.coroutines
 }
 
@@ -19,9 +21,8 @@ object WebAppDependencies {
         "org.jetbrains.kotlinx:kotlinx-serialization-json:${WebAppDependencyVersions.kotlinxSerialization}",
         "org.jetbrains.kotlinx:kotlinx-html-js:${WebAppDependencyVersions.kotlinxHtmlJs}",
         "org.jetbrains.kotlin-wrappers:kotlin-styled:${WebAppDependencyVersions.wrappersKotlinStyled}",
-        "org.jetbrains.kotlin-wrappers:kotlin-react-css:${WebAppDependencyVersions.wrappersKotlinReact}",
         "org.jetbrains.kotlin-wrappers:kotlin-react:${WebAppDependencyVersions.wrappersKotlinReact}",
-        "org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.338",
+        "org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:${WebAppDependencyVersions.wrappersKotlinReact}",
         "org.jetbrains.kotlin-wrappers:kotlin-react-dom:${WebAppDependencyVersions.wrappersKotlinReact}",
     )
     val kotlin = listOf(
