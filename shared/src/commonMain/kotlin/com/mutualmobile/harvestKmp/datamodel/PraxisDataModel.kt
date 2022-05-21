@@ -2,6 +2,7 @@ package com.mutualmobile.harvestKmp.datamodel
 
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 abstract class PraxisDataModel(private val onDataState: (DataState) -> Unit) {
   protected val dataModelScope = CoroutineScope(SupervisorJob() + Dispatchers.Main.immediate)
@@ -20,7 +21,8 @@ abstract class PraxisDataModel(private val onDataState: (DataState) -> Unit) {
 
   fun listenState() {
     dataModelScope.launch {
-      dataState.collect {
+      dataState.collectLatest {
+        print("collected $it")
         onDataState(it)
       }
     }
