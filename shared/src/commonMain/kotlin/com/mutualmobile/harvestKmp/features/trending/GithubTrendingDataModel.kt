@@ -12,49 +12,46 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class GithubTrendingDataModel(
-  onDataState: (DataState) -> Unit
+    onDataState: (DataState) -> Unit
 ) : PraxisDataModel(onDataState), KoinComponent {
 
-  private var currentLoadingJob: Job? = null
-  private val useCasesComponent = UseCasesComponent()
+    private var currentLoadingJob: Job? = null
+    private val useCasesComponent = UseCasesComponent()
 
 
-  override fun activate() {
-    listenState()
-    readLocalRepositories()
-    fetchTrendingRepos()
-  }
-
-  override fun destroy() {
-    dataModelScope.cancel()
-  }
-
-  override fun refresh() {
-    fetchTrendingRepos()
-  }
-
-  private fun readLocalRepositories() {
-    dataModelScope.launch(exceptionHandler) {
-      useCasesComponent.provideGetLocalReposUseCase().perform(input = null).collectLatest { list ->
-        dataState.value = SuccessState(list)
-      }
+    override fun activate() {
+        listenState()
+        readLocalRepositories()
+        fetchTrendingRepos()
     }
-  }
 
-  fun filterRecords(search: String? = null) {
-    fetchTrendingRepos(search)
-  }
-
-  private fun fetchTrendingRepos(search: String? = "kotlin") {
-    currentLoadingJob?.cancel()
-    currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-      dataState.value = LoadingState
-      val repos = useCasesComponent.provideFetchTrendingReposUseCase().perform(search)
-      useCasesComponent.provideSaveTrendingReposUseCase().perform(repos)
+    override fun destroy() {
+        dataModelScope.cancel()
     }
-  }
 
-  data class SuccessState(
-    val trendingList: List<GithubReposItem>,
-  ) : DataState()
+    override fun refresh() {
+        fetchTrendingRepos()
+    }
+
+    private fun readLocalRepositories() {
+        dataModelScope.launch(exceptionHandler) {
+            useCasesComponent.provideGetLocalReposUseCase().perform(input = null)
+                .collectLatest { list ->
+                    dataState.value = SuccessState(list)
+                }
+        }
+    }
+
+    fun filterRecords(search: String? = null) {
+        fetchTrendingRepos(search)
+    }
+
+    private fun fetchTrendingRepos(search: String? = "kotlin") {
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
+            dataState.value = LoadingState
+            val repos = useCasesComponent.provideFetchTrendingReposUseCase().perform(search)
+            useCasesComponent.provideSaveTrendingReposUseCase().perform(repos)
+        }
+    }
 }

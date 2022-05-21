@@ -3,36 +3,31 @@ package harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 import kotlinx.coroutines.*
-import kotlinx.css.Display
-import kotlinx.css.FlexDirection
-import kotlinx.css.display
-import kotlinx.css.flexDirection
-import kotlinx.html.js.onChangeFunction
 import mui.material.*
-import mui.system.ResponsiveStyleValue
 import mui.system.responsive
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
-import styled.css
-import styled.styledDiv
+import react.router.useNavigate
 
-external interface LoginProps : Props
-
-val JSLoginScreen = fc<LoginProps> {
+val JSLoginScreen = VFC {
     var message by useState("")
-    var state by useState<DataState>()
     var email by useState("")
+    var state by useState<DataState>()
     var password by useState("")
+    val mainScope = MainScope()
+
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         state = stateNew
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
             }
-            is LoginDataModel.SuccessState -> {
-                val response = stateNew.loginResponse
+            is SuccessState<*> -> {
+                val response = stateNew.data
                 message = "Logged In!"
+                val navigator = useNavigate()
+                navigator.invoke(to = "/trendingui")
             }
             Complete -> {
                 message = "Completed loading!"
@@ -47,18 +42,21 @@ val JSLoginScreen = fc<LoginProps> {
     })
 
     useEffectOnce {
-        val scope = MainScope()
-        scope.launch {
+        mainScope.launch {
             dataModel.activate()
         }
     }
 
-    h1 {
+    Typography{
+        this.align = TypographyAlign.center
         +"Login Form"
     }
-    h1 {
-        +"Login Status :"
+
+    Typography{
+        this.align = TypographyAlign.center
+        +"Login Status: "
         +message
+
     }
 
     Box{
@@ -66,35 +64,35 @@ val JSLoginScreen = fc<LoginProps> {
 
 
             Stack {
-                this.attrs.spacing = responsive(8)
+                this.spacing = responsive(8)
                 TextField {
-                    this.attrs.variant = FormControlVariant.outlined
-                    this.attrs.value = email
-                    this.attrs.onChange = {
+                    this.variant = FormControlVariant.outlined
+                    this.value = email
+                    this.onChange = {
                         val target = it.target as HTMLInputElement
                         email = target.value
                     }
-                    this.attrs.placeholder = "Enter email address"
+                    this.placeholder = "Enter email address"
                 }
 
 
                 TextField {
-                    this.attrs.variant = FormControlVariant.outlined
-                    this.attrs.value = password
-                    this.attrs.onChange = {
+                    this.variant = FormControlVariant.outlined
+                    this.value = password
+                    this.onChange = {
                         val target = it.target as HTMLInputElement
                         password = target.value
                     }
-                    this.attrs.placeholder = "Enter Password"
+                    this.placeholder = "Enter Password"
                 }
 
-                if(state is LoadingState){
-                    CircularProgress()
-                }
+
 
                 Button {
-                    this.attrs.onClick = {
-                        dataModel.login(email, password)
+                    this.onClick = {
+                        mainScope.launch {
+                            dataModel.login(email, password)
+                        }
                     }
                     +"Login"
                 }

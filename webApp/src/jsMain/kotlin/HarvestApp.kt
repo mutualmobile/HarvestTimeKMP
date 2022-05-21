@@ -1,21 +1,19 @@
 import common.ThemeModule
-import common.Themes
 import harvest.JSHomePage
 import harvest.JSLoginScreen
 import harvest.JSNotFound
 import harvest.JSSignupScreen
-import mui.system.Theme
 import react.*
 import react.router.Route
 import react.router.Routes
-import react.router.dom.BrowserRouter
+import react.router.dom.HashRouter
 
 
 external interface AppProps : Props
 
 val HarvestApp = FC<AppProps> {
 
-    BrowserRouter {
+    HashRouter {
         ThemeModule {
             Routes {
                 Route {

@@ -1,12 +1,11 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
@@ -16,7 +15,7 @@ class FindOrgByIdentifierDataModel(onDataState: (DataState) -> Unit) :
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
-    fun FindOrgByIdentifier(identifier: String) {
+    fun findOrgByIdentifier(identifier: String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             dataState.value = LoadingState
@@ -41,15 +40,10 @@ class FindOrgByIdentifierDataModel(onDataState: (DataState) -> Unit) :
     }
 
     override fun destroy() {
+        dataModelScope.cancel()
     }
 
     override fun refresh() {
     }
-
-    data class SuccessState(
-        val List: FindOrgResponse,
-    ) : DataState()
-
-    data class ErrorState(var throwable: Throwable) : DataState()
 
 }

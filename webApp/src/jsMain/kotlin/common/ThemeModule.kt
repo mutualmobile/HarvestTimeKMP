@@ -6,7 +6,7 @@ import react.*
 
 val ThemeModule = FC<PropsWithChildren> { props ->
     ThemeProvider {
-        this.theme = Themes.Light
+        this.theme = Themes.Dark
 
         CssBaseline()
         +props.children

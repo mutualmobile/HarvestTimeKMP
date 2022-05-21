@@ -49,13 +49,15 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
                 contentType(ContentType.Application.Json)
-                setBody(LoginData(
-                    email = email,
-                    password = password,
-                    orgId = company,
-                    firstName = firstName,
-                    lastName = lastName
-                ))
+                setBody(
+                    LoginData(
+                        email = email,
+                        password = password,
+                        orgId = company,
+                        firstName = firstName,
+                        lastName = lastName
+                    )
+                )
             }.body())
         } catch (e: Exception) {
             println(e)
@@ -68,10 +70,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         password: String
     ): NetworkResponse<LoginResponse> {
         return try {
-            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN") {
+            val response = httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginData(email = email, password = password))
-            }.body())
+            }
+            val responseBody = response.body<LoginResponse>()
+            println("response from login")
+            NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -102,7 +107,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
 
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse> {
         return try {
-            NetworkResponse.Success(httpClient.get("$BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier").body())
+            NetworkResponse.Success(
+                httpClient.get("$BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier")
+                    .body()
+            )
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)

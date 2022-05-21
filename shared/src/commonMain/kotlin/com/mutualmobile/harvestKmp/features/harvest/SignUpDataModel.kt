@@ -1,12 +1,11 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
@@ -21,6 +20,7 @@ class SignUpDataModel(onDataState: (DataState) -> Unit) :
     }
 
     override fun destroy() {
+        dataModelScope.cancel()
     }
 
     override fun refresh() {
@@ -51,9 +51,4 @@ class SignUpDataModel(onDataState: (DataState) -> Unit) :
         }
     }
 
-    data class SuccessState(
-        val trendingList: SignUpResponse,
-    ) : DataState()
-
-    data class ErrorState(var throwable: Throwable) : DataState()
 }
