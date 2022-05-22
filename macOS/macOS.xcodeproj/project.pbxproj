@@ -7,6 +7,19 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8908FED9282A5EFF00E29D35 /* LaunchScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FED8282A5EFF00E29D35 /* LaunchScreen.swift */; };
+		8908FEDE282A77DF00E29D35 /* LoginForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEDD282A77DF00E29D35 /* LoginForm.swift */; };
+		8908FEE0282A813300E29D35 /* SignInButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEDF282A813300E29D35 /* SignInButton.swift */; };
+		8908FEE6282BA12B00E29D35 /* DashboardScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEE5282BA12B00E29D35 /* DashboardScreen.swift */; };
+		8908FEED282BFF9500E29D35 /* DashHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEEC282BFF9500E29D35 /* DashHeader.swift */; };
+		8908FEEF282C001B00E29D35 /* DayNavigateButtons.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEEE282C001B00E29D35 /* DayNavigateButtons.swift */; };
+		8908FEF1282CE8A100E29D35 /* CalendarHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF0282CE8A100E29D35 /* CalendarHelper.swift */; };
+		8908FEF3282D05A200E29D35 /* NewEntryModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF2282D05A200E29D35 /* NewEntryModal.swift */; };
+		8908FEF5282D448000E29D35 /* NewEntryButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF4282D448000E29D35 /* NewEntryButton.swift */; };
+		8908FEF8282D479100E29D35 /* ProjectSelection.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEF7282D479100E29D35 /* ProjectSelection.swift */; };
+		8908FEFB282D51DF00E29D35 /* WeekView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEFA282D51DF00E29D35 /* WeekView.swift */; };
+		8908FEFD282D5C1100E29D35 /* MainContent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEFC282D5C1100E29D35 /* MainContent.swift */; };
+		8908FEFF282D5C4A00E29D35 /* RecordForDayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8908FEFE282D5C4A00E29D35 /* RecordForDayView.swift */; };
 		89D8421F277A218500D08BC0 /* macOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D8421E277A218500D08BC0 /* macOSApp.swift */; };
 		89D84223277A218600D08BC0 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89D84222277A218600D08BC0 /* Assets.xcassets */; };
 		89D84226277A218600D08BC0 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 89D84225277A218600D08BC0 /* Preview Assets.xcassets */; };
@@ -40,6 +53,20 @@
 		14536A7C63C12B806054769C /* Pods-macOS.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS.debug.xcconfig"; path = "Target Support Files/Pods-macOS/Pods-macOS.debug.xcconfig"; sourceTree = "<group>"; };
 		1EA38324EF8E940C0D06D4CE /* libPods-macOS.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-macOS.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		854FBFAB66BF3DF25604115C /* Pods-macOS.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-macOS.release.xcconfig"; path = "Target Support Files/Pods-macOS/Pods-macOS.release.xcconfig"; sourceTree = "<group>"; };
+		8908FED8282A5EFF00E29D35 /* LaunchScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchScreen.swift; sourceTree = "<group>"; };
+		8908FEDD282A77DF00E29D35 /* LoginForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginForm.swift; sourceTree = "<group>"; };
+		8908FEDF282A813300E29D35 /* SignInButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignInButton.swift; sourceTree = "<group>"; };
+		8908FEE5282BA12B00E29D35 /* DashboardScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardScreen.swift; sourceTree = "<group>"; };
+		8908FEEC282BFF9500E29D35 /* DashHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashHeader.swift; sourceTree = "<group>"; };
+		8908FEEE282C001B00E29D35 /* DayNavigateButtons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DayNavigateButtons.swift; sourceTree = "<group>"; };
+		8908FEF0282CE8A100E29D35 /* CalendarHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarHelper.swift; sourceTree = "<group>"; };
+		8908FEF2282D05A200E29D35 /* NewEntryModal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEntryModal.swift; sourceTree = "<group>"; };
+		8908FEF4282D448000E29D35 /* NewEntryButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewEntryButton.swift; sourceTree = "<group>"; };
+		8908FEF7282D479100E29D35 /* ProjectSelection.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectSelection.swift; sourceTree = "<group>"; };
+		8908FEFA282D51DF00E29D35 /* WeekView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeekView.swift; sourceTree = "<group>"; };
+		8908FEFC282D5C1100E29D35 /* MainContent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainContent.swift; sourceTree = "<group>"; };
+		8908FEFE282D5C4A00E29D35 /* RecordForDayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordForDayView.swift; sourceTree = "<group>"; };
+		89A03EAB2836ABD700DD7F68 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		89D8421B277A218500D08BC0 /* macOS.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = macOS.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		89D8421E277A218500D08BC0 /* macOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = macOSApp.swift; sourceTree = "<group>"; };
 		89D84222277A218600D08BC0 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -90,6 +117,65 @@
 			path = Pods;
 			sourceTree = "<group>";
 		};
+		8908FED7282A5EDA00E29D35 /* launch */ = {
+			isa = PBXGroup;
+			children = (
+				8908FED8282A5EFF00E29D35 /* LaunchScreen.swift */,
+				8908FEDD282A77DF00E29D35 /* LoginForm.swift */,
+				8908FEDF282A813300E29D35 /* SignInButton.swift */,
+			);
+			path = launch;
+			sourceTree = "<group>";
+		};
+		8908FEE1282B9E0E00E29D35 /* dashboard */ = {
+			isa = PBXGroup;
+			children = (
+				8908FEE4282B9E2C00E29D35 /* reports */,
+				8908FEE3282B9E2400E29D35 /* projects */,
+				8908FEE2282B9E1C00E29D35 /* time */,
+				8908FEE5282BA12B00E29D35 /* DashboardScreen.swift */,
+				8908FEEC282BFF9500E29D35 /* DashHeader.swift */,
+			);
+			path = dashboard;
+			sourceTree = "<group>";
+		};
+		8908FEE2282B9E1C00E29D35 /* time */ = {
+			isa = PBXGroup;
+			children = (
+				8908FEF6282D449200E29D35 /* newentry */,
+				8908FEEE282C001B00E29D35 /* DayNavigateButtons.swift */,
+				8908FEF0282CE8A100E29D35 /* CalendarHelper.swift */,
+				8908FEFA282D51DF00E29D35 /* WeekView.swift */,
+				8908FEFC282D5C1100E29D35 /* MainContent.swift */,
+				8908FEFE282D5C4A00E29D35 /* RecordForDayView.swift */,
+			);
+			path = time;
+			sourceTree = "<group>";
+		};
+		8908FEE3282B9E2400E29D35 /* projects */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = projects;
+			sourceTree = "<group>";
+		};
+		8908FEE4282B9E2C00E29D35 /* reports */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = reports;
+			sourceTree = "<group>";
+		};
+		8908FEF6282D449200E29D35 /* newentry */ = {
+			isa = PBXGroup;
+			children = (
+				8908FEF2282D05A200E29D35 /* NewEntryModal.swift */,
+				8908FEF4282D448000E29D35 /* NewEntryButton.swift */,
+				8908FEF7282D479100E29D35 /* ProjectSelection.swift */,
+			);
+			path = newentry;
+			sourceTree = "<group>";
+		};
 		89D84212277A218500D08BC0 = {
 			isa = PBXGroup;
 			children = (
@@ -115,6 +201,9 @@
 		89D8421D277A218500D08BC0 /* macOS */ = {
 			isa = PBXGroup;
 			children = (
+				89A03EAB2836ABD700DD7F68 /* Info.plist */,
+				8908FEE1282B9E0E00E29D35 /* dashboard */,
+				8908FED7282A5EDA00E29D35 /* launch */,
 				89D8424D277A25D100D08BC0 /* githubtrending */,
 				89D8421E277A218500D08BC0 /* macOSApp.swift */,
 				89D84222277A218600D08BC0 /* Assets.xcassets */,
@@ -184,6 +273,8 @@
 			dependencies = (
 			);
 			name = macOS;
+			packageProductDependencies = (
+			);
 			productName = macOS;
 			productReference = 89D8421B277A218500D08BC0 /* macOS.app */;
 			productType = "com.apple.product-type.application";
@@ -256,6 +347,8 @@
 				Base,
 			);
 			mainGroup = 89D84212277A218500D08BC0;
+			packageReferences = (
+			);
 			productRefGroup = 89D8421C277A218500D08BC0 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -323,10 +416,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8908FEE6282BA12B00E29D35 /* DashboardScreen.swift in Sources */,
 				89D84253277A25D100D08BC0 /* GithubTrendingVM.swift in Sources */,
+				8908FEED282BFF9500E29D35 /* DashHeader.swift in Sources */,
+				8908FEDE282A77DF00E29D35 /* LoginForm.swift in Sources */,
+				8908FEF8282D479100E29D35 /* ProjectSelection.swift in Sources */,
 				89D84251277A25D100D08BC0 /* GithubTrendingUI.swift in Sources */,
+				8908FEFB282D51DF00E29D35 /* WeekView.swift in Sources */,
+				8908FEEF282C001B00E29D35 /* DayNavigateButtons.swift in Sources */,
+				8908FED9282A5EFF00E29D35 /* LaunchScreen.swift in Sources */,
+				8908FEF1282CE8A100E29D35 /* CalendarHelper.swift in Sources */,
+				8908FEE0282A813300E29D35 /* SignInButton.swift in Sources */,
 				89D8421F277A218500D08BC0 /* macOSApp.swift in Sources */,
+				8908FEFD282D5C1100E29D35 /* MainContent.swift in Sources */,
+				8908FEFF282D5C4A00E29D35 /* RecordForDayView.swift in Sources */,
 				89D84252277A25D100D08BC0 /* UiRepo.swift in Sources */,
+				8908FEF5282D448000E29D35 /* NewEntryButton.swift in Sources */,
+				8908FEF3282D05A200E29D35 /* NewEntryModal.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -493,6 +599,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = macOS/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -533,6 +640,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = macOS/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

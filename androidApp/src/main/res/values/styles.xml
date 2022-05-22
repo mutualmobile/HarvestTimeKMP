@@ -2,8 +2,13 @@
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
         <item name="colorPrimary">@color/colorPrimary</item>
-        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="CalenderViewCustom" parent="ThemeOverlay.MaterialComponents.MaterialCalendar">
+        <item name="colorAccent">@color/colorPrimary</item>
+        <item name="colorOnPrimary">@color/calendarTextColor</item>
+        <item name="colorSurface">@color/calendarSurfaceColor</item>
     </style>
 
 </resources>

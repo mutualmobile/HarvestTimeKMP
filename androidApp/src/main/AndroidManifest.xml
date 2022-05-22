@@ -1,22 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.baseio.kmm.android">
+    package="com.mutualmobile.harvestKmp.android">
 
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
-        android:name=".PraxisApp"
-        android:allowBackup="false"
+        android:name=".HKMPApp"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        tools:targetApi="donut"
-        android:label="@string/title_activity_trending_repos_ui"
-        tools:ignore="RtlEnabled">
+        tools:ignore="RtlEnabled"
+        android:usesCleartextTraffic="true"
+        tools:targetApi="donut">
         <activity
-            android:name=".TrendingReposUI"
+            android:name=".ui.screens.newEntryScreen.NewEntryActivity"
+            android:exported="false"
+            android:label="@string/title_activity_new_entry"
+            android:windowSoftInputMode="adjustResize"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.screens.settingsScreen.SettingsActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
+            android:name=".ui.MainActivity"
             android:exported="true"
-            android:theme="@style/AppTheme.NoActionBar" >
+            android:theme="@style/SplashScreen"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

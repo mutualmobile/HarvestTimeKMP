@@ -105,6 +105,7 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
+				8908FED6282A59C400E29D35 /* dashboard */,
 				89D841712779D5E300D08BC0 /* githubtrending */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
@@ -115,6 +116,13 @@
 				313E37CD28379EF800CA7E57 /* Resources */,
 			);
 			path = iosApp;
+			sourceTree = "<group>";
+		};
+		8908FED6282A59C400E29D35 /* dashboard */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = dashboard;
 			sourceTree = "<group>";
 		};
 		89D841712779D5E300D08BC0 /* githubtrending */ = {

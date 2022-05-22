@@ -1,4 +1,5 @@
 plugins {
+    id("org.jetbrains.kotlin.android")
     AndroidPluginDependencies.plugins.forEach { (lib, v) ->
         if (v.isNotBlank()) {
             id(lib) version v
@@ -11,7 +12,7 @@ plugins {
 android {
     compileSdk = 31
     defaultConfig {
-        applicationId = "com.baseio.kmm.android"
+        applicationId = "com.mutualmobile.harvestKmp.android"
         minSdk = 21
         targetSdk = 31
         versionCode = 1
@@ -29,6 +30,11 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
+        kotlin {
+            kotlinOptions {
+                freeCompilerArgs = freeCompilerArgs + "-Xopt-in=kotlin.RequiresOptIn"
+            }
+        }
     }
     kotlinOptions {
         jvmTarget = "1.8"
@@ -48,6 +54,16 @@ android {
 
 dependencies {
     implementation(project(":shared"))
+    implementation("androidx.compose.ui:ui:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.material:material:${rootProject.extra["compose_version"]}")
+    implementation("androidx.compose.ui:ui-tooling-preview:${rootProject.extra["compose_version"]}")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.3.1")
+    implementation("androidx.activity:activity-compose:1.3.1")
+    androidTestImplementation("androidx.compose.ui:ui-test-junit4:${rootProject.extra["compose_version"]}")
+    debugImplementation("androidx.compose.ui:ui-tooling:${rootProject.extra["compose_version"]}")
+    AndroidDependencies.platforms.forEach { platformDependency ->
+        implementation(platform(platformDependency))
+    }
     AndroidDependencies.implementation.forEach(::implementation)
     AndroidDependencies.androidTestImplementation.forEach(::androidTestImplementation)
     AndroidDependencies.debugImplementation.forEach(::debugImplementation)

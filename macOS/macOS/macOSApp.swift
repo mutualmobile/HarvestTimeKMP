@@ -7,19 +7,23 @@
 
 import SwiftUI
 import shared
-
-let sharedComponent = SharedComponent()
-let useCasesComponent = UseCasesComponent()
+import AppKit
 
 @main
 struct macOSApp: App {
+    
     init() {
         KoinKt.doInitSharedDependencies()
     }
+
     
     var body: some Scene {
+     
         WindowGroup {
-            GithubTrendingScreen()
-        }
+            
+          
+            RootView()
+   
+        }.windowStyle(HiddenTitleBarWindowStyle())
     }
 }
