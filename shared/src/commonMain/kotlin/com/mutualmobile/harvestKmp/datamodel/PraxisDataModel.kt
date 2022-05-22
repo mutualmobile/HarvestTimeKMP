@@ -1,31 +1,17 @@
 package com.mutualmobile.harvestKmp.datamodel
 
 import kotlinx.coroutines.*
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import kotlinx.coroutines.flow.receiveAsFlow
+import org.koin.core.component.getScopeName
 
-abstract class PraxisDataModel(private val onDataState: (DataState) -> Unit) {
+abstract class PraxisDataModel {
     protected val dataModelScope = MainScope()
-
-    protected val dataState: MutableStateFlow<DataState> = MutableStateFlow(EmptyState)
-
-    protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        dataState.value = ErrorState(throwable)
-    }
-
     abstract fun activate()
     abstract fun destroy()
     abstract fun refresh()
-
-    fun listenState() {
-        dataModelScope.launch {
-            dataState.collectLatest {
-                print("collected $it")
-                onDataState(it)
-            }
-        }
-    }
-
 }
 

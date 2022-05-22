@@ -2,25 +2,25 @@ package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
+import common.Themes
+import components.AppThemeContext
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
-import kotlinx.coroutines.*
-import kotlinx.css.sub
 import mui.material.*
-import mui.system.responsive
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
+import react.dom.aria.ariaLabel
 import react.router.useNavigate
-import setupDriver
 
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
     var state by useState<DataState>()
     var password by useState("")
+    var appTheme by useContext(AppThemeContext)
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         state = stateNew
@@ -54,7 +54,6 @@ val JSLoginScreen = VFC {
         title = "Login Form"
         subtitle = message
     }
-
     Box {
         Card {
             sx {
@@ -92,9 +91,18 @@ val JSLoginScreen = VFC {
                 }
 
 
+                Button {
+                    onClick = {
+                        appTheme = if (appTheme == Themes.Light) Themes.Dark else Themes.Light
+                    }
+                    +"Change Theme!"
+                }
+
+
 
                 Button {
                     this.onClick = {
+
                         dataModel.login(email, password)
                     }
                     +"Login"
@@ -104,6 +112,7 @@ val JSLoginScreen = VFC {
 
         }
     }
+
 
 }
 
