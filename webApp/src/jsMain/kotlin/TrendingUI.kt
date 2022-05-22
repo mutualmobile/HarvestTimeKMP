@@ -9,10 +9,8 @@ import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
 import mui.material.StackDirection.row
-import mui.material.styles.TypographyVariant
 import mui.system.responsive
 import mui.system.sx
-import react.dom.html.ReactHTML.div
 
 
 val TrendingUI = VFC {
