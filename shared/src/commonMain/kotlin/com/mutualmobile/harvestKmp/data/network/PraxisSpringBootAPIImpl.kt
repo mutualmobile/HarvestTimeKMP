@@ -75,7 +75,6 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
                 setBody(LoginData(email = email, password = password))
             }
             val responseBody = response.body<LoginResponse>()
-            println("response from login")
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)

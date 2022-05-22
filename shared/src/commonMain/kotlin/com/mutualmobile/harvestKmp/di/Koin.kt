@@ -23,23 +23,24 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
 fun initSharedDependencies() = startKoin {
-    modules(commonModule, useCaseModule, platformModule())
+    modules(commonModule, localDBRepos, useCaseModule, platformModule())
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
-    modules(sqlDelightFixMeModule, useCaseModule, platformModule())
+    modules(commonModule, jsSqliteDeps, useCaseModule, platformModule())
 }
+
+val jsSqliteDeps = module {
+    single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
+}
+
+val localDBRepos = module {
+    single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
+}
+
 
 val commonModule = module {
     single { httpClient(get()) }
-    single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
-    single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
-    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
-}
-
-val sqlDelightFixMeModule = module {
-    single { httpClient(get()) }
-    single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
 }

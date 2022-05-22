@@ -11,7 +11,9 @@ val sharedComponent = SharedComponent()
 fun main() {
     initSqlDelightExperimentalDependencies()
     window.onload = { _ ->
-        createRoot(document.getElementById("root")!!).render(HarvestApp.create())
+        createRoot(document.createElement("root").also { document.body!!.appendChild(it) }).render(
+            HarvestApp.create()
+        )
     }
 }
 

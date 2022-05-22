@@ -2,20 +2,25 @@ package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
+import csstype.Margin
+import csstype.px
+import harvest.material.TopAppBar
 import kotlinx.coroutines.*
+import kotlinx.css.sub
 import mui.material.*
 import mui.system.responsive
+import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.*
 import react.router.useNavigate
+import setupDriver
 
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
     var state by useState<DataState>()
     var password by useState("")
-    val mainScope = MainScope()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         state = stateNew
@@ -24,7 +29,6 @@ val JSLoginScreen = VFC {
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                val response = stateNew.data
                 message = "Logged In!"
                 val navigator = useNavigate()
                 navigator.invoke(to = "/trendingui")
@@ -41,30 +45,25 @@ val JSLoginScreen = VFC {
         }
     })
 
+
     useEffectOnce {
-        mainScope.launch {
-            dataModel.activate()
-        }
+        dataModel.activate()
     }
 
-    Typography{
-        this.align = TypographyAlign.center
-        +"Login Form"
+    TopAppBar {
+        title = "Login Form"
+        subtitle = message
     }
 
-    Typography{
-        this.align = TypographyAlign.center
-        +"Login Status: "
-        +message
-
-    }
-
-    Box{
+    Box {
         Card {
-
-
+            sx {
+                margin = Margin(24.px, 24.px)
+            }
             Stack {
-                this.spacing = responsive(8)
+                sx {
+                    margin = Margin(24.px, 24.px)
+                }
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = email
@@ -73,6 +72,9 @@ val JSLoginScreen = VFC {
                         email = target.value
                     }
                     this.placeholder = "Enter email address"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
                 }
 
 
@@ -84,15 +86,16 @@ val JSLoginScreen = VFC {
                         password = target.value
                     }
                     this.placeholder = "Enter Password"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
                 }
 
 
 
                 Button {
                     this.onClick = {
-                        mainScope.launch {
-                            dataModel.login(email, password)
-                        }
+                        dataModel.login(email, password)
                     }
                     +"Login"
                 }

@@ -1,18 +1,18 @@
-import common.ThemeModule
+import components.ThemeModule
 import harvest.JSHomePage
 import harvest.JSLoginScreen
 import harvest.JSNotFound
 import harvest.JSSignupScreen
-import react.*
 import react.router.Route
 import react.router.Routes
 import react.router.dom.HashRouter
-
+import react.FC
+import react.Props
+import react.create
 
 external interface AppProps : Props
 
 val HarvestApp = FC<AppProps> {
-
     HashRouter {
         ThemeModule {
             Routes {

@@ -11,12 +11,12 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 
-class LoginDataModel(onDataState: (DataState) -> Unit) :
+class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-
+    private val loginUseCase = useCasesComponent.provideLoginUseCase()
     override fun activate() {
         print("activate called")
         listenState()
@@ -34,13 +34,12 @@ class LoginDataModel(onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             dataState.value = LoadingState
-            val loginResponse = useCasesComponent.provideLoginUseCase()
-                .perform(email, password)
-            when (loginResponse) {
+            when (val loginResponse = loginUseCase.perform(email, password)) {
                 is NetworkResponse.Success -> {
                     print(loginResponse.data)
                     dataState.value =
                         SuccessState(loginResponse.data)
+
                 }
                 is NetworkResponse.Failure -> {
                     dataState.value =

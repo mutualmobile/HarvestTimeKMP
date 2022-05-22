@@ -2,6 +2,7 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.GithubReposItem
 import com.mutualmobile.harvestKmp.features.trending.GithubTrendingDataModel
 import csstype.*
+import harvest.material.TopAppBar
 import kotlinx.coroutines.*
 import mui.material.*
 import org.w3c.dom.HTMLInputElement
@@ -45,45 +46,14 @@ val TrendingUI = VFC {
     useEffectOnce {
         MainScope().launch {
             setupDriver()
-            message = "Driver created";
             dataModel.activate()
-            message = "DataModel activated";
         }
     }
 
-    Box {
-        sx { flexGrow = number(1.0) }
-
-        AppBar{
-            position = AppBarPosition.static
-
-            Toolbar{
-                Typography {
-                    sx { flexGrow = number(1.0) }
-                    variant = TypographyVariant.h6
-                    component = div
-                    +"Trending $search Repos"
-                }
-
-                Typography {
-                    sx { flexGrow = number(1.0) }
-                    variant = TypographyVariant.subtitle1
-                    component = div
-                    +"Status : $message"
-                }
-
-                Button {
-                    color = ButtonColor.inherit
-                    +"Refresh"
-
-                    onClick = {
-                        dataModel.refresh()
-                    }
-                }
-            }
-        }
+    TopAppBar{
+        title = "Trending $search Repos"
+        subtitle = "Status : $message"
     }
-
 
 
     Stack {
@@ -109,17 +79,28 @@ val TrendingUI = VFC {
     Stack {
         for (repo in trendingRepos) {
             Card {
+                sx {
+                    margin = Margin(12.px, 12.px)
+                }
                 Stack {
                     this.direction = responsive(row)
-                    Avatar {
-                        sx {
-                            margin = Margin(12.px, 12.px)
-                        }
-                        src = repo.avatar
+                    sx {
+                        margin = Margin(12.px, 12.px)
                     }
-                    ListItemText {
-                        +"${repo.url}"
-                        +"${repo.name}: ${repo.author}"
+                    Avatar {
+                        src = repo.avatar
+                        sx {
+                            margin = Margin(2.px, 12.px)
+                        }
+                    }
+                    Stack{
+                        this.direction = responsive(StackDirection.column)
+                        Typography {
+                            +"${repo.url}"
+                        }
+                        Typography{
+                            +"${repo.name}: ${repo.author}"
+                        }
                     }
                 }
                 onClick = {
