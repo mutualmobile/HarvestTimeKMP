@@ -39,7 +39,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$REFRESH_TOKEN").body()
     }
 
-    override suspend fun signup(
+    override suspend fun existingOrgSignUp(
         firstName: String,
         lastName: String,
         company: String,
@@ -50,12 +50,44 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
                 contentType(ContentType.Application.Json)
                 setBody(
-                    LoginData(
+                    SignUpData(
                         email = email,
                         password = password,
                         orgId = company,
                         firstName = firstName,
                         lastName = lastName
+                    )
+                )
+            }.body())
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun newOrgSignUp(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String,
+        orgName: String,
+        orgWebsite: String,
+        orgIdentifier: String
+    ): NetworkResponse<SignUpResponse> {
+        return try {
+            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    SignUpData(
+                        email = email,
+                        password = password,
+                        firstName = firstName,
+                        lastName = lastName,
+                        harvestOrganization = HarvestOrganization(
+                            name = orgName,
+                            website = orgWebsite,
+                            identifier = orgIdentifier
+                        )
                     )
                 )
             }.body())

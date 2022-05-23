@@ -1,21 +1,19 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-
+import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-
-class LoginDataModel(private val onDataState: (DataState) -> Unit) :
+class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    private val loginUseCase = useCasesComponent.provideLoginUseCase()
+
     override fun activate() {
     }
 
@@ -24,23 +22,31 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     }
 
     override fun refresh() {
-
     }
 
-    fun login(email: String, password: String) {
+    fun signUp(
+        firstName: String,
+        lastName: String,
+        company: String,
+        email: String,
+        password: String
+    ) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
+        currentLoadingJob = dataModelScope.launch() {
             onDataState(LoadingState)
-            when (val loginResponse = loginUseCase.perform(email, password)) {
+            val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()
+                .perform(firstName, lastName, company, email, password)
+            when (signUpResponse) {
                 is NetworkResponse.Success -> {
-                    print("Login Successful, ${loginResponse.data.message}")
-                    onDataState(SuccessState(loginResponse.data))
+                    onDataState(SuccessState(signUpResponse.data))
+                    println("SUCCESS ${signUpResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    print("Login Failed, ${loginResponse.exception.message}")
-                    onDataState(ErrorState(loginResponse.exception))
+                    onDataState(ErrorState(signUpResponse.exception))
+                    println("FAILED, ${signUpResponse.exception.message}")
                 }
             }
         }
     }
+
 }

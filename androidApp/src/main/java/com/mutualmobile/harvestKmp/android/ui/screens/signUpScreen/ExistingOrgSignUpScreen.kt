@@ -34,7 +34,7 @@ import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
+import com.mutualmobile.harvestKmp.features.harvest.ExistingOrgSignUpDataModel
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
@@ -121,9 +121,9 @@ fun SignUpScreen(navController: NavHostController) {
             )
             SurfaceTextButton(
                 text = buildAnnotatedString {
-                    append("Don't have an account?")
+                    append("Already have an account?")
                     withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append(" Try Harvest Free")
+                        append("Login")
                     }
                 }.toString()
             )
