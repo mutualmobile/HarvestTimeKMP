@@ -16,7 +16,6 @@ typealias ThemeState = StateInstance<Theme>
 val AppThemeContext = createContext<ThemeState>()
 
 val ThemeModule = FC<PropsWithChildren> { props ->
-    // TODO how do we implement this light/dark mode here ?
     val currentTheme = window.matchMedia("(prefers-color-scheme: dark)");
     val state = useState(if (currentTheme.matches) Themes.Dark else Themes.Light)
 
