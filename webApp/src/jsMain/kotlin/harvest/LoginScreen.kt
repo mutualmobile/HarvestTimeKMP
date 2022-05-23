@@ -47,6 +47,7 @@ val JSLoginScreen = VFC {
     var state by useState<DataState>()
     var password by useState("")
     var appTheme by useContext(AppThemeContext)
+    val navigator = useNavigate()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         state = stateNew
@@ -56,7 +57,6 @@ val JSLoginScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = "Logged In!"
-                val navigator = useNavigate()
                 navigator.invoke(to = "/trendingui")
             }
             Complete -> {
