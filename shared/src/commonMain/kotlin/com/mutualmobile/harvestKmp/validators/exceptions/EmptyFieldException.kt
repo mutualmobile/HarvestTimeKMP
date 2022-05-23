@@ -1,3 +1,3 @@
 package com.mutualmobile.harvestKmp.validators.exceptions
 
-class EmptyFieldException : Throwable("The field is empty")
+class EmptyFieldException(field: String) : Throwable("The $field field is empty")

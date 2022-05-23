@@ -34,7 +34,6 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
 
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
-            LoginFormValidator().invoke(email, password)
             when (val loginResponse = loginUseCase.perform(email, password)) {
                 is NetworkResponse.Success -> {
                     print("Login Successful, ${loginResponse.data.message}")

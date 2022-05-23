@@ -22,7 +22,7 @@ val HarvestApp = FC<AppProps> {
                 }
                 Route {
                     this.index = true
-                    this.element = JsWorkspaceFindScreen.create()
+                    this.element = JSLoginScreen.create()
                     this.path = "/"
                 }
                 Route {
