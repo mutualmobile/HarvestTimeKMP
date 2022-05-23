@@ -8,8 +8,13 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.koin.core.component.getScopeName
 
-abstract class PraxisDataModel {
+abstract class PraxisDataModel(onDataState: (DataState) -> Unit) {
     protected val dataModelScope = MainScope()
+
+    protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
+        onDataState(ErrorState(throwable))
+    }
+
     abstract fun activate()
     abstract fun destroy()
     abstract fun refresh()
