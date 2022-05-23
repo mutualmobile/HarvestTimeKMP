@@ -6,6 +6,8 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class LoginUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
     suspend fun perform(email: String, password: String): NetworkResponse<LoginResponse> {
-        return praxisSpringBootAPI.login(email, password)
+        when(email.isBlank() || password.isBlank()){
+            else -> {return praxisSpringBootAPI.login(email, password)}
+        }
     }
 }
