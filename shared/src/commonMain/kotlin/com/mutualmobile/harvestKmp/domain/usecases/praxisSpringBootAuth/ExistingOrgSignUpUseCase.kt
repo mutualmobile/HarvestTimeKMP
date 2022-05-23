@@ -4,7 +4,7 @@ import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
-class SignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
+class ExistingOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
     suspend fun perform(
         firstName: String,
         lastName: String,
@@ -12,6 +12,6 @@ class SignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
         email: String,
         password: String
     ): NetworkResponse<SignUpResponse> {
-        return praxisSpringBootAPI.signup(firstName, lastName, company, email, password)
+        return praxisSpringBootAPI.existingOrgSignUp(firstName, lastName, company, email, password)
     }
 }
