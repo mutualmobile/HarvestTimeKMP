@@ -9,6 +9,7 @@ import react.router.dom.HashRouter
 import react.FC
 import react.Props
 import react.create
+import workspace.JsWorkspaceFindScreen
 
 external interface AppProps : Props
 
@@ -21,7 +22,7 @@ val HarvestApp = FC<AppProps> {
                 }
                 Route {
                     this.index = true
-                    this.element = JSHomePage.create()
+                    this.element = JSLoginScreen.create()
                     this.path = "/"
                 }
                 Route {

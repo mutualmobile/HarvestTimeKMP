@@ -153,7 +153,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("$BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier")
+                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier")
                     .body()
             )
         } catch (e: Exception) {

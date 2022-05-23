@@ -19,9 +19,9 @@ import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
-import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 
 
 class MainActivity : ComponentActivity() {
@@ -37,22 +37,15 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    val loginDataModel = LoginDataModel{}
                     NavHost(
                         navController = navController,
-                        startDestination = ScreenList.LoginScreen(),
+                        startDestination = ScreenList.ExistingOrgSignUpScreen(),
                     ) {
+                        composable(ScreenList.ExistingOrgSignUpScreen()){
+                            SignUpScreen(navController = navController)
+                        }
                         composable(ScreenList.LoginScreen()) {
-                            LoginScreen(
-                                initiateGoogleSignIn = {
-                                    navController.navigate(ScreenList.LandingScreen()) {
-                                        popUpTo(ScreenList.LoginScreen()) {
-                                            inclusive = true
-                                        }
-                                    }
-                                },
-                                loginDataModel = loginDataModel
-                            )
+                            LoginScreen(navController = navController)
                         }
                         composable(ScreenList.LandingScreen()) {
                             LandingScreen()

@@ -7,13 +7,39 @@ import components.AppThemeContext
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
+import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
+import org.w3c.dom.MediaQueryList
+import org.w3c.dom.events.Event
+import org.w3c.dom.events.EventListener
 import react.*
 import react.dom.*
 import react.dom.aria.ariaLabel
 import react.router.useNavigate
+
+
+val useThemeDetector = fc<Props> {
+    val getCurrentTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
+    val (isDarkTheme, setIsDarkTheme) = useState(getCurrentTheme)
+
+    val mqListener = object : EventListener {
+        override fun handleEvent(event: Event) {
+            if (event is MediaQueryList) {
+                setIsDarkTheme(event.matches);
+            }
+        }
+    }
+
+    useEffect {
+        val darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)")
+        darkThemeMq.addListener(mqListener);
+        this.cleanup {
+            darkThemeMq.removeListener(mqListener)
+        }
+    }
+}
 
 val JSLoginScreen = VFC {
     var message by useState("")
@@ -21,6 +47,7 @@ val JSLoginScreen = VFC {
     var state by useState<DataState>()
     var password by useState("")
     var appTheme by useContext(AppThemeContext)
+    val navigator = useNavigate()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         state = stateNew
@@ -30,7 +57,6 @@ val JSLoginScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = "Logged In!"
-                val navigator = useNavigate()
                 navigator.invoke(to = "/trendingui")
             }
             Complete -> {
@@ -54,7 +80,7 @@ val JSLoginScreen = VFC {
         title = "Login Form"
         subtitle = message
     }
-    Box {
+    Paper {
         Card {
             sx {
                 margin = Margin(24.px, 24.px)
@@ -70,12 +96,11 @@ val JSLoginScreen = VFC {
                         val target = it.target as HTMLInputElement
                         email = target.value
                     }
-                    this.placeholder = "Enter email address"
+                    this.placeholder = "Work Email"
                     sx {
                         margin = Margin(12.px, 2.px)
                     }
                 }
-
 
                 TextField {
                     this.variant = FormControlVariant.outlined
@@ -90,7 +115,6 @@ val JSLoginScreen = VFC {
                     }
                 }
 
-
                 Button {
                     onClick = {
                         appTheme = if (appTheme == Themes.Light) Themes.Dark else Themes.Light
@@ -98,21 +122,13 @@ val JSLoginScreen = VFC {
                     +"Change Theme!"
                 }
 
-
-
                 Button {
                     this.onClick = {
-
                         dataModel.login(email, password)
                     }
                     +"Login"
                 }
             }
-
-
         }
     }
-
-
 }
-

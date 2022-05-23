@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class NewOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(), KoinComponent {
+    PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()

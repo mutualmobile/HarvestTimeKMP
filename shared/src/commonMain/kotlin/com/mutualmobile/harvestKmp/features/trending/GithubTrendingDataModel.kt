@@ -10,7 +10,7 @@ import org.koin.core.component.KoinComponent
 
 class GithubTrendingDataModel(
     private val onDataState: (DataState) -> Unit
-) : PraxisDataModel(), KoinComponent {
+) : PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = UseCasesComponent()
