@@ -17,12 +17,22 @@ interface PraxisSpringBootAPI {
 
     suspend fun refreshToken(refreshToken: String): RefreshToken
 
-    suspend fun signup(
+    suspend fun existingOrgSignUp(
         firstName: String,
         lastName: String,
         company: String,
         email: String,
         password: String
+    ): NetworkResponse<SignUpResponse>
+
+    suspend fun newOrgSignUp(
+        firstName: String,
+        lastName: String,
+        email: String,
+        password: String,
+        orgName: String,
+        orgWebsite: String,
+        orgIdentifier: String
     ): NetworkResponse<SignUpResponse>
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>

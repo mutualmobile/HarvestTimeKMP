@@ -15,14 +15,13 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.systemBarsPadding
 import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
-import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
+import com.mutualmobile.harvestKmp.features.harvest.ExistingOrgSignUpDataModel
 
 @Composable
 fun SignUpScreen(
-    signUpDataModel: SignUpDataModel
+    signUpDataModel: ExistingOrgSignUpDataModel
 ) {
     var currentWorkEmail by remember { mutableStateOf("") }
     var currentPassword by remember { mutableStateOf("") }

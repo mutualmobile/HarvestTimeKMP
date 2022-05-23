@@ -17,4 +17,3 @@ data class SignUpData(
     val orgId: String? = null,
     val harvestOrganization: HarvestOrganization? = null
 )
-

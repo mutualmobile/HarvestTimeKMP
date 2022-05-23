@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
+class NewOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -27,15 +27,17 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
     fun signUp(
         firstName: String,
         lastName: String,
-        company: String,
         email: String,
-        password: String
+        password: String,
+        orgName: String,
+        orgWebsite: String,
+        orgIdentifier: String
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch() {
             onDataState(LoadingState)
-            val signUpResponse = useCasesComponent.provideSignUpUseCase()
-                .perform(firstName, lastName, company, email, password)
+            val signUpResponse = useCasesComponent.provideNewOrgSignUpUseCase()
+                .perform(firstName, lastName, email, password, orgName, orgWebsite, orgIdentifier)
             when (signUpResponse) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(signUpResponse.data))
@@ -48,5 +50,4 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
             }
         }
     }
-
 }
