@@ -1,6 +1,7 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -16,7 +17,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.components.W
 
 @Composable
 fun ReportsScreen() {
-    Column(modifier = Modifier.verticalScroll(rememberScrollState())) {
+    Column(modifier = Modifier.verticalScroll(rememberScrollState()).navigationBarsPadding()) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 4.dp)) {
             var weekOffset by remember { mutableStateOf(0) }
             WeekSwitcher(
