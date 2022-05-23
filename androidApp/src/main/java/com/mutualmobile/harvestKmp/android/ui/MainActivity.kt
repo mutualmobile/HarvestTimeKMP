@@ -38,8 +38,12 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    val loginDataModel = LoginDataModel()
-                    val signUpDataModel = SignUpDataModel()
+                    val loginDataModel = LoginDataModel{
+
+                    }
+                    val signUpDataModel = SignUpDataModel{
+
+                    }
                     NavHost(
                         navController = navController,
                         startDestination = ScreenList.SignUpScreen(),
