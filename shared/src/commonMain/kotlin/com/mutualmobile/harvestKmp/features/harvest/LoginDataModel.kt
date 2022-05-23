@@ -33,10 +33,11 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
             onDataState(LoadingState)
             when (val loginResponse = loginUseCase.perform(email, password)) {
                 is NetworkResponse.Success -> {
-                    print(loginResponse.data)
+                    print("Login Successful, ${loginResponse.data.message}")
                     onDataState(SuccessState(loginResponse.data))
                 }
                 is NetworkResponse.Failure -> {
+                    print("Login Failed, ${loginResponse.exception.message}")
                     onDataState(ErrorState(loginResponse.exception))
                 }
             }
