@@ -1,5 +1,11 @@
 package workspace
 
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
+import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
 import csstype.*
 import harvest.material.TopAppBar
 import mui.material.*
@@ -7,13 +13,36 @@ import mui.material.styles.TypographyVariant
 import mui.system.responsive
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
-import react.VFC
+import react.*
 import react.dom.html.ReactHTML
 import react.dom.onChange
-import react.useState
 
 val JsWorkspaceFindScreen = VFC {
-    val status by useState("")
+    var status by useState("")
+    var organization by useState<FindOrgResponse>()
+    var workspaceName by useState("")
+
+    val dataModel = FindOrgByIdentifierDataModel(onDataState = { dataState: DataState ->
+        when (dataState) {
+            is LoadingState -> {
+                status = "Loading..."
+            }
+            is SuccessState<*> -> {
+                organization = dataState.data as FindOrgResponse
+                status = "Found organization! ${organization?.data?.name}"
+            }
+            is ErrorState -> {
+                status = dataState.throwable.message.toString()
+            }
+        }
+    })
+
+
+    useEffectOnce {
+        dataModel.activate()
+    }
+
+
 
     TopAppBar {
         title = "Find your workspace"
@@ -63,7 +92,12 @@ val JsWorkspaceFindScreen = VFC {
                             margin = Margin(0.px, 4.px)
                         }
                     }
-                    WorkspaceComp()
+                    WorkspaceComp {
+                        this.name = workspaceName
+                        this.nameUpdate = {
+                            workspaceName = it
+                        }
+                    }
                     Typography {
                         this.sx {
                             margin = Margin(0.px, 4.px)
@@ -82,7 +116,7 @@ val JsWorkspaceFindScreen = VFC {
                     }
                     +"Find Workspace"
                     onClick = {
-
+                        dataModel.findOrgByIdentifier(workspaceName)
                     }
                 }
             }
@@ -92,15 +126,18 @@ val JsWorkspaceFindScreen = VFC {
 }
 
 
-val WorkspaceComp = VFC {
-    var workspaceName by useState("")
+external interface WorkspaceProps : Props {
+    var name: String
+    var nameUpdate: (String) -> Unit
+}
 
+val WorkspaceComp = FC<WorkspaceProps> { props ->
     TextField {
         this.variant = FormControlVariant.standard
-        this.value = workspaceName
+        this.value = props.name
         this.onChange = {
             val target = it.target as HTMLInputElement
-            workspaceName = target.value
+            props.nameUpdate(target.value)
         }
         this.placeholder = "your-organization"
         sx {
