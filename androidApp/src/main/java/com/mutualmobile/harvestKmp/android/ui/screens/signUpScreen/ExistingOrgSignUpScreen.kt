@@ -50,12 +50,12 @@ fun SignUpScreen(navController: NavHostController) {
 
     val signUpDataModel by remember {
         mutableStateOf(
-            SignUpDataModel { signUpState ->
+            ExistingOrgSignUpDataModel { signUpState ->
                 currentSignUpState = signUpState
                 when (signUpState) {
                     is SuccessState<*> -> {
                         navController.navigateAndClear(
-                            clearRoute = ScreenList.SignUpScreen(),
+                            clearRoute = ScreenList.ExistingOrgSignUpScreen(),
                             navigateTo = ScreenList.LandingScreen(),
                         )
                     }
