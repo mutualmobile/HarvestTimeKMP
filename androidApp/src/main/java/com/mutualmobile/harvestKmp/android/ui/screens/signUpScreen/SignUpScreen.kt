@@ -1,9 +1,19 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -12,23 +22,49 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
-import com.google.accompanist.insets.systemBarsPadding
+import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
+import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
 @Composable
-fun SignUpScreen(
-    signUpDataModel: SignUpDataModel
-) {
-    var currentWorkEmail by remember { mutableStateOf("") }
-    var currentPassword by remember { mutableStateOf("") }
-    var currentFirstName by remember { mutableStateOf("") }
-    var currentLastName by remember { mutableStateOf("") }
+fun SignUpScreen(navController: NavHostController) {
+    var currentWorkEmail by remember { mutableStateOf("test@gmail.com") }
+    var currentPassword by remember { mutableStateOf("testpassword") }
+    var currentFirstName by remember { mutableStateOf("test") }
+    var currentLastName by remember { mutableStateOf("test") }
     var currentCompanyName by remember { mutableStateOf("5186f350-1f0e-42b7-b07e-ab36eb460552") }
+
+    var currentSignUpState: DataState by remember {
+        mutableStateOf(EmptyState)
+    }
+
+    val signUpDataModel by remember {
+        mutableStateOf(
+            SignUpDataModel { signUpState ->
+                currentSignUpState = signUpState
+                when (signUpState) {
+                    is SuccessState<*> -> {
+                        navController.navigateAndClear(
+                            clearRoute = ScreenList.SignUpScreen(),
+                            navigateTo = ScreenList.LandingScreen(),
+                        )
+                    }
+                    else -> Unit
+                }
+            }
+        )
+    }
+
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -71,13 +107,15 @@ fun SignUpScreen(
             )
             IconLabelButton(
                 label = stringResource(R.string.signup_screen_signup_btn_txt),
+                isLoading = currentSignUpState is LoadingState,
+                errorMsg = (currentSignUpState as? ErrorState)?.throwable?.message,
                 onClick = {
                     signUpDataModel.signUp(
-                        currentFirstName,
-                        currentLastName,
-                        currentCompanyName,
-                        currentWorkEmail,
-                        currentPassword
+                        firstName = currentFirstName,
+                        lastName = currentLastName,
+                        company = currentCompanyName,
+                        email = currentWorkEmail,
+                        password = currentPassword
                     )
                 }
             )
