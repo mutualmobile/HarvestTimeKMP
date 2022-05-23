@@ -50,7 +50,8 @@ val useCaseModule = module {
     single { SaveTrendingReposUseCase(get()) }
     single { GetLocalReposUseCase(get()) }
     single { LoginUseCase(get()) }
-    single { SignUpUseCase(get()) }
+    single { ExistingOrgSignUpUseCase(get()) }
+    single { NewOrgSignUpUseCase(get()) }
     single { FindOrgByIdentifierUseCase(get()) }
     single { LogoutUseCase(get()) }
     single { ChangePasswordUseCase(get()) }
@@ -65,7 +66,8 @@ class UseCasesComponent : KoinComponent {
 
 class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideLoginUseCase(): LoginUseCase = get()
-    fun provideSignUpUseCase(): SignUpUseCase = get()
+    fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
+    fun provideNewOrgSignUpUseCase(): NewOrgSignUpUseCase = get()
     fun provideFindOrgByIdentifier(): FindOrgByIdentifierUseCase = get()
     fun provideLogoutUseCase(): LogoutUseCase = get()
     fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()

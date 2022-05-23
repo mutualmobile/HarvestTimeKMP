@@ -18,11 +18,10 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
-import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
-import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
 
 class MainActivity : ComponentActivity() {
@@ -38,27 +37,23 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val navController = rememberNavController()
-                    val loginDataModel = LoginDataModel()
-                    val signUpDataModel = SignUpDataModel()
+                    val loginDataModel = LoginDataModel{}
                     NavHost(
                         navController = navController,
-                        startDestination = ScreenList.SignUpScreen(),
+                        startDestination = ScreenList.LoginScreen(),
                     ) {
-                        composable(ScreenList.SignUpScreen()){
-                            SignUpScreen(signUpDataModel)
+                        composable(ScreenList.LoginScreen()) {
+                            LoginScreen(
+                                initiateGoogleSignIn = {
+                                    navController.navigate(ScreenList.LandingScreen()) {
+                                        popUpTo(ScreenList.LoginScreen()) {
+                                            inclusive = true
+                                        }
+                                    }
+                                },
+                                loginDataModel = loginDataModel
+                            )
                         }
-//                        composable(ScreenList.LoginScreen()) {
-//                            LoginScreen(
-//                                initiateGoogleSignIn = {
-//                                    navController.navigate(ScreenList.LandingScreen()) {
-//                                        popUpTo(ScreenList.LoginScreen()) {
-//                                            inclusive = true
-//                                        }
-//                                    }
-//                                },
-//                                loginDataModel = loginDataModel
-//                            )
-//                        }
                         composable(ScreenList.LandingScreen()) {
                             LandingScreen()
                         }

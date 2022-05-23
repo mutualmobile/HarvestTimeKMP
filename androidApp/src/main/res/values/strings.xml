@@ -46,4 +46,8 @@
     <string name="signup_screen_first_name_et_placeholder">First Name</string>
     <string name="signup_screen_last_name_et_placeholder">Last Name</string>
     <string name="signup_screen_company_name_et_placeholder">Company Name</string>
+    <string name="signup_screen_company_website_et_placeholder">Company Name</string>
+    <string name="signup_screen_company_identifier_et_placeholder">Company Name</string>
+    <string name="signup_screen_user_details_et_placeholder">Company Name</string>
+    <string name="signup_screen_company_details_et_placeholder">Company Name</string>
 </resources>
