@@ -27,9 +27,10 @@ val ThemeModule = FC<PropsWithChildren> { props ->
             }
         }
     }
-    currentTheme.addListener(listener)
+
 
     useEffect {
+        currentTheme.addListener(listener)
         cleanup {
             currentTheme.removeListener(listener)
         }
