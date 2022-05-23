@@ -4,6 +4,7 @@ import kotlinx.js.jso
 import mui.material.PaletteMode.dark
 import mui.material.PaletteMode.light
 import mui.material.styles.ThemeOptions
+import mui.material.styles.TypeBackground
 import mui.material.styles.createTheme
 
 object Themes {
@@ -11,6 +12,9 @@ object Themes {
         jso {
             palette = jso {
                 mode = light
+                background = jso {
+                    paper = "#33fa5d00"
+                }
                 primary = jso {
                     main = "#fa5d00"
                 }
@@ -26,6 +30,9 @@ object Themes {
         jso {
             palette = jso {
                 mode = dark
+                background = jso {
+                    paper = "#33fa5d00"
+                }
                 primary = jso {
                     main = "#fa5d00"
                 }
