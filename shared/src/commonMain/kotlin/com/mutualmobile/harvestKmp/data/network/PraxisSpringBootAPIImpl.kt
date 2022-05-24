@@ -2,6 +2,10 @@ package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.ChangePasswordResponse
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
@@ -149,7 +153,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         }
     }
 
-    override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse> {
+    override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
                 httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier")

@@ -1,13 +1,10 @@
 package com.mutualmobile.harvestKmp.domain.model.response
 
-import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import kotlinx.serialization.Serializable
 
+//TODO rename this file
 @Serializable
-data class FindOrgResponse(
-    val `data`: HarvestOrganization?,
-    val message: String
-)
+data class ApiResponse<T>(val message: String? = null, val data: T? = null)
 
 //@Serializable
 //data class Data(
