@@ -4,6 +4,7 @@ import com.mutualmobile.harvestKmp.domain.model.request.ChangePassword
 import com.mutualmobile.harvestKmp.domain.model.request.LogoutData
 import com.mutualmobile.harvestKmp.domain.model.request.RefreshToken
 import com.mutualmobile.harvestKmp.domain.model.request.User
+import com.mutualmobile.harvestKmp.domain.model.response.ChangePasswordResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
@@ -41,8 +42,10 @@ interface PraxisSpringBootAPI {
 
     suspend fun fcmToken(): NetworkResponse<LoginResponse>
 
-    suspend fun changePassword(password: String, oldPassword: String): ChangePassword
+    suspend fun changePassword(password: String, oldPassword: String, token: String): NetworkResponse<ChangePasswordResponse>
 
     suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse>
+
+    suspend fun forgotPassword(): NetworkResponse<Any>
 
 }
