@@ -4,11 +4,7 @@ import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.request.LogoutData
 import com.mutualmobile.harvestKmp.domain.model.request.RefreshToken
 import com.mutualmobile.harvestKmp.domain.model.request.User
-import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.ChangePasswordResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 interface PraxisSpringBootAPI {
@@ -25,7 +21,7 @@ interface PraxisSpringBootAPI {
         company: String,
         email: String,
         password: String
-    ): NetworkResponse<SignUpResponse>
+    ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun newOrgSignUp(
         firstName: String,
@@ -35,18 +31,18 @@ interface PraxisSpringBootAPI {
         orgName: String,
         orgWebsite: String,
         orgIdentifier: String
-    ): NetworkResponse<SignUpResponse>
+    ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
-    suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>
+    suspend fun login(email: String, password: String): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun logout(userId: String): LogoutData
 
-    suspend fun fcmToken(): NetworkResponse<LoginResponse>
+    suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>>
 
-    suspend fun changePassword(password: String, oldPassword: String): NetworkResponse<ChangePasswordResponse>
+    suspend fun changePassword(password: String, oldPassword: String): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>>
 
-    suspend fun forgotPassword(email: String): NetworkResponse<ForgetPasswordResponse>
+    suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>>
 
 }
