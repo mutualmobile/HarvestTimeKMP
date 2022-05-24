@@ -4,7 +4,8 @@ import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
 import csstype.*
 import harvest.material.TopAppBar
@@ -19,7 +20,6 @@ import react.dom.onChange
 
 val JsWorkspaceFindScreen = VFC {
     var status by useState("")
-    var organization by useState<FindOrgResponse>()
     var workspaceName by useState("")
 
     val dataModel = FindOrgByIdentifierDataModel(onDataState = { dataState: DataState ->
@@ -28,8 +28,8 @@ val JsWorkspaceFindScreen = VFC {
                 status = "Loading..."
             }
             is SuccessState<*> -> {
-                organization = dataState.data as FindOrgResponse
-                status = "Found organization! ${organization?.data?.name}"
+                val organization = dataState.data as ApiResponse<HarvestOrganization>
+                status = "Found organization! ${organization.data?.name}"
             }
             is ErrorState -> {
                 status = dataState.throwable.message.toString()

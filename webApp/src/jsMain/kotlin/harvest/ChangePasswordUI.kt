@@ -11,11 +11,12 @@ import react.VFC
 import react.dom.onChange
 import react.useState
 
-val ChangePasswordUI = VFC{
+val ChangePasswordUI = VFC {
     var message by useState("")
     var changePassword by useState("")
     var state by useState<DataState>()
     var password by useState("")
+
     TopAppBar {
         title = "Change Password Form"
         subtitle = message
