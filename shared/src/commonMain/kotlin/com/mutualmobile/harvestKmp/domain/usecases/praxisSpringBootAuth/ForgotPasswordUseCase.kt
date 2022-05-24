@@ -5,8 +5,10 @@ import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
-class FcmTokenUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return praxisSpringBootAPI.fcmToken()
+class ForgotPasswordUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
+    suspend fun perform(
+        email: String
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
+        return praxisSpringBootAPI.forgotPassword(email)
     }
 }

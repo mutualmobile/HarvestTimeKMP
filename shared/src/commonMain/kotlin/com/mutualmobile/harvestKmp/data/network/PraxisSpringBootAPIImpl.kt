@@ -2,12 +2,8 @@ package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.ChangePasswordResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
-import com.russhwolf.settings.get
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -49,7 +45,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         company: String,
         email: String,
         password: String
-    ): NetworkResponse<SignUpResponse> {
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
                 contentType(ContentType.Application.Json)
@@ -77,7 +73,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         orgName: String,
         orgWebsite: String,
         orgIdentifier: String
-    ): NetworkResponse<SignUpResponse> {
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
                 contentType(ContentType.Application.Json)
@@ -104,13 +100,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun login(
         email: String,
         password: String
-    ): NetworkResponse<LoginResponse> {
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             val response = httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginData(email = email, password = password))
             }
-            val responseBody = response.body<LoginResponse>()
+            val responseBody = response.body<ApiResponse<HarvestOrganization>>()
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
@@ -122,7 +118,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGOUT").body()
     }
 
-    override suspend fun fcmToken(): NetworkResponse<LoginResponse> {
+    override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
                 httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN").body()
@@ -136,7 +132,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun changePassword(
         password: String,
         oldPassword: String,
-    ): NetworkResponse<ChangePasswordResponse> {
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         val settings = Settings()
         val jwtToken = settings.getString("JWT_TOKEN")
         return try {
@@ -145,7 +141,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
                 setBody(ChangePassword(password = password, oldPass = oldPassword))
                 header("Authorization", "Bearer $jwtToken")
             }
-            val responseBody = response.body<ChangePasswordResponse>()
+            val responseBody = response.body<ApiResponse<HarvestOrganization>>()
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
@@ -165,10 +161,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         }
     }
 
-    override suspend fun forgotPassword(): NetworkResponse<Any> {
+    override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD")
+                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD?email=$email")
                     .body()
             )
         } catch (e: Exception) {
