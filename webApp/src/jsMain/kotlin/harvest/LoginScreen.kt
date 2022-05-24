@@ -114,9 +114,9 @@ val JSLoginScreen = VFC {
 
                 Button {
                     onClick = {
-                        appTheme = if (appTheme == Themes.Light) Themes.Dark else Themes.Light
+                        navigator("/forgotPassword")
                     }
-                    +"Change Theme!"
+                    +"Forgot Password"
                 }
 
                 Button {

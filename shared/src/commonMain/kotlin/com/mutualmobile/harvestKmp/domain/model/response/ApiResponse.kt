@@ -7,8 +7,5 @@ import kotlinx.serialization.Serializable
 data class ApiResponse<T>(
     val message: String? = null,
     val data: T? = null,
-    @SerialName("token")
-    val jwt_token : String? = null,
-    val refreshToken : String? = null
 )
 

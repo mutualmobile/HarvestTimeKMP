@@ -1,7 +1,11 @@
 package com.mutualmobile.harvestKmp.data.network
 
+import com.mutualmobile.harvestKmp.data.network.Endpoint.CHANGE_PASSWORD
+import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
+import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
@@ -9,34 +13,20 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-const val SPRING_BOOT_BASE_URL = "http://mmharvestkmp.us-east-2.elasticbeanstalk.com"
-const val API_URL = "/api/v1"
-
-const val GET_USER = "/user"
-const val PUT_USER = "/user"
-const val REFRESH_TOKEN = "/refreshToken"
-const val SIGNUP = "/public/signup"
-const val LOGIN = "/public/login"
-const val LOGOUT = "/logout"
-const val FCM_TOKEN = "/fcmToken"
-const val CHANGE_PASSWORD = "/changePassword"
-const val FIND_ORGANIZATION_BY_IDENTIFIER = "/public/organization"
-const val FORGOT_PASSWORD = "/public/forgotPassword"
-
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpringBootAPI {
 
     override suspend fun getUser(id: String): User {
-        return httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$GET_USER").body()
+        return httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}").body()
     }
 
     override suspend fun putUser(id: String): User {
-        return httpClient.put("$SPRING_BOOT_BASE_URL$API_URL$PUT_USER").body()
+        return httpClient.put("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}").body()
     }
 
     override suspend fun refreshToken(
         refreshToken: String
     ): RefreshToken {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$REFRESH_TOKEN").body()
+        return httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.REFRESH_TOKEN}").body()
     }
 
     override suspend fun existingOrgSignUp(
@@ -47,7 +37,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
-            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
+            NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     SignUpData(
@@ -75,7 +65,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         orgIdentifier: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
-            NetworkResponse.Success(httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$SIGNUP") {
+            NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     SignUpData(
@@ -100,13 +90,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun login(
         email: String,
         password: String
-    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
+    ): NetworkResponse<LoginResponse> {
         return try {
-            val response = httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGIN") {
+            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGIN}") {
                 contentType(ContentType.Application.Json)
                 setBody(LoginData(email = email, password = password))
             }
-            val responseBody = response.body<ApiResponse<HarvestOrganization>>()
+            val responseBody = response.body<LoginResponse>()
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
@@ -115,13 +105,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     }
 
     override suspend fun logout(userId: String): LogoutData {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$LOGOUT").body()
+        return httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}").body()
     }
 
     override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
-                httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$FCM_TOKEN").body()
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.FCM_TOKEN}").body()
             )
         } catch (e: Exception) {
             println(e)
@@ -136,7 +126,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         val settings = Settings()
         val jwtToken = settings.getString("JWT_TOKEN")
         return try {
-            val response = httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD") {
+            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
                 contentType(ContentType.Application.Json)
                 setBody(ChangePassword(password = password, oldPass = oldPassword))
                 header("Authorization", "Bearer $jwtToken")
@@ -152,7 +142,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier")
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}/?identifier=$identifier")
                     .body()
             )
         } catch (e: Exception) {
@@ -164,9 +154,26 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD?email=$email")
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}/?email=$email")
                     .body()
             )
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun resetPassword(
+        resetPasswordRequest: ResetPasswordRequest
+    ): NetworkResponse<ApiResponse<Unit>> {
+        return try {
+            val response =
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$RESET_PASSWORD_ENDPOINT") {
+                    contentType(ContentType.Application.Json)
+                    setBody(resetPasswordRequest)
+                }
+            val responseBody = response.body<ApiResponse<Unit>>()
+            NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)

@@ -74,6 +74,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
     fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
     fun provideForgotPasswordUseCase(): ForgotPasswordUseCase = get()
+    fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
 }
 
 class SharedComponent : KoinComponent {

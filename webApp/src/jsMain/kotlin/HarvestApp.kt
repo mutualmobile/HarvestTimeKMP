@@ -28,9 +28,17 @@ val HarvestApp = FC<AppProps> {
                     this.path = "/login"
                     this.element = JSLoginScreen.create()
                 }
+                Route{
+                    this.path = "/forgotPassword"
+                    this.element = ForgotPasswordUI.create()
+                }
                 Route {
                     this.path = "/changePassword"
                     this.element = ChangePasswordUI.create()
+                }
+                Route {
+                    this.path = "/resetPassword"
+                    this.element = ResetPasswordScreen.create()
                 }
                 Route {
                     this.path = "/trendingui"
