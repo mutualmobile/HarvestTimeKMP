@@ -39,10 +39,10 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
             onDataState(LoadingState)
             when (val loginResponse = loginUseCase.perform(email, password)) {
                 is NetworkResponse.Success -> {
-                    settings["JWT_TOKEN"] =loginResponse.data.token
-                    settings["REFRESH_TOKEN"] = loginResponse.data.refreshToken
                     print("Login Successful, ${loginResponse.data.message}")
                     onDataState(SuccessState(loginResponse.data))
+                    settings["JWT_TOKEN"] = loginResponse.data.token
+                    settings["REFRESH_TOKEN"] = loginResponse.data.refreshToken
                 }
                 is NetworkResponse.Failure -> {
                     print("Login Failed, ${loginResponse.exception.message}")

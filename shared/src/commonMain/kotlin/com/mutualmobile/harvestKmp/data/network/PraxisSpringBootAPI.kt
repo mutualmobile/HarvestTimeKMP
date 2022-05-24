@@ -42,7 +42,7 @@ interface PraxisSpringBootAPI {
 
     suspend fun fcmToken(): NetworkResponse<LoginResponse>
 
-    suspend fun changePassword(password: String, oldPassword: String, token: String): NetworkResponse<ChangePasswordResponse>
+    suspend fun changePassword(password: String, oldPassword: String): NetworkResponse<ChangePasswordResponse>
 
     suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse>
 

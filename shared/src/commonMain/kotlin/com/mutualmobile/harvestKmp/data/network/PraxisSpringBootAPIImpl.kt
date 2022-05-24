@@ -6,6 +6,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -134,13 +136,14 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun changePassword(
         password: String,
         oldPassword: String,
-        token: String
     ): NetworkResponse<ChangePasswordResponse> {
+        val settings = Settings()
+        val jwtToken = settings.getString("JWT_TOKEN")
         return try {
             val response = httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD") {
                 contentType(ContentType.Application.Json)
-                setBody(ChangePassword(password = password, oldPassword = oldPassword))
-                header("authorization", "Bearer $token")
+                setBody(ChangePassword(password = password, oldPass = oldPassword))
+                header("Authorization", "Bearer $jwtToken")
             }
             val responseBody = response.body<ChangePasswordResponse>()
             NetworkResponse.Success(responseBody)
@@ -165,7 +168,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun forgotPassword(): NetworkResponse<Any> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("$BASE_URL$API_URL$FORGOT_PASSWORD")
+                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD")
                     .body()
             )
         } catch (e: Exception) {

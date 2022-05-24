@@ -9,7 +9,7 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(), KoinComponent {
+    PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
@@ -25,17 +25,17 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
 
     }
 
-    fun login(password: String, oldPassword: String, token: String) {
+    fun changePassWord(password: String, oldPassword: String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val changePasswordResponse = changePasswordUseCase.perform(password, oldPassword, token)) {
+            when (val changePasswordResponse = changePasswordUseCase.perform(password, oldPassword)) {
                 is NetworkResponse.Success -> {
-                    print("Login Successful, ${changePasswordResponse.data.message}")
+                    print("ChangePassword Successful, ${changePasswordResponse.data.message}")
                     onDataState(SuccessState(changePasswordResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    print("Login Failed, ${changePasswordResponse.exception.message}")
+                    print("ChangePassword Failed, ${changePasswordResponse.exception.message}")
                     onDataState(ErrorState(changePasswordResponse.exception))
                 }
             }
