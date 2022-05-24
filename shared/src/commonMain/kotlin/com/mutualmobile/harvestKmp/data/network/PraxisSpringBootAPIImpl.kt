@@ -1,13 +1,9 @@
 package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.*
-import com.mutualmobile.harvestKmp.domain.model.response.ChangePasswordResponse
-import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
+import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
-import com.russhwolf.settings.get
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -165,10 +161,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         }
     }
 
-    override suspend fun forgotPassword(): NetworkResponse<Any> {
+    override suspend fun forgotPassword(email: String): NetworkResponse<ForgetPasswordResponse> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD")
+                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD?email=$email")
                     .body()
             )
         } catch (e: Exception) {
