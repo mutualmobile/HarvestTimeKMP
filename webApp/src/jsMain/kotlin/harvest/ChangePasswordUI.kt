@@ -1,6 +1,7 @@
 package harvest
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.features.harvest.ChangePasswordDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -16,6 +17,26 @@ val ChangePasswordUI = VFC {
     var changePassword by useState("")
     var state by useState<DataState>()
     var password by useState("")
+
+    val dataModel = ChangePasswordDataModel(onDataState = { stateNew ->
+        when (stateNew) {
+            is LoadingState -> {
+                message = "Loading..."
+            }
+            is SuccessState<*> -> {
+                message = "Request Complete!"
+            }
+            Complete -> {
+                message = "Completed loading!"
+            }
+            EmptyState -> {
+                message = "Empty state"
+            }
+            is ErrorState -> {
+                message = stateNew.throwable.message ?: "Error"
+            }
+        }
+    })
 
     TopAppBar {
         title = "Change Password Form"
@@ -58,6 +79,7 @@ val ChangePasswordUI = VFC {
 
                 Button {
                     this.onClick = {
+                        dataModel.changePassWord(password, changePassword)
                     }
                     +"Change Password"
                 }

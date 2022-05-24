@@ -14,6 +14,7 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val changePasswordUseCase = useCasesComponent.provideChangePasswordUseCase()
+
     override fun activate() {
     }
 

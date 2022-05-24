@@ -8,6 +8,7 @@ import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -17,16 +18,22 @@ import org.w3c.dom.events.EventListener
 import react.*
 import react.dom.*
 import react.dom.aria.ariaLabel
+import react.router.NavigateFunction
+import react.router.NavigateOptions
+import react.router.useLocation
 import react.router.useNavigate
+import kotlin.js.Json
 
 
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
     var state by useState<DataState>()
+    var organization by useState("")
     var password by useState("")
     var appTheme by useContext(AppThemeContext)
     val navigator = useNavigate()
+    val location = useLocation()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         state = stateNew
@@ -52,11 +59,22 @@ val JSLoginScreen = VFC {
 
 
     useEffectOnce {
-        dataModel.activate()
+        try {
+            val orgJson = location.state.unsafeCast<Json>()
+            orgJson["orgId"]?.let {
+                organization = it.toString()
+                dataModel.activate()
+            } ?: kotlin.run {
+                navigateRoot(navigator)
+            }
+        } catch (ex: Exception) {
+            navigateRoot(navigator)
+        }
+
     }
 
     TopAppBar {
-        title = "Login Form"
+        title = "$organization Login Form"
         subtitle = message
     }
     Paper {
@@ -110,4 +128,10 @@ val JSLoginScreen = VFC {
             }
         }
     }
+}
+
+private fun navigateRoot(navigator: NavigateFunction) {
+    navigator.invoke(to = "/", options = jso {
+        replace = true
+    })
 }

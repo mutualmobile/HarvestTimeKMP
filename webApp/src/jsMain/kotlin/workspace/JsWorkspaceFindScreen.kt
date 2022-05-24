@@ -9,6 +9,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
 import csstype.*
 import harvest.material.TopAppBar
+import kotlinx.js.jso
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
@@ -17,11 +18,14 @@ import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.html.ReactHTML
 import react.dom.onChange
+import react.router.NavigateOptions
+import react.router.useNavigate
+import kotlin.js.json
 
 val JsWorkspaceFindScreen = VFC {
     var status by useState("")
     var workspaceName by useState("")
-
+    val navigator = useNavigate()
     val dataModel = FindOrgByIdentifierDataModel(onDataState = { dataState: DataState ->
         when (dataState) {
             is LoadingState -> {
@@ -30,6 +34,9 @@ val JsWorkspaceFindScreen = VFC {
             is SuccessState<*> -> {
                 val organization = dataState.data as ApiResponse<HarvestOrganization>
                 status = "Found organization! ${organization.data?.name}"
+                navigator.invoke(to = "/login", options = jso {
+                    state = json(Pair("orgId", organization.data?.identifier))
+                })
             }
             is ErrorState -> {
                 status = dataState.throwable.message.toString()
