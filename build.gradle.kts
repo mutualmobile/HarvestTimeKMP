@@ -8,6 +8,7 @@ buildscript {
         AppDependencies.plugins.forEach { dependency ->
             classpath(dependency)
         }
+        classpath ("dev.icerock.moko:resources-generator:0.20.0")
     }
 }
 

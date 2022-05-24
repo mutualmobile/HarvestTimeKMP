@@ -38,7 +38,7 @@ import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
@@ -97,7 +97,7 @@ fun BucketSelector() {
                 onValueChange = { updatedText -> notesEtText = updatedText },
                 placeholder = {
                     Text(
-                        text = stringResource(R.string.new_entry_screen_notes_et_hint),
+                        text = stringResource(MR.strings.new_entry_screen_notes_et_hint.resourceId),
                         modifier = Modifier.alpha(0.5f)
                     )
                 },

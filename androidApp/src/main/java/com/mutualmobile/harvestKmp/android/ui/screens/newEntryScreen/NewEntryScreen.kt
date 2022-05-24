@@ -32,7 +32,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 
@@ -44,7 +44,7 @@ fun NewEntryScreen() {
             TopAppBar(
                 title = {
                     Text(
-                        text = stringResource(id = R.string.title_activity_new_entry),
+                        text = stringResource(id = MR.strings.title_activity_new_entry.resourceId),
                         fontWeight = FontWeight.Bold
                     )
                 },
@@ -73,7 +73,7 @@ fun NewEntryScreen() {
                         modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
                     ) {
                         Text(
-                            text = stringResource(R.string.new_entry_screen_start_timer_btn_txt),
+                            text = stringResource(MR.strings.new_entry_screen_start_timer_btn_txt.resourceId),
                             style = MaterialTheme.typography.button.copy(
                                 color = MaterialTheme.colors.onSurface
                             ),
@@ -95,7 +95,7 @@ fun NewEntryScreen() {
             DateDurationSelector()
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
             Text(
-                text = stringResource(R.string.new_entry_screen_end_view_text),
+                text = stringResource(MR.strings.new_entry_screen_end_view_text.resourceId),
                 style = MaterialTheme.typography.body2,
                 modifier = Modifier.alpha(0.5f)
             )

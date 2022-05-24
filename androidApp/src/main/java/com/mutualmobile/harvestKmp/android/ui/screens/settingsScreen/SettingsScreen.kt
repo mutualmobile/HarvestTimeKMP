@@ -21,7 +21,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.components.AboutHarvestSection
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.components.AccountSection
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.components.NotificationsSection
@@ -39,7 +39,7 @@ fun SettingsScreen() {
                 },
                 title = {
                     Text(
-                        text = stringResource(id = R.string.title_activity_settings),
+                        text = stringResource(id = MR.strings.title_activity_settings.resourceId),
                         fontWeight = FontWeight.Bold,
                     )
                 },

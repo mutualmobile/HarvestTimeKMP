@@ -4,6 +4,7 @@ import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 plugins {
   kotlin("multiplatform")
   id("org.jetbrains.compose") version ComposeDesktopDependencyVersions.composeDesktopWeb
+  id("dev.icerock.mobile.multiplatform-resources")
 }
 
 group = "com.mutualmobile"
@@ -42,4 +43,8 @@ compose.desktop {
       packageVersion = "1.0.0"
     }
   }
+}
+
+multiplatformResources {
+  multiplatformResourcesPackage = "com.mutualmobile.harvestKmp"
 }

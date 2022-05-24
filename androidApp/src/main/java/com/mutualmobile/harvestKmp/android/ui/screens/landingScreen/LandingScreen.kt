@@ -39,10 +39,9 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
@@ -87,7 +86,7 @@ fun LandingScreen() {
                             }
                             LandingScreenDrawerItemType.Reports -> {
                                 Text(
-                                    text = stringResource(R.string.reports_screen_app_bar_subtitle),
+                                    text = stringResource(MR.strings.reports_screen_app_bar_subtitle.resourceId),
                                     style = MaterialTheme.typography.body1.copy(
                                         color = MaterialTheme.colors.surface.copy(alpha = 0.6f)
                                     )
@@ -123,15 +122,15 @@ fun LandingScreen() {
                                 onDismissRequest = { isDropDownMenuShown = false },
                             ) {
                                 DropdownMenuItem(onClick = {}) {
-                                    Text(text = stringResource(R.string.landing_screen_dropdown_jump_to_date_option))
+                                    Text(text = stringResource(MR.strings.landing_screen_dropdown_jump_to_date_option.resourceId))
                                 }
                                 DropdownMenuItem(onClick = {}) {
-                                    Text(text = stringResource(R.string.landing_screen_dropdown_submit_week_option))
+                                    Text(text = stringResource(MR.strings.landing_screen_dropdown_submit_week_option.resourceId))
                                 }
                                 DropdownMenuItem(onClick = {}, enabled = false) {
                                     Text(
                                         text = stringResource(
-                                            R.string.landing_screen_dropdown_week_total_option,
+                                            MR.strings.landing_screen_dropdown_week_total_option.resourceId,
                                             "0.00"
                                         ),
                                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.25f)

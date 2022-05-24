@@ -36,6 +36,7 @@ import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
+import com.mutualmobile.harvestKmp.MR
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -79,7 +80,7 @@ fun LoginScreen(navController: NavHostController) {
         ) {
             IconLabelButton(
                 icon = R.drawable.google_logo,
-                label = stringResource(R.string.login_screen_google_btn_txt),
+                label = stringResource(MR.strings.login_screen_google_btn_txt.resourceId),
                 isLoading = currentLoginState is LoadingState,
                 errorMsg = (currentLoginState as? ErrorState)?.throwable?.message,
                 onClick = {
@@ -90,16 +91,16 @@ fun LoginScreen(navController: NavHostController) {
             SignInTextField(
                 value = currentWorkEmail,
                 onValueChange = { updatedString -> currentWorkEmail = updatedString },
-                placeholderText = stringResource(R.string.login_screen_email_et_placeholder)
+                placeholderText = stringResource(MR.strings.login_screen_email_et_placeholder.resourceId)
             )
             SignInTextField(
                 value = currentPassword,
                 onValueChange = { updatedString -> currentPassword = updatedString },
-                placeholderText = stringResource(R.string.login_screen_password_et_placeholder),
+                placeholderText = stringResource(MR.strings.login_screen_password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
             IconLabelButton(
-                label = stringResource(R.string.login_screen_signIn_btn_txt),
+                label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
                 onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) }
             )
             SurfaceTextButton(

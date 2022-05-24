@@ -5,6 +5,7 @@ plugins {
     WearOSPlugins.kotlinPlugins.forEach { dependency ->
         kotlin(dependency)
     }
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 android {
@@ -49,4 +50,8 @@ android {
 dependencies {
     implementation(project(":shared"))
     WearOSDependencies.implementation.forEach(::implementation)
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.mutualmobile.harvestKmp"
 }

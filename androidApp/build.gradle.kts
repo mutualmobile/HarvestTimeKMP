@@ -7,6 +7,7 @@ plugins {
             id(lib)
         }
     }
+    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 android {
@@ -60,4 +61,9 @@ dependencies {
     AndroidDependencies.implementation.forEach(::implementation)
     AndroidDependencies.androidTestImplementation.forEach(::androidTestImplementation)
     AndroidDependencies.debugImplementation.forEach(::debugImplementation)
+}
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.mutualmobile.harvestKmp"
+    disableStaticFrameworkWarning = true
 }

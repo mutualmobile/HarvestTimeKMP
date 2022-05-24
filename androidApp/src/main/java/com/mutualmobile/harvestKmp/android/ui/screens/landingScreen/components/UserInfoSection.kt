@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.R
 
 @Composable
@@ -70,7 +71,7 @@ fun UserInfoSection(
         ) {
             UserInfoSectionText(
                 text = stringResource(
-                    id = R.string.user_info_section_username,
+                    id = MR.strings.user_info_section_username.resourceId,
                     userName
                 )
             )
