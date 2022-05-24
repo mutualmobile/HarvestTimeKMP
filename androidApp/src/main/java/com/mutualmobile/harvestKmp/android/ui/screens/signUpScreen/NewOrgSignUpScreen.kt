@@ -3,9 +3,11 @@ package com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -15,20 +17,21 @@ import androidx.compose.ui.unit.dp
 import com.google.accompanist.insets.systemBarsPadding
 import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
-import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
+import com.mutualmobile.harvestKmp.features.harvest.NewOrgSignUpDataModel
 
 @Composable
-fun SignUpScreen(
-    signUpDataModel: SignUpDataModel
+fun NewOrgSignUpScreen(
+    signUpDataModel: NewOrgSignUpDataModel
 ) {
     var currentWorkEmail by remember { mutableStateOf("") }
     var currentPassword by remember { mutableStateOf("") }
     var currentFirstName by remember { mutableStateOf("") }
     var currentLastName by remember { mutableStateOf("") }
-    var currentCompanyName by remember { mutableStateOf("5186f350-1f0e-42b7-b07e-ab36eb460552") }
+    var companyName by remember { mutableStateOf("") }
+    var companyWebsite by remember { mutableStateOf("") }
+    var companyIdentifier by remember { mutableStateOf("") }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -43,6 +46,24 @@ fun SignUpScreen(
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
+            Text(text = stringResource(R.string.signup_screen_company_details_et_placeholder))
+            SignUpTextField(
+                value = companyName,
+                onValueChange = { updatedString -> companyName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_company_name_et_placeholder)
+            )
+            SignUpTextField(
+                value = companyWebsite,
+                onValueChange = { updatedString -> companyWebsite = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_company_website_et_placeholder)
+            )
+            SignUpTextField(
+                value = companyIdentifier,
+                onValueChange = { updatedString -> companyIdentifier = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_company_identifier_et_placeholder)
+            )
+            Spacer(modifier = Modifier.padding(8.dp))
+            Text(text = stringResource(R.string.signup_screen_user_details_et_placeholder))
             SignUpTextField(
                 value = currentFirstName,
                 onValueChange = { updatedString -> currentFirstName = updatedString },
@@ -52,11 +73,6 @@ fun SignUpScreen(
                 value = currentLastName,
                 onValueChange = { updatedString -> currentLastName = updatedString },
                 placeholderText = stringResource(R.string.signup_screen_last_name_et_placeholder)
-            )
-            SignUpTextField(
-                value = currentCompanyName,
-                onValueChange = { updatedString -> currentCompanyName = updatedString },
-                placeholderText = stringResource(R.string.signup_screen_company_name_et_placeholder)
             )
             SignUpTextField(
                 value = currentWorkEmail,
@@ -75,17 +91,19 @@ fun SignUpScreen(
                     signUpDataModel.signUp(
                         currentFirstName,
                         currentLastName,
-                        currentCompanyName,
                         currentWorkEmail,
-                        currentPassword
+                        currentPassword,
+                        companyName,
+                        companyWebsite,
+                        companyIdentifier
                     )
                 }
             )
             SurfaceTextButton(
                 text = buildAnnotatedString {
-                    append("Don't have an account?")
+                    append("Already have an account?")
                     withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append(" Try Harvest Free")
+                        append("Login")
                     }
                 }.toString()
             )

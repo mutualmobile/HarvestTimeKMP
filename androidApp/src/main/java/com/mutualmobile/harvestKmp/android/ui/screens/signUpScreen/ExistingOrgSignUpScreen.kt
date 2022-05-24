@@ -1,4 +1,4 @@
-package com.mutualmobile.harvestKmp.android.ui.screens.loginScreen
+package com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -26,35 +26,37 @@ import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.OrDivider
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
+import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
+import com.mutualmobile.harvestKmp.features.harvest.ExistingOrgSignUpDataModel
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
-    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
-    var currentPassword by remember { mutableStateOf("password") }
+fun SignUpScreen(navController: NavHostController) {
+    var currentWorkEmail by remember { mutableStateOf("test@gmail.com") }
+    var currentPassword by remember { mutableStateOf("testpassword") }
+    var currentFirstName by remember { mutableStateOf("test") }
+    var currentLastName by remember { mutableStateOf("test") }
+    var currentCompanyName by remember { mutableStateOf("5186f350-1f0e-42b7-b07e-ab36eb460552") }
 
-    var currentLoginState: DataState by remember {
+    var currentSignUpState: DataState by remember {
         mutableStateOf(EmptyState)
     }
 
-    val loginDataModel by remember {
+    val signUpDataModel by remember {
         mutableStateOf(
-            LoginDataModel { loginState ->
-                currentLoginState = loginState
-                when (loginState) {
+            ExistingOrgSignUpDataModel { signUpState ->
+                currentSignUpState = signUpState
+                when (signUpState) {
                     is SuccessState<*> -> {
                         navController.navigateAndClear(
-                            clearRoute = ScreenList.LoginScreen(),
-                            navigateTo = ScreenList.LandingScreen()
+                            clearRoute = ScreenList.ExistingOrgSignUpScreen(),
+                            navigateTo = ScreenList.LandingScreen(),
                         )
                     }
                     else -> Unit
@@ -77,36 +79,51 @@ fun LoginScreen(navController: NavHostController) {
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconLabelButton(
-                icon = R.drawable.google_logo,
-                label = stringResource(R.string.login_screen_google_btn_txt),
-                isLoading = currentLoginState is LoadingState,
-                errorMsg = (currentLoginState as? ErrorState)?.throwable?.message,
-                onClick = {
-                    loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim())
-                }
+            SignUpTextField(
+                value = currentFirstName,
+                onValueChange = { updatedString -> currentFirstName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_first_name_et_placeholder)
             )
-            OrDivider()
-            SignInTextField(
+            SignUpTextField(
+                value = currentLastName,
+                onValueChange = { updatedString -> currentLastName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_last_name_et_placeholder)
+            )
+            SignUpTextField(
+                value = currentCompanyName,
+                onValueChange = { updatedString -> currentCompanyName = updatedString },
+                placeholderText = stringResource(R.string.signup_screen_company_name_et_placeholder)
+            )
+            SignUpTextField(
                 value = currentWorkEmail,
                 onValueChange = { updatedString -> currentWorkEmail = updatedString },
-                placeholderText = stringResource(R.string.login_screen_email_et_placeholder)
+                placeholderText = stringResource(R.string.signup_screen_email_et_placeholder)
             )
-            SignInTextField(
+            SignUpTextField(
                 value = currentPassword,
                 onValueChange = { updatedString -> currentPassword = updatedString },
-                placeholderText = stringResource(R.string.login_screen_password_et_placeholder),
+                placeholderText = stringResource(R.string.signup_screen_password_et_placeholder),
                 isPasswordTextField = true
             )
             IconLabelButton(
-                label = stringResource(R.string.login_screen_signIn_btn_txt),
-                onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) }
+                label = stringResource(R.string.signup_screen_signup_btn_txt),
+                isLoading = currentSignUpState is LoadingState,
+                errorMsg = (currentSignUpState as? ErrorState)?.throwable?.message,
+                onClick = {
+                    signUpDataModel.signUp(
+                        firstName = currentFirstName,
+                        lastName = currentLastName,
+                        company = currentCompanyName,
+                        email = currentWorkEmail,
+                        password = currentPassword
+                    )
+                }
             )
             SurfaceTextButton(
                 text = buildAnnotatedString {
-                    append("Don't have an account?")
+                    append("Already have an account?")
                     withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append(" Try Harvest Free")
+                        append("Login")
                     }
                 }.toString()
             )
@@ -114,4 +131,3 @@ fun LoginScreen(navController: NavHostController) {
         }
     }
 }
-

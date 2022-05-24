@@ -8,6 +8,7 @@ import mui.material.styles.ThemeProvider
 import org.w3c.dom.MediaQueryList
 import org.w3c.dom.events.Event
 import org.w3c.dom.events.EventListener
+import org.w3c.dom.events.EventTarget
 import react.*
 
 typealias ThemeState = StateInstance<Theme>
@@ -15,14 +16,13 @@ typealias ThemeState = StateInstance<Theme>
 val AppThemeContext = createContext<ThemeState>()
 
 val ThemeModule = FC<PropsWithChildren> { props ->
-    // TODO how do we implement this light/dark mode here ?
     val currentTheme = window.matchMedia("(prefers-color-scheme: dark)");
     val state = useState(if (currentTheme.matches) Themes.Dark else Themes.Light)
 
     val listener = object : EventListener {
         override fun handleEvent(event: Event) {
-            if (event is MediaQueryList) {
-                val newThemeDark = currentTheme.matches;
+            if (event.target is MediaQueryList) {
+                val newThemeDark = (event.target as MediaQueryList).matches;
                 state.component2().invoke(if (newThemeDark) Themes.Dark else Themes.Light)
             }
         }
@@ -30,9 +30,10 @@ val ThemeModule = FC<PropsWithChildren> { props ->
 
 
     useEffect {
-        currentTheme.addListener(listener)
+        val darkThemeMQ = window.matchMedia("(prefers-color-scheme: dark)");
+        darkThemeMQ.addListener(listener)
         cleanup {
-            currentTheme.removeListener(listener)
+            darkThemeMQ.removeListener(listener)
         }
     }
 

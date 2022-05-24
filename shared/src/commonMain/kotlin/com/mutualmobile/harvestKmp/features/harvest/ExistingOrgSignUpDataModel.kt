@@ -8,8 +8,8 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(), KoinComponent {
+class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
+    PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
@@ -34,7 +34,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch() {
             onDataState(LoadingState)
-            val signUpResponse = useCasesComponent.provideSignUpUseCase()
+            val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()
                 .perform(firstName, lastName, company, email, password)
             when (signUpResponse) {
                 is NetworkResponse.Success -> {

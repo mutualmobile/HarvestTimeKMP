@@ -18,7 +18,7 @@ object Themes {
                 primary = jso {
                     main = "#fa5d00"
                 }
-                secondary = jso{
+                secondary = jso {
                     main = "#f50057"
                 }
             }
@@ -36,7 +36,7 @@ object Themes {
                 primary = jso {
                     main = "#fa5d00"
                 }
-                secondary = jso{
+                secondary = jso {
                     main = "#f50057"
                 }
             }

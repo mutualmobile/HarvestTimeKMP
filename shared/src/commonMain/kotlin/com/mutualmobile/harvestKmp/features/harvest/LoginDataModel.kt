@@ -12,7 +12,8 @@ import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 
-class LoginDataModel(private val onDataState: (DataState) -> Unit) : PraxisDataModel(), KoinComponent {
+class LoginDataModel(private val onDataState: (DataState) -> Unit) :
+    PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
@@ -34,16 +35,17 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) : PraxisDataM
 
     fun login(email: String, password: String) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
+        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
             when (val loginResponse = loginUseCase.perform(email, password)) {
                 is NetworkResponse.Success -> {
-                    print(loginResponse.data)
                     settings["JWT_TOKEN"] =loginResponse.data.token
                     settings["REFRESH_TOKEN"] = loginResponse.data.refreshToken
+                    print("Login Successful, ${loginResponse.data.message}")
                     onDataState(SuccessState(loginResponse.data))
                 }
                 is NetworkResponse.Failure -> {
+                    print("Login Failed, ${loginResponse.exception.message}")
                     onDataState(ErrorState(loginResponse.exception))
                 }
             }
