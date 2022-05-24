@@ -1,10 +1,13 @@
 package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.*
+import com.mutualmobile.harvestKmp.domain.model.response.ChangePasswordResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.get
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -22,6 +25,7 @@ const val LOGOUT = "/logout"
 const val FCM_TOKEN = "/fcmToken"
 const val CHANGE_PASSWORD = "/changePassword"
 const val FIND_ORGANIZATION_BY_IDENTIFIER = "/public/organization"
+const val FORGOT_PASSWORD = "/public/forgotPassword"
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpringBootAPI {
 
@@ -131,15 +135,40 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
 
     override suspend fun changePassword(
         password: String,
-        oldPassword: String
-    ): ChangePassword {
-        return httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD").body()
+        oldPassword: String,
+    ): NetworkResponse<ChangePasswordResponse> {
+        val settings = Settings()
+        val jwtToken = settings.getString("JWT_TOKEN")
+        return try {
+            val response = httpClient.post("$SPRING_BOOT_BASE_URL$API_URL$CHANGE_PASSWORD") {
+                contentType(ContentType.Application.Json)
+                setBody(ChangePassword(password = password, oldPass = oldPassword))
+                header("Authorization", "Bearer $jwtToken")
+            }
+            val responseBody = response.body<ChangePasswordResponse>()
+            NetworkResponse.Success(responseBody)
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<FindOrgResponse> {
         return try {
             NetworkResponse.Success(
                 httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FIND_ORGANIZATION_BY_IDENTIFIER?identifier=$identifier")
+                    .body()
+            )
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun forgotPassword(): NetworkResponse<Any> {
+        return try {
+            NetworkResponse.Success(
+                httpClient.get("$SPRING_BOOT_BASE_URL$API_URL$FORGOT_PASSWORD")
                     .body()
             )
         } catch (e: Exception) {

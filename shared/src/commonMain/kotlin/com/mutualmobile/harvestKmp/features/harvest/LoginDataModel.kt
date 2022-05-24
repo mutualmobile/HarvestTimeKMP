@@ -3,7 +3,8 @@ package com.mutualmobile.harvestKmp.features.harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-import com.mutualmobile.harvestKmp.validators.LoginFormValidator
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.set
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -18,6 +19,9 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val loginUseCase = useCasesComponent.provideLoginUseCase()
 
+    // Todo Inject Settings
+    private val settings = Settings()
+
     override fun activate() {
     }
 
@@ -31,13 +35,14 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun login(email: String, password: String) {
         currentLoadingJob?.cancel()
-
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
             when (val loginResponse = loginUseCase.perform(email, password)) {
                 is NetworkResponse.Success -> {
                     print("Login Successful, ${loginResponse.data.message}")
                     onDataState(SuccessState(loginResponse.data))
+                    settings["JWT_TOKEN"] = loginResponse.data.token
+                    settings["REFRESH_TOKEN"] = loginResponse.data.refreshToken
                 }
                 is NetworkResponse.Failure -> {
                     print("Login Failed, ${loginResponse.exception.message}")
