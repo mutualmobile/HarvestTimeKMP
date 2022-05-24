@@ -20,27 +20,6 @@ import react.dom.aria.ariaLabel
 import react.router.useNavigate
 
 
-val useThemeDetector = fc<Props> {
-    val getCurrentTheme = window.matchMedia("(prefers-color-scheme: dark)").matches
-    val (isDarkTheme, setIsDarkTheme) = useState(getCurrentTheme)
-
-    val mqListener = object : EventListener {
-        override fun handleEvent(event: Event) {
-            if (event is MediaQueryList) {
-                setIsDarkTheme(event.matches);
-            }
-        }
-    }
-
-    useEffect {
-        val darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)")
-        darkThemeMq.addListener(mqListener);
-        this.cleanup {
-            darkThemeMq.removeListener(mqListener)
-        }
-    }
-}
-
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
