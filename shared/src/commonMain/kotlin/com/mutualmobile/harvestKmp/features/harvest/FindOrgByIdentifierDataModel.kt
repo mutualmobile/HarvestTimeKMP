@@ -19,9 +19,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
         currentLoadingJob = dataModelScope.launch() {
             onDataState(LoadingState)
 
-            val response = useCasesComponent.provideFindOrgByIdentifier()
-                .perform(identifier)
-            when (response) {
+            when (val response = useCasesComponent.provideFindOrgByIdentifier()(identifier)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(response.data))
                     println("SUCCESS, ${response.data.message}")

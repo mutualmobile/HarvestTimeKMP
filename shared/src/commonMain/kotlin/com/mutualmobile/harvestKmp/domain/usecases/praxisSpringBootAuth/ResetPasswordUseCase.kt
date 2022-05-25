@@ -7,7 +7,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class ResetPasswordUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(
+    suspend operator fun invoke(
         resetPasswordRequest: ResetPasswordRequest
     ): NetworkResponse<ApiResponse<Unit>> {
         return praxisSpringBootAPI.resetPassword(resetPasswordRequest)

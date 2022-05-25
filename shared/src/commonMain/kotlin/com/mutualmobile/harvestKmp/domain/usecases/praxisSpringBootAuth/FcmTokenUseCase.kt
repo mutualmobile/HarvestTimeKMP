@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class FcmTokenUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(): NetworkResponse<ApiResponse<HarvestOrganization>> {
+    suspend operator fun invoke(): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return praxisSpringBootAPI.fcmToken()
     }
 }

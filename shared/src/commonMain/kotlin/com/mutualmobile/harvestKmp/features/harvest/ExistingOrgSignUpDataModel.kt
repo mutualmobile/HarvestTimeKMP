@@ -32,11 +32,9 @@ class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
         password: String
     ) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch() {
+        currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()
-                .perform(firstName, lastName, company, email, password)
-            when (signUpResponse) {
+            when (val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()(firstName, lastName, company, email, password)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(signUpResponse.data))
                     println("SUCCESS ${signUpResponse.data.message}")

@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class ForgotPasswordUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(
+    suspend operator fun invoke(
         email: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return praxisSpringBootAPI.forgotPassword(email)
