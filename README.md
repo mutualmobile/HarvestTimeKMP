@@ -1,16 +1,27 @@
-# PraxisKMM
+# HarvestTime KMM 
 
-Minimal **Kotlin Multiplatform** project with SwiftUI, Jetpack Compose, Compose for Wear OS,. Currently running on
+Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Compose for Wear OS,. Currently running on
 
-* Desktop JVM (Jetpack Compose) ✅ DONE
-* Android (Jetpack Compose) ✅ DONE
-* Android App Widget 🚧 TODO
-* Wear OS (Compose for Wear OS) ✅ DONE
-* iOS (SwiftUI) ✅ DONE
-* iOS App Widget (SwiftUI) 🚧 TODO
-* watchOS (SwiftUI) ✅ DONE
-* macOS (SwiftUI) ✅ DONE
-* Web (ReactJS) ✅ DONE
+* Desktop JVM (Jetpack Compose) 🚧  WIP
+* Android (Jetpack Compose) 🚧  WIP
+* iOS (SwiftUI) 🚧  WIP
+* macOS (SwiftUI) 🚧  WIP
+* Web (ReactJS) 🚧  WIP
+* Android App Widget ⚠️ TODO 
+* Wear OS (Compose for Wear OS) ⚠ TODO
+* iOS App Widget (SwiftUI) ⚠️ TODO
+* watchOS (SwiftUI) ⚠️ TODO
+
+Build using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project. 
+
+### API
+
+The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://github.com/mutualmobile/HarvestAPISpring).
+- Find Organization ✅ DONE
+- Sign In User  ✅ DONE
+- Sign Up User  ✅ DONE
+- Forgot Password 🚧 WIP
+- Change Password 🚧 WIP
 
 ### TODOs
 
@@ -20,6 +31,18 @@ Minimal **Kotlin Multiplatform** project with SwiftUI, Jetpack Compose, Compose 
 
 ### Screenshots
 
+* Android (Jetpack Compose)
+
+<img src="art/android_harvest_sign_in.png" alt="drawing" style="width:200px;"/>
+
+* iOS (SwiftUI)
+
+<img src="art/ios_harvest_sign_in.png" alt="drawing" style="width:200px;"/>
+
+* Web (ReactJS)
+
+<img src="art/react_harvest_find_org.png" alt="drawing" style="width:200px;"/>
+
 * Compose Desktop (Compose for Desktop)
 
 <img src="art/art7.png" alt="drawing" style="width:200px;"/>
@@ -28,25 +51,14 @@ Minimal **Kotlin Multiplatform** project with SwiftUI, Jetpack Compose, Compose 
 
 <img src="art/art6.png" alt="drawing" style="width:200px;"/>
 
-* Android (Jetpack Compose)
-
-<img src="art/art5.png" alt="drawing" style="width:200px;"/>
-
 * watchOS (SwiftUI)
 
 <img src="art/art2.png" alt="drawing" style="width:200px;"/>
-
-* iOS (SwiftUI)
-
-<img src="art/art1.png" alt="drawing" style="width:200px;"/>
 
 * macOS (SwiftUI)
 
 <img src="art/art3.png" alt="drawing" style="width:200px;"/>
 
-* Web (ReactJS)
-
-<img src="art/art4.png" alt="drawing" style="width:200px;"/>
 
 ### Languages, libraries and tools used
 

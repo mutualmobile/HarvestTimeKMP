@@ -11,6 +11,7 @@ import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth.*
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
+import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.engine.*
 import io.ktor.client.plugins.logging.*
@@ -41,6 +42,7 @@ val localDBRepos = module {
 
 val commonModule = module {
     single { httpClient(get()) }
+    single { Settings() }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
 }
@@ -58,6 +60,7 @@ val useCaseModule = module {
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
     single { ResetPasswordUseCase(get()) }
+    single { SaveSettingsUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -68,6 +71,7 @@ class UseCasesComponent : KoinComponent {
 
 class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideLoginUseCase(): LoginUseCase = get()
+    fun provideSaveSettingsUseCase(): SaveSettingsUseCase = get()
     fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
     fun provideNewOrgSignUpUseCase(): NewOrgSignUpUseCase = get()
     fun provideFindOrgByIdentifier(): FindOrgByIdentifierUseCase = get()
@@ -81,6 +85,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
+    fun provideSettings(): Settings = get()
 }
 
 private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {

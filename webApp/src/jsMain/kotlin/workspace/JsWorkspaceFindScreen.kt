@@ -1,9 +1,6 @@
 package workspace
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
@@ -124,6 +121,17 @@ val JsWorkspaceFindScreen = VFC {
                     +"Find Workspace"
                     onClick = {
                         dataModel.findOrgByIdentifier(workspaceName)
+                    }
+                }
+
+                Button {
+                    this.variant = ButtonVariant.contained
+                    sx {
+                        this.margin = Margin(24.px, 4.px)
+                    }
+                    +"Not yet registered ? Signup ?"
+                    onClick = {
+                        navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + Routes.Screen.SIGNUP)
                     }
                 }
             }
