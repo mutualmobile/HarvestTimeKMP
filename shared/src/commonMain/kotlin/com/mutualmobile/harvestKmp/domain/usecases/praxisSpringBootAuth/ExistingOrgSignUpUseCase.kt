@@ -4,6 +4,8 @@ import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.mutualmobile.harvestKmp.validators.LoginFormValidator
+import com.mutualmobile.harvestKmp.validators.SignUpFormValidator
 
 class ExistingOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
     suspend fun perform(
@@ -13,6 +15,7 @@ class ExistingOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBoot
         email: String,
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
+        SignUpFormValidator().invokeExistingOrg(firstName, lastName, email, password)
         return praxisSpringBootAPI.existingOrgSignUp(firstName, lastName, company, email, password)
     }
 }
