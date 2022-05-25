@@ -32,7 +32,7 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
             when (val changePasswordResponse =
-                resetPasswordUseCase.perform(
+                resetPasswordUseCase(
                     ResetPasswordRequest(
                         password = password,
                         token = token

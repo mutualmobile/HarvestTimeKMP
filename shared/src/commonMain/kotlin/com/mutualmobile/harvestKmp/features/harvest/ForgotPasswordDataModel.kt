@@ -19,9 +19,7 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob = dataModelScope.launch() {
             onDataState(LoadingState)
 
-            val response = useCasesComponent.provideForgotPasswordUseCase()
-                .perform(email)
-            when (response) {
+            when (val response = useCasesComponent.provideForgotPasswordUseCase()(email)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(response.data))
                     println("SUCCESS, ${response.data.message}")

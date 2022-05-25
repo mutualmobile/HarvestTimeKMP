@@ -37,7 +37,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
-            when (val loginResponse = loginUseCase.perform(email, password)) {
+            when (val loginResponse = loginUseCase(email, password)) {
                 is NetworkResponse.Success -> {
                     print("Login Successful, ${loginResponse.data.message}")
                     onDataState(SuccessState(loginResponse.data))

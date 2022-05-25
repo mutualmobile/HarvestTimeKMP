@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class FindOrgByIdentifierUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
+    suspend operator fun invoke(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return praxisSpringBootAPI.findOrgByIdentifier(identifier)
     }
 }
