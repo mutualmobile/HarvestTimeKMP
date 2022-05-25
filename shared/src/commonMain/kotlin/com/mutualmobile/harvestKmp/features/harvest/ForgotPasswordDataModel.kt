@@ -25,8 +25,8 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                     println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.exception))
-                    println("FAILED, ${response.exception.message}")
+                    onDataState(ErrorState(response.throwable))
+                    println("FAILED, ${response.throwable.message}")
                 }
             }
         }

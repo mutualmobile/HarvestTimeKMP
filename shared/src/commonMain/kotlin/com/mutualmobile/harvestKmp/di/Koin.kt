@@ -44,6 +44,7 @@ val commonModule = module {
     single { httpClient(get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get(), get()) }
+    single { Settings() }
 }
 
 val useCaseModule = module {
@@ -86,7 +87,6 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
-    fun provideSettings(): Settings = get()
 }
 
 private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {

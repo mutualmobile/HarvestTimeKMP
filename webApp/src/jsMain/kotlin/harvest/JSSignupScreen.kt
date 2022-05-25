@@ -1,5 +1,10 @@
 package harvest
 
+import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgId
+import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgIdentifier
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -8,38 +13,53 @@ import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.onChange
-import react.router.useLocation
-import react.router.useNavigate
-import kotlin.js.Json
+import react.router.dom.useSearchParams
 
-external interface SignupProps : Props
 
-val JSSignupScreen = FC<SignupProps> {
+val JSSignupScreen = VFC {
     var message by useState("")
     var email by useState("")
-    var organization by useState<String?>(null)
+    var firstName by useState("")
+    var lastName by useState("")
+    val searchParams = useSearchParams()
+
+    val organizationIdentifier: String? = searchParams.component1().get(orgIdentifier)
+    val orgId:String? = searchParams.component1().get(orgId)
+
+    var orgName by useState("")
+    var orgWebsite by useState("")
+    var orgIdentifier by useState("")
+
     var password by useState("")
     var confPassword by useState("")
-    val navigator = useNavigate()
-    val location = useLocation()
 
+    val dataModel = SignUpDataModel(onDataState = { stateNew ->
+        when (stateNew) {
+            is LoadingState -> {
+                message = "Loading..."
+            }
+            is SuccessState<*> -> {
+                val data = (stateNew.data as ApiResponse<*>)
+                message = data.message ?: "No Data found!"
+            }
+            Complete -> {
+                message = "Completed loading!"
+            }
+            EmptyState -> {
+                message = "Empty state"
+            }
+            is ErrorState -> {
+                message = stateNew.throwable.message ?: "Error"
+            }
+        }
+    })
 
     useEffectOnce {
-        try {
-            val orgJson = location.state.unsafeCast<Json>()
-            orgJson["orgId"]?.let {
-                organization = it.toString()
-                dataModel.activate()
-            } ?: kotlin.run {
-                navigateRoot(navigator)
-            }
-        } catch (ex: Exception) {
-            navigateRoot(navigator)
-        }
+        dataModel.activate()
     }
 
     TopAppBar {
-        title = "${organization?:""} Signup Form"
+        title = "${organizationIdentifier ?: ""} Signup Form"
         subtitle = message
     }
     Paper {
@@ -50,6 +70,30 @@ val JSSignupScreen = FC<SignupProps> {
             Stack {
                 sx {
                     margin = Margin(24.px, 24.px)
+                }
+                TextField {
+                    this.variant = FormControlVariant.outlined
+                    this.value = firstName
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        firstName = target.value
+                    }
+                    this.placeholder = "First Name"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
+                }
+                TextField {
+                    this.variant = FormControlVariant.outlined
+                    this.value = lastName
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        lastName = target.value
+                    }
+                    this.placeholder = "Last Name"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
                 }
                 TextField {
                     this.variant = FormControlVariant.outlined
@@ -90,9 +134,66 @@ val JSSignupScreen = FC<SignupProps> {
                     }
                 }
 
+                if(organizationIdentifier == null){
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = orgName
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            orgName = target.value
+                        }
+                        this.placeholder = "Org Name"
+                        sx {
+                            margin = Margin(12.px, 2.px)
+                        }
+                    }
+
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = orgWebsite
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            orgWebsite = target.value
+                        }
+                        this.placeholder = "Org Website"
+                        sx {
+                            margin = Margin(12.px, 2.px)
+                        }
+                    }
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = orgIdentifier
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            orgIdentifier = target.value
+                        }
+                        this.placeholder = "Org Identifier"
+                        sx {
+                            margin = Margin(12.px, 2.px)
+                        }
+                    }
+
+
+                }
+
+
+
                 Button {
                     this.onClick = {
-                        dataModel.signup(email, password)
+                        orgId?.let { organization ->
+                            dataModel.signUp(firstName, lastName, organization, email, password)
+                        } ?: run {
+                            dataModel.signUp(
+                                firstName = firstName,
+                                lastName = lastName,
+                                email = email,
+                                password = password,
+                                orgName = orgName,
+                                orgWebsite = orgWebsite,
+                                orgIdentifier=orgIdentifier
+                            )
+
+                        }
                     }
                     +"Signup"
                 }

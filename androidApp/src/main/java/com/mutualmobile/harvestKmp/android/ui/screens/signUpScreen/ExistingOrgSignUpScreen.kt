@@ -34,7 +34,7 @@ import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.harvest.ExistingOrgSignUpDataModel
+import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
@@ -50,7 +50,7 @@ fun SignUpScreen(navController: NavHostController) {
 
     val signUpDataModel by remember {
         mutableStateOf(
-            ExistingOrgSignUpDataModel { signUpState ->
+            SignUpDataModel { signUpState ->
                 currentSignUpState = signUpState
                 when (signUpState) {
                     is SuccessState<*> -> {

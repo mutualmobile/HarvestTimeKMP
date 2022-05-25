@@ -36,8 +36,8 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
                     onDataState(SuccessState(changePasswordResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    print("ChangePassword Failed, ${changePasswordResponse.exception.message}")
-                    onDataState(ErrorState(changePasswordResponse.exception))
+                    print("ChangePassword Failed, ${changePasswordResponse.throwable.message}")
+                    onDataState(ErrorState(changePasswordResponse.throwable))
                 }
             }
         }

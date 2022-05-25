@@ -25,8 +25,8 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
                     onDataState(SuccessState(getUserResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    print("GetUser Failed, ${getUserResponse.exception.message}")
-                    onDataState(ErrorState(getUserResponse.exception))
+                    print("GetUser Failed, ${getUserResponse.throwable.message}")
+                    onDataState(ErrorState(getUserResponse.throwable))
                 }
             }
         }
