@@ -1,11 +1,12 @@
 package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth
 
 import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
-import com.mutualmobile.harvestKmp.domain.model.response.SignUpResponse
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class NewOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(
+    suspend operator fun invoke(
         firstName: String,
         lastName: String,
         email: String,
@@ -13,7 +14,7 @@ class NewOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) 
         orgName: String,
         orgWebsite: String,
         orgIdentifier: String
-    ): NetworkResponse<SignUpResponse> {
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return praxisSpringBootAPI.newOrgSignUp(firstName, lastName, email, password, orgName, orgWebsite, orgIdentifier)
     }
 }

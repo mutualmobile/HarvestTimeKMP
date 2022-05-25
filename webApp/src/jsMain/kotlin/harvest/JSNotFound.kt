@@ -1,13 +1,12 @@
 package harvest
 
-import kotlinx.css.div
+import mui.material.Box
+import mui.material.Typography
 import react.VFC
-import react.dom.html.ReactHTML.div
-import react.dom.html.ReactHTML.h1
 
 val JSNotFound = VFC {
-    div {
-        h1 {
+    Box {
+        Typography {
             +"404 Not found"
         }
     }

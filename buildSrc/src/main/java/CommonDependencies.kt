@@ -1,5 +1,5 @@
 object CommonDependencyVersions {
-    const val multiplatformSettings = "0.8.1"
+    const val multiplatformSettings = "0.9"
     const val sqlDelight = "1.5.3"
     const val ktor = "2.0.1"
     const val kotlinxDateTime = "0.3.1"
@@ -11,6 +11,7 @@ object CommonDependencyVersions {
 
 object CommonMainDependencies {
     val implementation = listOf(
+        "com.russhwolf:multiplatform-settings-no-arg:${CommonDependencyVersions.multiplatformSettings}",
         "com.russhwolf:multiplatform-settings:${CommonDependencyVersions.multiplatformSettings}",
         "com.squareup.sqldelight:runtime:${CommonDependencyVersions.sqlDelight}",
         "io.ktor:ktor-client-core:${CommonDependencyVersions.ktor}",

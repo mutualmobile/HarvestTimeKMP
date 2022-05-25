@@ -8,11 +8,12 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
+class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
+    private val changePasswordUseCase = useCasesComponent.provideChangePasswordUseCase()
 
     override fun activate() {
     }
@@ -22,29 +23,23 @@ class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
     }
 
     override fun refresh() {
+
     }
 
-    fun signUp(
-        firstName: String,
-        lastName: String,
-        company: String,
-        email: String,
-        password: String
-    ) {
+    fun changePassWord(password: String, oldPassword: String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()(firstName, lastName, company, email, password)) {
+            when (val changePasswordResponse = changePasswordUseCase(password, oldPassword)) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(signUpResponse.data))
-                    println("SUCCESS ${signUpResponse.data.message}")
+                    print("ChangePassword Successful, ${changePasswordResponse.data.message}")
+                    onDataState(SuccessState(changePasswordResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(signUpResponse.exception))
-                    println("FAILED, ${signUpResponse.exception.message}")
+                    print("ChangePassword Failed, ${changePasswordResponse.exception.message}")
+                    onDataState(ErrorState(changePasswordResponse.exception))
                 }
             }
         }
     }
-
 }

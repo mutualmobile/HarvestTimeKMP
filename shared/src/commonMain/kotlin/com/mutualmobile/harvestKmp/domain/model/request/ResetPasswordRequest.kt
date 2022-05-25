@@ -3,7 +3,4 @@ package com.mutualmobile.harvestKmp.domain.model.request
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class ChangePassword(
-    val password : String,
-    val oldPass : String
-)
+data class ResetPasswordRequest(var token:String?, var password:String?)

@@ -8,18 +8,18 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit) :
+class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
-    fun findOrgByIdentifier(identifier: String) {
+    fun forgotPassword(email: String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch() {
             onDataState(LoadingState)
 
-            when (val response = useCasesComponent.provideFindOrgByIdentifier()(identifier)) {
+            when (val response = useCasesComponent.provideForgotPasswordUseCase()(email)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(response.data))
                     println("SUCCESS, ${response.data.message}")
@@ -41,5 +41,4 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
 
     override fun refresh() {
     }
-
 }
