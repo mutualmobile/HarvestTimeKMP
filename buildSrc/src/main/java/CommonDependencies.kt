@@ -7,6 +7,7 @@ object CommonDependencyVersions {
     const val coroutines = "1.6.1"
     const val koin = "3.1.4"
     const val junit = "4.13.2"
+    const val mokoResources = AppDependencyVersions.mokoResources
 }
 
 object CommonMainDependencies {
@@ -25,7 +26,8 @@ object CommonMainDependencies {
     )
 
     val api = listOf(
-        "io.insert-koin:koin-core:${CommonDependencyVersions.koin}"
+        "io.insert-koin:koin-core:${CommonDependencyVersions.koin}",
+        "dev.icerock.moko:resources:${CommonDependencyVersions.mokoResources}",
     )
 }
 
@@ -45,6 +47,7 @@ object CommonPlugins {
         "kotlinx-serialization",
         "com.squareup.sqldelight",
         "com.rickclephas.kmp.nativecoroutines",
+        "dev.icerock.mobile.multiplatform-resources",
     )
     val kotlinPlugins = listOf(
         "multiplatform",

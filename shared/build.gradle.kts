@@ -5,7 +5,6 @@ plugins {
     CommonPlugins.kotlinPlugins.forEach { dependency ->
         kotlin(dependency)
     }
-    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 version = "1.0"
@@ -50,7 +49,6 @@ kotlin {
             dependencies {
                 CommonMainDependencies.implementation.forEach(::implementation)
                 CommonMainDependencies.api.forEach(::api)
-                api("dev.icerock.moko:resources:0.20.0")
             }
         }
         val commonTest by getting {
