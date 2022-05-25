@@ -10,7 +10,7 @@ import org.koin.core.component.getScopeName
 
 abstract class PraxisDataModel(onDataState: (DataState) -> Unit) {
     protected val dataModelScope = MainScope()
-
+    var praxisCommand: (PraxisCommand) -> Unit = {}
     protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onDataState(ErrorState(throwable))
     }
