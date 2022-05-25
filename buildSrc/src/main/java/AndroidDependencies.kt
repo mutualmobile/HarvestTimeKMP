@@ -4,6 +4,7 @@ object AndroidPluginDependencies {
     "com.android.application" to "",
     "kotlin-android" to "",
     "com.google.gms.google-services" to "",
+    "org.jetbrains.kotlin.android" to "",
   )
 }
 

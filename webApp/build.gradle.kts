@@ -2,7 +2,6 @@ plugins {
     WebAppPlugins.plugins.forEach { dependency ->
         kotlin(dependency)
     }
-    id("dev.icerock.mobile.multiplatform-resources")
 }
 
 kotlin {
@@ -29,8 +28,4 @@ kotlin {
             }
         }
     }
-}
-
-multiplatformResources {
-    multiplatformResourcesPackage = "com.mutualmobile.harvestKmp"
 }
