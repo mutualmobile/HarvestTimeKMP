@@ -5,6 +5,7 @@ import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
 import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
@@ -15,8 +16,19 @@ import io.ktor.http.*
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpringBootAPI {
 
-    override suspend fun getUser(id: String): User {
-        return httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}").body()
+    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>{
+        val settings = Settings()
+        val jwtToken = settings.getString("JWT_TOKEN")
+        return try {
+            val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}") {
+                header("Authorization", "Bearer $jwtToken")
+            }
+            val responseBody = response.body<ApiResponse<GetUserResponse>>()
+            NetworkResponse.Success(responseBody)
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 
     override suspend fun putUser(id: String): User {

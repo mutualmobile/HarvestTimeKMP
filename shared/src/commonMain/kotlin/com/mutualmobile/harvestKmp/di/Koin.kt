@@ -58,6 +58,7 @@ val useCaseModule = module {
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
     single { ResetPasswordUseCase(get()) }
+    single { GetUserUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -76,6 +77,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
     fun provideForgotPasswordUseCase(): ForgotPasswordUseCase = get()
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
+    fun provideGetUserUseCase(): GetUserUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
