@@ -5,6 +5,7 @@ import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
 import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
@@ -13,10 +14,21 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpringBootAPI {
+class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val settings: Settings) : PraxisSpringBootAPI {
 
-    override suspend fun getUser(id: String): User {
-        return httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}").body()
+    //TODO - can we have a global way for defining this header ? like an interceptor ?
+    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>{
+        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+        return try {
+            val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}") {
+                header("Authorization", "Bearer $jwtToken")
+            }
+            val responseBody = response.body<ApiResponse<GetUserResponse>>()
+            NetworkResponse.Success(responseBody)
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
     }
 
     override suspend fun putUser(id: String): User {
@@ -123,8 +135,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
         password: String,
         oldPassword: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        val settings = Settings()
-        val jwtToken = settings.getString("JWT_TOKEN")
+        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
         return try {
             val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
                 contentType(ContentType.Application.Json)
@@ -142,7 +153,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) : PraxisSpring
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(
-                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}/?identifier=$identifier")
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}?identifier=$identifier")
                     .body()
             )
         } catch (e: Exception) {
