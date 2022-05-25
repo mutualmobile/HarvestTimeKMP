@@ -9,5 +9,10 @@ data class ModalPraxisCommand(val title: String, val message: String) : PraxisCo
 object Routes{
     object Screen{
         const val TRENDING_UI = "trendingui"
+        const val FORGOT_PASSWORD = "forgotPassword"
+        const val RESET_PASSWORD = "resetPassword"
+        const val CHANGE_PASSWORD = "changePassword"
+        const val LOGIN = "login"
+        const val SIGNUP = "signup"
     }
 }

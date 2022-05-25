@@ -138,7 +138,7 @@ val JSLoginScreen = VFC {
 }
 
 private fun navigateRoot(navigator: NavigateFunction) {
-    navigator.invoke(to = "/", options = jso {
+    navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR, options = jso {
         replace = true
     })
 }
