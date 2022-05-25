@@ -1,6 +1,7 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 import common.Themes
 import components.AppThemeContext
@@ -28,22 +29,18 @@ import kotlin.js.Json
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
-    var state by useState<DataState>()
     var organization by useState("")
     var password by useState("")
-    var appTheme by useContext(AppThemeContext)
     val navigator = useNavigate()
     val location = useLocation()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
-        state = stateNew
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                message = "Logged In!"
-                navigator.invoke(to = "/trendingui")
+                message = (stateNew.data as LoginResponse).message ?: "Some message"
             }
             Complete -> {
                 message = "Completed loading!"
@@ -56,6 +53,17 @@ val JSLoginScreen = VFC {
             }
         }
     })
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.confirm(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
 
 
     useEffectOnce {
@@ -70,7 +78,6 @@ val JSLoginScreen = VFC {
         } catch (ex: Exception) {
             navigateRoot(navigator)
         }
-
     }
 
     TopAppBar {
@@ -131,7 +138,7 @@ val JSLoginScreen = VFC {
 }
 
 private fun navigateRoot(navigator: NavigateFunction) {
-    navigator.invoke(to = "/", options = jso {
+    navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR, options = jso {
         replace = true
     })
 }

@@ -3,8 +3,7 @@ package com.mutualmobile.harvestKmp.features.harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.set
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -18,9 +17,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val loginUseCase = useCasesComponent.provideLoginUseCase()
-
-    // Todo Inject Settings
-    private val settings = Settings()
+    private val saveSettingsUseCase = useCasesComponent.provideSaveSettingsUseCase()
 
     override fun activate() {
     }
@@ -39,15 +36,30 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
             onDataState(LoadingState)
             when (val loginResponse = loginUseCase(email, password)) {
                 is NetworkResponse.Success -> {
-                    print("Login Successful, ${loginResponse.data.message}")
                     onDataState(SuccessState(loginResponse.data))
-                    settings["JWT_TOKEN"] = loginResponse.data.token
-                    settings["REFRESH_TOKEN"] = loginResponse.data.refreshToken
+                    saveTokenAndNavigate(loginResponse)
                 }
                 is NetworkResponse.Failure -> {
-                    print("Login Failed, ${loginResponse.exception.message}")
                     onDataState(ErrorState(loginResponse.exception))
+                    praxisCommand(
+                        ModalPraxisCommand(
+                            title = "Error",
+                            loginResponse.exception.message ?: "An Unknown error has happened"
+                        )
+                    )
                 }
+            }
+        }
+    }
+
+    private fun saveTokenAndNavigate(loginResponse: NetworkResponse.Success<LoginResponse>) {
+        loginResponse.data.token?.let { token ->
+            loginResponse.data.refreshToken?.let { refreshToken ->
+                saveSettingsUseCase(
+                    token,
+                    refreshToken
+                )
+                praxisCommand(NavigationPraxisCommand(screen = Routes.Screen.TRENDING_UI, ""))
             }
         }
     }
