@@ -23,14 +23,10 @@ jobs:
           java-version: '12.x'
       - name: 'Build Web App'
         run: ./gradlew webApp:build
-      - name: Change Directory to webApp
-        run: |
-          pwd
-          cd webApp
-          pwd
       - name: Deploy to Firebase Hosting
         uses: w9jds/firebase-action@master
         with:
           args: deploy --only hosting
         env:
+          PROJECT_PATH: ./webApp
           FIREBASE_TOKEN: ${{ secrets.FIREBASE_TOKEN }}
