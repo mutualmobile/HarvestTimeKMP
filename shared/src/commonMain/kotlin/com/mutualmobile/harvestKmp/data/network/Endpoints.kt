@@ -1,7 +1,7 @@
 package com.mutualmobile.harvestKmp.data.network
 
 object Endpoint {
-    const val SPRING_BOOT_BASE_URL = "http://mmharvestkmp.us-east-2.elasticbeanstalk.com"
+    const val SPRING_BOOT_BASE_URL = "https://harvestkmp.mmharvest.com"
 
     private const val API_URL = "/api/v1"
     private const val ADMIN = "/admin"

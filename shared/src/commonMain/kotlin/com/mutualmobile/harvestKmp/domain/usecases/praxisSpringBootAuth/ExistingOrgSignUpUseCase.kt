@@ -8,7 +8,7 @@ import com.mutualmobile.harvestKmp.validators.LoginFormValidator
 import com.mutualmobile.harvestKmp.validators.SignUpFormValidator
 
 class ExistingOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend fun perform(
+    suspend operator fun invoke(
         firstName: String,
         lastName: String,
         company: String,

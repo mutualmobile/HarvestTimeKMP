@@ -30,7 +30,7 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val changePasswordResponse = changePasswordUseCase.perform(password, oldPassword)) {
+            when (val changePasswordResponse = changePasswordUseCase(password, oldPassword)) {
                 is NetworkResponse.Success -> {
                     print("ChangePassword Successful, ${changePasswordResponse.data.message}")
                     onDataState(SuccessState(changePasswordResponse.data))

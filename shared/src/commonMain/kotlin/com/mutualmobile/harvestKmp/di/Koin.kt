@@ -57,6 +57,7 @@ val useCaseModule = module {
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
+    single { ResetPasswordUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
