@@ -4,9 +4,10 @@ import com.mutualmobile.harvestKmp.validators.exceptions.EmptyFieldException
 import com.mutualmobile.harvestKmp.validators.exceptions.InvalidEmailException
 import com.mutualmobile.harvestKmp.validators.exceptions.InvalidPasswordException
 
+//TODO - can we use operator invoke for both methods ?
 class SignUpFormValidator {
 
-    fun invokeExistingOrg(firstName: String, lastName: String, email: String, password: String) {
+    operator fun invoke(firstName: String, lastName: String, email: String, password: String) {
         if (firstName.isEmpty()) {
             throw EmptyFieldException("First Name")
         }
@@ -22,12 +23,9 @@ class SignUpFormValidator {
         if (!isValidEmail(email)) {
             throw InvalidEmailException()
         }
-        if (!isValidPassword(password)) {
-            throw InvalidPasswordException()
-        }
     }
 
-    fun invokeNewOrg(
+    operator fun invoke(
         firstName: String,
         lastName: String,
         email: String,

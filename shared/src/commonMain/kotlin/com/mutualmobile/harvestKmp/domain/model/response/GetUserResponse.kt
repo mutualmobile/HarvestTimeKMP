@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GetUserResponse(
-    val email: String,
-    val firstName: String,
-    val id: String,
-    val lastName: String,
-    val modifiedTime: String,
-    val orgId: String,
-    val role: String
+    val email: String? = null,
+    val firstName: String? = null,
+    val id: String? = null,
+    val lastName: String? = null,
+    val modifiedTime: String? = null,
+    val orgId: String? = null,
+    val role: String? = null
 )

@@ -15,7 +15,7 @@ class ExistingOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBoot
         email: String,
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        SignUpFormValidator().invokeExistingOrg(firstName, lastName, email, password)
+        SignUpFormValidator()(firstName, lastName, email, password)
         return praxisSpringBootAPI.existingOrgSignUp(firstName, lastName, company, email, password)
     }
 }

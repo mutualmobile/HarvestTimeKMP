@@ -43,7 +43,7 @@ val localDBRepos = module {
 val commonModule = module {
     single { httpClient(get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
-    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get(), get()) }
 }
 
 val useCaseModule = module {
