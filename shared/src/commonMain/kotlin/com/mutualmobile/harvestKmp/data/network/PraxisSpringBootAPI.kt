@@ -30,12 +30,12 @@ interface PraxisSpringBootAPI {
         password: String,
         orgName: String,
         orgWebsite: String,
-        orgIdentifier: String
+        orgIdentifier: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>
 
-    suspend fun logout(userId: String): LogoutData
+    suspend fun logout(): NetworkResponse<LogoutData>
 
     suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>>
 

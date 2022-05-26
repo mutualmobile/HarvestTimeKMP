@@ -1,12 +1,14 @@
 package workspace
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgIdentifier
+import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
 import csstype.*
 import harvest.material.TopAppBar
-import kotlinx.js.jso
+import kotlinx.browser.window
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
@@ -15,9 +17,7 @@ import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.html.ReactHTML
 import react.dom.onChange
-import react.router.NavigateOptions
 import react.router.useNavigate
-import kotlin.js.json
 
 val JsWorkspaceFindScreen = VFC {
     var status by useState("")
@@ -29,17 +29,26 @@ val JsWorkspaceFindScreen = VFC {
                 status = "Loading..."
             }
             is SuccessState<*> -> {
-                val organization = dataState.data as ApiResponse<HarvestOrganization>
-                status = "Found organization! ${organization.data?.name}"
-                navigator.invoke(to = "/login", options = jso {
-                    state = json(Pair("orgId", organization.data?.identifier))
-                })
+                val organization = (dataState.data as ApiResponse<HarvestOrganization>).data
+                status = "Found organization! ${organization?.name}"
             }
             is ErrorState -> {
                 status = dataState.throwable.message.toString()
             }
         }
     })
+
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
 
 
     useEffectOnce {
@@ -129,11 +138,13 @@ val JsWorkspaceFindScreen = VFC {
                     sx {
                         this.margin = Margin(24.px, 4.px)
                     }
-                    +"Not yet registered ? Signup ?"
+                    +"Organization Not yet registered ? Signup ?"
                     onClick = {
                         navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + Routes.Screen.SIGNUP)
                     }
                 }
+
+
             }
         }
     }

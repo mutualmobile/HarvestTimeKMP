@@ -42,7 +42,7 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                     onDataState(SuccessState(changePasswordResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(changePasswordResponse.exception))
+                    onDataState(ErrorState(changePasswordResponse.throwable))
                 }
             }
         }

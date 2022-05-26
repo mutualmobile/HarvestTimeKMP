@@ -44,6 +44,7 @@ val commonModule = module {
     single { httpClient(get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get(), get()) }
+    single { Settings() }
 }
 
 val useCaseModule = module {
@@ -54,13 +55,14 @@ val useCaseModule = module {
     single { ExistingOrgSignUpUseCase(get()) }
     single { NewOrgSignUpUseCase(get()) }
     single { FindOrgByIdentifierUseCase(get()) }
-    single { LogoutUseCase(get()) }
+    single { LogoutUseCase(get(), get()) }
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
     single { ResetPasswordUseCase(get()) }
     single { GetUserUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
+    single { CurrentUserLoggedInUseCase(get()) }
     single { CreateProjectUseCase(get()) }
 }
 
@@ -82,13 +84,13 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideForgotPasswordUseCase(): ForgotPasswordUseCase = get()
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
     fun provideGetUserUseCase(): GetUserUseCase = get()
+    fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
     fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
-    fun provideSettings(): Settings = get()
 }
 
 private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {

@@ -1,6 +1,7 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 import common.Themes
@@ -21,6 +22,7 @@ import react.dom.*
 import react.dom.aria.ariaLabel
 import react.router.NavigateFunction
 import react.router.NavigateOptions
+import react.router.dom.useSearchParams
 import react.router.useLocation
 import react.router.useNavigate
 import kotlin.js.Json
@@ -29,10 +31,13 @@ import kotlin.js.Json
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
-    var organization by useState("")
+    val searchParams = useSearchParams();
+
+    val organizationId: String? = searchParams.component1().get(Routes.Keys.orgIdentifier)
+    val orgId: String? = searchParams.component1().get(Routes.Keys.orgId)
+
     var password by useState("")
     val navigator = useNavigate()
-    val location = useLocation()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -60,28 +65,18 @@ val JSLoginScreen = VFC {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
             }
             is ModalPraxisCommand -> {
-                window.confirm(newCommand.title + "\n" + newCommand.message)
+                window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
     }
 
 
     useEffectOnce {
-        try {
-            val orgJson = location.state.unsafeCast<Json>()
-            orgJson["orgId"]?.let {
-                organization = it.toString()
-                dataModel.activate()
-            } ?: kotlin.run {
-                navigateRoot(navigator)
-            }
-        } catch (ex: Exception) {
-            navigateRoot(navigator)
-        }
+        dataModel.activate()
     }
 
     TopAppBar {
-        title = "$organization Login Form"
+        title = "${organizationId ?: ""} Login Form"
         subtitle = message
     }
     Paper {
@@ -132,12 +127,28 @@ val JSLoginScreen = VFC {
                     }
                     +"Login"
                 }
+
+                organizationId?.let {
+                    Button {
+                        this.variant = ButtonVariant.contained
+                        sx {
+                            this.margin = Margin(24.px, 4.px)
+                        }
+                        +"Signup with $organizationId"
+                        onClick = {
+                            navigator(
+                                BROWSER_SCREEN_ROUTE_SEPARATOR +
+                                        Routes.Screen.SIGNUP.withOrgId(organizationId, orgId)
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 }
 
-private fun navigateRoot(navigator: NavigateFunction) {
+fun navigateRoot(navigator: NavigateFunction) {
     navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR, options = jso {
         replace = true
     })
