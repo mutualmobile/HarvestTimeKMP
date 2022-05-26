@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
+class FindUsersInOrgDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -25,23 +25,21 @@ class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
     }
 
     fun createProject(
-        name: String,
-        client: String,
-        isIndefinite: Boolean,
-        startDate: String,
-        endDate: String
+        userType: Int,
+        orgIdentifier: String,
+        isUserDeleted: Boolean,
+        offset: Int,
+        limit: Int
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(name, client, isIndefinite, startDate, endDate)) {
+            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(userType, orgIdentifier, isUserDeleted, offset, limit)) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(createProjectResponse.data))
-                    println("SUCCESS ${createProjectResponse.data.message}")
+                    onDataState(SuccessState(findUsersInOrgResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(createProjectResponse.throwable))
-                    println("FAILED, ${createProjectResponse.throwable.message}")
+                    onDataState(ErrorState(findUsersInOrgResponse.throwable))
                 }
             }
         }
