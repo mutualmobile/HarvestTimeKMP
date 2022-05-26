@@ -3,6 +3,8 @@ package com.mutualmobile.harvestKmp.features.harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -43,24 +45,10 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
                 password
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(signUpResponse.data))
-                    praxisCommand(
-                        NavigationPraxisCommand(
-                            Routes.Screen.LOGIN.withOrgId(
-                                signUpResponse.data.data?.identifier,
-                                signUpResponse.data.data?.id
-                            )
-                        )
-                    )
+                    handleSuccessSignup(signUpResponse)
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(signUpResponse.throwable))
-                    praxisCommand(
-                        ModalPraxisCommand(
-                            title = "Error",
-                            signUpResponse.throwable.message ?: "Error"
-                        )
-                    )
+                    handleFailure(signUpResponse)
                 }
             }
         }
@@ -81,29 +69,40 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
             when (val signUpResponse = useCasesComponent.provideNewOrgSignUpUseCase()
                 .invoke(firstName, lastName, email, password, orgName, orgWebsite, orgIdentifier)) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(signUpResponse.data))
-                    praxisCommand(
-                        NavigationPraxisCommand(
-                            Routes.Screen.LOGIN.withOrgId(
-                                signUpResponse.data.data?.identifier,
-                                signUpResponse.data.data?.id
-                            )
-                        )
-                    )
-                    println("SUCCESS ${signUpResponse.data.message}")
+                    handleSuccessSignup(signUpResponse)
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(signUpResponse.throwable))
-                    praxisCommand(
-                        ModalPraxisCommand(
-                            "Error",
-                            signUpResponse.throwable.message ?: "Error"
-                        )
-                    )
-                    println("FAILED, ${signUpResponse.throwable.message}")
+                    handleFailure(signUpResponse)
                 }
             }
         }
+    }
+
+    private fun handleFailure(signUpResponse: NetworkResponse.Failure) {
+        onDataState(ErrorState(signUpResponse.throwable))
+        praxisCommand(
+            ModalPraxisCommand(
+                "Error",
+                signUpResponse.throwable.message ?: "Error"
+            )
+        )
+        println("FAILED, ${signUpResponse.throwable.message}")
+    }
+
+    private fun handleSuccessSignup(signUpResponse: NetworkResponse.Success<ApiResponse<HarvestOrganization>>) {
+        onDataState(SuccessState(signUpResponse.data))
+        signUpResponse.data.data?.let {
+            praxisCommand(
+                NavigationPraxisCommand(
+                    Routes.Screen.LOGIN.withOrgId(
+                        signUpResponse.data.data.identifier,
+                        signUpResponse.data.data.id
+                    )
+                )
+            )
+        }
+
+        println("SUCCESS ${signUpResponse.data.message}")
     }
 
 }
