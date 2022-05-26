@@ -1,10 +1,12 @@
 package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.data.network.Endpoint.CHANGE_PASSWORD
+import com.mutualmobile.harvestKmp.data.network.Endpoint.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
 import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
@@ -189,6 +191,28 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
                     setBody(resetPasswordRequest)
                 }
             val responseBody = response.body<ApiResponse<Unit>>()
+            NetworkResponse.Success(responseBody)
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun createProject(
+        name: String,
+        client: String,
+        isIndefinite: Boolean,
+        startDate: String,
+        endDate: String
+    ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
+        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+        return try {
+            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CREATE_PROJECT") {
+                contentType(ContentType.Application.Json)
+                setBody(CreateProject(name, client, isIndefinite, startDate, endDate))
+                header("Authorization", "Bearer $jwtToken")
+            }
+            val responseBody = response.body<ApiResponse<CreateProjectResponse>>()
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
