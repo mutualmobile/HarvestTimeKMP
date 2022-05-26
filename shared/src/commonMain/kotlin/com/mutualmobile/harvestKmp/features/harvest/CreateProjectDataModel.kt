@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
+class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -24,24 +24,24 @@ class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
     override fun refresh() {
     }
 
-    fun signUp(
-        firstName: String,
-        lastName: String,
-        company: String,
-        email: String,
-        password: String
+    fun createProject(
+        name: String,
+        client: String,
+        isIndefinite: Boolean,
+        startDate: String,
+        endDate: String
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()(firstName, lastName, company, email, password)) {
+            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(name, client, isIndefinite, startDate, endDate)) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(signUpResponse.data))
-                    println("SUCCESS ${signUpResponse.data.message}")
+                    onDataState(SuccessState(createProjectResponse.data))
+                    println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(signUpResponse.exception))
-                    println("FAILED, ${signUpResponse.exception.message}")
+                    onDataState(ErrorState(createProjectResponse.exception))
+                    println("FAILED, ${createProjectResponse.exception.message}")
                 }
             }
         }

@@ -31,6 +31,8 @@ object Endpoint {
     const val TIME_ENTRIES = "$API_URL/organization-project-user/times"
     const val TIME_ENTRY = "$API_URL/organization-project-user/time"
 
+    const val CREATE_PROJECT = "$API_URL/organization/project"
+
     //ADMIN
     const val LIST_USERS = "$API_URL$ADMIN/users"
 
@@ -58,7 +60,7 @@ object Endpoint {
         const val SORT_BY = "sortBy"
         const val SORT_ORDER = "sortOrder"
 
-        const val NOTIFICATION_ID = "notificationId";
+        const val NOTIFICATION_ID = "notificationId"
 
         const val ORG_IDENTIFIER = "identifier"
     }
