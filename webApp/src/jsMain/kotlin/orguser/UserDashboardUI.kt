@@ -5,7 +5,6 @@ import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgUserDashboardDataModel
 import csstype.Display
 import kotlinx.browser.window
-import mui.material.*
 import mui.system.sx
 import react.VFC
 import react.router.useNavigate
@@ -17,7 +16,6 @@ import csstype.array
 import mui.material.useMediaQuery
 import mui.system.Box
 import orguser.structure.Area
-import orguser.structure.Area.Sidebar
 import orguser.structure.Sizes
 
 

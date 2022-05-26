@@ -38,11 +38,6 @@ val OrgUserContent = VFC {
             }
 
             Route {
-                path = com.mutualmobile.harvestKmp.datamodel.Routes.Screen.CREATE_PROJECT
-                element = JsCreateProject.create()
-            }
-
-            Route {
                 path = "*"
                 element = Typography.create { +"404 Page Not Found" }
             }

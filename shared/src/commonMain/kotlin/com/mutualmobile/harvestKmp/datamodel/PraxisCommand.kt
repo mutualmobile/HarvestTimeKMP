@@ -26,6 +26,7 @@ object Routes {
         const val ORG_PROJECTS = "orgProjects"
         const val SETTINGS = "settings"
         const val ORG_USER_DASHBOARD = "orgUserDashboard"
+        const val CREATE_PROJECT = "create-edit-project"
 
         fun String.withOrgId(identifier: String?, id: String?): String {
             return this.plus(
