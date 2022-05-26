@@ -40,7 +40,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
@@ -54,7 +54,7 @@ fun DateDurationSelector() {
             modifier = Modifier.padding(16.dp)
         ) {
             DateDurationSelectorItem(
-                title = stringResource(R.string.dds_screen_date_title)
+                title = stringResource(MR.strings.dds_screen_date_title.resourceId)
             ) {
                 var isDateIconPressed by remember { mutableStateOf(false) }
                 Row(
@@ -100,7 +100,7 @@ fun DateDurationSelector() {
                     .alpha(0.5f)
             )
             DateDurationSelectorItem(
-                title = stringResource(R.string.dds_screen_duration_title)
+                title = stringResource(MR.strings.dds_screen_duration_title.resourceId)
             ) {
                 var durationEtText by remember { mutableStateOf("") }
                 val keyboardController = LocalSoftwareKeyboardController.current
