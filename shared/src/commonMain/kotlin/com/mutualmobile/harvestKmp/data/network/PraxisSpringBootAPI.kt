@@ -34,11 +34,14 @@ interface PraxisSpringBootAPI {
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>
 
-    suspend fun logout(userId: String): LogoutData
+    suspend fun logout(): NetworkResponse<LogoutData>
 
     suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>>
 
-    suspend fun changePassword(password: String, oldPassword: String): NetworkResponse<ApiResponse<HarvestOrganization>>
+    suspend fun changePassword(
+        password: String,
+        oldPassword: String
+    ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>>
 

@@ -14,10 +14,11 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val settings: Settings) : PraxisSpringBootAPI {
+class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val settings: Settings) :
+    PraxisSpringBootAPI {
 
     //TODO - can we have a global way for defining this header ? like an interceptor ?
-    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>{
+    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
         val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
         return try {
             val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}") {
@@ -116,8 +117,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
         }
     }
 
-    override suspend fun logout(userId: String): LogoutData {
-        return httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}").body()
+    override suspend fun logout(): NetworkResponse<LogoutData> {
+        return NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
+            val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+            contentType(ContentType.Application.Json)
+            header("Authorization", "Bearer $jwtToken")
+        }.body())
     }
 
     override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {

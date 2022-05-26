@@ -11,6 +11,7 @@ import react.create
 import react.router.dom.BrowserRouter
 import workspace.JsWorkspaceFindScreen
 import com.mutualmobile.harvestKmp.datamodel.Routes.Screen
+import orguser.UserDashboardUI
 
 external interface AppProps : Props
 
@@ -31,7 +32,7 @@ val HarvestApp = FC<AppProps> {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.LOGIN
                     this.element = JSLoginScreen.create()
                 }
-                Route{
+                Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.FORGOT_PASSWORD
                     this.element = ForgotPasswordUI.create()
                 }
@@ -50,6 +51,10 @@ val HarvestApp = FC<AppProps> {
                 Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.SIGNUP
                     this.element = JSSignupScreen.create()
+                }
+                Route {
+                    this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.ORG_USER_DASHBOARD
+                    this.element = UserDashboardUI.create()
                 }
             }
         }

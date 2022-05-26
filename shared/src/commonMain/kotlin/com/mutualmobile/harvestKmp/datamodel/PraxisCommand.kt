@@ -22,6 +22,10 @@ object Routes {
         const val CHANGE_PASSWORD = "changePassword"
         const val LOGIN = "login"
         const val SIGNUP = "signup"
+        const val ORG_USERS = "orgUsers"
+        const val ORG_PROJECTS = "orgProjects"
+        const val SETTINGS = "settings"
+        const val ORG_USER_DASHBOARD = "orgUserDashboard"
 
         fun String.withOrgId(identifier: String?, id: String?): String {
             return this.plus(

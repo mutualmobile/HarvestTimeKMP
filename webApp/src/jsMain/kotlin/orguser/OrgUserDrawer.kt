@@ -6,37 +6,42 @@ import emotion.react.css
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
-import react.ReactNode
-import react.VFC
-import react.key
-import react.useState
+import react.*
 import react.dom.html.ReactHTML.nav
 import react.router.dom.NavLink
 import react.router.useLocation
 
-val OrgUserDrawer = VFC {
-    var drawerOpen by useState(false)
+
+external interface OrgUserDrawerProps : Props {
+    var open: Boolean
+    var onOpen: () -> Unit
+    var onClose: () -> Unit
+}
+
+val OrgUserDrawer = FC<OrgUserDrawerProps> { props->
+    val drawerItems = useContext(OrgUserDrawerItemsContext)
     val lastPathname = useLocation().pathname.substringAfterLast("/")
 
-    fun toggleDrawer() {
-        drawerOpen = !drawerOpen
-    }
-
-    Drawer{
-        variant = DrawerVariant.permanent
+    SwipeableDrawer {
         anchor = DrawerAnchor.left
+        open = props.open
+        onOpen = {
+            props.onOpen()
+        }
+        onClose = {
+            props.onClose()
+        }
         Box {
             component = nav
             Toolbar {}
             Divider {}
             List {
-                arrayOf("projects", "users", "settings").map { text ->
+                for ((key, name) in drawerItems) {
                     ListItem {
-                        key = text
                         disablePadding = true
 
                         NavLink {
-                            to = text
+                            to = key
 
                             css {
                                 textDecoration = None.none
@@ -44,17 +49,17 @@ val OrgUserDrawer = VFC {
                             }
 
                             ListItemButton {
-                                selected = lastPathname == text
+                                selected = lastPathname == key
 
                                 ListItemText {
-                                    primary = ReactNode(text)
+                                    primary = ReactNode(name)
                                 }
                             }
                         }
                     }
                 }
             }
-            Divider{}
+            Divider {}
         }
     }
 
