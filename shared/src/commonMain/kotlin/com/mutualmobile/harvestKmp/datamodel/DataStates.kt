@@ -1,6 +1,6 @@
 package com.mutualmobile.harvestKmp.datamodel
 
-open class DataState
+sealed class DataState
 object LoadingState : DataState()
 object EmptyState : DataState()
 object Complete : DataState()

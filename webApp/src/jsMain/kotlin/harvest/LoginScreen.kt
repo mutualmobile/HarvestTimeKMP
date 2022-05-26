@@ -79,68 +79,66 @@ val JSLoginScreen = VFC {
         title = "${organizationId ?: ""} Login Form"
         subtitle = message
     }
-    Paper {
-        Card {
+    Card {
+        sx {
+            margin = Margin(24.px, 24.px)
+        }
+        Stack {
             sx {
                 margin = Margin(24.px, 24.px)
             }
-            Stack {
+            TextField {
+                this.variant = FormControlVariant.outlined
+                this.value = email
+                this.onChange = {
+                    val target = it.target as HTMLInputElement
+                    email = target.value
+                }
+                this.placeholder = "Work Email"
                 sx {
-                    margin = Margin(24.px, 24.px)
+                    margin = Margin(12.px, 2.px)
                 }
-                TextField {
-                    this.variant = FormControlVariant.outlined
-                    this.value = email
-                    this.onChange = {
-                        val target = it.target as HTMLInputElement
-                        email = target.value
-                    }
-                    this.placeholder = "Work Email"
-                    sx {
-                        margin = Margin(12.px, 2.px)
-                    }
-                }
+            }
 
-                TextField {
-                    this.variant = FormControlVariant.outlined
-                    this.value = password
-                    this.onChange = {
-                        val target = it.target as HTMLInputElement
-                        password = target.value
-                    }
-                    this.placeholder = "Enter Password"
-                    sx {
-                        margin = Margin(12.px, 2.px)
-                    }
+            TextField {
+                this.variant = FormControlVariant.outlined
+                this.value = password
+                this.onChange = {
+                    val target = it.target as HTMLInputElement
+                    password = target.value
                 }
+                this.placeholder = "Enter Password"
+                sx {
+                    margin = Margin(12.px, 2.px)
+                }
+            }
 
+            Button {
+                onClick = {
+                    navigator("/forgotPassword")
+                }
+                +"Forgot Password"
+            }
+
+            Button {
+                this.onClick = {
+                    dataModel.login(email, password)
+                }
+                +"Login"
+            }
+
+            organizationId?.let {
                 Button {
+                    this.variant = ButtonVariant.contained
+                    sx {
+                        this.margin = Margin(24.px, 4.px)
+                    }
+                    +"Signup with $organizationId"
                     onClick = {
-                        navigator("/forgotPassword")
-                    }
-                    +"Forgot Password"
-                }
-
-                Button {
-                    this.onClick = {
-                        dataModel.login(email, password)
-                    }
-                    +"Login"
-                }
-
-                organizationId?.let {
-                    Button {
-                        this.variant = ButtonVariant.contained
-                        sx {
-                            this.margin = Margin(24.px, 4.px)
-                        }
-                        +"Signup with $organizationId"
-                        onClick = {
-                            navigator(
-                                BROWSER_SCREEN_ROUTE_SEPARATOR +
-                                        Routes.Screen.SIGNUP.withOrgId(organizationId, orgId)
-                            )
-                        }
+                        navigator(
+                            BROWSER_SCREEN_ROUTE_SEPARATOR +
+                                    Routes.Screen.SIGNUP.withOrgId(organizationId, orgId)
+                        )
                     }
                 }
             }

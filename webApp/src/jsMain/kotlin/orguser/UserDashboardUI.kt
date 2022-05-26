@@ -3,30 +3,30 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgUserDashboardDataModel
-import csstype.number
-import harvest.material.TopAppBar
+import csstype.Display
 import kotlinx.browser.window
-import mui.icons.material.Menu
-import mui.icons.material.Logout
-
-import mui.material.*
-import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.VFC
-import react.dom.aria.AriaHasPopup
-import react.dom.aria.ariaHasPopup
-import react.dom.aria.ariaLabel
-import react.dom.html.ReactHTML.div
 import react.router.useNavigate
 import react.useEffectOnce
 import react.useState
+import csstype.Auto.auto
+import csstype.GridTemplateAreas
+import csstype.array
+import mui.material.useMediaQuery
+import mui.system.Box
+import orguser.structure.Area
+import orguser.structure.Sizes
+
 
 val UserDashboardUI = VFC {
+    val mobileMode = useMediaQuery("(max-width:960px)")
+
     var message by useState("")
     val navigator = useNavigate()
     var isNavDrawerOpen by useState(false)
 
-    val dataModel = OrgUserDashboardDataModel(onDataState = {stateNew ->
+    val dataModel = OrgUserDashboardDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -66,36 +66,34 @@ val UserDashboardUI = VFC {
 
     OrgUserDrawerItemsModule {
         Box {
-            AppBar {
-                Container {
-                    Toolbar {
-                        IconButton {
-                            ariaLabel = "menu"
-                            ariaHasPopup = AriaHasPopup.`false`
-                            onClick = {
-                                isNavDrawerOpen = !isNavDrawerOpen
-                            }
-                            Menu()
-                        }
-                        Typography {
-                            sx { flexGrow = number(1.0) }
-                            variant = TypographyVariant.h6
-                            component = div
 
-                            +"Organization User"
-                        }
-                        IconButton {
-                            ariaLabel = "logout"
-                            ariaHasPopup = AriaHasPopup.`false`
-                            onClick = {
-                                dataModel.logout()
-                            }
-                            Logout()
-                        }
-                    }
+            sx {
+                display = Display.grid
+                gridTemplateRows = array(
+                    Sizes.Header.Height,
+                    auto,
+                )
+                gridTemplateColumns = array(
+                    Sizes.Sidebar.Width, auto,
+                )
+                gridTemplateAreas = GridTemplateAreas(
+                    arrayOf(Area.Header, Area.Header),
+                    if (mobileMode)
+                        arrayOf(Area.Content, Area.Content)
+                    else
+                        arrayOf(Area.Sidebar, Area.Content),
+                )
+            }
+
+            Header {
+                this.logout = {
+                    dataModel.logout()
+                }
+                this.navDrawerToggle = {
+                    isNavDrawerOpen = !isNavDrawerOpen
                 }
             }
-            OrgUserDrawer {
+            if(mobileMode) OrgUserDrawer {
                 open = isNavDrawerOpen
                 onOpen = {
                     isNavDrawerOpen = true
@@ -103,7 +101,9 @@ val UserDashboardUI = VFC {
                 onClose = {
                     isNavDrawerOpen = false
                 }
-            }
+            } else OrgUserSidebar()
+
+            OrgUserContent()
         }
     }
 }
