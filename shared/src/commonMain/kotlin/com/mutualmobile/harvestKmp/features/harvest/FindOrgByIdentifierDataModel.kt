@@ -25,7 +25,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                     onDataState(SuccessState(response.data)) // TODO redundant
                     praxisCommand(
                         NavigationPraxisCommand(
-                            screen = Routes.Screen.SIGNUP.withOrgId(
+                            screen = Routes.Screen.LOGIN.withOrgId(
                                 response.data.data?.identifier,
                                 response.data.data?.id
                             )
@@ -42,7 +42,16 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
     }
 
     override fun activate() {
+        if (isUserTokenAvailable()) {
+            praxisCommand(
+                NavigationPraxisCommand(
+                    screen = Routes.Screen.ORG_USER_DASHBOARD
+                )
+            )
+        }
     }
+
+    private fun isUserTokenAvailable() = useCasesComponent.providerUserLoggedInUseCase().invoke()
 
     override fun destroy() {
         dataModelScope.cancel()

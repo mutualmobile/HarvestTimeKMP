@@ -64,7 +64,7 @@ val JSSignupScreen = VFC {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
             }
             is ModalPraxisCommand -> {
-                window.confirm(newCommand.title + "\n" + newCommand.message)
+                window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
     }

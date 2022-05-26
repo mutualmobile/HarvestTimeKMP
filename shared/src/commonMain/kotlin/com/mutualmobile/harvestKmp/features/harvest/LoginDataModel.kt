@@ -59,7 +59,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     token,
                     refreshToken
                 )
-                praxisCommand(NavigationPraxisCommand(screen = Routes.Screen.TRENDING_UI, ""))
+                praxisCommand(NavigationPraxisCommand(screen = Routes.Screen.ORG_USER_DASHBOARD, ""))
             }
         }
     }
