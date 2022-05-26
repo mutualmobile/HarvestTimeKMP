@@ -29,7 +29,7 @@ interface PraxisSpringBootAPI {
         password: String,
         orgName: String,
         orgWebsite: String,
-        orgIdentifier: String
+        orgIdentifier: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>

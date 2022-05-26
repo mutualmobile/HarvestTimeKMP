@@ -74,7 +74,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
         password: String,
         orgName: String,
         orgWebsite: String,
-        orgIdentifier: String
+        orgIdentifier: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {

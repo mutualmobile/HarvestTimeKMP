@@ -7,7 +7,6 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -19,7 +18,6 @@ import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
-import com.mutualmobile.harvestKmp.features.harvest.NewOrgSignUpDataModel
 
 @Composable
 fun NewOrgSignUpScreen(
