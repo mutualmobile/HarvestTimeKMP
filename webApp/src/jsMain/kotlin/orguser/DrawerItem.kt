@@ -17,9 +17,9 @@ typealias DrawerItems = Iterable<DrawerItem>
 fun useOrgUserDrawerItems(): DrawerItems {
     return useMemo(callback = {
         setOf(
-            DrawerItem(Routes.Screen.ORG_USERS, Routes.Screen.ORG_USERS, JSLoginScreen),
-            DrawerItem(Routes.Screen.ORG_PROJECTS, Routes.Screen.ORG_PROJECTS, JSLoginScreen),
-            DrawerItem(Routes.Screen.SETTINGS, Routes.Screen.SETTINGS, JSLoginScreen)
+            DrawerItem(Routes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
+            DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
+            DrawerItem(Routes.Screen.SETTINGS, "Settings", JsSettingsScreen)
         )
     })
 }
