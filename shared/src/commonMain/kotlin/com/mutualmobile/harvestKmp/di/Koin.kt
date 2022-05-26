@@ -42,9 +42,9 @@ val localDBRepos = module {
 
 val commonModule = module {
     single { httpClient(get()) }
-    single { Settings() }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
-    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get(), get()) }
+    single { Settings() }
 }
 
 val useCaseModule = module {
@@ -60,6 +60,7 @@ val useCaseModule = module {
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
     single { ResetPasswordUseCase(get()) }
+    single { GetUserUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
 }
 
@@ -80,12 +81,12 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
     fun provideForgotPasswordUseCase(): ForgotPasswordUseCase = get()
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
+    fun provideGetUserUseCase(): GetUserUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
-    fun provideSettings(): Settings = get()
 }
 
 private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {

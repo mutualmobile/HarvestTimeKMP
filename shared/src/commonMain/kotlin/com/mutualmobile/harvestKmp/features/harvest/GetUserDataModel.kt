@@ -8,11 +8,29 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
+class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
+    private val getUserUseCase = useCasesComponent.provideGetUserUseCase()
+
+    fun getUser() {
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch {
+            onDataState(LoadingState)
+            when (val getUserResponse = getUserUseCase()) {
+                is NetworkResponse.Success -> {
+                    print("GetUser Successful, ${getUserResponse.data.message}")
+                    onDataState(SuccessState(getUserResponse.data))
+                }
+                is NetworkResponse.Failure -> {
+                    print("GetUser Failed, ${getUserResponse.throwable.message}")
+                    onDataState(ErrorState(getUserResponse.throwable))
+                }
+            }
+        }
+    }
 
     override fun activate() {
     }
@@ -22,29 +40,6 @@ class ExistingOrgSignUpDataModel(private val onDataState: (DataState) -> Unit) :
     }
 
     override fun refresh() {
-    }
 
-    fun signUp(
-        firstName: String,
-        lastName: String,
-        company: String,
-        email: String,
-        password: String
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
-            when (val signUpResponse = useCasesComponent.provideExistingOrgSignUpUseCase()(firstName, lastName, company, email, password)) {
-                is NetworkResponse.Success -> {
-                    onDataState(SuccessState(signUpResponse.data))
-                    println("SUCCESS ${signUpResponse.data.message}")
-                }
-                is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(signUpResponse.exception))
-                    println("FAILED, ${signUpResponse.exception.message}")
-                }
-            }
-        }
     }
-
 }

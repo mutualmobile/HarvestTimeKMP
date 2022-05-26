@@ -8,5 +8,5 @@ data class HarvestOrganization(
     val imgUrl: String? = null,
     val name: String? = null,
     val website: String? = null,
-    val identifier: String
+    val identifier: String? = null
 )

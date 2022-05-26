@@ -2,12 +2,13 @@ package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 interface PraxisSpringBootAPI {
 
-    suspend fun getUser(id: String): User
+    suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>
 
     suspend fun putUser(id: String): User
 
@@ -28,7 +29,7 @@ interface PraxisSpringBootAPI {
         password: String,
         orgName: String,
         orgWebsite: String,
-        orgIdentifier: String
+        orgIdentifier: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>

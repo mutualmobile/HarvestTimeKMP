@@ -40,11 +40,11 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     saveTokenAndNavigate(loginResponse)
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(loginResponse.exception))
+                    onDataState(ErrorState(loginResponse.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",
-                            loginResponse.exception.message ?: "An Unknown error has happened"
+                            loginResponse.throwable.message ?: "An Unknown error has happened"
                         )
                     )
                 }
