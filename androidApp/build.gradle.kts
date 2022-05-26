@@ -1,5 +1,4 @@
 plugins {
-    id("org.jetbrains.kotlin.android")
     AndroidPluginDependencies.plugins.forEach { (lib, v) ->
         if (v.isNotBlank()) {
             id(lib) version v

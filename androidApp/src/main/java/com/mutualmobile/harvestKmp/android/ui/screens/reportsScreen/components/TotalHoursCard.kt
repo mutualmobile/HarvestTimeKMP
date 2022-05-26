@@ -8,7 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.theme.ReportCardTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 
@@ -20,7 +20,7 @@ fun TotalHoursCard(totalHours: Float) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.reports_screen_total_hours_card_title))
+            Text(text = stringResource(MR.strings.reports_screen_total_hours_card_title.resourceId))
             Text(text = totalHours.toDecimalString(), style = ReportCardTypography.h2)
         }
     }

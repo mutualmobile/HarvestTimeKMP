@@ -1,10 +1,9 @@
-package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth
+package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot
 
 import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import com.mutualmobile.harvestKmp.validators.LoginFormValidator
 import com.mutualmobile.harvestKmp.validators.SignUpFormValidator
 
 class ExistingOrgSignUpUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {

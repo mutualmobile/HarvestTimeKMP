@@ -1,10 +1,7 @@
 package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.request.*
-import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
-import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 interface PraxisSpringBootAPI {
@@ -59,5 +56,13 @@ interface PraxisSpringBootAPI {
         startDate: String,
         endDate: String
     ): NetworkResponse<ApiResponse<CreateProjectResponse>>
+
+    suspend fun findUsersInOrg(
+        userType: Int,
+        orgIdentifier: String,
+        isUserDeleted: Boolean,
+        offset: Int,
+        limit: Int
+    ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>>
 
 }

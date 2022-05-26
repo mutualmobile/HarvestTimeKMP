@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsActivity
 
 @Composable
@@ -50,7 +50,7 @@ fun LandingScreenDrawer(
 private fun SettingsButton() {
     val activity = LocalContext.current as Activity
     Text(
-        text = stringResource(id = R.string.drawer_settings_btn_txt),
+        text = stringResource(id = MR.strings.drawer_settings_btn_txt.resourceId),
         style = MaterialTheme.typography.subtitle2.copy(
             color = MaterialTheme.colors.surface.copy(alpha = 0.6f)
         ),

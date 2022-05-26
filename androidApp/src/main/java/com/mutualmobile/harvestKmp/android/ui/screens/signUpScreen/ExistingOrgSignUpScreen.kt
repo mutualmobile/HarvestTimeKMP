@@ -23,7 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
@@ -82,31 +82,31 @@ fun SignUpScreen(navController: NavHostController) {
             SignUpTextField(
                 value = currentFirstName,
                 onValueChange = { updatedString -> currentFirstName = updatedString },
-                placeholderText = stringResource(R.string.signup_screen_first_name_et_placeholder)
+                placeholderText = stringResource(MR.strings.signup_screen_first_name_et_placeholder.resourceId)
             )
             SignUpTextField(
                 value = currentLastName,
                 onValueChange = { updatedString -> currentLastName = updatedString },
-                placeholderText = stringResource(R.string.signup_screen_last_name_et_placeholder)
+                placeholderText = stringResource(MR.strings.signup_screen_last_name_et_placeholder.resourceId)
             )
             SignUpTextField(
                 value = currentCompanyName,
                 onValueChange = { updatedString -> currentCompanyName = updatedString },
-                placeholderText = stringResource(R.string.signup_screen_company_name_et_placeholder)
+                placeholderText = stringResource(MR.strings.signup_screen_company_name_et_placeholder.resourceId)
             )
             SignUpTextField(
                 value = currentWorkEmail,
                 onValueChange = { updatedString -> currentWorkEmail = updatedString },
-                placeholderText = stringResource(R.string.signup_screen_email_et_placeholder)
+                placeholderText = stringResource(MR.strings.signup_screen_email_et_placeholder.resourceId)
             )
             SignUpTextField(
                 value = currentPassword,
                 onValueChange = { updatedString -> currentPassword = updatedString },
-                placeholderText = stringResource(R.string.signup_screen_password_et_placeholder),
+                placeholderText = stringResource(MR.strings.signup_screen_password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
             IconLabelButton(
-                label = stringResource(R.string.signup_screen_signup_btn_txt),
+                label = stringResource(MR.strings.signup_screen_signup_btn_txt.resourceId),
                 isLoading = currentSignUpState is LoadingState,
                 errorMsg = (currentSignUpState as? ErrorState)?.throwable?.message,
                 onClick = {

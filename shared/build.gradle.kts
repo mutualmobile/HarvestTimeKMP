@@ -146,3 +146,8 @@ android {
         targetSdk = 31
     }
 }
+
+multiplatformResources {
+    multiplatformResourcesPackage = "com.mutualmobile.harvestKmp"
+    disableStaticFrameworkWarning = true
+}

@@ -8,9 +8,7 @@ import com.mutualmobile.harvestKmp.di.initSharedDependencies
 @Composable
 @Preview
 fun App() {
-    MaterialTheme {
-        TrendingReposListScreen(TrendingReposVM())
-    }
+    MaterialTheme {}
 }
 
 fun main() = application {

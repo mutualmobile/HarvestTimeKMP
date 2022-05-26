@@ -22,7 +22,7 @@ import androidx.compose.ui.text.style.BaselineShift
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.theme.ReportCardTypography
 import com.mutualmobile.harvestKmp.android.ui.theme.TertiaryColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TertiaryInverseColor
@@ -41,7 +41,7 @@ fun BillableHoursCard(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = stringResource(R.string.reports_screen_billable_hours_title))
+            Text(text = stringResource(MR.strings.reports_screen_billable_hours_title.resourceId))
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -68,13 +68,13 @@ fun BillableHoursCard(
                 Column {
                     BillableTypeRow(
                         color = TertiaryColor,
-                        title = stringResource(R.string.report_screen_billable_title),
+                        title = stringResource(MR.strings.report_screen_billable_title.resourceId),
                         value = billableHours.toDecimalString()
                     )
                     Spacer(modifier = Modifier.padding(vertical = 2.dp))
                     BillableTypeRow(
                         color = TertiaryInverseColor,
-                        title = stringResource(R.string.report_screen_non_billable_title),
+                        title = stringResource(MR.strings.report_screen_non_billable_title.resourceId),
                         value = nonBillableHours.toDecimalString()
                     )
                 }
