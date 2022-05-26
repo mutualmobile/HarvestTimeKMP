@@ -18,10 +18,11 @@ import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
+import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
 @Composable
 fun NewOrgSignUpScreen(
-    signUpDataModel: NewOrgSignUpDataModel
+    signUpDataModel: SignUpDataModel
 ) {
     var currentWorkEmail by remember { mutableStateOf("") }
     var currentPassword by remember { mutableStateOf("") }

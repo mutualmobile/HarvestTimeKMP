@@ -3,12 +3,10 @@ package com.mutualmobile.harvestKmp.data.network
 import com.mutualmobile.harvestKmp.data.network.Endpoint.CHANGE_PASSWORD
 import com.mutualmobile.harvestKmp.data.network.Endpoint.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
+import com.mutualmobile.harvestKmp.data.network.Endpoint.ORG_USERS
 import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
-import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
-import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
@@ -213,6 +211,28 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
                 header("Authorization", "Bearer $jwtToken")
             }
             val responseBody = response.body<ApiResponse<CreateProjectResponse>>()
+            NetworkResponse.Success(responseBody)
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun findUsersInOrg(
+        userType: Int,
+        orgIdentifier: String,
+        isUserDeleted: Boolean,
+        offset: Int,
+        limit: Int
+    ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>> {
+        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+        return try {
+            val response =
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
+                    contentType(ContentType.Application.Json)
+                    header("Authorization", "Bearer $jwtToken")
+                }
+            val responseBody = response.body<ApiResponse<List<FindUsersInOrgResponse>>>()
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)

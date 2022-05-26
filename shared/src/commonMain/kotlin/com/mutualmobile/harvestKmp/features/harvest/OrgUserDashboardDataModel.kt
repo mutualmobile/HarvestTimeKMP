@@ -47,6 +47,4 @@ class OrgUserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
             }
         }
     }
-
-
 }

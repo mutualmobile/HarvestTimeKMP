@@ -1,4 +1,4 @@
-package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBootAuth
+package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot
 
 import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
