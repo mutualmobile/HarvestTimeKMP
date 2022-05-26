@@ -40,8 +40,8 @@ class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
                     println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(createProjectResponse.exception))
-                    println("FAILED, ${createProjectResponse.exception.message}")
+                    onDataState(ErrorState(createProjectResponse.throwable))
+                    println("FAILED, ${createProjectResponse.throwable.message}")
                 }
             }
         }
