@@ -93,7 +93,7 @@ val UserDashboardUI = VFC {
                     isNavDrawerOpen = !isNavDrawerOpen
                 }
             }
-            if(mobileMode) OrgUserDrawer {
+            if (mobileMode) OrgUserDrawer {
                 open = isNavDrawerOpen
                 onOpen = {
                     isNavDrawerOpen = true

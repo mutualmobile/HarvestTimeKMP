@@ -14,16 +14,12 @@ import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 
-class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val settings: Settings) :
+class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
 
-    //TODO - can we have a global way for defining this header ? like an interceptor ?
     override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
-        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
         return try {
-            val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}") {
-                header("Authorization", "Bearer $jwtToken")
-            }
+            val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
             val responseBody = response.body<ApiResponse<GetUserResponse>>()
             NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
@@ -38,8 +34,11 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
 
     override suspend fun refreshToken(
         refreshToken: String
-    ): RefreshToken {
-        return httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.REFRESH_TOKEN}").body()
+    ): LoginResponse {
+        return httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.REFRESH_TOKEN}") {
+            contentType(ContentType.Application.Json)
+            setBody(LoginResponse(refreshToken = refreshToken))
+        }.body()
     }
 
     override suspend fun existingOrgSignUp(
@@ -119,9 +118,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
 
     override suspend fun logout(): NetworkResponse<LogoutData> {
         return NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
-            val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
             contentType(ContentType.Application.Json)
-            header("Authorization", "Bearer $jwtToken")
         }.body())
     }
 
@@ -140,12 +137,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
         password: String,
         oldPassword: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+
         return try {
             val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
                 contentType(ContentType.Application.Json)
                 setBody(ChangePassword(password = password, oldPass = oldPassword))
-                header("Authorization", "Bearer $jwtToken")
+
             }
             val responseBody = response.body<ApiResponse<HarvestOrganization>>()
             NetworkResponse.Success(responseBody)
@@ -203,12 +200,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
         startDate: String,
         endDate: String
     ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
-        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+
         return try {
             val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CREATE_PROJECT") {
                 contentType(ContentType.Application.Json)
                 setBody(CreateProject(name, client, isIndefinite, startDate, endDate))
-                header("Authorization", "Bearer $jwtToken")
+
             }
             val responseBody = response.body<ApiResponse<CreateProjectResponse>>()
             NetworkResponse.Success(responseBody)
@@ -225,12 +222,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient, private val se
         offset: Int,
         limit: Int
     ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>> {
-        val jwtToken = settings.getString(key = Constants.JWT_TOKEN)
+
         return try {
             val response =
                 httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
                     contentType(ContentType.Application.Json)
-                    header("Authorization", "Bearer $jwtToken")
+
                 }
             val responseBody = response.body<ApiResponse<List<FindUsersInOrgResponse>>>()
             NetworkResponse.Success(responseBody)

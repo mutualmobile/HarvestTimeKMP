@@ -1,25 +1,29 @@
 package com.mutualmobile.harvestKmp.di
 
 
-import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
-import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPIImpl
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
-import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPI
-import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPIImpl
+import com.mutualmobile.harvestKmp.data.network.*
+import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.logging.*
 import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
 import org.koin.core.component.get
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 
@@ -41,9 +45,9 @@ val localDBRepos = module {
 
 
 val commonModule = module {
-    single { httpClient(get()) }
+    single { httpClient(get(), get(), get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
-    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get(), get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
     single { Settings() }
 }
 
@@ -95,15 +99,43 @@ class SharedComponent : KoinComponent {
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
 }
 
-private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {
+private fun httpClient(
+    httpClientEngine: HttpClientEngine,
+    settings: Settings,
+    saveSettingsUseCase: SaveSettingsUseCase
+) =
+    HttpClient(httpClientEngine) {
 
-    install(ContentNegotiation) {
-        json(Json {
-            isLenient = true; ignoreUnknownKeys = true; prettyPrint = true
-        })
+        install(ContentNegotiation) {
+            json(Json {
+                isLenient = true; ignoreUnknownKeys = true; prettyPrint = true
+            })
+        }
+        install(Auth) {
+            this.bearer {
+                this.loadTokens {
+                    BearerTokens(
+                        settings.getString(Constants.JWT_TOKEN, ""),
+                        settings.getString(Constants.REFRESH_TOKEN, "")
+                    )
+                }
+                this.refreshTokens {
+                    val oldRefreshToken = this.oldTokens?.refreshToken
+                    val refreshTokens =
+                        this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
+                            contentType(ContentType.Application.Json)
+                            setBody(LoginResponse(refreshToken = oldRefreshToken))
+                        }.body<LoginResponse>()
+                    saveSettingsUseCase.invoke(refreshTokens.token, refreshTokens.refreshToken)
+                    BearerTokens(
+                        settings.getString(Constants.JWT_TOKEN, ""),
+                        settings.getString(Constants.REFRESH_TOKEN, "")
+                    )
+                }
+            }
+        }
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = LogLevel.ALL
+        }
     }
-    install(Logging) {
-        logger = Logger.DEFAULT
-        level = LogLevel.ALL
-    }
-}

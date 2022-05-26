@@ -10,7 +10,7 @@ interface PraxisSpringBootAPI {
 
     suspend fun putUser(id: String): User
 
-    suspend fun refreshToken(refreshToken: String): RefreshToken
+    suspend fun refreshToken(refreshToken: String): LoginResponse
 
     suspend fun existingOrgSignUp(
         firstName: String,
