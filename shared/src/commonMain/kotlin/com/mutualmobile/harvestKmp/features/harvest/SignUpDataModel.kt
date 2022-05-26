@@ -44,11 +44,23 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
             )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(signUpResponse.data))
-                    println("SUCCESS ${signUpResponse.data.message}")
+                    praxisCommand(
+                        NavigationPraxisCommand(
+                            Routes.Screen.LOGIN.withOrgId(
+                                signUpResponse.data.data?.identifier,
+                                signUpResponse.data.data?.id
+                            )
+                        )
+                    )
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(signUpResponse.throwable))
-                    println("FAILED, ${signUpResponse.throwable.message}")
+                    praxisCommand(
+                        ModalPraxisCommand(
+                            title = "Error",
+                            signUpResponse.throwable.message ?: "Error"
+                        )
+                    )
                 }
             }
         }

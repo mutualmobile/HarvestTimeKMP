@@ -8,12 +8,14 @@ import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
+import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.onChange
 import react.router.dom.useSearchParams
+import react.router.useNavigate
 
 
 val JSSignupScreen = VFC {
@@ -29,6 +31,8 @@ val JSSignupScreen = VFC {
     var orgName by useState("")
     var orgWebsite by useState("")
     var orgIdentifier by useState("")
+
+    val navigator = useNavigate()
 
     var password by useState("")
     var confPassword by useState("")
@@ -53,6 +57,18 @@ val JSSignupScreen = VFC {
             }
         }
     })
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.confirm(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
+
 
     useEffectOnce {
         dataModel.activate()
