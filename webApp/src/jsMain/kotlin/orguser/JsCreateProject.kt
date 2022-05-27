@@ -2,7 +2,7 @@ package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.Color
 import csstype.Margin
 import csstype.px
@@ -11,7 +11,6 @@ import kotlinx.browser.window
 import mui.material.*
 import mui.system.responsive
 import mui.system.sx
-import muix.pickers.DatePicker
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.html.ReactHTML
@@ -35,7 +34,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     var startDate by useState("")
     var endDate by useState("")
 
-    val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
+    val dataModel = OrgProjectDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."

@@ -12,7 +12,6 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
-import org.koin.core.parameter.parametersOf
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
@@ -20,8 +19,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
         return try {
             val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
-            val responseBody = response.body<ApiResponse<GetUserResponse>>()
-            NetworkResponse.Success(responseBody)
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -180,7 +183,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             val response =
-                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}?identifier=$identifier")
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}") {
+                    contentType(ContentType.Application.Json)
+                    parameter("identifier", identifier)
+                }
             if (response.status == HttpStatusCode.OK) {
                 NetworkResponse.Success(response.body())
             } else {
@@ -196,7 +202,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}/?email=$email")
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}") {
+                    contentType(ContentType.Application.Json)
+                    parameter("email", email)
+                }
             if (response.status == HttpStatusCode.OK) {
                 NetworkResponse.Success(response.body())
             } else {
@@ -294,7 +303,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun findProjectsInOrg(
+    override suspend fun getProjectsInOrg(
         orgId: String?,
         offset: Int?,
         limit: Int?
@@ -307,6 +316,54 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                     parameter("offset", offset)
                     parameter("limit", limit)
                 }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun updateProjects(
+        id: String,
+        name: String,
+        client: String,
+        startDate: String,
+        endDate: String,
+        isIndefinite: Boolean,
+        organizationId: String
+    ): NetworkResponse<ApiResponse<Unit>> {
+        return try {
+            val response = httpClient.put("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    UpdateProjectRequest(
+                        id, name, client, startDate, endDate, isIndefinite, organizationId
+                    )
+                )
+            }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun deleteProject(projectId: String): NetworkResponse<ApiResponse<Unit>> {
+        return try {
+            val response = httpClient.delete("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
+                contentType(ContentType.Application.Json)
+                parameter("projectId", projectId)
+            }
             if (response.status == HttpStatusCode.OK) {
                 NetworkResponse.Success(response.body())
             } else {

@@ -2,12 +2,9 @@ package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
 import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
 import csstype.*
-import kotlinx.js.jso
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx

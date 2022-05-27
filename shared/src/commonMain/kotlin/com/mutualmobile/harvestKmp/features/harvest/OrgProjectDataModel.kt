@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
+class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -34,14 +34,38 @@ class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(name, client, isIndefinite, startDate, endDate)) {
+            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(
+                name,
+                client,
+                isIndefinite,
+                startDate,
+                endDate
+            )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(createProjectResponse.data))
-                    println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(createProjectResponse.throwable))
-                    println("FAILED, ${createProjectResponse.throwable.message}")
+                }
+            }
+        }
+    }
+
+    fun getProjectsInOrg(
+        orgId: String?,
+        offset: Int?,
+        limit: Int?
+    ) {
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch {
+            onDataState(LoadingState)
+            when (val getProjectsInOrgResponse =
+                useCasesComponent.provideGetProjectsInOrgUseCase()(orgId, offset, limit)) {
+                is NetworkResponse.Success -> {
+                    onDataState(SuccessState(getProjectsInOrgResponse.data))
+                }
+                is NetworkResponse.Failure -> {
+                    onDataState(ErrorState(getProjectsInOrgResponse.throwable))
                 }
             }
         }

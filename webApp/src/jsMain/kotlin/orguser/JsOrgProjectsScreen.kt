@@ -1,17 +1,14 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.*
-import emotion.react.css
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
 import react.*
-import react.router.dom.NavLink
 import react.router.useNavigate
 
 val JsOrgProjectsScreen = VFC {
@@ -19,7 +16,7 @@ val JsOrgProjectsScreen = VFC {
     var createRequested by useState(false)
     val navigate = useNavigate()
 
-    val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
+    val dataModel = OrgProjectDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
