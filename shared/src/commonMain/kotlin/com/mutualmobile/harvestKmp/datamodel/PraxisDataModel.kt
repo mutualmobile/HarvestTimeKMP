@@ -13,6 +13,14 @@ abstract class PraxisDataModel(onDataState: (DataState) -> Unit) {
     var praxisCommand: (PraxisCommand) -> Unit = {}
     protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onDataState(ErrorState(throwable))
+        println(throwable)
+        throwable.printStackTrace()
+        praxisCommand(
+            ModalPraxisCommand(
+                title = "Error",
+                throwable.message ?: "An Unknown error has happened"
+            )
+        )
     }
 
     abstract fun activate()

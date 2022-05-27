@@ -33,10 +33,12 @@ class OrgUserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
         dataModelScope.launch(exceptionHandler) {
             when (val result = useCasesComponent.provideLogoutUseCase().invoke()) {
                 is Success<*> -> {
+                    println("logged out!")
                     onDataState(SuccessState(result.data))
                     praxisCommand(NavigationPraxisCommand(screen = ""))
                 }
                 is Failure -> {
+                    println("logg out failed!")
                     onDataState(ErrorState(result.throwable))
                     praxisCommand(
                         ModalPraxisCommand(

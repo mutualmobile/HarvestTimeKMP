@@ -1,6 +1,7 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgUserDashboardDataModel
 import csstype.Display
@@ -32,7 +33,6 @@ val UserDashboardUI = VFC {
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                message = (stateNew.data as LoginResponse).message ?: "Some message"
             }
             Complete -> {
                 message = "Completed loading!"

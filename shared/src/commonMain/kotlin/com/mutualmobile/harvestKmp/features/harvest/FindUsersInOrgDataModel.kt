@@ -24,9 +24,9 @@ class FindUsersInOrgDataModel(private val onDataState: (DataState) -> Unit) :
     override fun refresh() {
     }
 
-    fun createProject(
+    fun findUsers(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int

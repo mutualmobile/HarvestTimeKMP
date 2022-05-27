@@ -56,6 +56,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                             email = email,
                             password = password,
                             orgId = company,
+                            role = "2",//todo extract const
                             firstName = firstName,
                             lastName = lastName
                         )
@@ -238,7 +239,16 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         return try {
             val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
                 contentType(ContentType.Application.Json)
-                setBody(CreateProject(name, client, isIndefinite, startDate, endDate))
+                setBody(
+                    CreateProject(
+                        name = name,
+                        client = client,
+                        isIndefinite = isIndefinite,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
+                )
+
             }
             if (response.status == HttpStatusCode.OK) {
                 NetworkResponse.Success(response.body())
