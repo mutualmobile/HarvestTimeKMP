@@ -3,6 +3,7 @@ package com.mutualmobile.harvestKmp.data.network
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import io.ktor.client.statement.*
 
 interface PraxisSpringBootAPI {
 
@@ -10,7 +11,7 @@ interface PraxisSpringBootAPI {
 
     suspend fun putUser(id: String): User
 
-    suspend fun refreshToken(refreshToken: String): RefreshToken
+    suspend fun refreshToken(refreshToken: String): LoginResponse
 
     suspend fun existingOrgSignUp(
         firstName: String,
@@ -32,7 +33,7 @@ interface PraxisSpringBootAPI {
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>
 
-    suspend fun logout(): NetworkResponse<LogoutData>
+    suspend fun logout(): NetworkResponse<ApiResponse<String>>
 
     suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>>
 
@@ -59,10 +60,15 @@ interface PraxisSpringBootAPI {
 
     suspend fun findUsersInOrg(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
     ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>>
 
+    suspend fun findProjectsInOrg(
+        orgId: String?,
+        offset: Int?,
+        limit: Int?
+    ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>>
 }

@@ -6,13 +6,13 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse.Failure
 import com.mutualmobile.harvestKmp.features.NetworkResponse.Success
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
 class OrgUserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
 
     override fun activate() {
@@ -22,20 +22,23 @@ class OrgUserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
     }
 
     override fun destroy() {
-
+        dataModelScope.cancel()
     }
 
     override fun refresh() {
+
     }
 
     fun logout() {
         dataModelScope.launch(exceptionHandler) {
             when (val result = useCasesComponent.provideLogoutUseCase().invoke()) {
                 is Success<*> -> {
+                    println("logged out!")
                     onDataState(SuccessState(result.data))
                     praxisCommand(NavigationPraxisCommand(screen = ""))
                 }
                 is Failure -> {
+                    println("logg out failed!")
                     onDataState(ErrorState(result.throwable))
                     praxisCommand(
                         ModalPraxisCommand(

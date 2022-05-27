@@ -1,5 +1,8 @@
 package com.mutualmobile.harvestKmp.domain.model.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class FindUsersInOrgResponse(
     val email: String? = null,
     val firstName: String? = null,

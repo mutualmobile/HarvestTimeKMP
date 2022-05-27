@@ -8,7 +8,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class FindUsersInOrgDataModel(private val onDataState: (DataState) -> Unit) :
+class FindProjectsInOrgDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -24,17 +24,16 @@ class FindUsersInOrgDataModel(private val onDataState: (DataState) -> Unit) :
     override fun refresh() {
     }
 
-    fun findUsers(
-        userType: Int,
-        orgIdentifier: String?,
-        isUserDeleted: Boolean,
-        offset: Int,
-        limit: Int
+    fun findProjectInOrg(
+        orgId: String?,
+        offset: Int?,
+        limit: Int?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(userType, orgIdentifier, isUserDeleted, offset, limit)) {
+            when (val findUsersInOrgResponse =
+                useCasesComponent.provideFindProjectsInOrgUseCase()(orgId, offset, limit)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))
                 }

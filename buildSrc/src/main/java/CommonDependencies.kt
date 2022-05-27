@@ -17,6 +17,7 @@ object CommonMainDependencies {
         "com.squareup.sqldelight:runtime:${CommonDependencyVersions.sqlDelight}",
         "io.ktor:ktor-client-core:${CommonDependencyVersions.ktor}",
         "io.ktor:ktor-client-json:${CommonDependencyVersions.ktor}",
+        "io.ktor:ktor-client-auth:${CommonDependencyVersions.ktor}",
         "io.ktor:ktor-client-content-negotiation:${CommonDependencyVersions.ktor}",
         "io.ktor:ktor-serialization-kotlinx-json:${CommonDependencyVersions.ktor}",
         "io.ktor:ktor-client-logging:${CommonDependencyVersions.ktor}",

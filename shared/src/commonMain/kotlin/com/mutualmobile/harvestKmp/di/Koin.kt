@@ -1,34 +1,43 @@
 package com.mutualmobile.harvestKmp.di
 
 
-import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
-import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPIImpl
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
-import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPI
-import com.mutualmobile.harvestKmp.data.network.GithubTrendingAPIImpl
+import com.mutualmobile.harvestKmp.data.network.*
+import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
+import io.ktor.client.call.*
 import io.ktor.client.engine.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.logging.*
-import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import org.koin.core.component.get
 import io.ktor.client.plugins.contentnegotiation.*
+import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.koin.core.KoinApplication
+import org.koin.core.component.*
+import org.koin.core.scope.Scope
+
+lateinit var koinApplication: KoinApplication
 
 fun initSharedDependencies() = startKoin {
-    modules(commonModule, localDBRepos, useCaseModule, platformModule())
+    modules(commonModule, networkModule, localDBRepos, useCaseModule, platformModule())
+}.also {
+    koinApplication = it
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
-    modules(commonModule, jsSqliteDeps, useCaseModule, platformModule())
+    modules(commonModule, networkModule, jsSqliteDeps, useCaseModule, platformModule())
 }
 
 val jsSqliteDeps = module {
@@ -39,11 +48,25 @@ val localDBRepos = module {
     single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
 }
 
+// TODO learn about KoinScopeComponent and check how to invalidate the httpClient after logout,
+//  because it still persists the old bearer token!
+open class HttpClientScoped : KoinScopeComponent {
+    override val scope: Scope by lazy { createScope(this) }
+    val client: HttpClient by inject()
+    fun close() {
+        scope.close() // don't forget to close current scope
+    }
+}
+
+val networkModule = module {
+    single {
+        httpClient(get(), get(), get())
+    }
+}
 
 val commonModule = module {
-    single { httpClient(get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
-    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get(), get()) }
+    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
     single { Settings() }
 }
 
@@ -65,15 +88,16 @@ val useCaseModule = module {
     single { CurrentUserLoggedInUseCase(get()) }
     single { CreateProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
+    single { FindProjectsInOrgUseCase(get())}
 }
 
-class UseCasesComponent : KoinComponent {
+class UseCasesComponent : HttpClientScoped() {
     fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
     fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
     fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
 }
 
-class SpringBootAuthUseCasesComponent : KoinComponent {
+class SpringBootAuthUseCasesComponent : HttpClientScoped() {
     fun provideLoginUseCase(): LoginUseCase = get()
     fun provideSaveSettingsUseCase(): SaveSettingsUseCase = get()
     fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
@@ -88,6 +112,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
     fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
+    fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
@@ -95,15 +120,44 @@ class SharedComponent : KoinComponent {
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
 }
 
-private fun httpClient(httpClientEngine: HttpClientEngine) = HttpClient(httpClientEngine) {
+fun httpClient(
+    httpClientEngine: HttpClientEngine,
+    settings: Settings,
+    saveSettingsUseCase: SaveSettingsUseCase
+) =
+    HttpClient(httpClientEngine) {
 
-    install(ContentNegotiation) {
-        json(Json {
-            isLenient = true; ignoreUnknownKeys = true; prettyPrint = true
-        })
+        install(ContentNegotiation) {
+            json(Json {
+                isLenient = true; ignoreUnknownKeys = true; prettyPrint = true
+            })
+        }
+        install(Auth) {
+            this.bearer {
+                this.loadTokens {
+                    BearerTokens(
+                        settings.getString(Constants.JWT_TOKEN, ""),
+                        settings.getString(Constants.REFRESH_TOKEN, "")
+                    )
+                }
+                this.refreshTokens {
+                    val oldRefreshToken = settings.getString(Constants.REFRESH_TOKEN, "")
+                    val refreshTokens =
+                        this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
+                            contentType(ContentType.Application.Json)
+                            markAsRefreshTokenRequest()
+                            setBody(LoginResponse(refreshToken = oldRefreshToken))
+                        }.body<LoginResponse>()
+                    saveSettingsUseCase.invoke(refreshTokens.token, refreshTokens.refreshToken)
+                    BearerTokens(
+                        settings.getString(Constants.JWT_TOKEN, ""),
+                        settings.getString(Constants.REFRESH_TOKEN, "")
+                    )
+                }
+            }
+        }
+        install(Logging) {
+            logger = Logger.DEFAULT
+            level = LogLevel.ALL
+        }
     }
-    install(Logging) {
-        logger = Logger.DEFAULT
-        level = LogLevel.ALL
-    }
-}
