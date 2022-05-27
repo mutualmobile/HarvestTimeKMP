@@ -55,9 +55,7 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 
 Screenshots            | In Progress                        |
 |----------------	|------------------------------	|
-| <img src="art/android_harvest_sign_in.png" alt="" style="width:300px;"/> | <img src="art/android_main_screen.jpg" alt="" style="width:300px;"/> |
-| <img src="art/android_drawer.jpg" alt="drawing" style="width:300px;"/> | <img src="art/android_new_entry_screen.jpg" alt="drawing" style="width:300px;"/> |
-| <img src="art/android_report_screen.jpg" alt="drawing" style="width:300px;"/> | <img src="art/android_settings_screen.jpg" alt="drawing" style="width:300px;"/> |
+| <img src="art/android_harvest_sign_in.png" alt="" style="width:300px;"/> |  |
 
 * iOS (SwiftUI)
 
