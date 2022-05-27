@@ -262,8 +262,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
         return try {
             val response =
-                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS") {
                     contentType(ContentType.Application.Json)
+                    parameter("userType", userType)
+                    parameter("orgIdentifier", orgIdentifier)
+                    parameter("isUserDeleted", isUserDeleted)
+                    parameter("offset", offset)
+                    parameter("limit", limit)
                 }
             if (response.status == HttpStatusCode.OK) {
                 NetworkResponse.Success(response.body())
@@ -284,8 +289,11 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>> {
         return try {
             val response =
-                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT?orgId=$orgId&offset=$offset&limit=$limit") {
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
                     contentType(ContentType.Application.Json)
+                    parameter("orgId", orgId)
+                    parameter("offset", offset)
+                    parameter("limit", limit)
                 }
             if (response.status == HttpStatusCode.OK) {
                 NetworkResponse.Success(response.body())
