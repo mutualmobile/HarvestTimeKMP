@@ -12,6 +12,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import org.koin.core.parameter.parametersOf
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
@@ -135,10 +136,11 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun logout(): NetworkResponse<LogoutData> {
-        return NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
+    override suspend fun logout(): NetworkResponse<ApiResponse<String>> {
+        val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
             contentType(ContentType.Application.Json)
-        }.body())
+        }
+        return NetworkResponse.Success(response.body())
     }
 
     override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {
@@ -264,7 +266,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
     override suspend fun findUsersInOrg(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
