@@ -3,6 +3,7 @@ package com.mutualmobile.harvestKmp.data.network
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import io.ktor.client.statement.*
 
 interface PraxisSpringBootAPI {
 
@@ -65,4 +66,9 @@ interface PraxisSpringBootAPI {
         limit: Int
     ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>>
 
+    suspend fun findProjectsInOrg(
+        orgId: String?,
+        offset: Int?,
+        limit: Int?
+    ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>>
 }

@@ -88,6 +88,7 @@ val useCaseModule = module {
     single { CurrentUserLoggedInUseCase(get()) }
     single { CreateProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
+    single { FindProjectsInOrgUseCase(get())}
 }
 
 class UseCasesComponent : HttpClientScoped() {
@@ -111,6 +112,7 @@ class SpringBootAuthUseCasesComponent : HttpClientScoped() {
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
     fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
+    fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
