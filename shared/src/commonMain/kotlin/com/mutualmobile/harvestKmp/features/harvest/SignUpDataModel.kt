@@ -101,8 +101,6 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
                 )
             )
         }
-
         println("SUCCESS ${signUpResponse.data.message}")
     }
-
 }

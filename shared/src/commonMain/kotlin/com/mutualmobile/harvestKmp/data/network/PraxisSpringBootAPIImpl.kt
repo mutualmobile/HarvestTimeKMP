@@ -1,14 +1,13 @@
 package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.data.network.Endpoint.CHANGE_PASSWORD
-import com.mutualmobile.harvestKmp.data.network.Endpoint.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
+import com.mutualmobile.harvestKmp.data.network.Endpoint.ORG_PROJECT
 import com.mutualmobile.harvestKmp.data.network.Endpoint.ORG_USERS
 import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -49,18 +48,25 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
-            NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    SignUpData(
-                        email = email,
-                        password = password,
-                        orgId = company,
-                        firstName = firstName,
-                        lastName = lastName
+            val response =
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        SignUpData(
+                            email = email,
+                            password = password,
+                            orgId = company,
+                            firstName = firstName,
+                            lastName = lastName
+                        )
                     )
-                )
-            }.body())
+                }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -77,22 +83,29 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         orgIdentifier: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
-            NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    SignUpData(
-                        email = email,
-                        password = password,
-                        firstName = firstName,
-                        lastName = lastName,
-                        harvestOrganization = HarvestOrganization(
-                            name = orgName,
-                            website = orgWebsite,
-                            identifier = orgIdentifier
+            val response =
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
+                    contentType(ContentType.Application.Json)
+                    setBody(
+                        SignUpData(
+                            email = email,
+                            password = password,
+                            firstName = firstName,
+                            lastName = lastName,
+                            harvestOrganization = HarvestOrganization(
+                                name = orgName,
+                                website = orgWebsite,
+                                identifier = orgIdentifier
+                            )
                         )
                     )
-                )
-            }.body())
+                }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -104,12 +117,17 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         password: String
     ): NetworkResponse<LoginResponse> {
         return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGIN}") {
-                contentType(ContentType.Application.Json)
-                setBody(LoginData(email = email, password = password))
+            val response =
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGIN}") {
+                    contentType(ContentType.Application.Json)
+                    setBody(LoginData(email = email, password = password))
+                }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
             }
-            val responseBody = response.body<LoginResponse>()
-            NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -139,13 +157,17 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
 
         return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
-                contentType(ContentType.Application.Json)
-                setBody(ChangePassword(password = password, oldPass = oldPassword))
-
+            val response =
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
+                    contentType(ContentType.Application.Json)
+                    setBody(ChangePassword(password = password, oldPass = oldPassword))
+                }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
             }
-            val responseBody = response.body<ApiResponse<HarvestOrganization>>()
-            NetworkResponse.Success(responseBody)
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -154,10 +176,14 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
-            NetworkResponse.Success(
+            val response =
                 httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}?identifier=$identifier")
-                    .body()
-            )
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -166,10 +192,14 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
     override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
-            NetworkResponse.Success(
+            val response =
                 httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}/?email=$email")
-                    .body()
-            )
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -185,8 +215,12 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                     contentType(ContentType.Application.Json)
                     setBody(resetPasswordRequest)
                 }
-            val responseBody = response.body<ApiResponse<Unit>>()
-            NetworkResponse.Success(responseBody)
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -202,13 +236,16 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
 
         return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CREATE_PROJECT") {
+            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
                 contentType(ContentType.Application.Json)
                 setBody(CreateProject(name, client, isIndefinite, startDate, endDate))
-
             }
-            val responseBody = response.body<ApiResponse<CreateProjectResponse>>()
-            NetworkResponse.Success(responseBody)
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -225,12 +262,37 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
         return try {
             val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
                     contentType(ContentType.Application.Json)
-
                 }
-            val responseBody = response.body<ApiResponse<List<FindUsersInOrgResponse>>>()
-            NetworkResponse.Success(responseBody)
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun findProjectsInOrg(
+        orgId: String?,
+        offset: Int?,
+        limit: Int?
+    ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>> {
+        return try {
+            val response =
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT?orgId=$orgId&offset=$offset&limit=$limit") {
+                    contentType(ContentType.Application.Json)
+                }
+            if (response.status == HttpStatusCode.OK) {
+                NetworkResponse.Success(response.body())
+            } else {
+                val responseMsg = response.body<ApiResponse<Unit>>().message
+                NetworkResponse.Failure(Exception(responseMsg))
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)

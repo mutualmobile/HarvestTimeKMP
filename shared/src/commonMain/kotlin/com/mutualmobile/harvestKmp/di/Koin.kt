@@ -69,6 +69,7 @@ val useCaseModule = module {
     single { CurrentUserLoggedInUseCase(get()) }
     single { CreateProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
+    single { FindProjectsInOrgUseCase(get())}
 }
 
 class UseCasesComponent : KoinComponent {
@@ -92,6 +93,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
     fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
+    fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
