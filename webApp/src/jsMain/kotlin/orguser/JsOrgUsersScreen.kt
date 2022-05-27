@@ -15,6 +15,7 @@ import react.*
 
 val JsOrgUsersScreen = VFC {
     var message by useState("")
+    var totalPages by useState(0)
     var users by useState<List<FindUsersInOrgResponse>>()
     var currentPage by useState(0)
     val limit = 10
@@ -26,8 +27,10 @@ val JsOrgUsersScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = try {
-                    val response = (stateNew.data as ApiResponse<List<FindUsersInOrgResponse>>)
-                    users = response.data
+                    val response =
+                        (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
+                    users = response.data?.second
+                    totalPages = response.data?.first ?: 0
                     response.message ?: "Some message"
                 } catch (ex: Exception) {
                     ex.message ?: ""
@@ -62,12 +65,10 @@ val JsOrgUsersScreen = VFC {
             alignItems = AlignItems.baseline
         }
         Pagination {
-            count =
-                if (((users?.size ?: 0) % limit) == 0) ((users?.size
-                    ?: 0) / limit) else ((users?.size ?: 0) / limit + 1)
+            count = totalPages
             page = currentPage
             onChange = { event, value ->
-                currentPage = value.toInt()
+                currentPage = value.toInt().minus(1)
                 dataModel.findUsers(
                     userType = 2, // TODO extract user role as const
                     orgIdentifier = null, isUserDeleted = false,

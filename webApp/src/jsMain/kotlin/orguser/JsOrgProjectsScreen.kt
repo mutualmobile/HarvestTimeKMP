@@ -24,6 +24,7 @@ val JsOrgProjectsScreen = VFC {
     var projects by useState<List<FindProjectsInOrgResponse>>()
     val limit = 10
     var currentPage by useState(0)
+    var totalPages by useState(0)
 
     val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -32,8 +33,10 @@ val JsOrgProjectsScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = try {
-                    val response = (stateNew.data as ApiResponse<List<FindProjectsInOrgResponse>>)
-                    projects = response.data
+                    val response = (stateNew.data as ApiResponse<Pair<Int,List<FindProjectsInOrgResponse>>>)
+                    projects = response.data?.second
+                    totalPages = response.data?.first ?: 0
+
                     response.message ?: "Some message"
                 } catch (ex: Exception) {
                     ex.message ?: ""
@@ -70,12 +73,10 @@ val JsOrgProjectsScreen = VFC {
                 alignItems = AlignItems.baseline
             }
             Pagination {
-                count =
-                    if (((projects?.size ?: 0) % limit) == 0) ((projects?.size
-                        ?: 0) / limit) else ((projects?.size ?: 0) / limit + 1)
+                count = totalPages
                 page = currentPage
                 onChange = { event, value ->
-                    currentPage = value.toInt()
+                    currentPage = value.toInt().minus(1)
                     dataModel.findProjectInOrg(
                         offset = currentPage, limit = limit, orgId = null
                     )
