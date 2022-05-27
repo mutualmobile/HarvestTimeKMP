@@ -1,6 +1,7 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.ChangePasswordDataModel
 import csstype.Color
 import csstype.Margin
@@ -14,6 +15,7 @@ import react.Props
 import react.VFC
 import react.dom.html.ReactHTML
 import react.dom.onChange
+import react.router.dom.useSearchParams
 import react.useState
 
 external interface ChangePasswordUIProps : Props {
@@ -22,7 +24,7 @@ external interface ChangePasswordUIProps : Props {
     var onClose: () -> Unit
 }
 
-val ChangePasswordUI = FC<ChangePasswordUIProps> {props ->
+val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
     var message by useState("")
     var changePassword by useState("")
     var state by useState<DataState>()
@@ -34,7 +36,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> {props ->
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                message = "Request Complete!"
+                message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
                 changePassword = ""
                 password = ""
             }
@@ -51,7 +53,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> {props ->
     })
 
 
-    Drawer{
+    Drawer {
         this.variant = DrawerVariant.temporary
         this.anchor = DrawerAnchor.bottom
         open = props.drawerOpen
@@ -61,7 +63,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> {props ->
         sx {
             backgroundColor = Color("main")
         }
-        Box{
+        Box {
             component = ReactHTML.nav
             TopAppBar {
                 title = "Change Password Form"
