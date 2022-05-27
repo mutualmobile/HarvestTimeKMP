@@ -4,7 +4,10 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
+import com.mutualmobile.harvestKmp.domain.model.response.FindProjectsInOrgResponse
+import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
 import csstype.*
 import emotion.react.css
 import mui.material.*
@@ -18,16 +21,23 @@ val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
     val navigate = useNavigate()
+    var projects by useState<List<FindProjectsInOrgResponse>>()
+    val limit = 10
+    var currentPage by useState(0)
 
-    val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
+    val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                val response = (stateNew.data as ApiResponse<CreateProjectResponse>)
-                response.data
-                message = response.message ?: "Some message"
+                message = try {
+                    val response = (stateNew.data as ApiResponse<List<FindProjectsInOrgResponse>>)
+                    projects = response.data
+                    response.message ?: "Some message"
+                } catch (ex: Exception) {
+                    ex.message ?: ""
+                }
             }
             Complete -> {
                 message = "Completed loading!"
@@ -43,6 +53,9 @@ val JsOrgProjectsScreen = VFC {
 
     useEffectOnce {
         dataModel.activate()
+        dataModel.findProjectInOrg(
+            offset = currentPage, limit = limit, orgId = null
+        )
     }
 
 
@@ -56,13 +69,27 @@ val JsOrgProjectsScreen = VFC {
                 alignSelf = AlignSelf.flexEnd
                 alignItems = AlignItems.baseline
             }
+            Pagination {
+                count =
+                    if (((projects?.size ?: 0) % limit) == 0) ((projects?.size
+                        ?: 0) / limit) else ((projects?.size ?: 0) / limit + 1)
+                page = currentPage
+                onChange = { event, value ->
+                    currentPage = value.toInt()
+                    dataModel.findProjectInOrg(
+                        offset = currentPage, limit = limit, orgId = null
+                    )
+                }
+
+            }
             List {
-                repeat(10) {
+                projects?.map { project ->
                     ListItem {
                         ListItemText {
-                            primary = ReactNode("Kotlin Multiplatform")
+                            primary =
+                                ReactNode("Name: ${project.name ?: ""} Client: ${project.client ?: ""}")
                             secondary =
-                                ReactNode("Bluetooth and WIFI Multi Platform Module")
+                                ReactNode("Start Date: ${project.startDate} EndDate: ${project.endDate}")
                         }
                     }
                 }

@@ -5,6 +5,7 @@ import com.mutualmobile.harvestKmp.features.harvest.ResetPasswordDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
+import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -12,6 +13,7 @@ import react.FC
 import react.Props
 import react.dom.onChange
 import react.router.dom.useSearchParams
+import react.router.useNavigate
 import react.useState
 
 val ResetPasswordScreen = FC<Props> {
@@ -19,6 +21,7 @@ val ResetPasswordScreen = FC<Props> {
     var changePassword by useState("")
     var password by useState("")
     val searchParams = useSearchParams()
+    val navigator  = useNavigate()
 
     val dataModel = ResetPasswordDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -39,6 +42,17 @@ val ResetPasswordScreen = FC<Props> {
             }
         }
     })
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
 
     TopAppBar {
         title = "Reset Password Form"

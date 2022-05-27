@@ -62,13 +62,12 @@ val JsOrgUsersScreen = VFC {
             alignItems = AlignItems.baseline
         }
         Pagination {
-            //count={data.sub.length%10===0 ? data.sub.length/10 : data.sub.length/10 +1} page={page} onChange={(event,val)=> setPage(val)}
             count =
                 if (((users?.size ?: 0) % limit) == 0) ((users?.size
                     ?: 0) / limit) else ((users?.size ?: 0) / limit + 1)
             page = currentPage
             onChange = { event, value ->
-                page = value
+                currentPage = value.toInt()
                 dataModel.findUsers(
                     userType = 2, // TODO extract user role as const
                     orgIdentifier = null, isUserDeleted = false,

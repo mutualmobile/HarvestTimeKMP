@@ -40,6 +40,7 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                 )) {
                 is NetworkResponse.Success<*> -> {
                     onDataState(SuccessState(changePasswordResponse.data))
+                    praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(changePasswordResponse.throwable))
