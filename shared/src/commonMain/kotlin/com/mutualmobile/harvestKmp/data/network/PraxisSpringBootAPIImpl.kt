@@ -12,6 +12,7 @@ import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import org.koin.core.parameter.parametersOf
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
@@ -55,6 +56,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                         email = email,
                         password = password,
                         orgId = company,
+                        role = "2",//todo extract const
                         firstName = firstName,
                         lastName = lastName
                     )
@@ -225,17 +227,20 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
     override suspend fun findUsersInOrg(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
     ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>> {
-
         return try {
             val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS") {
                     contentType(ContentType.Application.Json)
-
+                    parameter("userType", userType)
+                    parameter("orgIdentifier", orgIdentifier)
+                    parameter("isUserDeleted", isUserDeleted)
+                    parameter("offset", offset)
+                    parameter("limit", limit)
                 }
             val responseBody = response.body<ApiResponse<List<FindUsersInOrgResponse>>>()
             NetworkResponse.Success(responseBody)

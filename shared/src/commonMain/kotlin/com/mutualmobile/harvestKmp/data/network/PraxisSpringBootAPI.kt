@@ -59,7 +59,7 @@ interface PraxisSpringBootAPI {
 
     suspend fun findUsersInOrg(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
