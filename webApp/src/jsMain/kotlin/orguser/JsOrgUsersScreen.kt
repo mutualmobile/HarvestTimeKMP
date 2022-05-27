@@ -64,8 +64,8 @@ val JsOrgUsersScreen = VFC {
         Pagination {
             //count={data.sub.length%10===0 ? data.sub.length/10 : data.sub.length/10 +1} page={page} onChange={(event,val)=> setPage(val)}
             count =
-                if ((users?.size ?: (0 % limit)) == 0) users?.size ?: (0 / limit) else users?.size
-                    ?: (0 / limit + 1)
+                if (((users?.size ?: 0) % limit) == 0) ((users?.size
+                    ?: 0) / limit) else ((users?.size ?: 0) / limit + 1)
             page = currentPage
             onChange = { event, value ->
                 page = value
