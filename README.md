@@ -55,9 +55,9 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 
 Screenshots            | In Progress                        |
 |----------------	|------------------------------	|
-| <img src="art/android_harvest_sign_in.png" alt="" style="width:300px;"/> | <img src="art/android_main_screen.png" alt="" style="width:300px;"/> |
-| <img src="art/android_drawer.png" alt="drawing" style="width:300px;"/> | <img src="art/android_new_entry_screen.png" alt="drawing" style="width:300px;"/> |
-| <img src="art/android_report_screen.png" alt="drawing" style="width:300px;"/> | <img src="art/android_settings_screen.png" alt="drawing" style="width:300px;"/> |
+| <img src="art/android_harvest_sign_in.png" alt="" style="width:300px;"/> | <img src="art/android_main_screen.jpg" alt="" style="width:300px;"/> |
+| <img src="art/android_drawer.jpg" alt="drawing" style="width:300px;"/> | <img src="art/android_new_entry_screen.jpg" alt="drawing" style="width:300px;"/> |
+| <img src="art/android_report_screen.jpg" alt="drawing" style="width:300px;"/> | <img src="art/android_settings_screen.jpg" alt="drawing" style="width:300px;"/> |
 
 * iOS (SwiftUI)
 
@@ -69,8 +69,8 @@ Screenshots            | In Progress                        |
 
 Screenshots            | In Progress                        |
 |----------------	|------------------------------	|
-| <img src="art/react_js_find_org_screen.png" alt="" style="width:300px;"/> | <img src="art/react_js_sign_up_screen.png" alt="" style="width:300px;"/> |
-| <img src="art/react_js_login_screen.png" alt="drawing" style="width:300px;"/> | <img src="art/react_js_forgot_password_screen.png" alt="drawing" style="width:300px;"/> |
+| <img src="art/react_js_find_org_screen.png" alt="" style="width:400px;"/> | <img src="art/react_js_sign_up_screen.png" alt="" style="width:400px;"/> |
+| <img src="art/react_js_login_screen.png" alt="drawing" style="width:400px;"/> | <img src="art/react_js_forgot_password_screen.png" alt="drawing" style="width:400px;"/> |
 
 * Compose Desktop (Compose for Desktop)
 
