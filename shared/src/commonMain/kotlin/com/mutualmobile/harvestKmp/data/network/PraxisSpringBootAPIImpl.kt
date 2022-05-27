@@ -8,7 +8,6 @@ import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -116,10 +115,11 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun logout(): NetworkResponse<LogoutData> {
-        return NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
+    override suspend fun logout(): NetworkResponse<ApiResponse<String>> {
+        val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
             contentType(ContentType.Application.Json)
-        }.body())
+        }
+        return NetworkResponse.Success(response.body())
     }
 
     override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {
@@ -204,7 +204,15 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         return try {
             val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CREATE_PROJECT") {
                 contentType(ContentType.Application.Json)
-                setBody(CreateProject(name, client, isIndefinite, startDate, endDate))
+                setBody(
+                    CreateProject(
+                        name = name,
+                        client = client,
+                        isIndefinite = isIndefinite,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
+                )
 
             }
             val responseBody = response.body<ApiResponse<CreateProjectResponse>>()

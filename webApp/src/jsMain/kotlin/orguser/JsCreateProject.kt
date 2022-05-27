@@ -32,8 +32,8 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     var name by useState("")
     var client by useState("")
     val isIndefinite by useState(false)
-    val startDate by useState("")
-    val endDate by useState("")
+    var startDate by useState("")
+    var endDate by useState("")
 
     val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -121,6 +121,31 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                                 client = target.value
                             }
                             this.placeholder = "Client Name"
+                            sx {
+                                margin = Margin(12.px, 2.px)
+                            }
+                        }
+
+                        TextField {
+                            this.variant = FormControlVariant.outlined
+                            this.value = startDate
+                            this.onChange = {
+                                val target = it.target as HTMLInputElement
+                                startDate = target.value
+                            }
+                            this.placeholder = "startDate"
+                            sx {
+                                margin = Margin(12.px, 2.px)
+                            }
+                        }
+                        TextField {
+                            this.variant = FormControlVariant.outlined
+                            this.value = endDate
+                            this.onChange = {
+                                val target = it.target as HTMLInputElement
+                                endDate = target.value
+                            }
+                            this.placeholder = "endDate"
                             sx {
                                 margin = Margin(12.px, 2.px)
                             }

@@ -32,7 +32,7 @@ interface PraxisSpringBootAPI {
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>
 
-    suspend fun logout(): NetworkResponse<LogoutData>
+    suspend fun logout(): NetworkResponse<ApiResponse<String>>
 
     suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>>
 

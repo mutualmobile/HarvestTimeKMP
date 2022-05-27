@@ -17,22 +17,27 @@ import io.ktor.client.engine.*
 import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.plugins.logging.*
-import org.koin.core.component.KoinComponent
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import org.koin.core.component.get
 import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
+import org.koin.core.KoinApplication
+import org.koin.core.component.*
+import org.koin.core.scope.Scope
+
+lateinit var koinApplication: KoinApplication
 
 fun initSharedDependencies() = startKoin {
-    modules(commonModule, localDBRepos, useCaseModule, platformModule())
+    modules(commonModule, networkModule, localDBRepos, useCaseModule, platformModule())
+}.also {
+    koinApplication = it
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
-    modules(commonModule, jsSqliteDeps, useCaseModule, platformModule())
+    modules(commonModule, networkModule, jsSqliteDeps, useCaseModule, platformModule())
 }
 
 val jsSqliteDeps = module {
@@ -43,9 +48,23 @@ val localDBRepos = module {
     single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
 }
 
+// TODO learn about KoinScopeComponent and check how to invalidate the httpClient after logout,
+//  because it still persists the old bearer token!
+open class HttpClientScoped : KoinScopeComponent {
+    override val scope: Scope by lazy { createScope(this) }
+    val client: HttpClient by inject()
+    fun close() {
+        scope.close() // don't forget to close current scope
+    }
+}
+
+val networkModule = module {
+    single {
+        httpClient(get(), get(), get())
+    }
+}
 
 val commonModule = module {
-    single { httpClient(get(), get(), get()) }
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
     single { Settings() }
@@ -71,13 +90,13 @@ val useCaseModule = module {
     single { FindUsersInOrgUseCase(get()) }
 }
 
-class UseCasesComponent : KoinComponent {
+class UseCasesComponent : HttpClientScoped() {
     fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
     fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
     fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
 }
 
-class SpringBootAuthUseCasesComponent : KoinComponent {
+class SpringBootAuthUseCasesComponent : HttpClientScoped() {
     fun provideLoginUseCase(): LoginUseCase = get()
     fun provideSaveSettingsUseCase(): SaveSettingsUseCase = get()
     fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
@@ -99,7 +118,7 @@ class SharedComponent : KoinComponent {
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
 }
 
-private fun httpClient(
+fun httpClient(
     httpClientEngine: HttpClientEngine,
     settings: Settings,
     saveSettingsUseCase: SaveSettingsUseCase
@@ -120,10 +139,11 @@ private fun httpClient(
                     )
                 }
                 this.refreshTokens {
-                    val oldRefreshToken = this.oldTokens?.refreshToken
+                    val oldRefreshToken = settings.getString(Constants.REFRESH_TOKEN, "")
                     val refreshTokens =
                         this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
                             contentType(ContentType.Application.Json)
+                            markAsRefreshTokenRequest()
                             setBody(LoginResponse(refreshToken = oldRefreshToken))
                         }.body<LoginResponse>()
                     saveSettingsUseCase.invoke(refreshTokens.token, refreshTokens.refreshToken)

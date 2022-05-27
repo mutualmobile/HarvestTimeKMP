@@ -3,12 +3,15 @@ package com.mutualmobile.harvestKmp.features.harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
+import com.mutualmobile.harvestKmp.di.networkModule
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
+import org.koin.core.context.loadKoinModules
+import org.koin.core.context.unloadKoinModules
 
 
 class LoginDataModel(private val onDataState: (DataState) -> Unit) :
@@ -59,6 +62,8 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     token,
                     refreshToken
                 )
+                unloadKoinModules(networkModule) // required for auth block to know about the new tokens
+                loadKoinModules(networkModule)
                 praxisCommand(NavigationPraxisCommand(screen = Routes.Screen.ORG_USER_DASHBOARD, ""))
             }
         }

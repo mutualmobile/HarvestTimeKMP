@@ -18,7 +18,7 @@ external interface OrgUserDrawerProps : Props {
     var onClose: () -> Unit
 }
 
-val OrgUserDrawer = FC<OrgUserDrawerProps> { props->
+val OrgUserDrawer = FC<OrgUserDrawerProps> { props ->
     val drawerItems = useContext(OrgUserDrawerItemsContext)
     val lastPathname = useLocation().pathname.substringAfterLast("/")
 
@@ -50,7 +50,9 @@ val OrgUserDrawer = FC<OrgUserDrawerProps> { props->
 
                             ListItemButton {
                                 selected = lastPathname == key
-
+                                ListItemIcon {
+                                    mui.icons.material.Group()
+                                }
                                 ListItemText {
                                     primary = ReactNode(name)
                                 }
