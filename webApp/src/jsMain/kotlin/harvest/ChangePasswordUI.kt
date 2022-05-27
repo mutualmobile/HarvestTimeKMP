@@ -2,17 +2,27 @@ package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.ChangePasswordDataModel
+import csstype.Color
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
+import react.FC
+import react.Props
 import react.VFC
+import react.dom.html.ReactHTML
 import react.dom.onChange
 import react.useState
 
-val ChangePasswordUI = VFC {
+external interface ChangePasswordUIProps : Props {
+    var drawerOpen: Boolean
+    var onOpen: () -> Unit
+    var onClose: () -> Unit
+}
+
+val ChangePasswordUI = FC<ChangePasswordUIProps> {props ->
     var message by useState("")
     var changePassword by useState("")
     var state by useState<DataState>()
@@ -25,6 +35,8 @@ val ChangePasswordUI = VFC {
             }
             is SuccessState<*> -> {
                 message = "Request Complete!"
+                changePassword = ""
+                password = ""
             }
             Complete -> {
                 message = "Completed loading!"
@@ -38,52 +50,70 @@ val ChangePasswordUI = VFC {
         }
     })
 
-    TopAppBar {
-        title = "Change Password Form"
-        subtitle = message
-    }
-    Paper {
-        Card {
-            sx {
-                margin = Margin(24.px, 24.px)
+
+    Drawer{
+        this.variant = DrawerVariant.temporary
+        this.anchor = DrawerAnchor.bottom
+        open = props.drawerOpen
+        onClose = { event, reason ->
+            props.onClose()
+        }
+        sx {
+            backgroundColor = Color("main")
+        }
+        Box{
+            component = ReactHTML.nav
+            TopAppBar {
+                title = "Change Password Form"
+                subtitle = message
             }
-            Stack {
-                sx {
-                    margin = Margin(24.px, 24.px)
-                }
-                TextField {
-                    this.variant = FormControlVariant.outlined
-                    this.value = password
-                    this.onChange = {
-                        val target = it.target as HTMLInputElement
-                        password = target.value
-                    }
-                    this.placeholder = "Current Password"
-                    sx {
-                        margin = Margin(12.px, 2.px)
-                    }
-                }
+            Divider {}
 
-                TextField {
-                    this.variant = FormControlVariant.outlined
-                    this.value = changePassword
-                    this.onChange = {
-                        val target = it.target as HTMLInputElement
-                        changePassword = target.value
-                    }
-                    this.placeholder = "New Password"
+            Paper {
+                Card {
                     sx {
-                        margin = Margin(12.px, 2.px)
+                        margin = Margin(24.px, 24.px)
                     }
-                }
+                    Stack {
+                        sx {
+                            margin = Margin(24.px, 24.px)
+                        }
+                        TextField {
+                            this.variant = FormControlVariant.outlined
+                            this.value = password
+                            this.onChange = {
+                                val target = it.target as HTMLInputElement
+                                password = target.value
+                            }
+                            this.placeholder = "Current Password"
+                            sx {
+                                margin = Margin(12.px, 2.px)
+                            }
+                        }
 
-                Button {
-                    this.onClick = {
-                        dataModel.changePassWord(password, changePassword)
+                        TextField {
+                            this.variant = FormControlVariant.outlined
+                            this.value = changePassword
+                            this.onChange = {
+                                val target = it.target as HTMLInputElement
+                                changePassword = target.value
+                            }
+                            this.placeholder = "New Password"
+                            sx {
+                                margin = Margin(12.px, 2.px)
+                            }
+                        }
+
+                        Button {
+                            this.onClick = {
+                                dataModel.changePassWord(password, changePassword)
+                            }
+                            +"Change Password"
+                        }
                     }
-                    +"Change Password"
                 }
             }
         }
     }
+
 }

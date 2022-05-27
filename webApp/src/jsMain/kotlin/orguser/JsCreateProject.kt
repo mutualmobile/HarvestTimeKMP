@@ -73,117 +73,115 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     }
 
 
-    Paper {
-        Drawer {
-            this.variant = DrawerVariant.temporary
-            this.anchor = DrawerAnchor.bottom
-            open = props.drawerOpen
-            onClose = { event, reason ->
-                props.onClose()
-            }
-            sx {
-                backgroundColor = Color("main")
-            }
+    Drawer {
+        this.variant = DrawerVariant.temporary
+        this.anchor = DrawerAnchor.bottom
+        open = props.drawerOpen
+        onClose = { event, reason ->
+            props.onClose()
+        }
+        sx {
+            backgroundColor = Color("main")
+        }
 
-            Box {
-                component = ReactHTML.nav
-                TopAppBar {
-                    title = "Create Project"
-                    subtitle = message
+        Box {
+            component = ReactHTML.nav
+            TopAppBar {
+                title = "Create Project"
+                subtitle = message
+            }
+            Divider {}
+            Card {
+                sx {
+                    margin = Margin(24.px, 24.px)
                 }
-                Divider {}
-                Card {
+                Stack {
                     sx {
                         margin = Margin(24.px, 24.px)
                     }
-                    Stack {
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = name
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            name = target.value
+                        }
+                        this.placeholder = "Project Name"
                         sx {
-                            margin = Margin(24.px, 24.px)
+                            margin = Margin(12.px, 2.px)
                         }
-                        TextField {
-                            this.variant = FormControlVariant.outlined
-                            this.value = name
-                            this.onChange = {
-                                val target = it.target as HTMLInputElement
-                                name = target.value
-                            }
-                            this.placeholder = "Project Name"
-                            sx {
-                                margin = Margin(12.px, 2.px)
-                            }
+                    }
+
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = client
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            client = target.value
                         }
-
-                        TextField {
-                            this.variant = FormControlVariant.outlined
-                            this.value = client
-                            this.onChange = {
-                                val target = it.target as HTMLInputElement
-                                client = target.value
-                            }
-                            this.placeholder = "Client Name"
-                            sx {
-                                margin = Margin(12.px, 2.px)
-                            }
+                        this.placeholder = "Client Name"
+                        sx {
+                            margin = Margin(12.px, 2.px)
                         }
+                    }
 
-                        TextField {
-                            this.variant = FormControlVariant.outlined
-                            this.value = startDate
-                            this.onChange = {
-                                val target = it.target as HTMLInputElement
-                                startDate = target.value
-                            }
-                            this.placeholder = "startDate"
-                            sx {
-                                margin = Margin(12.px, 2.px)
-                            }
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = startDate
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            startDate = target.value
                         }
-                        TextField {
-                            this.variant = FormControlVariant.outlined
-                            this.value = endDate
-                            this.onChange = {
-                                val target = it.target as HTMLInputElement
-                                endDate = target.value
-                            }
-                            this.placeholder = "endDate"
-                            sx {
-                                margin = Margin(12.px, 2.px)
-                            }
+                        this.placeholder = "startDate"
+                        sx {
+                            margin = Margin(12.px, 2.px)
                         }
-
-
-
-                        FormControlLabel {
-                            control = Checkbox.create().apply {
-                                this.props.checked = isIndefinite
-                            }
-                            label = ReactNode("Is Indefinite ?")
+                    }
+                    TextField {
+                        this.variant = FormControlVariant.outlined
+                        this.value = endDate
+                        this.onChange = {
+                            val target = it.target as HTMLInputElement
+                            endDate = target.value
                         }
-
-                        Stack {
-                            this.direction = responsive(StackDirection.row)
-
-                            if (isIndefinite) {
-                                // don't show end date
-                            } else {
-                                //show end date
-                            }
+                        this.placeholder = "endDate"
+                        sx {
+                            margin = Margin(12.px, 2.px)
                         }
+                    }
 
 
-                        Button {
-                            variant = ButtonVariant.contained
-                            this.onClick = {
-                                dataModel.createProject(
-                                    name = name,
-                                    client = client,
-                                    isIndefinite = isIndefinite,
-                                    startDate = startDate,
-                                    endDate = endDate
-                                )
-                            }
-                            +"Create Project"
+
+                    FormControlLabel {
+                        control = Checkbox.create().apply {
+                            this.props.checked = isIndefinite
                         }
+                        label = ReactNode("Is Indefinite ?")
+                    }
+
+                    Stack {
+                        this.direction = responsive(StackDirection.row)
+
+                        if (isIndefinite) {
+                            // don't show end date
+                        } else {
+                            //show end date
+                        }
+                    }
+
+
+                    Button {
+                        variant = ButtonVariant.contained
+                        this.onClick = {
+                            dataModel.createProject(
+                                name = name,
+                                client = client,
+                                isIndefinite = isIndefinite,
+                                startDate = startDate,
+                                endDate = endDate
+                            )
+                        }
+                        +"Create Project"
                     }
                 }
             }

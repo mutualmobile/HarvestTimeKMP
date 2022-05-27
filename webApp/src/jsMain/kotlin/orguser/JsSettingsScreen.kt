@@ -1,10 +1,43 @@
 package orguser
 
+import harvest.ChangePasswordUI
+import mui.material.Box
+import mui.material.ListItem
+import mui.material.ListItemText
 import mui.material.Typography
+import react.ReactNode
 import react.VFC
+import react.router.useNavigate
+import react.useState
 
 val JsSettingsScreen = VFC {
-    Typography {
-        +"Settings will show here!"
+    var message by useState("")
+    var changePassword by useState(false)
+    val navigate = useNavigate()
+
+    Box{
+        mui.material.List {
+            ListItem {
+                ListItemText {
+                    primary = ReactNode("Change Password")
+                    secondary =
+                        ReactNode("Recommended: Update your password regularly or use a secure password manager")
+                    onClick = {
+                        changePassword = true
+                    }
+                }
+            }
+        }
+
+        ChangePasswordUI{
+            drawerOpen = changePassword
+            onOpen = {
+                changePassword = true
+            }
+            onClose = {
+                changePassword = false
+            }
+        }
+
     }
 }
