@@ -2,7 +2,7 @@ package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.*
 import mui.material.*
@@ -22,7 +22,7 @@ val JsOrgProjectsScreen = VFC {
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                val response = (stateNew.data as ApiResponse<CreateProjectResponse>)
+                val response = (stateNew.data as ApiResponse<OrgProjectResponse>)
                 response.data
                 message = response.message ?: "Some message"
             }

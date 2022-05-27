@@ -8,6 +8,7 @@ import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.request.*
@@ -245,7 +246,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         isIndefinite: Boolean,
         startDate: String,
         endDate: String
-    ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
+    ): NetworkResponse<ApiResponse<OrgProjectResponse>> {
 
         return try {
             val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
@@ -307,8 +308,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>> {
+    ): NetworkResponse<ApiResponse<List<OrgProjectResponse>>> {
         return try {
+
+            /*---trying to get the the OrgId from get user data model---*/
+//            val settings = Settings()
+//            val orgID = settings.getString("ORG_ID")
+
             val response =
                 httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
                     contentType(ContentType.Application.Json)
@@ -328,7 +334,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         }
     }
 
-    override suspend fun updateProjects(
+    override suspend fun updateProject(
         id: String,
         name: String,
         client: String,

@@ -2,16 +2,13 @@ package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
-import com.mutualmobile.harvestKmp.di.networkModule
-import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.set
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
-import org.koin.core.context.loadKoinModules
-import org.koin.core.context.unloadKoinModules
 
 class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
@@ -19,6 +16,7 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val getUserUseCase = useCasesComponent.provideGetUserUseCase()
+//    val settings = Settings()
 
     fun getUser() {
         currentLoadingJob?.cancel()
@@ -28,6 +26,11 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Success -> {
                     print("GetUser Successful, ${getUserResponse.data.message}")
                     onDataState(SuccessState(getUserResponse.data))
+
+                    /*---Trying to save the userId and OrgId for use in the api calls---*/
+//                    settings["USER_ID"] = getUserResponse.data.data?.id
+//                    settings["ORG_ID"] = getUserResponse.data.data?.orgId
+
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")

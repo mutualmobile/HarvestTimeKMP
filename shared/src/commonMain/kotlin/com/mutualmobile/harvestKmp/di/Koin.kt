@@ -86,9 +86,11 @@ val useCaseModule = module {
     single { GetUserUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
     single { CurrentUserLoggedInUseCase(get()) }
+    single { GetProjectsInOrgUseCase(get())}
     single { CreateProjectUseCase(get()) }
+    single { UpdateProjectUseCase(get())}
+    single { DeleteProjectUseCase(get())}
     single { FindUsersInOrgUseCase(get()) }
-    single { getProjectsInOrgUseCase(get())}
 }
 
 class UseCasesComponent : HttpClientScoped() {
@@ -110,9 +112,11 @@ class SpringBootAuthUseCasesComponent : HttpClientScoped() {
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
     fun provideGetUserUseCase(): GetUserUseCase = get()
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
+    fun provideGetProjectsInOrgUseCase(): GetProjectsInOrgUseCase = get()
     fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
+    fun provideUpdateProjectUseCase(): UpdateProjectUseCase = get()
+    fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
-    fun provideGetProjectsInOrgUseCase(): getProjectsInOrgUseCase = get()
 }
 
 class SharedComponent : KoinComponent {

@@ -3,6 +3,8 @@ package com.mutualmobile.harvestKmp.features.harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import com.russhwolf.settings.Settings
+import com.russhwolf.settings.set
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -13,6 +15,8 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
+    private val getProjectsUseCase = useCasesComponent.provideGetProjectsInOrgUseCase()
+    private val settings = Settings()
 
     override fun activate() {
     }
@@ -51,6 +55,50 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         }
     }
 
+    fun updateProject(
+        id: String,
+        name: String,
+        client: String,
+        startDate: String,
+        endDate: String,
+        isIndefinite: Boolean,
+        organizationId: String
+    ) {
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch {
+            onDataState(LoadingState)
+            when (val updateProjectResponse = useCasesComponent.provideUpdateProjectUseCase()(
+                id, name, client, startDate, endDate, isIndefinite, organizationId
+            )) {
+                is NetworkResponse.Success -> {
+                    onDataState(SuccessState(updateProjectResponse.data))
+                }
+                is NetworkResponse.Failure -> {
+                    onDataState(ErrorState(updateProjectResponse.throwable))
+                }
+            }
+        }
+    }
+
+    fun deleteProject(
+        projectId: String
+    ) {
+        currentLoadingJob?.cancel()
+        currentLoadingJob = dataModelScope.launch {
+            onDataState(LoadingState)
+            when (val deleteProjectResponse = useCasesComponent.provideDeleteProjectUseCase()(
+                projectId
+            )) {
+                is NetworkResponse.Success -> {
+                    onDataState(SuccessState(deleteProjectResponse.data))
+                }
+                is NetworkResponse.Failure -> {
+                    onDataState(ErrorState(deleteProjectResponse.throwable))
+                }
+            }
+        }
+    }
+
     fun getProjectsInOrg(
         orgId: String?,
         offset: Int?,
@@ -59,8 +107,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val getProjectsInOrgResponse =
-                useCasesComponent.provideGetProjectsInOrgUseCase()(orgId, offset, limit)) {
+            when (val getProjectsInOrgResponse = getProjectsUseCase(orgId, offset, limit)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(getProjectsInOrgResponse.data))
                 }
