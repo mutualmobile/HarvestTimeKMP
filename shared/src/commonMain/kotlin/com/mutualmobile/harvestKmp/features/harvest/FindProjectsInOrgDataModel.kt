@@ -5,7 +5,6 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import io.ktor.client.call.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

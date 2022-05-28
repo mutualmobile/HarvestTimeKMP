@@ -3,12 +3,8 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
-import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
-import com.mutualmobile.harvestKmp.domain.model.response.FindProjectsInOrgResponse
-import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
 import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
+import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.*
 import emotion.react.css
 import kotlinx.browser.window
@@ -23,13 +19,13 @@ val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
     val navigator = useNavigate()
-    var projects by useState<List<FindProjectsInOrgResponse>>()
+    var projects by useState<List<OrgProjectResponse>>()
     val limit = 10
     var currentPage by useState(0)
     var totalPages by useState(0)
 
     val dataModel = OrgProjectDataModel(onDataState = { stateNew ->
-    val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
+        val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -40,7 +36,7 @@ val JsOrgProjectsScreen = VFC {
                 message = response.message ?: "Some message"
                 message = try {
                     val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>)
+                        (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
                     projects = response.data?.second
                     totalPages = response.data?.first ?: 0
 
@@ -141,4 +137,5 @@ val JsOrgProjectsScreen = VFC {
             }
         }
     }
+    })
 }

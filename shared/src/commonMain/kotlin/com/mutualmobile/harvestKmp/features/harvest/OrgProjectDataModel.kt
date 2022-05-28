@@ -1,10 +1,9 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import com.russhwolf.settings.Settings
-import com.russhwolf.settings.set
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -15,8 +14,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    private val getProjectsUseCase = useCasesComponent.provideGetProjectsInOrgUseCase()
-    private val settings = Settings()
+    private val settings = SharedComponent().provideSettings()
 
     override fun activate() {
     }
@@ -33,23 +31,24 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         client: String,
         isIndefinite: Boolean,
         startDate: String,
-        endDate: String
+        endDate: String?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(
-                name,
-                client,
-                isIndefinite,
-                startDate,
-                endDate
-            )) {
+            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(name, client, isIndefinite, startDate, endDate)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(createProjectResponse.data))
+                    println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(createProjectResponse.throwable))
+                    println("FAILED, ${createProjectResponse.throwable.message}")
+                }
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -76,6 +75,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(updateProjectResponse.throwable))
                 }
+                else -> {}
             }
         }
     }
@@ -95,25 +95,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(deleteProjectResponse.throwable))
                 }
-            }
-        }
-    }
-
-    fun getProjectsInOrg(
-        orgId: String?,
-        offset: Int?,
-        limit: Int?
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
-            when (val getProjectsInOrgResponse = getProjectsUseCase(orgId, offset, limit)) {
-                is NetworkResponse.Success -> {
-                    onDataState(SuccessState(getProjectsInOrgResponse.data))
-                }
-                is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(getProjectsInOrgResponse.throwable))
-                }
+                else -> {}
             }
         }
     }

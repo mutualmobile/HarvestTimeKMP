@@ -49,36 +49,27 @@ interface PraxisSpringBootAPI {
         resetPasswordRequest: ResetPasswordRequest
     ): NetworkResponse<ApiResponse<Unit>>
 
-    suspend fun createProject(
-        name: String,
-        client: String,
-        isIndefinite: Boolean,
-        startDate: String,
-        endDate: String?
-    ): NetworkResponse<ApiResponse<CreateProjectResponse>>
-
     suspend fun findUsersInOrg(
         userType: Int,
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
-    ): NetworkResponse<ApiResponse<Pair<Int,List<FindUsersInOrgResponse>>>>
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>>
 
     suspend fun createProject(
         name: String,
         client: String,
         isIndefinite: Boolean,
         startDate: String,
-        endDate: String
+        endDate: String?
     ): NetworkResponse<ApiResponse<OrgProjectResponse>>
 
-    suspend fun getProjectsInOrg(
+    suspend fun findProjectsInOrg(
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>>
-    ): NetworkResponse<ApiResponse<List<OrgProjectResponse>>>
+    ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>>
 
     suspend fun updateProject(
         id: String,

@@ -26,7 +26,6 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
 import org.koin.core.component.*
-import org.koin.core.scope.Scope
 
 lateinit var koinApplication: KoinApplication
 
@@ -76,12 +75,11 @@ val useCaseModule = module {
     single { GetUserUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
     single { CurrentUserLoggedInUseCase(get()) }
-    single { GetProjectsInOrgUseCase(get())}
-    single { CreateProjectUseCase(get()) }
-    single { UpdateProjectUseCase(get())}
-    single { DeleteProjectUseCase(get())}
-    single { FindUsersInOrgUseCase(get()) }
     single { FindProjectsInOrgUseCase(get()) }
+    single { CreateProjectUseCase(get()) }
+    single { UpdateProjectUseCase(get()) }
+    single { DeleteProjectUseCase(get()) }
+    single { FindUsersInOrgUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -103,7 +101,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
     fun provideGetUserUseCase(): GetUserUseCase = get()
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
-    fun provideGetProjectsInOrgUseCase(): GetProjectsInOrgUseCase = get()
+    fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
     fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
     fun provideUpdateProjectUseCase(): UpdateProjectUseCase = get()
     fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
