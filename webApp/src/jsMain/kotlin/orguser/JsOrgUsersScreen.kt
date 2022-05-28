@@ -20,7 +20,7 @@ val JsOrgUsersScreen = VFC {
     var totalPages by useState(0)
     val navigator = useNavigate()
     var users by useState<List<FindUsersInOrgResponse>>()
-    var currentPage by useState(1)
+    var currentPage by useState(0)
     val limit = 10
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
@@ -86,7 +86,7 @@ val JsOrgUsersScreen = VFC {
                 dataModel.findUsers(
                     userType = 2, // TODO extract user role as const
                     orgIdentifier = null, isUserDeleted = false,
-                    currentPage, limit
+                    value.toInt().minus(1), limit
                 )
             }
 
