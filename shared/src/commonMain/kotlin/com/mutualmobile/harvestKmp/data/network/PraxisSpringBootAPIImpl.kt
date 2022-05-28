@@ -162,7 +162,9 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
             }
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    NetworkResponse.Success(response.body())
+                    NetworkResponse.Success<ApiResponse<String>>(response.body()).also {
+                        httpClient.attributes
+                    }
                 }
                 HttpStatusCode.Unauthorized -> {
                     NetworkResponse.Unauthorized(Throwable("Failed to authorize"))

@@ -62,8 +62,6 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     token,
                     refreshToken
                 )
-                unloadKoinModules(networkModule) // required for auth block to know about the new tokens
-                loadKoinModules(networkModule)
                 praxisCommand(NavigationPraxisCommand(screen = Routes.Screen.ORG_USER_DASHBOARD, ""))
             }
         }
