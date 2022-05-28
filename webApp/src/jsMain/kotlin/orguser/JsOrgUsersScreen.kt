@@ -7,17 +7,20 @@ import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
 import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
 import csstype.*
+import kotlinx.browser.window
 import kotlinx.js.jso
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
 import react.*
+import react.router.useNavigate
 
 val JsOrgUsersScreen = VFC {
     var message by useState("")
     var totalPages by useState(0)
+    val navigator = useNavigate()
     var users by useState<List<FindUsersInOrgResponse>>()
-    var currentPage by useState(0)
+    var currentPage by useState(1)
     val limit = 10
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
@@ -48,6 +51,17 @@ val JsOrgUsersScreen = VFC {
         }
     })
 
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
+
     useEffectOnce {
         dataModel.activate()
         dataModel.findUsers(
@@ -68,7 +82,7 @@ val JsOrgUsersScreen = VFC {
             count = totalPages
             page = currentPage
             onChange = { event, value ->
-                currentPage = value.toInt().minus(1)
+                currentPage = value.toInt()
                 dataModel.findUsers(
                     userType = 2, // TODO extract user role as const
                     orgIdentifier = null, isUserDeleted = false,

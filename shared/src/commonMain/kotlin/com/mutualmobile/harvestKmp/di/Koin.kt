@@ -88,7 +88,7 @@ val useCaseModule = module {
     single { CurrentUserLoggedInUseCase(get()) }
     single { CreateProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
-    single { FindProjectsInOrgUseCase(get())}
+    single { FindProjectsInOrgUseCase(get()) }
 }
 
 class UseCasesComponent : HttpClientScoped() {
@@ -118,6 +118,7 @@ class SpringBootAuthUseCasesComponent : HttpClientScoped() {
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
+    fun provideSettings(): Settings = get()
 }
 
 fun httpClient(
@@ -141,17 +142,31 @@ fun httpClient(
                     )
                 }
                 this.refreshTokens {
-                    val oldRefreshToken = settings.getString(Constants.REFRESH_TOKEN, "")
-                    val refreshTokens =
-                        this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
-                            contentType(ContentType.Application.Json)
-                            markAsRefreshTokenRequest()
-                            setBody(LoginResponse(refreshToken = oldRefreshToken))
-                        }.body<LoginResponse>()
-                    saveSettingsUseCase.invoke(refreshTokens.token, refreshTokens.refreshToken)
+                    try {
+                        val oldRefreshToken = settings.getString(Constants.REFRESH_TOKEN, "")
+                        val refreshTokensResponse =
+                            this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
+                                contentType(ContentType.Application.Json)
+                                markAsRefreshTokenRequest()
+                                setBody(LoginResponse(refreshToken = oldRefreshToken))
+                            }
+                        if (refreshTokensResponse.body<String>().isNotEmpty()) {
+                            val refreshTokens = refreshTokensResponse.body<LoginResponse>()
+                            saveSettingsUseCase.invoke(
+                                refreshTokens.token,
+                                refreshTokens.refreshToken
+                            )
+                            BearerTokens(
+                                settings.getString(Constants.JWT_TOKEN, ""),
+                                settings.getString(Constants.REFRESH_TOKEN, "")
+                            )
+                        }
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                     BearerTokens(
-                        settings.getString(Constants.JWT_TOKEN, ""),
-                        settings.getString(Constants.REFRESH_TOKEN, "")
+                        "",
+                        ""
                     )
                 }
             }

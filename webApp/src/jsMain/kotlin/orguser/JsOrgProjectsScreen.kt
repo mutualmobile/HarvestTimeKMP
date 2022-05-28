@@ -10,6 +10,7 @@ import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
 import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
 import csstype.*
 import emotion.react.css
+import kotlinx.browser.window
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
@@ -20,10 +21,10 @@ import react.router.useNavigate
 val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
-    val navigate = useNavigate()
+    val navigator = useNavigate()
     var projects by useState<List<FindProjectsInOrgResponse>>()
     val limit = 10
-    var currentPage by useState(0)
+    var currentPage by useState(1)
     var totalPages by useState(0)
 
     val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
@@ -54,6 +55,18 @@ val JsOrgProjectsScreen = VFC {
         }
     })
 
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
+
+
     useEffectOnce {
         dataModel.activate()
         dataModel.findProjectInOrg(
@@ -76,7 +89,7 @@ val JsOrgProjectsScreen = VFC {
                 count = totalPages
                 page = currentPage
                 onChange = { event, value ->
-                    currentPage = value.toInt().minus(1)
+                    currentPage = value.toInt()
                     dataModel.findProjectInOrg(
                         offset = currentPage, limit = limit, orgId = null
                     )

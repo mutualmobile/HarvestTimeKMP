@@ -1,8 +1,10 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import io.ktor.client.call.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -13,6 +15,7 @@ class FindProjectsInOrgDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
+    private val settings = SharedComponent().provideSettings()
 
     override fun activate() {
     }
@@ -30,7 +33,7 @@ class FindProjectsInOrgDataModel(private val onDataState: (DataState) -> Unit) :
         limit: Int?
     ) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
+        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
             when (val findUsersInOrgResponse =
                 useCasesComponent.provideFindProjectsInOrgUseCase()(orgId, offset, limit)) {
@@ -39,6 +42,11 @@ class FindProjectsInOrgDataModel(private val onDataState: (DataState) -> Unit) :
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(findUsersInOrgResponse.throwable))
+                }
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
                 }
             }
         }
