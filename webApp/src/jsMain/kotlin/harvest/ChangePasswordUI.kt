@@ -7,6 +7,7 @@ import csstype.Color
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
+import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -16,6 +17,7 @@ import react.VFC
 import react.dom.html.ReactHTML
 import react.dom.onChange
 import react.router.dom.useSearchParams
+import react.router.useNavigate
 import react.useState
 
 external interface ChangePasswordUIProps : Props {
@@ -29,6 +31,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
     var changePassword by useState("")
     var state by useState<DataState>()
     var password by useState("")
+    val navigator = useNavigate()
 
     val dataModel = ChangePasswordDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -51,6 +54,17 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
             }
         }
     })
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
 
 
     Drawer {

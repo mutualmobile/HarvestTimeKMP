@@ -4,9 +4,14 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
+import com.mutualmobile.harvestKmp.domain.model.response.FindProjectsInOrgResponse
+import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
 import csstype.*
 import emotion.react.css
+import kotlinx.browser.window
+import kotlinx.js.jso
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
@@ -17,17 +22,28 @@ import react.router.useNavigate
 val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
-    val navigate = useNavigate()
+    val navigator = useNavigate()
+    var projects by useState<List<FindProjectsInOrgResponse>>()
+    val limit = 10
+    var currentPage by useState(0)
+    var totalPages by useState(0)
 
-    val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
+    val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
             }
             is SuccessState<*> -> {
-                val response = (stateNew.data as ApiResponse<CreateProjectResponse>)
-                response.data
-                message = response.message ?: "Some message"
+                message = try {
+                    val response =
+                        (stateNew.data as ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>)
+                    projects = response.data?.second
+                    totalPages = response.data?.first ?: 0
+
+                    response.message ?: "Some message"
+                } catch (ex: Exception) {
+                    ex.message ?: ""
+                }
             }
             Complete -> {
                 message = "Completed loading!"
@@ -41,11 +57,24 @@ val JsOrgProjectsScreen = VFC {
         }
     })
 
-    useEffectOnce {
-        dataModel.activate()
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
     }
 
 
+    useEffectOnce {
+        dataModel.activate()
+        dataModel.findProjectInOrg(
+            offset = currentPage, limit = limit, orgId = null
+        )
+    }
 
     Box {
         Box {
@@ -56,13 +85,25 @@ val JsOrgProjectsScreen = VFC {
                 alignSelf = AlignSelf.flexEnd
                 alignItems = AlignItems.baseline
             }
+            Pagination {
+                count = totalPages
+                page = currentPage
+                onChange = { event, value ->
+                    currentPage = value.toInt()
+                    dataModel.findProjectInOrg(
+                        offset = value.toInt().minus(1), limit = limit, orgId = null
+                    )
+                }
+
+            }
             List {
-                repeat(10) {
+                projects?.map { project ->
                     ListItem {
                         ListItemText {
-                            primary = ReactNode("Kotlin Multiplatform")
+                            primary =
+                                ReactNode("Name: ${project.name ?: ""} Client: ${project.client ?: ""}")
                             secondary =
-                                ReactNode("Bluetooth and WIFI Multi Platform Module")
+                                ReactNode("Start Date: ${project.startDate} EndDate: ${project.endDate}")
                         }
                     }
                 }

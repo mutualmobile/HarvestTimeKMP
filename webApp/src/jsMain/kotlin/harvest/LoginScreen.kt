@@ -127,7 +127,7 @@ val JSLoginScreen = VFC {
                 +"Login"
             }
 
-            organizationId?.let {
+            organizationId?.takeIf { it.isNotEmpty() }?.let {
                 Button {
                     this.variant = ButtonVariant.contained
                     sx {

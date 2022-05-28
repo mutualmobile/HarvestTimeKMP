@@ -108,7 +108,7 @@ val JsWorkspaceFindScreen = VFC {
                     WorkspaceComp {
                         this.name = workspaceName
                         this.nameUpdate = {
-                            workspaceName = it
+                            workspaceName = it.lowercase().trim()
                         }
                     }
                     Typography {

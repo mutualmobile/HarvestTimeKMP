@@ -64,11 +64,11 @@ interface PraxisSpringBootAPI {
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
-    ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>>
+    ): NetworkResponse<ApiResponse<Pair<Int,List<FindUsersInOrgResponse>>>>
 
     suspend fun findProjectsInOrg(
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>>
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>>
 }

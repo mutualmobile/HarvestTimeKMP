@@ -10,7 +10,7 @@ class FindProjectsInOrgUseCase(private val praxisSpringBootAPI: PraxisSpringBoot
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<List<FindProjectsInOrgResponse>>> {
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>> {
         return praxisSpringBootAPI.findProjectsInOrg(
             orgId,
             offset,
