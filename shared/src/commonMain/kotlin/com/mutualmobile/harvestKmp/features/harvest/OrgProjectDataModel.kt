@@ -75,7 +75,11 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(updateProjectResponse.throwable))
                 }
-                else -> {}
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
+                }
             }
         }
     }
@@ -95,7 +99,11 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(deleteProjectResponse.throwable))
                 }
-                else -> {}
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
+                }
             }
         }
     }

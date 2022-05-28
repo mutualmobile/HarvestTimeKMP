@@ -8,7 +8,6 @@ import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.call.*
 import io.ktor.client.plugins.*
@@ -23,11 +22,17 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
         return try {
             val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
-            if (response.status == HttpStatusCode.OK) {
-                NetworkResponse.Success(response.body())
-            } else {
-                val responseMsg = response.body<ApiResponse<Unit>>().message
-                NetworkResponse.Failure(Exception(responseMsg))
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
             }
         } catch (e: Exception) {
             println(e)
@@ -386,11 +391,6 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         limit: Int?
     ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>> {
         return try {
-
-            /*---trying to get the the OrgId from get user data model---*/
-//            val settings = Settings()
-//            val orgID = settings.getString("ORG_ID")
-
             val response =
                 httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
                     contentType(ContentType.Application.Json)
@@ -430,15 +430,27 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                 contentType(ContentType.Application.Json)
                 setBody(
                     UpdateProjectRequest(
-                        id, name, client, startDate, endDate, isIndefinite, organizationId
+                        id = id,
+                        name = name,
+                        client = client,
+                        startDate = startDate,
+                        endDate = endDate,
+                        isIndefinite = isIndefinite,
+                        organizationId = organizationId
                     )
                 )
             }
-            if (response.status == HttpStatusCode.OK) {
-                NetworkResponse.Success(response.body())
-            } else {
-                val responseMsg = response.body<ApiResponse<Unit>>().message
-                NetworkResponse.Failure(Exception(responseMsg))
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
             }
         } catch (e: Exception) {
             println(e)
@@ -452,11 +464,17 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                 contentType(ContentType.Application.Json)
                 parameter("projectId", projectId)
             }
-            if (response.status == HttpStatusCode.OK) {
-                NetworkResponse.Success(response.body())
-            } else {
-                val responseMsg = response.body<ApiResponse<Unit>>().message
-                NetworkResponse.Failure(Exception(responseMsg))
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
             }
         } catch (e: Exception) {
             println(e)
