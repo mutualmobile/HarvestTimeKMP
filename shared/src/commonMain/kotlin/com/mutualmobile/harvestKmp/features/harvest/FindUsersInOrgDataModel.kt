@@ -36,7 +36,7 @@ class FindUsersInOrgDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(userType, orgIdentifier, isUserDeleted, offset.minus(1), limit)) {
+            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(userType, orgIdentifier, isUserDeleted, offset, limit)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))
                 }

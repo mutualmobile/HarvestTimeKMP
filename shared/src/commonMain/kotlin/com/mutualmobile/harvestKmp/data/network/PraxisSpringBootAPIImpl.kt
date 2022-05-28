@@ -10,10 +10,11 @@ import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import io.ktor.client.*
 import io.ktor.client.call.*
+import io.ktor.client.plugins.*
+import io.ktor.client.plugins.auth.*
+import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.request.*
-import io.ktor.client.statement.*
 import io.ktor.http.*
-import org.koin.core.parameter.parametersOf
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
@@ -139,7 +140,9 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                 }
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    NetworkResponse.Success(response.body())
+                    NetworkResponse.Success<LoginResponse>(response.body()).also {
+                        httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().firstOrNull()?.clearToken()
+                    }
                 }
                 HttpStatusCode.Unauthorized -> {
                     NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
@@ -162,9 +165,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
             }
             when (response.status) {
                 HttpStatusCode.OK -> {
-                    NetworkResponse.Success<ApiResponse<String>>(response.body()).also {
-                        httpClient.attributes
-                    }
+                    NetworkResponse.Success(response.body())
                 }
                 HttpStatusCode.Unauthorized -> {
                     NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
