@@ -35,7 +35,8 @@ val JsOrgProjectsScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = try {
-                    val response = (stateNew.data as ApiResponse<Pair<Int,List<FindProjectsInOrgResponse>>>)
+                    val response =
+                        (stateNew.data as ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>)
                     projects = response.data?.second
                     totalPages = response.data?.first ?: 0
 
