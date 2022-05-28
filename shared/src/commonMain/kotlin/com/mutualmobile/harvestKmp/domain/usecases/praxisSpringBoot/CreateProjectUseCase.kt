@@ -12,9 +12,9 @@ class CreateProjectUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI)
         client: String,
         isIndefinite: Boolean,
         startDate: String,
-        endDate: String
+        endDate: String?
     ): NetworkResponse<ApiResponse<OrgProjectResponse>> {
-        ProjectCrudValidator()(name, client, startDate, endDate)
+        ProjectCrudValidator()(name, client, startDate)
         return praxisSpringBootAPI.createProject(
             name = name,
             client = client,

@@ -3,7 +3,7 @@ package com.mutualmobile.harvestKmp.validators
 import com.mutualmobile.harvestKmp.validators.exceptions.EmptyFieldException
 
 class ProjectCrudValidator {
-    operator fun invoke(name: String, client: String, startDate: String, endDate: String) {
+    operator fun invoke(name: String, client: String, startDate: String) {
         if (name.isEmpty()) {
             throw EmptyFieldException("Name")
         }
@@ -12,9 +12,6 @@ class ProjectCrudValidator {
         }
         if (startDate.isEmpty()) {
             throw EmptyFieldException("Start Date")
-        }
-        if (endDate.isEmpty()) {
-            throw EmptyFieldException("End Date")
         }
     }
 }

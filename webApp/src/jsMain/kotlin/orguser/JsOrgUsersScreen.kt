@@ -5,13 +5,18 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
 import csstype.*
+import kotlinx.browser.window
+import kotlinx.js.jso
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
 import react.*
+import react.router.useNavigate
 
 val JsOrgUsersScreen = VFC {
     var message by useState("")
+    var totalPages by useState(0)
+    val navigator = useNavigate()
     var users by useState<List<FindUsersInOrgResponse>>()
     var currentPage by useState(0)
     val limit = 10
@@ -23,8 +28,10 @@ val JsOrgUsersScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = try {
-                    val response = (stateNew.data as ApiResponse<List<FindUsersInOrgResponse>>)
-                    users = response.data
+                    val response =
+                        (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
+                    users = response.data?.second
+                    totalPages = response.data?.first ?: 0
                     response.message ?: "Some message"
                 } catch (ex: Exception) {
                     ex.message ?: ""
@@ -41,6 +48,17 @@ val JsOrgUsersScreen = VFC {
             }
         }
     })
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
 
     useEffectOnce {
         dataModel.activate()
@@ -59,17 +77,14 @@ val JsOrgUsersScreen = VFC {
             alignItems = AlignItems.baseline
         }
         Pagination {
-            //count={data.sub.length%10===0 ? data.sub.length/10 : data.sub.length/10 +1} page={page} onChange={(event,val)=> setPage(val)}
-            count =
-                if (((users?.size ?: 0) % limit) == 0) ((users?.size
-                    ?: 0) / limit) else ((users?.size ?: 0) / limit + 1)
+            count = totalPages
             page = currentPage
             onChange = { event, value ->
-                page = value
+                currentPage = value.toInt()
                 dataModel.findUsers(
                     userType = 2, // TODO extract user role as const
                     orgIdentifier = null, isUserDeleted = false,
-                    currentPage, limit
+                    value.toInt().minus(1), limit
                 )
             }
 

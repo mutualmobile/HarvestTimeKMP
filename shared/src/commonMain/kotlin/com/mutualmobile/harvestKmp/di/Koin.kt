@@ -48,16 +48,6 @@ val localDBRepos = module {
     single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
 }
 
-// TODO learn about KoinScopeComponent and check how to invalidate the httpClient after logout,
-//  because it still persists the old bearer token!
-open class HttpClientScoped : KoinScopeComponent {
-    override val scope: Scope by lazy { createScope(this) }
-    val client: HttpClient by inject()
-    fun close() {
-        scope.close() // don't forget to close current scope
-    }
-}
-
 val networkModule = module {
     single {
         httpClient(get(), get(), get())
@@ -78,7 +68,7 @@ val useCaseModule = module {
     single { ExistingOrgSignUpUseCase(get()) }
     single { NewOrgSignUpUseCase(get()) }
     single { FindOrgByIdentifierUseCase(get()) }
-    single { LogoutUseCase(get(), get()) }
+    single { LogoutUseCase(get(), get(), get()) }
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
@@ -91,15 +81,16 @@ val useCaseModule = module {
     single { UpdateProjectUseCase(get())}
     single { DeleteProjectUseCase(get())}
     single { FindUsersInOrgUseCase(get()) }
+    single { FindProjectsInOrgUseCase(get()) }
 }
 
-class UseCasesComponent : HttpClientScoped() {
+class UseCasesComponent : KoinComponent {
     fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
     fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
     fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
 }
 
-class SpringBootAuthUseCasesComponent : HttpClientScoped() {
+class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideLoginUseCase(): LoginUseCase = get()
     fun provideSaveSettingsUseCase(): SaveSettingsUseCase = get()
     fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
@@ -122,6 +113,7 @@ class SpringBootAuthUseCasesComponent : HttpClientScoped() {
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
+    fun provideSettings(): Settings = get()
 }
 
 fun httpClient(
@@ -138,6 +130,7 @@ fun httpClient(
         }
         install(Auth) {
             this.bearer {
+                sendWithoutRequest { request -> !request.url.encodedPath.startsWith("/public") }
                 this.loadTokens {
                     BearerTokens(
                         settings.getString(Constants.JWT_TOKEN, ""),
@@ -145,18 +138,7 @@ fun httpClient(
                     )
                 }
                 this.refreshTokens {
-                    val oldRefreshToken = settings.getString(Constants.REFRESH_TOKEN, "")
-                    val refreshTokens =
-                        this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
-                            contentType(ContentType.Application.Json)
-                            markAsRefreshTokenRequest()
-                            setBody(LoginResponse(refreshToken = oldRefreshToken))
-                        }.body<LoginResponse>()
-                    saveSettingsUseCase.invoke(refreshTokens.token, refreshTokens.refreshToken)
-                    BearerTokens(
-                        settings.getString(Constants.JWT_TOKEN, ""),
-                        settings.getString(Constants.REFRESH_TOKEN, "")
-                    )
+                    refreshToken(settings, saveSettingsUseCase)
                 }
             }
         }
@@ -165,3 +147,35 @@ fun httpClient(
             level = LogLevel.ALL
         }
     }
+
+private suspend fun RefreshTokensParams.refreshToken(
+    settings: Settings,
+    saveSettingsUseCase: SaveSettingsUseCase
+): BearerTokens {
+    try {
+        val oldRefreshToken = settings.getString(Constants.REFRESH_TOKEN, "")
+        val refreshTokensResponse =
+            this.client.post("${Endpoint.SPRING_BOOT_BASE_URL}$REFRESH_TOKEN") {
+                contentType(ContentType.Application.Json)
+                markAsRefreshTokenRequest()
+                setBody(LoginResponse(refreshToken = oldRefreshToken))
+            }
+        if (refreshTokensResponse.body<String>().isNotEmpty()) {
+            val refreshTokens = refreshTokensResponse.body<LoginResponse>()
+            saveSettingsUseCase.invoke(
+                refreshTokens.token,
+                refreshTokens.refreshToken
+            )
+            BearerTokens(
+                settings.getString(Constants.JWT_TOKEN, ""),
+                settings.getString(Constants.REFRESH_TOKEN, "")
+            )
+        }
+    } catch (ex: Exception) {
+        ex.printStackTrace()
+    }
+    return BearerTokens(
+        "",
+        ""
+    )
+}

@@ -1,3 +1,4 @@
+
 package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
@@ -9,37 +10,40 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
+class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    private val changePasswordUseCase = useCasesComponent.provideChangePasswordUseCase()
     val settings = SharedComponent().provideSettings()
 
     override fun activate() {
     }
-
     override fun destroy() {
         dataModelScope.cancel()
     }
 
     override fun refresh() {
-
     }
 
-    fun changePassWord(password: String, oldPassword: String) {
+    fun createProject(
+        name: String,
+        client: String,
+        isIndefinite: Boolean,
+        startDate: String,
+        endDate: String?
+    ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val changePasswordResponse = changePasswordUseCase(password, oldPassword)) {
+            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(name, client, isIndefinite, startDate, endDate)) {
                 is NetworkResponse.Success -> {
-                    print("ChangePassword Successful, ${changePasswordResponse.data.message}")
-                    onDataState(SuccessState(changePasswordResponse.data))
+                    onDataState(SuccessState(createProjectResponse.data))
+                    println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    print("ChangePassword Failed, ${changePasswordResponse.throwable.message}")
-                    onDataState(ErrorState(changePasswordResponse.throwable))
+                    onDataState(ErrorState(createProjectResponse.throwable))
+                    println("FAILED, ${createProjectResponse.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

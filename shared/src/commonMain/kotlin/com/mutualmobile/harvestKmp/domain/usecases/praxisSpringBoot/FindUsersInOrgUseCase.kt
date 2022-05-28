@@ -12,7 +12,7 @@ class FindUsersInOrgUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
-    ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>> {
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>> {
         return praxisSpringBootAPI.findUsersInOrg(
             userType,
             orgIdentifier,
