@@ -3,20 +3,20 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
-import csstype.Color
 import csstype.Margin
 import csstype.px
-import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.js.jso
 import mui.material.*
-import mui.system.responsive
 import mui.system.sx
-import muix.pickers.DatePicker
+import muix.pickers.*
 import org.w3c.dom.HTMLInputElement
 import react.*
-import react.dom.html.ReactHTML
 import react.dom.onChange
 import react.router.useNavigate
+import kotlin.js.Date
+import kotlinext.js.require
+
 
 external interface CreateProjectProps : Props {
     var drawerOpen: Boolean
@@ -31,9 +31,8 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
 
     var name by useState("")
     var client by useState("")
-    val isIndefinite by useState(false)
-    var startDate by useState("")
-    var endDate by useState("")
+    var startDate by useState(Date())
+    var endDate by useState<Date?>(null)
 
     val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -51,8 +50,9 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
             }
             is SuccessState<*> -> {
                 val response = stateNew.data as ApiResponse<*>
-                message = "create project ${response.message}"
-
+                message = "${response.message}"
+                window.alert(message)
+                props.onClose()
             }
         }
     })
@@ -73,118 +73,102 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     }
 
 
-    Drawer {
-        this.variant = DrawerVariant.temporary
-        this.anchor = DrawerAnchor.bottom
+    Dialog {
         open = props.drawerOpen
         onClose = { event, reason ->
             props.onClose()
         }
-        sx {
-            backgroundColor = Color("main")
+        DialogTitle {
+            +"Create Project\n${message}"
         }
-
-        Box {
-            component = ReactHTML.nav
-            TopAppBar {
-                title = "Create Project"
-                subtitle = message
-            }
-            Divider {}
-            Card {
+        DialogContent {
+            Stack {
                 sx {
-                    margin = Margin(24.px, 24.px)
+                    margin = Margin(8.px, 8.px)
                 }
-                Stack {
+
+                TextField {
+                    this.variant = FormControlVariant.outlined
+                    this.value = name
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        name = target.value
+                    }
+                    this.placeholder = "Project Name"
                     sx {
-                        margin = Margin(24.px, 24.px)
+                        margin = Margin(12.px, 2.px)
                     }
-                    TextField {
-                        this.variant = FormControlVariant.outlined
-                        this.value = name
-                        this.onChange = {
-                            val target = it.target as HTMLInputElement
-                            name = target.value
-                        }
-                        this.placeholder = "Project Name"
-                        sx {
-                            margin = Margin(12.px, 2.px)
-                        }
-                    }
+                }
 
-                    TextField {
-                        this.variant = FormControlVariant.outlined
-                        this.value = client
-                        this.onChange = {
-                            val target = it.target as HTMLInputElement
-                            client = target.value
-                        }
-                        this.placeholder = "Client Name"
-                        sx {
-                            margin = Margin(12.px, 2.px)
-                        }
+                TextField {
+                    this.variant = FormControlVariant.outlined
+                    this.value = client
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        client = target.value
                     }
+                    this.placeholder = "Client Name"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
+                }
 
-                    TextField {
-                        this.variant = FormControlVariant.outlined
-                        this.value = startDate
-                        this.onChange = {
-                            val target = it.target as HTMLInputElement
-                            startDate = target.value
-                        }
-                        this.placeholder = "startDate"
-                        sx {
-                            margin = Margin(12.px, 2.px)
-                        }
-                    }
-                    TextField {
-                        this.variant = FormControlVariant.outlined
-                        this.value = endDate
-                        this.onChange = {
-                            val target = it.target as HTMLInputElement
-                            endDate = target.value
-                        }
-                        this.placeholder = "endDate"
-                        sx {
-                            margin = Margin(12.px, 2.px)
+                Typography {
+                    +"Start Date"
+                }
+                LocalizationProvider {
+                    dateAdapter = AdapterDateFns
+                    common.ui.CalendarPicker {
+                        this.date = startDate
+                        this.view = CalendarPickerView.day
+                        this.onChange = { date, _ ->
+                            if (date != null) {
+                                startDate = date
+                            }
                         }
                     }
 
 
-
-                    FormControlLabel {
-                        control = Checkbox.create().apply {
-                            this.props.checked = isIndefinite
-                        }
-                        label = ReactNode("Is Indefinite ?")
-                    }
-
-                    Stack {
-                        this.direction = responsive(StackDirection.row)
-
-                        if (isIndefinite) {
-                            // don't show end date
-                        } else {
-                            //show end date
+                }
+                Typography {
+                    +"End Date"
+                }
+                LocalizationProvider {
+                    dateAdapter = AdapterDateFns
+                    common.ui.CalendarPicker {
+                        this.date = endDate
+                        this.view = CalendarPickerView.day
+                        this.onChange = { date, _ ->
+                            if (date != null) {
+                                endDate = date
+                            }
                         }
                     }
+                }
 
-
+                DialogActions {
                     Button {
-                        variant = ButtonVariant.contained
-                        this.onClick = {
+                        onClick = {
+                            val format: dynamic = require("date-fns").format
                             dataModel.createProject(
                                 name = name,
                                 client = client,
-                                isIndefinite = isIndefinite,
-                                startDate = startDate,
-                                endDate = endDate
+                                isIndefinite = endDate == null,
+                                startDate = format(startDate, "yyyy-MM-dd") as String,
+                                endDate = format(endDate, "yyyy-MM-dd") as? String
                             )
                         }
                         +"Create Project"
+                    }
+                    Button {
+                        onClick = {
+                            props.onClose()
+                        }
+                        +"Cancel"
                     }
                 }
             }
         }
     }
+
 }

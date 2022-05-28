@@ -298,7 +298,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         client: String,
         isIndefinite: Boolean,
         startDate: String,
-        endDate: String
+        endDate: String?
     ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
 
         return try {

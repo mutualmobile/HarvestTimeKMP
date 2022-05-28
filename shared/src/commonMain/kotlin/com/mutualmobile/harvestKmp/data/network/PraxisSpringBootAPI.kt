@@ -55,7 +55,7 @@ interface PraxisSpringBootAPI {
         client: String,
         isIndefinite: Boolean,
         startDate: String,
-        endDate: String
+        endDate: String?
     ): NetworkResponse<ApiResponse<CreateProjectResponse>>
 
     suspend fun findUsersInOrg(

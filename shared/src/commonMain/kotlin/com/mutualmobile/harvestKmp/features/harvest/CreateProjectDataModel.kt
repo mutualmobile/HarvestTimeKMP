@@ -31,7 +31,7 @@ class CreateProjectDataModel(private val onDataState: (DataState) -> Unit) :
         client: String,
         isIndefinite: Boolean,
         startDate: String,
-        endDate: String
+        endDate: String?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
