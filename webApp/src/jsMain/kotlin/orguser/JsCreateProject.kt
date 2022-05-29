@@ -26,6 +26,7 @@ import mui.icons.material.Save
 
 external interface CreateProjectProps : Props {
     var drawerOpen: Boolean
+    var myKey:String
     var projectClicked: OrgProjectResponse?
     var onOpen: () -> Unit
     var onClose: () -> Unit
@@ -76,11 +77,8 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     }
 
     useEffectOnce {
-        dataModel.activate()
-    }
-
-    useEffect {
         message = ""
+        dataModel.activate()
         startDate =
             if (props.projectClicked?.startDate != null) Date(props.projectClicked?.startDate!!.toString()) else Date()
         endDate =
@@ -88,7 +86,6 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
         name = props.projectClicked?.name ?: ""
         client = props.projectClicked?.client ?: ""
     }
-
 
     fun saveNow()  {
         props.projectClicked?.let {
@@ -112,6 +109,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     }
 
     Drawer {
+        key = props.myKey
         open = props.drawerOpen
         this.anchor = DrawerAnchor.bottom
         onClose = { event, reason ->

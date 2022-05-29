@@ -15,7 +15,6 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    val settings = SharedComponent().provideSettings()
 
     fun findOrgByIdentifier(identifier: String) {
         currentLoadingJob?.cancel()

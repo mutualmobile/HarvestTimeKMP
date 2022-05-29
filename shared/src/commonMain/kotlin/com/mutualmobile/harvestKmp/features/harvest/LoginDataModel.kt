@@ -1,14 +1,10 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.data.network.Constants
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.russhwolf.settings.set
-
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
@@ -21,7 +17,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     private val loginUseCase = useCasesComponent.provideLoginUseCase()
     private val getUserUseCase = useCasesComponent.provideGetUserUseCase()
     private val saveSettingsUseCase = useCasesComponent.provideSaveSettingsUseCase()
-    val settings = SharedComponent().provideSettings()
+    private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
     override fun activate() {
     }
@@ -43,8 +39,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     saveTokenAndNavigate(loginResponse)
                     val getUserUseCase = getUserUseCase()
                     if (getUserUseCase is NetworkResponse.Success) {
-                        settings[Constants.ORGANIZATION_ID] = getUserUseCase.data.orgId ?: ""
-                        println("${getUserUseCase.data.orgId ?: ""} is org id")
+                        harvestLocal.saveUser(getUserUseCase.data)
                     }
                 }
                 is NetworkResponse.Failure -> {

@@ -15,7 +15,6 @@ class FindProjectsInOrgDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    private val settings = SharedComponent().provideSettings()
 
     override fun activate() {
     }

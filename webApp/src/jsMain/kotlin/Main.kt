@@ -47,7 +47,9 @@ private suspend fun setupDriverInternal() {
     try {
         val driver = DriverFactory().createDriverBlocking()
         val trendingLocal = sharedComponent.provideGithubTrendingLocal()
+        val harvestUser = sharedComponent.provideHarvestUserLocal()
         trendingLocal.driver = driver
+        harvestUser.driver = driver
     } catch (ex: Exception) {
         console.log(ex.message)
         console.log("Exception happened here.")

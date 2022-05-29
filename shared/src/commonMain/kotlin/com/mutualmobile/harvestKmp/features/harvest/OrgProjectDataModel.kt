@@ -16,7 +16,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    private val settings = SharedComponent().provideSettings()
+    val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
     override fun activate() {
     }
@@ -38,7 +38,13 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(name, client, isIndefinite, startDate, endDate)) {
+            when (val createProjectResponse = useCasesComponent.provideCreateProjectUseCase()(
+                name,
+                client,
+                isIndefinite,
+                startDate,
+                endDate
+            )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(createProjectResponse.data))
                     println("SUCCESS ${createProjectResponse.data.message}")
@@ -49,7 +55,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
             }
@@ -68,7 +74,13 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
             when (val updateProjectResponse = useCasesComponent.provideUpdateProjectUseCase()(
-                id, name, client, startDate, endDate, isIndefinite, settings.getString(Constants.ORGANIZATION_ID)
+                id,
+                name,
+                client,
+                startDate,
+                endDate,
+                isIndefinite,
+                harvestLocal.getUser().orgId ?: throw RuntimeException("this should not be null")
             )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(updateProjectResponse.data))
@@ -78,7 +90,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
             }
@@ -102,7 +114,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
             }
