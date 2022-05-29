@@ -12,9 +12,6 @@ object Themes {
         jso {
             palette = jso {
                 mode = light
-                background = jso {
-                    paper = "#33fa5d00"
-                }
                 primary = jso {
                     main = "#fa5d00"
                 }
@@ -30,9 +27,6 @@ object Themes {
         jso {
             palette = jso {
                 mode = dark
-                background = jso {
-                    paper = "#33fa5d00"
-                }
                 primary = jso {
                     main = "#fa5d00"
                 }

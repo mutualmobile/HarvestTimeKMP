@@ -42,6 +42,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
                 message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
                 changePassword = ""
                 password = ""
+                props.onClose()
             }
             Complete -> {
                 message = "Completed loading!"
@@ -122,7 +123,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
 
                         Button {
                             this.onClick = {
-                                dataModel.changePassWord(password, changePassword)
+                                dataModel.changePassWord(changePassword, password)
                             }
                             +"Change Password"
                         }

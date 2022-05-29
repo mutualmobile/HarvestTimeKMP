@@ -38,7 +38,7 @@ val Header = FC<HeaderProps> { props ->
                     variant = TypographyVariant.h6
                     component = ReactHTML.div
 
-                    +"Organization User"
+                    +"Dashboard"
                 }
                 IconButton {
                     ariaLabel = "logout"

@@ -1,13 +1,10 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.CreateProjectResponse
-import com.mutualmobile.harvestKmp.domain.model.response.FindProjectsInOrgResponse
-import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
+import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.*
 import emotion.react.css
 import kotlinx.browser.window
@@ -16,19 +13,22 @@ import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
 import react.*
-import react.router.dom.NavLink
 import react.router.useNavigate
+import kotlin.js.Date
 
 val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
+    var selectedProject by useState<OrgProjectResponse?>(null)
     val navigator = useNavigate()
-    var projects by useState<List<FindProjectsInOrgResponse>>()
-    val limit = 10
+    var projects by useState<List<OrgProjectResponse>>()
+    val limit = 20
     var currentPage by useState(0)
     var totalPages by useState(0)
+    var isLoading by useState(false)
 
     val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
+        isLoading = stateNew is LoadingState
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -36,10 +36,9 @@ val JsOrgProjectsScreen = VFC {
             is SuccessState<*> -> {
                 message = try {
                     val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>)
+                        (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
                     projects = response.data?.second
                     totalPages = response.data?.first ?: 0
-
                     response.message ?: "Some message"
                 } catch (ex: Exception) {
                     ex.message ?: ""
@@ -77,63 +76,81 @@ val JsOrgProjectsScreen = VFC {
     }
 
     Box {
-        Box {
-            sx {
-                position = Position.relative
-                transform = translatez(0.px)
-                flexGrow = number(1.0)
-                alignSelf = AlignSelf.flexEnd
-                alignItems = AlignItems.baseline
-            }
-            Pagination {
-                count = totalPages
-                page = currentPage
-                onChange = { event, value ->
-                    currentPage = value.toInt()
-                    dataModel.findProjectInOrg(
-                        offset = value.toInt().minus(1), limit = limit, orgId = null
-                    )
+        if (isLoading) {
+            CircularProgress()
+        } else {
+            Box {
+                sx {
+                    position = Position.relative
+                    transform = translatez(0.px)
+                    flexGrow = number(1.0)
+                    alignSelf = AlignSelf.flexEnd
+                    alignItems = AlignItems.baseline
                 }
+                Fab {
+                    variant = FabVariant.extended
+                    sx {
+                        transform = translatez(0.px)
+                        bottom = 16.px
+                        right = 16.px
+                    }
+                    color = FabColor.primary
+                    Add()
+                    onClick = {
+                        createRequested = true
+                    }
+                    +"Create Project"
+                }
+                Pagination {
+                    count = totalPages
+                    page = currentPage
+                    onChange = { event, value ->
+                        currentPage = value.toInt()
+                        dataModel.findProjectInOrg(
+                            offset = value.toInt().minus(1), limit = limit, orgId = null
+                        )
+                    }
 
-            }
-            List {
-                projects?.map { project ->
-                    ListItem {
-                        ListItemText {
-                            primary =
-                                ReactNode("Name: ${project.name ?: ""} Client: ${project.client ?: ""}")
-                            secondary =
-                                ReactNode("Start Date: ${project.startDate} EndDate: ${project.endDate}")
+                }
+                List {
+                    projects?.map { project ->
+                        val format: dynamic = kotlinext.js.require("date-fns").format
+                        val start =
+                            format(Date(project.startDate.toString()), "yyyy-MM-dd") as String
+                        val end = format(Date(project.endDate.toString()), "yyyy-MM-dd") as? String
+                        ListItem {
+                            ListItemText {
+                                primary =
+                                    ReactNode("Name: ${project.name ?: ""}\nClient: ${project.client ?: ""}")
+                                secondary =
+                                    ReactNode("Start Date: $start EndDate: $end")
+                            }
+                            onClick = {
+                                selectedProject = project
+                                createRequested = true
+                            }
                         }
                     }
                 }
             }
-
         }
 
-        Fab {
-            variant = FabVariant.extended
-            sx {
-                transform = translatez(0.px)
-                position = Position.absolute
-                bottom = 16.px
-                right = 16.px
-            }
-            color = FabColor.primary
-            Add()
-            onClick = {
-                createRequested = true
-            }
-            +"Create Project"
-        }
+
+
 
         JsCreateProject {
             drawerOpen = createRequested
+            projectClicked = selectedProject
             onOpen = {
                 createRequested = true
             }
             onClose = {
                 createRequested = false
+                selectedProject = null
+                currentPage = 0
+                dataModel.findProjectInOrg(
+                    offset = currentPage, limit = limit, orgId = null
+                )
             }
         }
     }

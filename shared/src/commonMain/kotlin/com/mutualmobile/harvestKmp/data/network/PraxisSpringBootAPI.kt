@@ -3,11 +3,11 @@ package com.mutualmobile.harvestKmp.data.network
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import io.ktor.client.statement.*
+import kotlinx.datetime.LocalDate
 
 interface PraxisSpringBootAPI {
 
-    suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>
+    suspend fun getUser(): NetworkResponse<GetUserResponse>
 
     suspend fun putUser(id: String): User
 
@@ -50,25 +50,39 @@ interface PraxisSpringBootAPI {
         resetPasswordRequest: ResetPasswordRequest
     ): NetworkResponse<ApiResponse<Unit>>
 
-    suspend fun createProject(
-        name: String,
-        client: String,
-        isIndefinite: Boolean,
-        startDate: String,
-        endDate: String
-    ): NetworkResponse<ApiResponse<CreateProjectResponse>>
-
     suspend fun findUsersInOrg(
         userType: Int,
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
         limit: Int
-    ): NetworkResponse<ApiResponse<Pair<Int,List<FindUsersInOrgResponse>>>>
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>>
+
+    suspend fun createProject(
+        name: String,
+        client: String,
+        isIndefinite: Boolean,
+        startDate: String,
+        endDate: String?
+    ): NetworkResponse<ApiResponse<OrgProjectResponse>>
 
     suspend fun findProjectsInOrg(
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>>
+    ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>>
+
+    suspend fun updateProject(
+        id: String,
+        name: String,
+        client: String,
+        startDate: String,
+        endDate: String?,
+        isIndefinite: Boolean,
+        organizationId: String
+    ): NetworkResponse<ApiResponse<Unit>>
+
+    suspend fun deleteProject(
+        projectId: String
+    ): NetworkResponse<ApiResponse<Unit>>
 }

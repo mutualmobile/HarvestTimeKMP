@@ -2,7 +2,7 @@ package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot
 
 import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.FindProjectsInOrgResponse
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class FindProjectsInOrgUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
@@ -10,11 +10,11 @@ class FindProjectsInOrgUseCase(private val praxisSpringBootAPI: PraxisSpringBoot
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>> {
+    ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>> {
         return praxisSpringBootAPI.findProjectsInOrg(
-            orgId,
-            offset,
-            limit
+            orgId = orgId,
+            offset = offset,
+            limit = limit
         )
     }
 }

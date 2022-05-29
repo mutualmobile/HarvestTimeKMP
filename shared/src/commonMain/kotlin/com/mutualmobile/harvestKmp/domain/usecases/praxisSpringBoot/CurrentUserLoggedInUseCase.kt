@@ -7,5 +7,4 @@ class CurrentUserLoggedInUseCase(private val settings: Settings) {
     operator fun invoke(): Boolean {
         return settings.get("JWT_TOKEN", defaultValue = "").isNotEmpty()
     }
-
 }

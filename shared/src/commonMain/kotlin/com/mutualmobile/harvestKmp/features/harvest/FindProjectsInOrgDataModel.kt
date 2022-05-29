@@ -1,10 +1,10 @@
+
 package com.mutualmobile.harvestKmp.features.harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import io.ktor.client.call.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -19,7 +19,6 @@ class FindProjectsInOrgDataModel(private val onDataState: (DataState) -> Unit) :
 
     override fun activate() {
     }
-
     override fun destroy() {
         dataModelScope.cancel()
     }
