@@ -15,11 +15,12 @@ import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.datetime.LocalDate
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
 
-    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
+    override suspend fun getUser(): NetworkResponse<GetUserResponse> {
         return try {
             val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
             when (response.status) {
@@ -421,7 +422,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         name: String,
         client: String,
         startDate: String,
-        endDate: String,
+        endDate: String?,
         isIndefinite: Boolean,
         organizationId: String
     ): NetworkResponse<ApiResponse<Unit>> {

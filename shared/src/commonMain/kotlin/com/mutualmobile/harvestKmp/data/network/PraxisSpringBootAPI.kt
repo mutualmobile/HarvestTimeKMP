@@ -3,10 +3,11 @@ package com.mutualmobile.harvestKmp.data.network
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import kotlinx.datetime.LocalDate
 
 interface PraxisSpringBootAPI {
 
-    suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>
+    suspend fun getUser(): NetworkResponse<GetUserResponse>
 
     suspend fun putUser(id: String): User
 
@@ -76,7 +77,7 @@ interface PraxisSpringBootAPI {
         name: String,
         client: String,
         startDate: String,
-        endDate: String,
+        endDate: String?,
         isIndefinite: Boolean,
         organizationId: String
     ): NetworkResponse<ApiResponse<Unit>>

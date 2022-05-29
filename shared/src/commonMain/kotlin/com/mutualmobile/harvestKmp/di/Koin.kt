@@ -66,13 +66,13 @@ val useCaseModule = module {
     single { LoginUseCase(get()) }
     single { ExistingOrgSignUpUseCase(get()) }
     single { NewOrgSignUpUseCase(get()) }
+    single { GetUserUseCase(get())}
     single { FindOrgByIdentifierUseCase(get()) }
     single { LogoutUseCase(get(), get(), get()) }
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
     single { ResetPasswordUseCase(get()) }
-    single { GetUserUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
     single { CurrentUserLoggedInUseCase(get()) }
     single { FindProjectsInOrgUseCase(get()) }

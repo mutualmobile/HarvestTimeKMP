@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
+import com.mutualmobile.harvestKmp.data.network.Constants
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
@@ -7,6 +8,7 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 
 class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
@@ -59,15 +61,14 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         name: String,
         client: String,
         startDate: String,
-        endDate: String,
+        endDate: String?,
         isIndefinite: Boolean,
-        organizationId: String
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
             when (val updateProjectResponse = useCasesComponent.provideUpdateProjectUseCase()(
-                id, name, client, startDate, endDate, isIndefinite, organizationId
+                id, name, client, startDate, endDate, isIndefinite, settings.getString(Constants.ORGANIZATION_ID)
             )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(updateProjectResponse.data))
