@@ -23,7 +23,7 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
             onDataState(LoadingState)
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
-                    print("GetUser Successful, ${getUserResponse.data.message}")
+                    print("GetUser Successful, ${getUserResponse.data}")
                     onDataState(SuccessState(getUserResponse.data))
                 }
                 is NetworkResponse.Failure -> {
