@@ -2,11 +2,11 @@ package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
+import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.Margin
 import csstype.px
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import muix.pickers.*
@@ -16,10 +16,13 @@ import react.dom.onChange
 import react.router.useNavigate
 import kotlin.js.Date
 import kotlinext.js.require
+import kotlinx.datetime.Instant
+import kotlinx.datetime.LocalDate
 
 
 external interface CreateProjectProps : Props {
     var drawerOpen: Boolean
+    var projectClicked: OrgProjectResponse?
     var onOpen: () -> Unit
     var onClose: () -> Unit
 }
@@ -28,13 +31,12 @@ external interface CreateProjectProps : Props {
 val JsCreateProject = FC<CreateProjectProps> { props ->
     var message by useState("")
     val navigator = useNavigate()
-
     var name by useState("")
     var client by useState("")
-    var startDate by useState(Date())
+    var startDate by useState<Date>()
     var endDate by useState<Date?>(null)
 
-    val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
+    val dataModel = OrgProjectDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -70,6 +72,16 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
 
     useEffectOnce {
         dataModel.activate()
+
+    }
+
+    useEffect {
+        startDate =
+            if (props.projectClicked?.startDate != null) Date(props.projectClicked?.startDate!!.toString()) else Date()
+        endDate =
+            if (props.projectClicked?.endDate != null) Date(props.projectClicked?.endDate!!.toString()) else Date()
+        name = props.projectClicked?.name ?: ""
+        client = props.projectClicked?.client ?: ""
     }
 
 
@@ -150,21 +162,46 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                     Button {
                         onClick = {
                             val format: dynamic = require("date-fns").format
-                            dataModel.createProject(
-                                name = name,
-                                client = client,
-                                isIndefinite = endDate == null,
-                                startDate = format(startDate, "yyyy-MM-dd") as String,
-                                endDate = format(endDate, "yyyy-MM-dd") as? String
-                            )
+                            props.projectClicked?.let {
+                                dataModel.updateProject(
+                                    id = it.id!!,
+                                    name = name,
+                                    client = client,
+                                    isIndefinite = endDate == null,
+                                    startDate = format(startDate, "yyyy-MM-dd") as String,
+                                    endDate = format(endDate, "yyyy-MM-dd") as? String,
+                                )
+                            } ?: run {
+                                dataModel.createProject(
+                                    name = name,
+                                    client = client,
+                                    isIndefinite = endDate == null,
+                                    startDate = format(startDate, "yyyy-MM-dd") as String,
+                                    endDate = format(endDate, "yyyy-MM-dd") as? String
+                                )
+                            }
+
                         }
-                        +"Create Project"
+                        props.projectClicked?.let {
+                            +"Update Project"
+                        } ?: run {
+                            +"Create Project"
+                        }
+
                     }
                     Button {
                         onClick = {
                             props.onClose()
                         }
-                        +"Cancel"
+                        +"Close"
+                    }
+                    props.projectClicked?.let { project ->
+                        Button {
+                            onClick = {
+                                dataModel.deleteProject(project.id!!)
+                            }
+                            +"Delete"
+                        }
                     }
                 }
             }

@@ -15,15 +15,26 @@ import io.ktor.client.plugins.auth.*
 import io.ktor.client.plugins.auth.providers.*
 import io.ktor.client.request.*
 import io.ktor.http.*
+import kotlinx.datetime.LocalDate
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
 
-    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
+    override suspend fun getUser(): NetworkResponse<GetUserResponse> {
         return try {
             val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
-            val responseBody = response.body<ApiResponse<GetUserResponse>>()
-            NetworkResponse.Success(responseBody)
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
+            }
         } catch (e: Exception) {
             println(e)
             NetworkResponse.Failure(e)
@@ -141,7 +152,8 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
             when (response.status) {
                 HttpStatusCode.OK -> {
                     NetworkResponse.Success<LoginResponse>(response.body()).also {
-                        httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().firstOrNull()?.clearToken()
+                        httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>()
+                            .firstOrNull()?.clearToken()
                     }
                 }
                 HttpStatusCode.Unauthorized -> {
@@ -225,7 +237,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             val response =
-                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}?identifier=$identifier")
+                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}") {
+                    contentType(ContentType.Application.Json)
+                    parameter("identifier", identifier)
+                }
             when (response.status) {
                 HttpStatusCode.OK -> {
                     NetworkResponse.Success(response.body())
@@ -247,7 +262,10 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return try {
             val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}/?email=$email")
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}") {
+                    contentType(ContentType.Application.Json)
+                    parameter("email", email)
+                }
             when (response.status) {
                 HttpStatusCode.OK -> {
                     NetworkResponse.Success(response.body())
@@ -275,46 +293,6 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                     contentType(ContentType.Application.Json)
                     setBody(resetPasswordRequest)
                 }
-            when (response.status) {
-                HttpStatusCode.OK -> {
-                    NetworkResponse.Success(response.body())
-                }
-                HttpStatusCode.Unauthorized -> {
-                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
-                }
-                else -> {
-                    val responseMsg = response.body<ApiResponse<Unit>>().message
-                    NetworkResponse.Failure(Exception(responseMsg))
-                }
-            }
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
-        }
-    }
-
-    override suspend fun createProject(
-        name: String,
-        client: String,
-        isIndefinite: Boolean,
-        startDate: String,
-        endDate: String?
-    ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
-
-        return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
-                contentType(ContentType.Application.Json)
-                setBody(
-                    CreateProject(
-                        name = name,
-                        client = client,
-                        isIndefinite = isIndefinite,
-                        startDate = startDate,
-                        endDate = endDate
-                    )
-                )
-
-            }
             when (response.status) {
                 HttpStatusCode.OK -> {
                     NetworkResponse.Success(response.body())
@@ -369,11 +347,50 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         }
     }
 
+    override suspend fun createProject(
+        name: String,
+        client: String,
+        isIndefinite: Boolean,
+        startDate: String,
+        endDate: String?
+    ): NetworkResponse<ApiResponse<OrgProjectResponse>> {
+        return try {
+            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    CreateProject(
+                        name = name,
+                        client = client,
+                        isIndefinite = isIndefinite,
+                        startDate = startDate,
+                        endDate = endDate
+                    )
+                )
+
+            }
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
+            }
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
     override suspend fun findProjectsInOrg(
         orgId: String?,
         offset: Int?,
         limit: Int?
-    ): NetworkResponse<ApiResponse<Pair<Int, List<FindProjectsInOrgResponse>>>> {
+    ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>> {
         return try {
             val response =
                 httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
@@ -397,6 +414,72 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         } catch (e: Exception) {
             e.printStackTrace()
             return NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun updateProject(
+        id: String,
+        name: String,
+        client: String,
+        startDate: String,
+        endDate: String?,
+        isIndefinite: Boolean,
+        organizationId: String
+    ): NetworkResponse<ApiResponse<Unit>> {
+        return try {
+            val response = httpClient.put("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    UpdateProjectRequest(
+                        id = id,
+                        name = name,
+                        client = client,
+                        startDate = startDate,
+                        endDate = endDate,
+                        isIndefinite = isIndefinite,
+                        organizationId = organizationId
+                    )
+                )
+            }
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
+            }
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
+        }
+    }
+
+    override suspend fun deleteProject(projectId: String): NetworkResponse<ApiResponse<Unit>> {
+        return try {
+            val response = httpClient.delete("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_PROJECT") {
+                contentType(ContentType.Application.Json)
+                parameter("projectId", projectId)
+            }
+            when (response.status) {
+                HttpStatusCode.OK -> {
+                    NetworkResponse.Success(response.body())
+                }
+                HttpStatusCode.Unauthorized -> {
+                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
+                }
+                else -> {
+                    val responseMsg = response.body<ApiResponse<Unit>>().message
+                    NetworkResponse.Failure(Exception(responseMsg))
+                }
+            }
+        } catch (e: Exception) {
+            println(e)
+            NetworkResponse.Failure(e)
         }
     }
 }

@@ -26,7 +26,6 @@ import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
 import org.koin.core.component.*
-import org.koin.core.scope.Scope
 
 lateinit var koinApplication: KoinApplication
 
@@ -67,18 +66,20 @@ val useCaseModule = module {
     single { LoginUseCase(get()) }
     single { ExistingOrgSignUpUseCase(get()) }
     single { NewOrgSignUpUseCase(get()) }
+    single { GetUserUseCase(get())}
     single { FindOrgByIdentifierUseCase(get()) }
     single { LogoutUseCase(get(), get(), get()) }
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }
     single { ResetPasswordUseCase(get()) }
-    single { GetUserUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
     single { CurrentUserLoggedInUseCase(get()) }
-    single { CreateProjectUseCase(get()) }
-    single { FindUsersInOrgUseCase(get()) }
     single { FindProjectsInOrgUseCase(get()) }
+    single { CreateProjectUseCase(get()) }
+    single { UpdateProjectUseCase(get()) }
+    single { DeleteProjectUseCase(get()) }
+    single { FindUsersInOrgUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -100,9 +101,11 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
     fun provideGetUserUseCase(): GetUserUseCase = get()
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
-    fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
-    fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
     fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
+    fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
+    fun provideUpdateProjectUseCase(): UpdateProjectUseCase = get()
+    fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
+    fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
 }
 
 class SharedComponent : KoinComponent {

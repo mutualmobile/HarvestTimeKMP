@@ -1,9 +1,12 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
+import com.mutualmobile.harvestKmp.data.network.Constants
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
+import com.russhwolf.settings.set
 
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -14,10 +17,11 @@ import org.koin.core.component.KoinComponent
 class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val loginUseCase = useCasesComponent.provideLoginUseCase()
+    private val getUserUseCase = useCasesComponent.provideGetUserUseCase()
     private val saveSettingsUseCase = useCasesComponent.provideSaveSettingsUseCase()
+    val settings = SharedComponent().provideSettings()
 
     override fun activate() {
     }
@@ -31,13 +35,17 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
     }
 
     fun login(email: String, password: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
+        dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
             when (val loginResponse = loginUseCase(email, password)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(loginResponse.data))
                     saveTokenAndNavigate(loginResponse)
+                    val getUserUseCase = getUserUseCase()
+                    if (getUserUseCase is NetworkResponse.Success) {
+                        settings[Constants.ORGANIZATION_ID] = getUserUseCase.data.orgId ?: ""
+                        println("${getUserUseCase.data.orgId ?: ""} is org id")
+                    }
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(loginResponse.throwable))
@@ -52,14 +60,21 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
         }
     }
 
-    private fun saveTokenAndNavigate(loginResponse: NetworkResponse.Success<LoginResponse>) {
+    private fun saveTokenAndNavigate(
+        loginResponse: NetworkResponse.Success<LoginResponse>
+    ) {
         loginResponse.data.token?.let { token ->
             loginResponse.data.refreshToken?.let { refreshToken ->
                 saveSettingsUseCase(
                     token,
                     refreshToken
                 )
-                praxisCommand(NavigationPraxisCommand(screen = Routes.Screen.ORG_USER_DASHBOARD, ""))
+                praxisCommand(
+                    NavigationPraxisCommand(
+                        screen = Routes.Screen.ORG_USER_DASHBOARD,
+                        ""
+                    )
+                )
             }
         }
     }
