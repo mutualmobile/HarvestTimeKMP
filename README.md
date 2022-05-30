@@ -1,16 +1,12 @@
 # HarvestTime KMM 
 
-Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Compose for Wear OS,. Currently running on
+Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Kotlin-ReactJs Currently running on
 
 * Desktop JVM (Jetpack Compose) 🚧  WIP
 * Android (Jetpack Compose) 🚧  WIP
 * iOS (SwiftUI) 🚧  WIP
 * macOS (SwiftUI) 🚧  WIP
 * Web (ReactJS) 🚧  WIP
-* Android App Widget ⚠️ TODO 
-* Wear OS (Compose for Wear OS) ⚠ TODO
-* iOS App Widget (SwiftUI) ⚠️ TODO
-* watchOS (SwiftUI) ⚠️ TODO
 
 Build using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project. 
 
@@ -20,6 +16,7 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 - Find Organization ✅ DONE
 - Sign In User  ✅ DONE
 - Sign Up User  ✅ DONE
+- Login User ✅ DONE
 - Forgot Password 🚧 WIP
 - Change Password 🚧 WIP
 - 
@@ -31,7 +28,7 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 | 🎭 IOS UI   | [Swift UI](https://developer.apple.com/documentation/swiftui/)                |
 | 🎭 Web UI   | [React JS with Kotlin](https://play.kotlinlang.org/hands-on/Building%20Web%20Applications%20with%20React%20and%20Kotlin%20JS/01_Introduction)                |
 | 🏗 Architecture    | [Clean](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)                            |
-| 💉 DI (Android)                | [Koin](https://insert-koin.io/)                        |
+| 💉 DI                | [Koin](https://insert-koin.io/)                        |
 | 🌊 Async            | [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/)                |
 | 🌐 Networking        | [Ktor](https://ktor.io/)                        |
 | ð Storage       | [Settings](https://github.com/russhwolf/multiplatform-settings)                        |
@@ -55,7 +52,7 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 
 Screenshots            | In Progress                        |
 |----------------	|------------------------------	|
-| <img src="art/android_harvest_sign_in.png" alt="" style="width:300px;"/> |  |
+| <img src="art/android_screenshots/android_harvest_sign_in.png" alt="" style="width:300px;"/> | <img src="art/android_screenshots/android_harvest_sign_up.png" alt="" style="width:300px;"/>  |
 
 * iOS (SwiftUI)
 
@@ -69,22 +66,6 @@ Screenshots            | In Progress                        |
 |----------------	|------------------------------	|
 | <img src="art/react_js_find_org_screen.png" alt="" style="width:400px;"/> | <img src="art/react_js_sign_up_screen.png" alt="" style="width:400px;"/> |
 | <img src="art/react_js_login_screen.png" alt="drawing" style="width:400px;"/> | <img src="art/react_js_forgot_password_screen.png" alt="drawing" style="width:400px;"/> |
-
-* Compose Desktop (Compose for Desktop)
-
-<img src="art/art7.png" alt="drawing" style="width:200px;"/>
-
-* Android Wear OS (Compose for Wear OS)
-
-<img src="art/art6.png" alt="drawing" style="width:200px;"/>
-
-* watchOS (SwiftUI)
-
-<img src="art/art2.png" alt="drawing" style="width:200px;"/>
-
-* macOS (SwiftUI)
-
-<img src="art/art3.png" alt="drawing" style="width:200px;"/>
 
 
 ### Languages, libraries and tools used
