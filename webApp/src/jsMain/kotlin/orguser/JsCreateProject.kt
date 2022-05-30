@@ -121,19 +121,17 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
 
             props.projectClicked?.let { project ->
                 IconButton {
-                    DeleteForever {
-                        onClick = {
-                            dataModel.deleteProject(project.id!!)
-                        }
+                    DeleteForever()
+                    onClick = {
+                        dataModel.deleteProject(project.id!!)
                     }
                 }
             }
 
             IconButton {
-                CloseRounded {
-                    onClick = {
-                        props.onClose()
-                    }
+                CloseRounded()
+                onClick = {
+                    props.onClose()
                 }
             }
 

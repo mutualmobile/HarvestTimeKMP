@@ -12,10 +12,13 @@ import react.useState
 import csstype.Auto.auto
 import csstype.GridTemplateAreas
 import csstype.array
+import firebase.messaging.messaging
+import firebaseApp
 import mui.material.useMediaQuery
 import mui.system.Box
 import orguser.structure.Area
 import orguser.structure.Sizes
+import webKey
 
 
 val UserDashboardUI = VFC {
@@ -71,7 +74,13 @@ val UserDashboardUI = VFC {
             Header {
                 this.isLoggingOut = isLoading
                 this.logout = {
-                    dataModel.logout()
+
+                    firebaseApp?.messaging()?.getToken(webKey)?.then {
+                        firebaseApp?.messaging()?.deleteToken(it)?.then {
+                            dataModel.logout()
+                        }
+                    }
+
                 }
                 this.navDrawerToggle = {
                     isNavDrawerOpen = !isNavDrawerOpen

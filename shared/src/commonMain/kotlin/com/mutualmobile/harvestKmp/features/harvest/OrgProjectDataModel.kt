@@ -80,7 +80,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 startDate,
                 endDate,
                 isIndefinite,
-                harvestLocal.getUser().orgId ?: throw RuntimeException("this should not be null")
+                harvestLocal.getUser()?.orgId ?: throw RuntimeException("this should not be null")
             )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(updateProjectResponse.data))

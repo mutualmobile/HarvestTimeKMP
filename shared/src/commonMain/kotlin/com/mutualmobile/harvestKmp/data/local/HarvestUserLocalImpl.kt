@@ -32,7 +32,7 @@ class HarvestUserLocalImpl(override var driver: SqlDriver? = null) : HarvestUser
         return dbQuery.selectAllUsers().asFlow().mapToList()
     }
 
-    override fun getUser(): Harvest_user {
-        return dbQuery.selectAllUsers().executeAsOne()
+    override fun getUser(): Harvest_user? {
+        return dbQuery.selectAllUsers().executeAsOneOrNull()
     }
 }

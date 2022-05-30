@@ -4,6 +4,7 @@ import com.mutualmobile.harvestKmp.data.network.Constants
 import com.mutualmobile.harvestKmp.datamodel.Routes
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import harvest.JSLoginScreen
+import kotlinx.browser.window
 import react.FC
 import react.Props
 import react.useMemo
@@ -17,7 +18,7 @@ data class DrawerItem(
 typealias DrawerItems = Iterable<DrawerItem>
 
 fun useDrawerItems(): DrawerItems {
-    SharedComponent().provideHarvestUserLocal().getUser().role?.let { role ->
+    SharedComponent().provideHarvestUserLocal().getUser()?.role?.let { role ->
         when (role) {
             Constants.USER_ORG_ADMIN -> {
                 return useMemo(callback = {
@@ -38,10 +39,11 @@ fun useDrawerItems(): DrawerItems {
                 })
             }
             else -> {
+                window.alert("we should always know the role of the person!")
                 throw RuntimeException("we should always know the role of the person!")
             }
         }
     }
-
+    window.alert("we should always know the role of the person!")
     throw RuntimeException("we should always know the role of the person!")
 }

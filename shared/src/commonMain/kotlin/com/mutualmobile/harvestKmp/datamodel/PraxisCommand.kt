@@ -27,6 +27,7 @@ object Routes {
         const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
         const val ORG_USER_DASHBOARD = "user-dashboard"
+        const val ORG_USER_FETCH = "user-data-fetch"
         const val CREATE_PROJECT = "create-edit-project"
 
         fun String.withOrgId(identifier: String?, id: String?): String {

@@ -19,7 +19,6 @@ import kotlin.js.Date
 val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
-    var projectKey by useState("")
     var selectedProject by useState<OrgProjectResponse?>(null)
     val navigator = useNavigate()
     var projects by useState<List<OrgProjectResponse>>()
