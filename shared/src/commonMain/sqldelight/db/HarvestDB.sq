@@ -1,0 +1,17 @@
+CREATE TABLE harvest_user(
+    uid TEXT NOT NULL PRIMARY KEY,
+    firstName TEXT,
+    lastName TEXT,
+    email TEXT,
+    orgId TEXT,
+    role TEXT
+);
+
+insertUser:
+INSERT OR REPLACE INTO harvest_user(uid,firstName,lastName,email,orgId,role) VALUES(?,?,?,?,?,?);
+
+selectAllUsers:
+SELECT * FROM harvest_user ORDER BY firstName ASC;
+
+deleteAllUsers:
+DELETE FROM harvest_user;

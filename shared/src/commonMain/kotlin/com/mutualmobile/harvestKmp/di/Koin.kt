@@ -3,6 +3,8 @@ package com.mutualmobile.harvestKmp.di
 
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
 import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
+import com.mutualmobile.harvestKmp.data.local.HarvestUserLocal
+import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
 import com.mutualmobile.harvestKmp.data.network.*
 import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
@@ -27,12 +29,8 @@ import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
 import org.koin.core.component.*
 
-lateinit var koinApplication: KoinApplication
-
 fun initSharedDependencies() = startKoin {
     modules(commonModule, networkModule, localDBRepos, useCaseModule, platformModule())
-}.also {
-    koinApplication = it
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
@@ -41,10 +39,12 @@ fun initSqlDelightExperimentalDependencies() = startKoin {
 
 val jsSqliteDeps = module {
     single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
+    single<HarvestUserLocal> { HarvestUserLocalImpl() }
 }
 
 val localDBRepos = module {
     single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
+    single<HarvestUserLocal> { HarvestUserLocalImpl(get()) }
 }
 
 val networkModule = module {
@@ -66,7 +66,7 @@ val useCaseModule = module {
     single { LoginUseCase(get()) }
     single { ExistingOrgSignUpUseCase(get()) }
     single { NewOrgSignUpUseCase(get()) }
-    single { GetUserUseCase(get())}
+    single { GetUserUseCase(get()) }
     single { FindOrgByIdentifierUseCase(get()) }
     single { LogoutUseCase(get(), get(), get()) }
     single { ChangePasswordUseCase(get()) }
@@ -111,6 +111,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
 class SharedComponent : KoinComponent {
     fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
     fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
+    fun provideHarvestUserLocal(): HarvestUserLocal = get()
     fun provideSettings(): Settings = get()
 }
 

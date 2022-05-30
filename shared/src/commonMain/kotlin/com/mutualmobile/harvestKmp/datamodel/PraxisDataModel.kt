@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.datamodel
 
+import com.mutualmobile.harvestKmp.di.SharedComponent
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -10,7 +11,11 @@ import org.koin.core.component.getScopeName
 
 abstract class PraxisDataModel(onDataState: (DataState) -> Unit) {
     protected val dataModelScope = MainScope()
+
+    protected val settings = SharedComponent().provideSettings()
+
     var praxisCommand: (PraxisCommand) -> Unit = {}
+
     protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
         onDataState(ErrorState(throwable))
         println(throwable)

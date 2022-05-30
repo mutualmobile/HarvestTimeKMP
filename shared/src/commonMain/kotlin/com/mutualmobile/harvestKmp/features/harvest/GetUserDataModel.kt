@@ -15,7 +15,6 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
     private var currentLoadingJob: Job? = null
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val getUserUseCase = useCasesComponent.provideGetUserUseCase()
-    val settings = SharedComponent().provideSettings()
 
     fun getUser() {
         currentLoadingJob?.cancel()

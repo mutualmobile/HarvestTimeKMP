@@ -194,10 +194,13 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
 
     }
 
-    override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {
+    override suspend fun fcmToken(user: User): NetworkResponse<ApiResponse<LoginResponse>> {
         return try {
             NetworkResponse.Success(
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.FCM_TOKEN}").body()
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.FCM_TOKEN}"){
+                    contentType(ContentType.Application.Json)
+                    setBody(user)
+                }.body()
             )
         } catch (e: Exception) {
             println(e)

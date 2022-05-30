@@ -4,11 +4,11 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OrgProjectResponse(
-    val client: String? = null,
-    val endDate: String? = null,
+    var client: String? = null,
+    var endDate: String? = null,
     val isIndefinite: Boolean? = null,
-    val name: String? = null,
-    val startDate: String? = null,
+    var name: String? = null,
+    var startDate: String? = null,
     val id: String? = null,
     val organizationId: String? = null
 )

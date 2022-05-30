@@ -6,6 +6,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
 import csstype.Margin
 import csstype.px
+import harvest.material.TopAppBar
 import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
@@ -18,10 +19,14 @@ import kotlin.js.Date
 import kotlinext.js.require
 import kotlinx.datetime.Instant
 import kotlinx.datetime.LocalDate
+import mui.icons.material.CloseRounded
+import mui.icons.material.DeleteForever
+import mui.icons.material.Save
 
 
 external interface CreateProjectProps : Props {
     var drawerOpen: Boolean
+    var myKey:String
     var projectClicked: OrgProjectResponse?
     var onOpen: () -> Unit
     var onClose: () -> Unit
@@ -35,6 +40,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     var client by useState("")
     var startDate by useState<Date>()
     var endDate by useState<Date?>(null)
+    val format: dynamic = require("date-fns").format
 
     val dataModel = OrgProjectDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -71,11 +77,8 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     }
 
     useEffectOnce {
+        message = ""
         dataModel.activate()
-
-    }
-
-    useEffect {
         startDate =
             if (props.projectClicked?.startDate != null) Date(props.projectClicked?.startDate!!.toString()) else Date()
         endDate =
@@ -84,16 +87,58 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
         client = props.projectClicked?.client ?: ""
     }
 
+    fun saveNow()  {
+        props.projectClicked?.let {
+            dataModel.updateProject(
+                id = it.id!!,
+                name = name,
+                client = client,
+                isIndefinite = endDate == null,
+                startDate = format(startDate, "yyyy-MM-dd") as String,
+                endDate = format(endDate, "yyyy-MM-dd") as? String,
+            )
+        } ?: run {
+            dataModel.createProject(
+                name = name,
+                client = client,
+                isIndefinite = endDate == null,
+                startDate = format(startDate, "yyyy-MM-dd") as String,
+                endDate = format(endDate, "yyyy-MM-dd") as? String
+            )
+        }
+    }
 
-    Dialog {
+    Drawer {
+        key = props.myKey
         open = props.drawerOpen
+        this.anchor = DrawerAnchor.bottom
         onClose = { event, reason ->
             props.onClose()
         }
-        DialogTitle {
-            +"Create Project\n${message}"
+        TopAppBar {
+            title = "Create Project"
+            subtitle = message
+
+            props.projectClicked?.let { project ->
+                IconButton {
+                    DeleteForever {
+                        onClick = {
+                            dataModel.deleteProject(project.id!!)
+                        }
+                    }
+                }
+            }
+
+            IconButton {
+                CloseRounded {
+                    onClick = {
+                        props.onClose()
+                    }
+                }
+            }
+
         }
-        DialogContent {
+        Box {
             Stack {
                 sx {
                     margin = Margin(8.px, 8.px)
@@ -105,6 +150,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         name = target.value
+                        props.projectClicked?.name = name
                     }
                     this.placeholder = "Project Name"
                     sx {
@@ -118,6 +164,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         client = target.value
+                        props.projectClicked?.client = client
                     }
                     this.placeholder = "Client Name"
                     sx {
@@ -136,6 +183,8 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                         this.onChange = { date, _ ->
                             if (date != null) {
                                 startDate = date
+                                props.projectClicked?.startDate =
+                                    format(date, "yyyy-MM-dd") as String
                             }
                         }
                     }
@@ -153,6 +202,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                         this.onChange = { date, _ ->
                             if (date != null) {
                                 endDate = date
+                                props.projectClicked?.endDate = format(date, "yyyy-MM-dd") as String
                             }
                         }
                     }
@@ -161,25 +211,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                 DialogActions {
                     Button {
                         onClick = {
-                            val format: dynamic = require("date-fns").format
-                            props.projectClicked?.let {
-                                dataModel.updateProject(
-                                    id = it.id!!,
-                                    name = name,
-                                    client = client,
-                                    isIndefinite = endDate == null,
-                                    startDate = format(startDate, "yyyy-MM-dd") as String,
-                                    endDate = format(endDate, "yyyy-MM-dd") as? String,
-                                )
-                            } ?: run {
-                                dataModel.createProject(
-                                    name = name,
-                                    client = client,
-                                    isIndefinite = endDate == null,
-                                    startDate = format(startDate, "yyyy-MM-dd") as String,
-                                    endDate = format(endDate, "yyyy-MM-dd") as? String
-                                )
-                            }
+                            saveNow()
 
                         }
                         props.projectClicked?.let {
@@ -195,14 +227,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                         }
                         +"Close"
                     }
-                    props.projectClicked?.let { project ->
-                        Button {
-                            onClick = {
-                                dataModel.deleteProject(project.id!!)
-                            }
-                            +"Delete"
-                        }
-                    }
+
                 }
             }
         }
