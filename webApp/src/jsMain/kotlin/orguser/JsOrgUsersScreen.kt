@@ -1,5 +1,7 @@
 package orguser
 
+import com.mutualmobile.harvestKmp.data.network.Constants
+import com.mutualmobile.harvestKmp.data.network.Constants.USER_ROLE_ORG_USER
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
@@ -17,11 +19,15 @@ val JsOrgUsersScreen = VFC {
     var message by useState("")
     var totalPages by useState(0)
     val navigator = useNavigate()
+    var userType by useState(USER_ROLE_ORG_USER)
     var users by useState<List<FindUsersInOrgResponse>>()
     var currentPage by useState(0)
     val limit = 10
+    var isLoading by useState(false)
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
+        isLoading = stateNew is LoadingState
+
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -63,7 +69,7 @@ val JsOrgUsersScreen = VFC {
     useEffectOnce {
         dataModel.activate()
         dataModel.findUsers(
-            userType = 2, orgIdentifier = null, isUserDeleted = false,
+            userType = userType.toInt(), orgIdentifier = null, isUserDeleted = false,
             currentPage, limit
         )
     }
@@ -76,30 +82,66 @@ val JsOrgUsersScreen = VFC {
             alignSelf = AlignSelf.flexEnd
             alignItems = AlignItems.baseline
         }
-        Pagination {
-            count = totalPages
-            page = currentPage
-            onChange = { event, value ->
-                currentPage = value.toInt()
-                dataModel.findUsers(
-                    userType = 2, // TODO extract user role as const
-                    orgIdentifier = null, isUserDeleted = false,
-                    value.toInt().minus(1), limit
-                )
+
+        if (isLoading) {
+            CircularProgress()
+        }else{
+
+            FormControl {
+                InputLabel {
+                    +"User Type"
+                }
+
+                Select {
+                    value = userType.unsafeCast<Nothing?>()
+                    label = ReactNode("UserType")
+                    onChange = { event, _ ->
+                        userType = event.target.value
+                        currentPage = 0
+                        dataModel.findUsers(
+                            userType = userType.toInt(),
+                            orgIdentifier = null, isUserDeleted = false,
+                            0, limit
+                        )
+                    }
+                    MenuItem {
+                        value = USER_ROLE_ORG_USER
+                        +"Users"
+                    }
+                    MenuItem {
+                        value = Constants.USER_ORG_ADMIN
+                        +"Org Admins"
+                    }
+
+                }
             }
 
-        }
-        List {
-            users?.map { user ->
-                ListItem {
-                    ListItemText {
-                        primary = ReactNode("${user.firstName ?: ""} ${user.lastName ?: ""}")
-                        secondary =
-                            ReactNode("${user.email}")
+            Pagination {
+                count = totalPages
+                page = currentPage
+                onChange = { event, value ->
+                    currentPage = value.toInt()
+                    dataModel.findUsers(
+                        userType = userType.toInt(), // TODO extract user role as const
+                        orgIdentifier = null, isUserDeleted = false,
+                        value.toInt().minus(1), limit
+                    )
+                }
+
+            }
+            List {
+                users?.map { user ->
+                    ListItem {
+                        ListItemText {
+                            primary = ReactNode("${user.firstName ?: ""} ${user.lastName ?: ""}")
+                            secondary =
+                                ReactNode("${user.email}")
+                        }
                     }
                 }
             }
         }
+
     }
     Fab {
         variant = FabVariant.extended
