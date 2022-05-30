@@ -151,7 +151,7 @@ val JsOrgProjectsScreen = VFC {
                 selectedProject = null
                 currentPage = 0
                 dataModel.findProjectInOrg(
-                    offset = currentPage, limit = limit, orgId = null
+                    offset = 0, limit = limit, orgId = null
                 )
             }
         }

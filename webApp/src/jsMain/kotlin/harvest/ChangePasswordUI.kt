@@ -14,6 +14,7 @@ import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
 import react.VFC
+import react.dom.html.InputType
 import react.dom.html.ReactHTML
 import react.dom.onChange
 import react.router.dom.useSearchParams
@@ -98,6 +99,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
                         TextField {
                             this.variant = FormControlVariant.outlined
                             this.value = password
+                            this.type = InputType.password
                             this.onChange = {
                                 val target = it.target as HTMLInputElement
                                 password = target.value
@@ -111,6 +113,7 @@ val ChangePasswordUI = FC<ChangePasswordUIProps> { props ->
                         TextField {
                             this.variant = FormControlVariant.outlined
                             this.value = changePassword
+                            this.type = InputType.password
                             this.onChange = {
                                 val target = it.target as HTMLInputElement
                                 changePassword = target.value

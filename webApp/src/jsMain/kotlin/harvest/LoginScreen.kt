@@ -20,6 +20,8 @@ import org.w3c.dom.events.EventListener
 import react.*
 import react.dom.*
 import react.dom.aria.ariaLabel
+import react.dom.html.InputMode
+import react.dom.html.InputType
 import react.router.NavigateFunction
 import react.router.NavigateOptions
 import react.router.dom.useSearchParams
@@ -47,7 +49,6 @@ val JSLoginScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = (stateNew.data as LoginResponse).message ?: "Some message"
-                setupFcmPush()
             }
             Complete -> {
                 message = "Completed loading!"
@@ -65,6 +66,7 @@ val JSLoginScreen = VFC {
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+                setupFcmPush()
             }
             is ModalPraxisCommand -> {
                 window.alert(newCommand.title + "\n" + newCommand.message)
@@ -92,6 +94,7 @@ val JSLoginScreen = VFC {
             TextField {
                 this.variant = FormControlVariant.outlined
                 this.value = email
+                this.type = InputType.email
                 this.onChange = {
                     val target = it.target as HTMLInputElement
                     email = target.value
@@ -105,6 +108,7 @@ val JSLoginScreen = VFC {
             TextField {
                 this.variant = FormControlVariant.outlined
                 this.value = password
+                this.type = InputType.password
                 this.onChange = {
                     val target = it.target as HTMLInputElement
                     password = target.value
@@ -116,24 +120,30 @@ val JSLoginScreen = VFC {
             }
 
             Button {
-                onClick = {
-                    navigator("/forgotPassword")
+                this.variant = ButtonVariant.contained
+                sx {
+                    this.margin = Margin(12.px, 4.px)
                 }
-                +"Forgot Password"
-            }
-
-            Button {
                 this.onClick = {
                     dataModel.login(email, password)
                 }
                 +"Login"
             }
 
+            Button {
+                sx {
+                    this.margin = Margin(12.px, 4.px)
+                }
+                onClick = {
+                    navigator("/forgotPassword")
+                }
+                +"Forgot Password"
+            }
+
             organizationId?.takeIf { it.isNotEmpty() }?.let {
                 Button {
-                    this.variant = ButtonVariant.contained
                     sx {
-                        this.margin = Margin(24.px, 4.px)
+                        this.margin = Margin(12.px, 4.px)
                     }
                     +"Signup with $organizationId"
                     onClick = {

@@ -23,27 +23,12 @@ import orguser.structure.Sizes
 val UserDashboardUI = VFC {
     val mobileMode = useMediaQuery("(max-width:960px)")
 
-    var message by useState("")
+    var isLoading by useState(false)
     val navigator = useNavigate()
     var isNavDrawerOpen by useState(false)
 
     val dataModel = OrgUserDashboardDataModel(onDataState = { stateNew ->
-        when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            is SuccessState<*> -> {
-            }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
-        }
+        isLoading = stateNew is LoadingState
 
     })
 
@@ -86,6 +71,7 @@ val UserDashboardUI = VFC {
             }
 
             Header {
+                this.isLoggingOut = isLoading
                 this.logout = {
                     dataModel.logout()
                 }

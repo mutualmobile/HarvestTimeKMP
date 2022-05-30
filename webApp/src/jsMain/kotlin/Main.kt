@@ -50,7 +50,11 @@ fun setupFcmPush() {
     firebaseApp?.messaging()?.requestPermission()?.then {
         firebaseApp?.messaging()?.getToken(webKey)?.then {
             sendTokenToServer(it)
+        }?.catch {
+            console.log(it)
         }
+    }?.catch {
+        console.log(it)
     }
 }
 
