@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
@@ -39,8 +40,11 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = ScreenList.ExistingOrgSignUpScreen(),
+                        startDestination = ScreenList.OnBoardingScreen(),
                     ) {
+                        composable(ScreenList.OnBoardingScreen()){
+                            OnBoardingScreen(navController = navController)
+                        }
                         composable(ScreenList.ExistingOrgSignUpScreen()){
                             SignUpScreen(navController = navController)
                         }
