@@ -7,6 +7,7 @@ import kotlinx.datetime.internal.JSJoda.Clock
 import kotlinx.datetime.internal.JSJoda.LocalDate
 import kotlinx.datetime.internal.JSJoda.LocalDateTime
 import mui.material.*
+import mui.material.styles.TypographyVariant
 import mui.system.sx
 import react.FC
 import react.Props
@@ -40,7 +41,9 @@ val JsTimeLoggingScreen = FC<Props> {
 
     Box {
         Typography {
-            +"Time logging for ${Date()}"
+            variant = TypographyVariant.h6
+            this.component = ReactHTML.div
+            +"Time logging for ${format(Date(selectedDate.toString()),"MMMM d LLLL")}"
         }
 
         Container {
