@@ -52,7 +52,10 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 
 Screenshots            | In Progress                        |
 |----------------	|------------------------------	|
-| <img src="art/android_screenshots/android_harvest_sign_in.png" alt="" style="width:300px;"/> | <img src="art/android_screenshots/android_harvest_sign_up.png" alt="" style="width:300px;"/>  |
+| <img src="art/android_screenshots/onboarding_android_one.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_onboarding_two.png" alt="" style="width:300px;" />|
+| <img src="art/android_screenshots/android_harvest_sign_in.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_harvest_sign_up.png" alt="" style="width:300px;" />|
+| <img src="art/android_screenshots/android_home_screen.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_new_entry_screen.png" alt="" style="width:300px;" />|
+| <img src="art/android_screenshots/android_report_screen.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_setting_screen.png" alt="" style="width:300px;" />|
 
 * iOS (SwiftUI)
 
@@ -62,10 +65,12 @@ Screenshots            | In Progress                        |
 
 * Web (ReactJS)
 
-Screenshots            | In Progress                        |
-|----------------	|------------------------------	|
-| <img src="art/react_js_find_org_screen.png" alt="" style="width:400px;"/> | <img src="art/react_js_sign_up_screen.png" alt="" style="width:400px;"/> |
-| <img src="art/react_js_login_screen.png" alt="drawing" style="width:400px;"/> | <img src="art/react_js_forgot_password_screen.png" alt="drawing" style="width:400px;"/> |
+Screenshots            | 
+|----------------	|
+| <img src="art/react_js_find_org_screen.png" alt= "" /> |
+| <img src="art/react_js_sign_up_screen.png" alt= "" /> |
+| <img src="art/react_js_login_screen.png" alt= "" /> |
+| <img src="art/react_js_forgot_password_screen.png" alt= "" /> |
 
 
 ### Languages, libraries and tools used
