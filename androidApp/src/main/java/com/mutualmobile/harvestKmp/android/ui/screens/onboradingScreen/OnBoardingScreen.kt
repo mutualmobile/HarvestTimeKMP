@@ -175,13 +175,10 @@ fun OnBoardingScreen(navController: NavHostController) {
                             isLoading = currentbBoardingState is LoadingState,
                             errorMsg = (currentbBoardingState as? ErrorState)?.throwable?.message,
                             onClick = {
-                                /* signUpDataModel.signUp(
-                                     firstName = currentFirstName,
-                                     lastName = currentLastName,
-                                     company = currentCompanyName,
-                                     email = currentWorkEmail,
-                                     password = currentPassword
-                                 )*/
+                                navController.navigateAndClear(
+                                    clearRoute = ScreenList.OnBoardingScreen(),
+                                    navigateTo = ScreenList.LoginScreen()
+                                )
                             }
                         )
                         SurfaceTextButton(
