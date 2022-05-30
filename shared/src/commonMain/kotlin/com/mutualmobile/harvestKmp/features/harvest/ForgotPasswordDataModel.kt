@@ -22,6 +22,7 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
 
             when (val response = useCasesComponent.provideForgotPasswordUseCase()(email)) {
                 is NetworkResponse.Success -> {
+                    praxisCommand(ModalPraxisCommand("Response", response.data.message ?: "Woah!"))
                     onDataState(SuccessState(response.data))
                     println("SUCCESS, ${response.data.message}")
                 }
@@ -31,7 +32,7 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
             }

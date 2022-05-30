@@ -3,9 +3,7 @@ package orguser
 import csstype.Color
 import csstype.None
 import emotion.react.css
-import kotlinx.js.jso
 import mui.material.*
-import mui.system.sx
 import react.*
 import react.dom.html.ReactHTML.nav
 import react.router.dom.NavLink
@@ -19,7 +17,7 @@ external interface OrgUserDrawerProps : Props {
 }
 
 val OrgUserDrawer = FC<OrgUserDrawerProps> { props ->
-    val drawerItems = useContext(OrgUserDrawerItemsContext)
+    val drawerItems = useContext(DrawerItemsContext)
     val lastPathname = useLocation().pathname.substringAfterLast("/")
 
     SwipeableDrawer {

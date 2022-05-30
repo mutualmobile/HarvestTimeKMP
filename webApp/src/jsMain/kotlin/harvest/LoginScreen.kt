@@ -135,7 +135,7 @@ val JSLoginScreen = VFC {
                     this.margin = Margin(12.px, 4.px)
                 }
                 onClick = {
-                    navigator("/forgotPassword")
+                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + Routes.Screen.FORGOT_PASSWORD)
                 }
                 +"Forgot Password"
             }

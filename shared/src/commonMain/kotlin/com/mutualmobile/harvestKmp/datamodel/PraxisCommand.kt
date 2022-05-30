@@ -17,15 +17,16 @@ object Routes {
 
     object Screen {
         const val TRENDING_UI = "trendingui"
-        const val FORGOT_PASSWORD = "forgotPassword"
+        const val FORGOT_PASSWORD = "forgot-password"
         const val RESET_PASSWORD = "resetPassword"
-        const val CHANGE_PASSWORD = "changePassword"
+        const val CHANGE_PASSWORD = "change-password"
         const val LOGIN = "login"
         const val SIGNUP = "signup"
-        const val ORG_USERS = "orgUsers"
-        const val ORG_PROJECTS = "orgProjects"
+        const val ORG_USERS = "users"
+        const val ORG_PROJECTS = "projects"
+        const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
-        const val ORG_USER_DASHBOARD = "orgUserDashboard"
+        const val ORG_USER_DASHBOARD = "user-dashboard"
         const val CREATE_PROJECT = "create-edit-project"
 
         fun String.withOrgId(identifier: String?, id: String?): String {

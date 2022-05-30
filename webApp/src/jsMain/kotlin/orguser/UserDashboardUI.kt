@@ -1,8 +1,6 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgUserDashboardDataModel
 import csstype.Display
 import kotlinx.browser.window
@@ -49,7 +47,7 @@ val UserDashboardUI = VFC {
 
 
 
-    OrgUserDrawerItemsModule {
+    DrawerItemsModule {
         Box {
 
             sx {
