@@ -1,12 +1,21 @@
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
+import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
+import com.mutualmobile.harvestKmp.domain.model.request.DevicePlatform
+import com.mutualmobile.harvestKmp.domain.model.request.User
+import firebase.app.App
 import firebase.messaging.messaging
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.await
+import kotlinx.coroutines.launch
 import react.create
 import react.dom.client.createRoot
 import kotlin.js.json
+
+var firebaseApp: App? = null
 
 val webKey =
     "BFmePGx52AaCaDZzf-0qq8-oF9VT6fATcprqeY4SBWxnJO7BKp1Snsixnt_M0pecIVaPpBN3I1vhPHZbFIu0w5Y" // TODO move this
@@ -23,8 +32,7 @@ fun main() {
     }
 }
 
-private fun firebaseInit() {
-
+fun firebaseInit() {
     val firebaseConfig = json(
         "apiKey" to "AIzaSyAEKlvIkYeG9rcZ1FuA7KOJoiLn1o4t1YU",
         "authDomain" to "harvestkmp.firebaseapp.com",
@@ -35,17 +43,22 @@ private fun firebaseInit() {
         "measurementId" to "G-T2KD5RPQXJ"
     )
 
-    val app = firebase.initializeApp(firebaseConfig)
-    console.log(app.name)
-    app.messaging().requestPermission()
-        .then {
-            console.log("GRANTED");
-            app.messaging().getToken(webKey)
-        }.then {
-            console.log(it)
-        }.catch {
-            console.log(it)
+    firebaseApp = firebase.initializeApp(firebaseConfig)
+}
+
+fun setupFcmPush() {
+    firebaseApp?.messaging()?.requestPermission()?.then {
+        firebaseApp?.messaging()?.getToken(webKey)?.then {
+            sendTokenToServer(it)
         }
+    }
+}
+
+fun sendTokenToServer(it: String?) {
+    GlobalScope.launch {
+        SpringBootAuthUseCasesComponent().provideFcmTokenUseCase()
+            .invoke(User(platform = DevicePlatform.Web, pushToken = it))
+    }
 }
 
 

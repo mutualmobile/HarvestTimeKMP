@@ -25,6 +25,7 @@ import react.router.NavigateOptions
 import react.router.dom.useSearchParams
 import react.router.useLocation
 import react.router.useNavigate
+import setupFcmPush
 import kotlin.js.Json
 
 
@@ -46,6 +47,7 @@ val JSLoginScreen = VFC {
             }
             is SuccessState<*> -> {
                 message = (stateNew.data as LoginResponse).message ?: "Some message"
+                setupFcmPush()
             }
             Complete -> {
                 message = "Completed loading!"

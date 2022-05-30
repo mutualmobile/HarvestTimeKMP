@@ -13,7 +13,14 @@ data class User(
     val pushToken: String? = null,
     val profilePic: String? = null,
     val modifiedTime: String? = null,
-    val platform: String? = null,
+    val platform: DevicePlatform? = null,
     val orgId: String? = null,
-    val harvestOrganization: HarvestOrganization
+    val harvestOrganization: HarvestOrganization? = null
 )
+
+@Serializable
+enum class DevicePlatform {
+    Android,
+    iOS,
+    Web
+}
