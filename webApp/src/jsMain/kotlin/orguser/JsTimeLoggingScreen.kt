@@ -6,9 +6,7 @@ import kotlinx.css.whiteAlpha
 import kotlinx.datetime.internal.JSJoda.Clock
 import kotlinx.datetime.internal.JSJoda.LocalDate
 import kotlinx.datetime.internal.JSJoda.LocalDateTime
-import mui.material.Box
-import mui.material.Container
-import mui.material.Typography
+import mui.material.*
 import mui.system.sx
 import react.FC
 import react.Props
@@ -25,6 +23,7 @@ val JsTimeLoggingScreen = FC<Props> {
     val navigate = useNavigate()
     var week by useState(mutableListOf<LocalDate>())
     val days = mutableListOf("Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun")
+    val format: dynamic = kotlinext.js.require("date-fns").format
 
     fun generateWeek() {
         val localWeek = mutableListOf<LocalDate>()
@@ -51,23 +50,25 @@ val JsTimeLoggingScreen = FC<Props> {
                 borderRadius = 10.px
                 marginBottom = 10.px
             }
-            mui.material.List {
-                sx {
-                    display = Display.flex
-                    flexDirection = FlexDirection.row
-                    padding = 0.px
+
+            ToggleButtonGroup{
+                color = ToggleButtonGroupColor.primary
+                value = selectedDate
+                exclusive = true
+                onChange = { event, newDate->
+                    selectedDate = newDate
                 }
+
                 week.mapIndexed { index, date ->
-                    DayOfWeekView {
-                        weekDate = date.dayOfMonth().toInt()
-                        isToday = date == today
-                        isSelected = date.isEqual(selectedDate)
-                        weekTitle = days[index]
-                        onSelected = {
-                            selectedDate = date
-                        }
+                    val start =
+                        format(Date(date.toString()), "do iii") as String
+                    ToggleButton{
+                        value = date
+                        +start
                     }
                 }
+
+
             }
         }
     }
