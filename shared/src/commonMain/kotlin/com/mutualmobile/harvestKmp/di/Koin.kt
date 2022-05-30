@@ -68,7 +68,7 @@ val useCaseModule = module {
     single { NewOrgSignUpUseCase(get()) }
     single { GetUserUseCase(get()) }
     single { FindOrgByIdentifierUseCase(get()) }
-    single { LogoutUseCase(get(), get(), get()) }
+    single { LogoutUseCase(get(), get(), get(), get()) }
     single { ChangePasswordUseCase(get()) }
     single { FcmTokenUseCase(get()) }
     single { ForgotPasswordUseCase(get()) }

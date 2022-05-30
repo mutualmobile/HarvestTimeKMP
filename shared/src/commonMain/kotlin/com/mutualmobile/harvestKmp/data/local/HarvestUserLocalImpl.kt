@@ -24,6 +24,10 @@ class HarvestUserLocalImpl(override var driver: SqlDriver? = null) : HarvestUser
         )
     }
 
+    override fun clear() {
+        dbQuery.deleteAllUsers()
+    }
+
     override fun getAll(): Flow<List<Harvest_user>> {
         return dbQuery.selectAllUsers().asFlow().mapToList()
     }

@@ -10,4 +10,5 @@ interface HarvestUserLocal {
     fun saveUser(input: GetUserResponse)
     fun getAll(): Flow<List<Harvest_user>>
     fun getUser(): Harvest_user
+    fun clear()
 }
