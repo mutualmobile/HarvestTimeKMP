@@ -26,8 +26,9 @@ object WebAppDependencies {
     )
     val npm = listOf(
         "copy-webpack-plugin" to "9.0.0",
-        "firebase" to "^8.3.1",
-        "firebaseui" to "^4.8.0"
+        "firebase" to "7.24.0",
+        "date-fns" to "2.28.0",
+        "@date-io/date-fns" to "2.14.0"
     )
 }
 

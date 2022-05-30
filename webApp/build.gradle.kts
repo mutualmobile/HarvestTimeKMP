@@ -38,8 +38,5 @@ kotlin {
         commonMainImplementation(kotlinw("emotion"))
         commonMainImplementation(kotlinw("mui"))
         commonMainImplementation(kotlinw("mui-icons"))
-
-        commonMainImplementation(npm("date-fns", "2.28.0"))
-        commonMainImplementation(npm("@date-io/date-fns", "2.14.0"))
     }
 }

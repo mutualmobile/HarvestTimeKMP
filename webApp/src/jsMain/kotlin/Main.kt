@@ -1,13 +1,15 @@
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
+import firebase.messaging.messaging
 import kotlinx.browser.document
 import kotlinx.browser.window
 import react.create
 import react.dom.client.createRoot
-import kotlinext.js.require
-import kotlinx.js.jso
 import kotlin.js.json
+
+val webKey =
+    "BFmePGx52AaCaDZzf-0qq8-oF9VT6fATcprqeY4SBWxnJO7BKp1Snsixnt_M0pecIVaPpBN3I1vhPHZbFIu0w5Y" // TODO move this
 
 val sharedComponent = SharedComponent()
 
@@ -22,7 +24,7 @@ fun main() {
 }
 
 private fun firebaseInit() {
-    val firebase: dynamic = require("firebase/app").default
+
     val firebaseConfig = json(
         "apiKey" to "AIzaSyAEKlvIkYeG9rcZ1FuA7KOJoiLn1o4t1YU",
         "authDomain" to "harvestkmp.firebaseapp.com",
@@ -32,7 +34,18 @@ private fun firebaseInit() {
         "appId" to "1:877837074584:web:0d32488e576994a668d0ed",
         "measurementId" to "G-T2KD5RPQXJ"
     )
-    firebase.initializeApp(firebaseConfig)
+
+    val app = firebase.initializeApp(firebaseConfig)
+    console.log(app.name)
+    app.messaging().requestPermission()
+        .then {
+            console.log("GRANTED");
+            app.messaging().getToken(webKey)
+        }.then {
+            console.log(it)
+        }.catch {
+            console.log(it)
+        }
 }
 
 

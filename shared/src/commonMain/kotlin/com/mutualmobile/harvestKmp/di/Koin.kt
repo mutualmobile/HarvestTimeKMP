@@ -29,12 +29,8 @@ import kotlinx.serialization.json.Json
 import org.koin.core.KoinApplication
 import org.koin.core.component.*
 
-lateinit var koinApplication: KoinApplication
-
 fun initSharedDependencies() = startKoin {
     modules(commonModule, networkModule, localDBRepos, useCaseModule, platformModule())
-}.also {
-    koinApplication = it
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
