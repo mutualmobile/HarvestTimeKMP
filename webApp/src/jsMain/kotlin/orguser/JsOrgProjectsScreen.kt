@@ -112,7 +112,7 @@ val JsOrgProjectsScreen = VFC {
                     }
 
                 }
-                List {
+                Grid{
                     projects?.map { project ->
                         val format: dynamic = kotlinext.js.require("date-fns").format
                         val start =

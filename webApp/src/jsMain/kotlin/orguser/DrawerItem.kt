@@ -1,6 +1,7 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.data.network.Constants
+import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.Routes
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import harvest.JSLoginScreen
@@ -20,7 +21,7 @@ typealias DrawerItems = Iterable<DrawerItem>
 fun useDrawerItems(): DrawerItems {
     SharedComponent().provideHarvestUserLocal().getUser()?.role?.let { role ->
         when (role) {
-            Constants.USER_ORG_ADMIN -> {
+            UserRole.ORG_ADMIN.role -> {
                 return useMemo(callback = {
                     setOf(
                         DrawerItem(Routes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
@@ -29,7 +30,7 @@ fun useDrawerItems(): DrawerItems {
                     )
                 })
             }
-            Constants.USER_ROLE_ORG_USER -> {
+            UserRole.ORG_USER.role -> {
                 return useMemo(callback = {
                     setOf(
                         DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),

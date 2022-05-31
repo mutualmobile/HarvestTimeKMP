@@ -70,7 +70,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                             email = email,
                             password = password,
                             orgId = company,
-                            role = Constants.USER_ROLE_ORG_USER,//todo extract const
+                            role = UserRole.ORG_USER.role,
                             firstName = firstName,
                             lastName = lastName
                         )
