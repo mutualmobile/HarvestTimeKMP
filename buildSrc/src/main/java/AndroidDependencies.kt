@@ -12,6 +12,7 @@ object AndroidDependencyVersions {
   const val material = "1.4.0"
   const val appCompat = "1.4.0"
   const val constraintLayout = "2.1.2"
+  const val constraintLayoutCompose = "1.0.0-beta02"
   const val compose = "1.2.0-beta02"
   const val composeKotlinCompiler = compose
   const val coil = "2.0.0-rc03"
@@ -43,7 +44,8 @@ object AndroidDependencies {
     "androidx.activity:activity-compose:${AndroidDependencyVersions.composeActivity}",
     "com.google.firebase:firebase-auth-ktx",
     "androidx.core:core-splashscreen:${AndroidDependencyVersions.splashScreen}",
-    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}"
+    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}",
+    "androidx.constraintlayout:constraintlayout-compose:${AndroidDependencyVersions.constraintLayoutCompose}"
   )
   val androidTestImplementation = listOf(
     "androidx.compose.ui:ui-test-junit4:${AndroidDependencyVersions.compose}"

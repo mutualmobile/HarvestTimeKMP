@@ -51,4 +51,5 @@
     <string name="signup_screen_company_identifier_et_placeholder">Company Name</string>
     <string name="signup_screen_user_details_et_placeholder">Company Name</string>
     <string name="signup_screen_company_details_et_placeholder">Company Name</string>
+    <string name="subtitle_this_address_harvest">This is the address you use to sign in to Harvest</string>
 </resources>
