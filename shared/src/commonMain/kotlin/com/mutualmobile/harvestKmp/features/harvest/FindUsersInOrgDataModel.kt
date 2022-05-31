@@ -9,7 +9,7 @@ import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class FindUsersInOrgDataModel(private val onDataState: (DataState) -> Unit) :
+class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
