@@ -33,18 +33,14 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.OnBoardingDataModel
 import java.util.*
 import com.mutualmobile.harvestKmp.MR
-
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnBoardingScreen(navController: NavHostController) {
     val scaffoldState = rememberScaffoldState()
-    var currentColor: Long = 0xFFFF0000
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
-    val coroutineScope = rememberCoroutineScope()
-
     var currentbBoardingState: DataState by remember {
         mutableStateOf(EmptyState)
     }
@@ -70,7 +66,6 @@ fun OnBoardingScreen(navController: NavHostController) {
         )
     }
 
-    val currentPage = onBoardingDataModel.currentPage.collectAsState()
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -83,16 +78,14 @@ fun OnBoardingScreen(navController: NavHostController) {
         ) {
             LaunchedEffect(key1 = Unit) {
                 pagerState.animateScrollToPage(
-                    page = currentPage.value
+                    page = pagerState.currentPage
                 )
             }
 
             Box(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .fillMaxHeight()
-                    .background(Color(currentColor)),
-
+                    .fillMaxSize()
+                    .background(Color(onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].color))
 
                 ) {
 
@@ -104,8 +97,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .padding(20.dp)
-                            .fillMaxWidth()
-                            .fillMaxHeight()
+                            .fillMaxSize()
                     ) {
                         Row(
                             verticalAlignment = Alignment.CenterVertically
@@ -146,9 +138,8 @@ fun OnBoardingScreen(navController: NavHostController) {
                         .align(Alignment.BottomCenter)
                         .height(250.dp)
                         .fillMaxWidth()
+                        .background(Color(onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].colorBottom))
                 ) {
-                    currentColor =
-                        onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].color
                     Column(
                         modifier = Modifier
                             .padding(bottom = 20.dp)
@@ -176,7 +167,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                             errorMsg = (currentbBoardingState as? ErrorState)?.throwable?.message,
                             onClick = {
                                 navController.navigateAndClear(
-                                    clearRoute = ScreenList.OnBoardingScreen(),
+                                    clearRoute = ScreenList.OnBoardingScreen (),
                                     navigateTo = ScreenList.LoginScreen()
                                 )
                             }
@@ -217,8 +208,7 @@ fun IndicateIcon(isSelected: Boolean) {
     Box(
         modifier = Modifier
             .padding(2.dp)
-            .height(10.dp)
-            .width(10.dp)
+            .size(10.dp)
             .clip(CircleShape)
             .background(
                 if (isSelected) {
