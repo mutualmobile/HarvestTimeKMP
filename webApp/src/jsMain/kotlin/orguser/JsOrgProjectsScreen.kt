@@ -19,7 +19,6 @@ import kotlin.js.Date
 val JsOrgProjectsScreen = VFC {
     var message by useState("")
     var createRequested by useState(false)
-    var projectKey by useState("")
     var selectedProject by useState<OrgProjectResponse?>(null)
     val navigator = useNavigate()
     var projects by useState<List<OrgProjectResponse>>()
@@ -113,7 +112,7 @@ val JsOrgProjectsScreen = VFC {
                     }
 
                 }
-                List {
+                Grid{
                     projects?.map { project ->
                         val format: dynamic = kotlinext.js.require("date-fns").format
                         val start =
@@ -151,7 +150,7 @@ val JsOrgProjectsScreen = VFC {
                 selectedProject = null
                 currentPage = 0
                 dataModel.findProjectInOrg(
-                    offset = currentPage, limit = limit, orgId = null
+                    offset = 0, limit = limit, orgId = null
                 )
             }
         }

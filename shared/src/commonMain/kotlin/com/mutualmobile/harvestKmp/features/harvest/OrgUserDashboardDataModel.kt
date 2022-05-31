@@ -31,6 +31,7 @@ class OrgUserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun logout() {
         dataModelScope.launch(exceptionHandler) {
+            onDataState(LoadingState)
             when (val result = useCasesComponent.provideLogoutUseCase().invoke()) {
                 is Success<*> -> {
                     println("logged out!")
@@ -46,6 +47,9 @@ class OrgUserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
                             result.throwable.message ?: "An Unknown error has happened"
                         )
                     )
+                }
+                is NetworkResponse.Unauthorized -> {
+                    praxisCommand(NavigationPraxisCommand(screen = ""))
                 }
             }
         }

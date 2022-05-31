@@ -17,6 +17,7 @@ import react.dom.html.ReactHTML
 external interface HeaderProps : Props {
     var navDrawerToggle: () -> Unit
     var logout: () -> Unit
+    var isLoggingOut: Boolean
 }
 
 val Header = FC<HeaderProps> { props ->
@@ -40,14 +41,19 @@ val Header = FC<HeaderProps> { props ->
 
                     +"Dashboard"
                 }
-                IconButton {
-                    ariaLabel = "logout"
-                    ariaHasPopup = AriaHasPopup.`false`
-                    onClick = {
-                        props.logout()
+                if (props.isLoggingOut) {
+                    CircularProgress()
+                } else {
+                    IconButton {
+                        ariaLabel = "logout"
+                        ariaHasPopup = AriaHasPopup.`false`
+                        onClick = {
+                            props.logout()
+                        }
+                        Logout()
                     }
-                    Logout()
                 }
+
             }
         }
     }

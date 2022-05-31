@@ -9,6 +9,7 @@ import firebase.messaging.messaging
 import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import react.create
@@ -22,9 +23,12 @@ val webKey =
 
 val sharedComponent = SharedComponent()
 
-fun main() {
+suspend fun main() {
     firebaseInit()
     initSqlDelightExperimentalDependencies()
+    MainScope().launch {
+        setupDriver()
+    }
     window.onload = { _ ->
         createRoot(document.createElement("root").also { document.body!!.appendChild(it) }).render(
             HarvestApp.create()
@@ -50,7 +54,11 @@ fun setupFcmPush() {
     firebaseApp?.messaging()?.requestPermission()?.then {
         firebaseApp?.messaging()?.getToken(webKey)?.then {
             sendTokenToServer(it)
+        }?.catch {
+            console.log(it)
         }
+    }?.catch {
+        console.log(it)
     }
 }
 

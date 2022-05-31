@@ -51,7 +51,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
         if (isUserTokenAvailable()) {
             praxisCommand(
                 NavigationPraxisCommand(
-                    screen = Routes.Screen.ORG_USER_DASHBOARD
+                    screen = Routes.Screen.ORG_USER_FETCH
                 )
             )
         }

@@ -36,11 +36,13 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
             when (val loginResponse = loginUseCase(email, password)) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(loginResponse.data))
-                    saveTokenAndNavigate(loginResponse)
-                    val getUserUseCase = getUserUseCase()
-                    if (getUserUseCase is NetworkResponse.Success) {
-                        harvestLocal.saveUser(getUserUseCase.data)
-                    }
+                    saveToken(loginResponse)
+                    praxisCommand(
+                        NavigationPraxisCommand(
+                            screen = Routes.Screen.ORG_USER_FETCH,
+                            ""
+                        )
+                    )
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(loginResponse.throwable))
@@ -55,7 +57,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
         }
     }
 
-    private fun saveTokenAndNavigate(
+    private fun saveToken(
         loginResponse: NetworkResponse.Success<LoginResponse>
     ) {
         loginResponse.data.token?.let { token ->
@@ -63,12 +65,6 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                 saveSettingsUseCase(
                     token,
                     refreshToken
-                )
-                praxisCommand(
-                    NavigationPraxisCommand(
-                        screen = Routes.Screen.ORG_USER_DASHBOARD,
-                        ""
-                    )
                 )
             }
         }

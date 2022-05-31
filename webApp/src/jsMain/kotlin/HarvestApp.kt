@@ -59,6 +59,10 @@ val HarvestApp = FC<AppProps> {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.TRENDING_UI
                     this.element = TrendingUI.create()
                 }
+                Route{
+                    this.path= BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.ORG_USER_FETCH
+                    this.element = JSFetchUserUI.create()
+                }
                 Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.SIGNUP
                     this.element = JSSignupScreen.create()

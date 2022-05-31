@@ -1,6 +1,5 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
 import csstype.px
 import mui.material.Typography
 import mui.system.Box
@@ -15,7 +14,7 @@ import react.router.Routes
 private val DEFAULT_PADDING = 30.px
 
 val OrgUserContent = VFC {
-    val drawerItems = useContext(OrgUserDrawerItemsContext)
+    val drawerItems = useContext(DrawerItemsContext)
     Routes {
         Route {
             path = "/"

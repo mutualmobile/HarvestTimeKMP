@@ -32,7 +32,7 @@ val ForgotPasswordUI = VFC {
             }
             is SuccessState<*> -> {
                 message = "Request Complete"
-                navigator.invoke(to = "/")
+                navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR)
             }
             Complete -> {
                 message = "Completed loading!"

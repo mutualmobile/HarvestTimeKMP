@@ -11,6 +11,7 @@ import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
+import react.dom.html.InputType
 import react.dom.onChange
 import react.router.dom.useSearchParams
 import react.router.useNavigate
@@ -70,6 +71,7 @@ val ResetPasswordScreen = FC<Props> {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = password
+                    this.type = InputType.password
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         password = target.value
@@ -83,6 +85,7 @@ val ResetPasswordScreen = FC<Props> {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = changePassword
+                    this.type = InputType.password
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         changePassword = target.value

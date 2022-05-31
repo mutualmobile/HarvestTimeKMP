@@ -13,6 +13,7 @@ import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.*
+import react.dom.html.InputType
 import react.dom.onChange
 import react.router.dom.useSearchParams
 import react.router.useNavigate
@@ -114,6 +115,7 @@ val JSSignupScreen = VFC {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = email
+                    this.type = InputType.email
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         email = target.value
@@ -127,6 +129,7 @@ val JSSignupScreen = VFC {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = password
+                    this.type = InputType.password
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         password = target.value
@@ -140,6 +143,7 @@ val JSSignupScreen = VFC {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = confPassword
+                    this.type = InputType.password
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         confPassword = target.value
@@ -167,6 +171,7 @@ val JSSignupScreen = VFC {
                     TextField {
                         this.variant = FormControlVariant.outlined
                         this.value = orgWebsite
+                        this.type = InputType.url
                         this.onChange = {
                             val target = it.target as HTMLInputElement
                             orgWebsite = target.value
@@ -181,7 +186,7 @@ val JSSignupScreen = VFC {
                         this.value = orgIdentifier
                         this.onChange = {
                             val target = it.target as HTMLInputElement
-                            orgIdentifier = target.value
+                            orgIdentifier = target.value.lowercase().trim()
                         }
                         this.placeholder = "Org Identifier"
                         sx {

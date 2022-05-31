@@ -12,7 +12,7 @@ import react.router.useLocation
 import react.useContext
 
 val OrgUserSidebar = VFC{
-    val drawerItems = useContext(OrgUserDrawerItemsContext)
+    val drawerItems = useContext(DrawerItemsContext)
     val lastPathname = useLocation().pathname.substringAfterLast("/")
 
     Drawer {
