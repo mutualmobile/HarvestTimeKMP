@@ -10,27 +10,27 @@ data class OnBoardingItem(
 
 val onBoardingItem = listOf(
     OnBoardingItem(
-        0,
-        0xFFF06808,
-        "Simple,powerful time tracking, reporting, and invoicing",
-        0xFF95d00
+        image = 0,
+        color = 0xFFF06808,
+        title = "Simple, powerful time tracking, reporting, and invoicing",
+        colorBottom = 0xFF95d00
     ),
     OnBoardingItem(
-        0,
-        0xFF34aca8,
-        "Track time easily, wherever you are",
-        0xFF21a5a0
+        image = 0,
+        color = 0xFF34aca8,
+        title = "Track time easily, wherever you are",
+        colorBottom = 0xFF21a5a0
     ),
     OnBoardingItem(
-        0,
-        0xFFce6665,
-        "Enter expense on the go",
-        0xFFcb5c5b
+        image = 0,
+        color = 0xFFce6665,
+        title = "Enter expense on the go",
+        colorBottom = 0xFFcb5c5b
     ),
     OnBoardingItem(
-        0,
-        0xFF4ca5c5,
-        "Report on time for powerful insights",
-        0xFF3589a6
+        image = 0,
+        color = 0xFF4ca5c5,
+        title = "Report on time for powerful insights",
+        colorBottom = 0xFF3589a6
     )
 )
