@@ -225,7 +225,7 @@ val JsProjectAssignScreen = VFC {
                                                 disableRipple = true
                                                 onChange = { ev, checked ->
                                                     val newSelection = hashSetOf<String>().apply {
-                                                        addAll(userSelection)
+                                                        addAll(projectSelection)
                                                     }
                                                     if (checked) {
                                                         newSelection.add(project.id!!)
