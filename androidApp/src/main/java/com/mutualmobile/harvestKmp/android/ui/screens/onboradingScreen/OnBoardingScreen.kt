@@ -104,11 +104,12 @@ fun OnBoardingScreen(navController: NavHostController) {
                 Text(
                     text = stringResource(MR.strings.app_name.resourceId),
                     color = Color.White,
+                    fontWeight = FontWeight.SemiBold,
                     fontSize = 30.sp,
                     textAlign = TextAlign.Center,
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(20.dp)
+                        .padding(top = 60.dp, bottom = 40.dp)
                 )
 
                 Log.d("neha", "" + pagerState.currentPage + " " + pagerState.targetPage + " ")
@@ -128,7 +129,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                                 text = onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].title,
                                 color = Color.White,
                                 textAlign = TextAlign.Center,
-                                fontWeight = FontWeight.SemiBold,
+                                fontWeight = FontWeight.Normal,
                                 fontSize = 20.sp,
                                 modifier = Modifier.fillMaxWidth()
                             )
@@ -146,7 +147,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                         modifier = Modifier
                             .padding(20.dp)
                             .fillMaxWidth()
-                            .fillMaxHeight(0.6f)
+                            .fillMaxHeight(0.65f)
                     ) {}
                 }
 
@@ -154,18 +155,15 @@ fun OnBoardingScreen(navController: NavHostController) {
 
                 Box(
                     modifier = Modifier
-                        .height(250.dp)
-                        .fillMaxWidth()
+                        .fillMaxSize()
                         .background(Color(onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].colorBottom))
                 ) {
                     Column(
-                        modifier = Modifier
-                            .padding(bottom = 20.dp)
-                            .fillMaxHeight(),
+                        modifier = Modifier.padding(top=10.dp),
                         verticalArrangement = if (pagerState.currentPage != 2) {
-                            Arrangement.Bottom
+                            Arrangement.Top
                         } else {
-                            Arrangement.Bottom
+                            Arrangement.Top
                         },
                         horizontalAlignment = Alignment.CenterHorizontally
 
