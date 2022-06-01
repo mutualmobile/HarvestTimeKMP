@@ -1,17 +1,24 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen
 
-import androidx.compose.foundation.Image
+import android.util.Log
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.animation.core.LinearEasing
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.*
+import androidx.compose.material.Scaffold
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -24,23 +31,20 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
-import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.OnBoardingDataModel
-import java.util.*
-import com.mutualmobile.harvestKmp.MR
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
 fun OnBoardingScreen(navController: NavHostController) {
     val scaffoldState = rememberScaffoldState()
+
     var currentbBoardingState: DataState by remember {
         mutableStateOf(EmptyState)
     }
@@ -79,15 +83,59 @@ fun OnBoardingScreen(navController: NavHostController) {
             LaunchedEffect(key1 = Unit) {
                 pagerState.animateScrollToPage(
                     page = pagerState.currentPage
+
                 )
+
             }
 
-            Box(
+            val color by animateColorAsState(
+                targetValue = Color(onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].color),
+                animationSpec = tween(durationMillis = 100, easing = LinearEasing)
+            )
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color(onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].color))
+                    .background(color)
 
-                ) {
+
+            ) {
+
+
+                Text(
+                    text = stringResource(MR.strings.app_name.resourceId),
+                    color = Color.White,
+                    fontSize = 30.sp,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(20.dp)
+                )
+
+                Log.d("neha", "" + pagerState.currentPage + " " + pagerState.targetPage + " ")
+
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    userScrollEnabled = false,
+
+                    ) {
+                    item {
+                        AnimatedVisibility(
+                            visible = pagerState.currentPage == pagerState.targetPage,
+                            enter = expandVertically(),
+
+                            ) {
+                            Text(
+                                text = onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].title,
+                                color = Color.White,
+                                textAlign = TextAlign.Center,
+                                fontWeight = FontWeight.SemiBold,
+                                fontSize = 20.sp,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
+                    }
+                }
+
 
                 HorizontalPager(
                     state = pagerState,
@@ -97,45 +145,15 @@ fun OnBoardingScreen(navController: NavHostController) {
                         horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .padding(20.dp)
-                            .fillMaxSize()
-                    ) {
-                        Row(
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-
-                            Image(
-                                painter = painterResource(id = R.drawable.ic_launcher_foreground),
-                                contentDescription = "OnBoardImage",
-                                modifier = Modifier
-                                    .size(100.dp)
-                            )
-                            Text(
-                                text = stringResource(MR.strings.app_name.resourceId).lowercase(
-                                    Locale.getDefault()
-                                ),
-                                color = Color.White,
-                                fontSize = 30.sp
-                            )
-
-                        }
-
-
-                        Text(
-                            text = onBoardingDataModel.getOnBoardingItemList()[page].title,
-                            color = Color.White,
-                            textAlign = TextAlign.Center,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 20.sp
-                        )
-
-                    }
+                            .fillMaxWidth()
+                            .fillMaxHeight(0.6f)
+                    ) {}
                 }
 
 
 
                 Box(
                     modifier = Modifier
-                        .align(Alignment.BottomCenter)
                         .height(250.dp)
                         .fillMaxWidth()
                         .background(Color(onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].colorBottom))
@@ -167,7 +185,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                             errorMsg = (currentbBoardingState as? ErrorState)?.throwable?.message,
                             onClick = {
                                 navController.navigateAndClear(
-                                    clearRoute = ScreenList.OnBoardingScreen (),
+                                    clearRoute = ScreenList.OnBoardingScreen(),
                                     navigateTo = ScreenList.LoginScreen()
                                 )
                             }
@@ -185,8 +203,8 @@ fun OnBoardingScreen(navController: NavHostController) {
             }
         }
     }
-
 }
+
 
 @Composable
 fun PagerIndicator(size: Int, currentPage: Int) {
@@ -219,3 +237,4 @@ fun IndicateIcon(isSelected: Boolean) {
             )
     )
 }
+
