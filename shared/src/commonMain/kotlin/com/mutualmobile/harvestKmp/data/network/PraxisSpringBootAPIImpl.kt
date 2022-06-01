@@ -369,7 +369,6 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                         endDate = endDate
                     )
                 )
-
             }
             when (response.status) {
                 HttpStatusCode.OK -> {

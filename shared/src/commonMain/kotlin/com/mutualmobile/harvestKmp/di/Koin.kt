@@ -7,8 +7,11 @@ import com.mutualmobile.harvestKmp.data.local.HarvestUserLocal
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
 import com.mutualmobile.harvestKmp.data.network.*
 import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
+import com.mutualmobile.harvestKmp.data.network.org.UserProjectApi
+import com.mutualmobile.harvestKmp.data.network.org.impl.UserProjectApiImpl
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.AssignProjectsToUsersUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
@@ -56,6 +59,7 @@ val networkModule = module {
 val commonModule = module {
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
+    single<UserProjectApi> { UserProjectApiImpl(get()) }
     single { Settings() }
 }
 
@@ -82,6 +86,10 @@ val useCaseModule = module {
     single { FindUsersInOrgUseCase(get()) }
 }
 
+val userProjectUseCaseModule = module {
+    single { AssignProjectsToUsersUseCase(get()) }
+}
+
 class UseCasesComponent : KoinComponent {
     fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
     fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
@@ -106,6 +114,10 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideUpdateProjectUseCase(): UpdateProjectUseCase = get()
     fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
+}
+
+class UserProjectUseCaseComponent : KoinComponent {
+    fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
