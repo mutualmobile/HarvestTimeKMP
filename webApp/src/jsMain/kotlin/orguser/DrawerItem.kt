@@ -1,11 +1,10 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.data.network.Constants
 import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.Routes
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import harvest.JSLoginScreen
 import kotlinx.browser.window
+import orgadmin.JsProjectAssignScreen
 import react.FC
 import react.Props
 import react.useMemo
@@ -26,6 +25,7 @@ fun useDrawerItems(): DrawerItems {
                     setOf(
                         DrawerItem(Routes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
                         DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
+                        DrawerItem(Routes.Screen.ASSIGN_PROJECT,"Project Assignments",JsProjectAssignScreen),
                         DrawerItem(Routes.Screen.SETTINGS, "Settings", JsSettingsScreen)
                     )
                 })

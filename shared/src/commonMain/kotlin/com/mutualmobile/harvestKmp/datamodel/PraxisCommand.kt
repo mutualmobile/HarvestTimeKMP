@@ -24,6 +24,7 @@ object Routes {
         const val SIGNUP = "signup"
         const val ORG_USERS = "users"
         const val ORG_PROJECTS = "projects"
+        const val ASSIGN_PROJECT = "assign-projects"
         const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
         const val ORG_USER_DASHBOARD = "user-dashboard"

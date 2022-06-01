@@ -14,7 +14,6 @@ import react.*
 import react.router.useNavigate
 
 val JsOrgUsersScreen = VFC {
-    var message by useState("")
     var totalPages by useState(0)
     val navigator = useNavigate()
     var userType by useState(UserRole.ORG_ADMIN.role)
@@ -25,30 +24,16 @@ val JsOrgUsersScreen = VFC {
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
         isLoading = stateNew is LoadingState
-
         when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
-            }
             is SuccessState<*> -> {
-                message = try {
+                 try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
                     users = response.data?.second
                     totalPages = response.data?.first ?: 0
-                    response.message ?: "Some message"
                 } catch (ex: Exception) {
-                    ex.message ?: ""
+                    ex.printStackTrace()
                 }
-            }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
             }
         }
     })
