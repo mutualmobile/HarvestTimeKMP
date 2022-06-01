@@ -1,10 +1,10 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.data.network.Constants
+import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.Routes
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import harvest.JSLoginScreen
 import kotlinx.browser.window
+import orgadmin.JsProjectAssignScreen
 import react.FC
 import react.Props
 import react.useMemo
@@ -20,16 +20,17 @@ typealias DrawerItems = Iterable<DrawerItem>
 fun useDrawerItems(): DrawerItems {
     SharedComponent().provideHarvestUserLocal().getUser()?.role?.let { role ->
         when (role) {
-            Constants.USER_ORG_ADMIN -> {
+            UserRole.ORG_ADMIN.role -> {
                 return useMemo(callback = {
                     setOf(
                         DrawerItem(Routes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
                         DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
+                        DrawerItem(Routes.Screen.ASSIGN_PROJECT,"Project Assignments",JsProjectAssignScreen),
                         DrawerItem(Routes.Screen.SETTINGS, "Settings", JsSettingsScreen)
                     )
                 })
             }
-            Constants.USER_ROLE_ORG_USER -> {
+            UserRole.ORG_USER.role -> {
                 return useMemo(callback = {
                     setOf(
                         DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
