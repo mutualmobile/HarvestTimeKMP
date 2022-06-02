@@ -1,7 +1,12 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.di.SharedComponent
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
@@ -17,7 +22,7 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun forgotPassword(email: String) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch() {
+        currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
 
             when (val response = useCasesComponent.provideForgotPasswordUseCase()(email)) {

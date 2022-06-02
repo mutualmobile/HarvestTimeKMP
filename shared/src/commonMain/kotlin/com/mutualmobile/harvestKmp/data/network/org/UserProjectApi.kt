@@ -5,6 +5,6 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 interface UserProjectApi {
 
-    suspend fun assignProjectsToUsers(projectMap:HashMap<String,List<String>>): NetworkResponse<ApiResponse<Unit>>
+    suspend fun assignProjectsToUsers(projectMap: HashMap<String, List<String>>): NetworkResponse<ApiResponse<Unit>>
 
 }
