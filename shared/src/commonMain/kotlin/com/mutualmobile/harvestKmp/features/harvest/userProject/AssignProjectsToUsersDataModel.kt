@@ -25,16 +25,14 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
     }
 
     fun assignProjectsToUsers(
-        projectId: String,
-        userId: List<String>
+        projectMap:HashMap<String,List<String>>
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
             when (val findUsersInOrgResponse =
                 useCasesComponent.provideAssignProjectsToUsersUseCase()(
-                    projectId = projectId,
-                    userId = userId
+                    projectMap
                 )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))

@@ -7,6 +7,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
 import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
+import com.mutualmobile.harvestKmp.features.harvest.userProject.AssignProjectsToUsersDataModel
 import csstype.*
 import kotlinx.browser.window
 import mui.icons.material.Add
@@ -18,8 +19,8 @@ import kotlin.js.Date
 
 val JsProjectAssignScreen = VFC {
     val selectionInfo = hashMapOf<String, List<String>>()
-    var userSelection by useState(setOf<String>())
-    var projectSelection by useState(setOf<String>())
+    var userSelection by useState(hashSetOf<String>())
+    var projectSelection by useState(hashSetOf<String>())
 
     var projects by useState<List<OrgProjectResponse>>()
     var users by useState<List<FindUsersInOrgResponse>>()
@@ -33,6 +34,7 @@ val JsProjectAssignScreen = VFC {
 
     var isLoadingProjects by useState(false)
     var isLoadingUsers by useState(false)
+    var isSaving by useState(false)
 
     val findProjectsInOrgDataModel = FindProjectsInOrgDataModel { stateNew: DataState ->
         isLoadingProjects = stateNew is LoadingState
@@ -64,6 +66,22 @@ val JsProjectAssignScreen = VFC {
             }
         }
     }
+    val assignDataModel = AssignProjectsToUsersDataModel { stateNew: DataState ->
+        isSaving = stateNew is LoadingState
+        when (stateNew) {
+            is SuccessState<*> -> {
+                try {
+                    val response =
+                        (stateNew.data as ApiResponse<Unit>)
+                    selectionInfo.clear()
+                    userSelection.clear()
+                    projectSelection.clear()
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+        }
+    }
 
     findProjectsInOrgDataModel.praxisCommand = { newCommand: PraxisCommand ->
         when (newCommand) {
@@ -76,6 +94,16 @@ val JsProjectAssignScreen = VFC {
         }
     }
     usersInOrgDataModel.praxisCommand = { newCommand: PraxisCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
+    assignDataModel.praxisCommand = { newCommand: PraxisCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -253,6 +281,7 @@ val JsProjectAssignScreen = VFC {
 
         Fab {
             variant = FabVariant.extended
+            color = FabColor.primary
             sx {
                 transform = translatez(0.px)
                 position = Position.absolute
@@ -260,12 +289,21 @@ val JsProjectAssignScreen = VFC {
                 right = 16.px
             }
             color = FabColor.primary
-            Add()
-            onClick = {
-                projectSelection.forEach { projectId ->
-                    selectionInfo[projectId] = userSelection.toList()
+            if (isSaving) {
+                CircularProgress {
+                    color = CircularProgressColor.secondary
+                }
+            } else {
+                Add()
+                onClick = {
+                    projectSelection.forEach { projectId ->
+                        selectionInfo[projectId] = userSelection.toList()
+                    }
+                    assignDataModel.assignProjectsToUsers(selectionInfo)
                 }
             }
+
+
             +"Save Assignments"
         }
     }

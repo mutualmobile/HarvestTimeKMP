@@ -84,9 +84,6 @@ val useCaseModule = module {
     single { UpdateProjectUseCase(get()) }
     single { DeleteProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
-}
-
-val userProjectUseCaseModule = module {
     single { AssignProjectsToUsersUseCase(get()) }
 }
 

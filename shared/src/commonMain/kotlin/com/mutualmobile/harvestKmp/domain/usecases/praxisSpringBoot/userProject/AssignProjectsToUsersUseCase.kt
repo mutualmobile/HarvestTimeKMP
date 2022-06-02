@@ -6,12 +6,10 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class AssignProjectsToUsersUseCase(private val userProjectApi: UserProjectApi) {
     suspend operator fun invoke(
-        projectId: String,
-        userId: List<String>
+        projectMap:HashMap<String,List<String>>
     ): NetworkResponse<ApiResponse<Unit>> {
         return userProjectApi.assignProjectsToUsers(
-            projectId = projectId,
-            userId = userId
+            projectMap
         )
     }
 }
