@@ -25,7 +25,7 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
     }
 
     fun assignProjectsToUsers(
-        projectMap:HashMap<String,List<String>>
+        projectMap: HashMap<String, List<String>>
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
@@ -36,6 +36,12 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
                 )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))
+                    praxisCommand(
+                        ModalPraxisCommand(
+                            "Message",
+                            findUsersInOrgResponse.data.message ?: "Success!"
+                        )
+                    )
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(findUsersInOrgResponse.throwable))
