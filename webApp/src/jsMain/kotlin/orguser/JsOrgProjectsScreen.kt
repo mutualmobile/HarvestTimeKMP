@@ -3,12 +3,9 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
-import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.orgProjects.FindProjectsInOrgDataModel
 import csstype.*
-import emotion.react.css
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx

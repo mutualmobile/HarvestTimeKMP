@@ -3,7 +3,7 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.orgProjects.OrgProjectsDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -17,11 +17,8 @@ import react.dom.onChange
 import react.router.useNavigate
 import kotlin.js.Date
 import kotlinext.js.require
-import kotlinx.datetime.Instant
-import kotlinx.datetime.LocalDate
 import mui.icons.material.CloseRounded
 import mui.icons.material.DeleteForever
-import mui.icons.material.Save
 
 
 external interface CreateProjectProps : Props {
@@ -42,7 +39,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     var endDate by useState<Date?>(null)
     val format: dynamic = require("date-fns").format
 
-    val dataModel = OrgProjectDataModel(onDataState = { stateNew ->
+    val dataModel = OrgProjectsDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."

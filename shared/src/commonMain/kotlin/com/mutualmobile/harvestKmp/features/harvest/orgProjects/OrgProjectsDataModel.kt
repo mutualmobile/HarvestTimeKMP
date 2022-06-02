@@ -1,4 +1,4 @@
-package com.mutualmobile.harvestKmp.features.harvest
+package com.mutualmobile.harvestKmp.features.harvest.orgProjects
 
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
@@ -7,20 +7,20 @@ import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.di.OrgProjectsUseCaseComponent
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
+class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
-    private val useCasesComponent = SpringBootAuthUseCasesComponent()
-    val harvestLocal = SharedComponent().provideHarvestUserLocal()
+    private val useCasesComponent = OrgProjectsUseCaseComponent()
+    private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
     override fun activate() {
     }

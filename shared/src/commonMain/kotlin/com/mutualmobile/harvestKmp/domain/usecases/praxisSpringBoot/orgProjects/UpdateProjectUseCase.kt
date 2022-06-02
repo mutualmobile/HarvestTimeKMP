@@ -1,12 +1,11 @@
-package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot
+package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects
 
-import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
+import com.mutualmobile.harvestKmp.data.network.org.OrgProjectsApi
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.validators.ProjectCrudValidator
-import kotlinx.datetime.LocalDate
 
-class UpdateProjectUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
+class UpdateProjectUseCase(private val orgProjectsApi: OrgProjectsApi) {
     suspend operator fun invoke(
         id: String,
         name: String,
@@ -17,7 +16,7 @@ class UpdateProjectUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI)
         organizationId: String
     ): NetworkResponse<ApiResponse<Unit>> {
         ProjectCrudValidator()(name, client)
-        return praxisSpringBootAPI.updateProject(
+        return orgProjectsApi.updateProject(
             id,
             name,
             client,

@@ -1,12 +1,12 @@
-package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot
+package com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects
 
-import com.mutualmobile.harvestKmp.data.network.PraxisSpringBootAPI
+import com.mutualmobile.harvestKmp.data.network.org.OrgProjectsApi
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.validators.ProjectCrudValidator
 
-class CreateProjectUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
+class CreateProjectUseCase(private val orgProjectsApi: OrgProjectsApi) {
     suspend operator fun invoke(
         name: String,
         client: String,
@@ -15,7 +15,7 @@ class CreateProjectUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI)
         endDate: String?
     ): NetworkResponse<ApiResponse<OrgProjectResponse>> {
         ProjectCrudValidator()(name, client)
-        return praxisSpringBootAPI.createProject(
+        return orgProjectsApi.createProject(
             name = name,
             client = client,
             isIndefinite = isIndefinite,
