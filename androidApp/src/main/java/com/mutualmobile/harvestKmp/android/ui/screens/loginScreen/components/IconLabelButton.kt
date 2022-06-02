@@ -25,15 +25,16 @@ val CardShape = RoundedCornerShape(8.dp)
 
 @Composable
 fun IconLabelButton(
+    modifier: Modifier=Modifier,
     @DrawableRes icon: Int? = null,
     label: String,
     isLoading: Boolean = false,
     errorMsg: String? = null,
-    onClick: () -> Unit
+    onClick: () -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = Modifier.animateContentSize()
+        modifier = modifier.animateContentSize()
     ) {
         Button(
             onClick = onClick, colors = ButtonDefaults.buttonColors(

@@ -1,14 +1,12 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.data.network.Constants
-import com.mutualmobile.harvestKmp.data.network.Constants.USER_ROLE_ORG_USER
+import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
 import csstype.*
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
@@ -16,10 +14,9 @@ import react.*
 import react.router.useNavigate
 
 val JsOrgUsersScreen = VFC {
-    var message by useState("")
     var totalPages by useState(0)
     val navigator = useNavigate()
-    var userType by useState(USER_ROLE_ORG_USER)
+    var userType by useState(UserRole.ORG_ADMIN.role)
     var users by useState<List<FindUsersInOrgResponse>>()
     var currentPage by useState(0)
     val limit = 10
@@ -27,30 +24,16 @@ val JsOrgUsersScreen = VFC {
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
         isLoading = stateNew is LoadingState
-
         when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
-            }
             is SuccessState<*> -> {
-                message = try {
+                 try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
                     users = response.data?.second
                     totalPages = response.data?.first ?: 0
-                    response.message ?: "Some message"
                 } catch (ex: Exception) {
-                    ex.message ?: ""
+                    ex.printStackTrace()
                 }
-            }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
             }
         }
     })
@@ -69,8 +52,9 @@ val JsOrgUsersScreen = VFC {
     useEffectOnce {
         dataModel.activate()
         dataModel.findUsers(
-            userType = userType.toInt(), orgIdentifier = null, isUserDeleted = false,
-            currentPage, limit
+            userType = userType.toInt(),
+            orgIdentifier = null, isUserDeleted = false,
+            0, limit
         )
     }
 
@@ -85,8 +69,7 @@ val JsOrgUsersScreen = VFC {
 
         if (isLoading) {
             CircularProgress()
-        }else{
-
+        } else {
             FormControl {
                 InputLabel {
                     +"User Type"
@@ -105,13 +88,14 @@ val JsOrgUsersScreen = VFC {
                         )
                     }
                     MenuItem {
-                        value = USER_ROLE_ORG_USER
-                        +"Users"
-                    }
-                    MenuItem {
-                        value = Constants.USER_ORG_ADMIN
+                        value = UserRole.ORG_ADMIN.role
                         +"Org Admins"
                     }
+                    MenuItem {
+                        value = UserRole.ORG_USER.role
+                        +"Users"
+                    }
+
 
                 }
             }
@@ -122,7 +106,7 @@ val JsOrgUsersScreen = VFC {
                 onChange = { event, value ->
                     currentPage = value.toInt()
                     dataModel.findUsers(
-                        userType = userType.toInt(), // TODO extract user role as const
+                        userType = userType.toInt(),
                         orgIdentifier = null, isUserDeleted = false,
                         value.toInt().minus(1), limit
                     )

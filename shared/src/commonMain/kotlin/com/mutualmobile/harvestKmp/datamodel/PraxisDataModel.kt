@@ -9,8 +9,10 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.flow.receiveAsFlow
 import org.koin.core.component.getScopeName
 
-abstract class PraxisDataModel(onDataState: (DataState) -> Unit) {
-    protected val dataModelScope = MainScope()
+abstract class PraxisDataModel(
+    onDataState: (DataState) -> Unit,
+    var dataModelScope: CoroutineScope = MainScope()
+) {
 
     protected val settings = SharedComponent().provideSettings()
 

@@ -16,8 +16,8 @@ import react.*
 import react.router.useNavigate
 import kotlin.js.Date
 
+
 val JsOrgProjectsScreen = VFC {
-    var message by useState("")
     var createRequested by useState(false)
     var selectedProject by useState<OrgProjectResponse?>(null)
     val navigator = useNavigate()
@@ -27,34 +27,23 @@ val JsOrgProjectsScreen = VFC {
     var totalPages by useState(0)
     var isLoading by useState(false)
 
-    val dataModel = FindProjectsInOrgDataModel(onDataState = { stateNew ->
+    val dataState = { stateNew: DataState ->
         isLoading = stateNew is LoadingState
         when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
-            }
             is SuccessState<*> -> {
-                message = try {
+                try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
                     projects = response.data?.second
                     totalPages = response.data?.first ?: 0
-                    response.message ?: "Some message"
                 } catch (ex: Exception) {
-                    ex.message ?: ""
+                    ex.printStackTrace()
                 }
             }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
         }
-    })
+    }
+
+    val dataModel = FindProjectsInOrgDataModel(onDataState = dataState)
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {
