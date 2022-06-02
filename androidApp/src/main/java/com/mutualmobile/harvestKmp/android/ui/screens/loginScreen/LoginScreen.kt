@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
@@ -36,7 +37,6 @@ import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
-import com.mutualmobile.harvestKmp.MR
 
 @Composable
 fun LoginScreen(navController: NavHostController) {
@@ -109,9 +109,14 @@ fun LoginScreen(navController: NavHostController) {
                     withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
                         append(" Try Harvest Free")
                     }
-                }.toString()
+                },
+                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
             )
-            SurfaceTextButton(text = "View Tour", fontWeight = FontWeight.Medium)
+            SurfaceTextButton(
+                text = "View Tour",
+                fontWeight = FontWeight.Medium,
+                onClick = navController::navigateUp
+            )
         }
     }
 }

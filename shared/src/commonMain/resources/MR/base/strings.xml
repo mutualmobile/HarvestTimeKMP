@@ -39,7 +39,7 @@
     <string name="report_screen_non_billable_title">Non-billable</string>
     <string name="login_screen_google_btn_txt">Sign In with Google</string>
     <string name="login_screen_signIn_btn_txt">Sign In</string>
-    <string name="signup_screen_signup_btn_txt">SignUp</string>
+    <string name="signup_screen_signup_btn_txt">Sign Up</string>
     <string name="login_screen_email_et_placeholder">Work email</string>
     <string name="login_screen_password_et_placeholder">Password</string>
     <string name="signup_screen_email_et_placeholder">Work email</string>

@@ -182,12 +182,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
                                 isLoading = currentBoardingState is LoadingState,
                                 errorMsg = (currentBoardingState as? ErrorState)?.throwable?.message,
-                                onClick = {
-                                    navController.navigateAndClear(
-                                        clearRoute = ScreenList.OnBoardingScreen(),
-                                        navigateTo = ScreenList.LoginScreen()
-                                    )
-                                }
+                                onClick = { navController.navigate(ScreenList.LoginScreen()) }
                             )
 
                             SurfaceTextButton(
@@ -196,7 +191,8 @@ fun OnBoardingScreen(navController: NavHostController) {
                                     withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
                                         append(" Try Harvest Free")
                                     }
-                                }.toString()
+                                },
+                                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
                             )
 
                             Spacer(modifier = Modifier.padding(bottom = 8.dp))
