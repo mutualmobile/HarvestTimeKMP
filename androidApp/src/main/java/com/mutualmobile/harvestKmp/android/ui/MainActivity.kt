@@ -56,7 +56,7 @@ class MainActivity : ComponentActivity() {
                             LandingScreen()
                         }
                         composable(ScreenList.FindWorkspaceScreen()) {
-                            FindWorkspaceScreen()
+                            FindWorkspaceScreen(navController = navController)
                         }
                     }
                 }

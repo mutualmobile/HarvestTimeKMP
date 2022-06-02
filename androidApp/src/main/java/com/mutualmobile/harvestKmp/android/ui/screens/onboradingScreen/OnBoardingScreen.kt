@@ -182,7 +182,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
                                 isLoading = currentBoardingState is LoadingState,
                                 errorMsg = (currentBoardingState as? ErrorState)?.throwable?.message,
-                                onClick = { navController.navigate(ScreenList.LoginScreen()) }
+                                onClick = { navController.navigate(ScreenList.FindWorkspaceScreen()) }
                             )
 
                             SurfaceTextButton(
