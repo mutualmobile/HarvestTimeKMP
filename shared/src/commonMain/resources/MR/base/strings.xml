@@ -51,4 +51,8 @@
     <string name="signup_screen_company_identifier_et_placeholder">Company Name</string>
     <string name="signup_screen_user_details_et_placeholder">Company Name</string>
     <string name="signup_screen_company_details_et_placeholder">Company Name</string>
+    <string name="find_workspace_screen_title">Organization Identifier</string>
+    <string name="find_workspace_screen_subtitle">This is the org identifier you use to sign in to Harvest</string>
+    <string name="find_workspace_screen_btn_txt">Find Workspace</string>
+    <string name="find_workspace_screen_placeholder_txt">your-workspace</string>
 </resources>
