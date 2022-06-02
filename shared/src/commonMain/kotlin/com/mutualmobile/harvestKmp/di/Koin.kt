@@ -12,6 +12,7 @@ import com.mutualmobile.harvestKmp.data.network.org.impl.UserProjectApiImpl
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.AssignProjectsToUsersUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.LogWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
@@ -85,6 +86,7 @@ val useCaseModule = module {
     single { DeleteProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
     single { AssignProjectsToUsersUseCase(get()) }
+    single { LogWorkTimeUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -115,6 +117,7 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
 
 class UserProjectUseCaseComponent : KoinComponent {
     fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
+    fun provideLogWorkTimeUseCase(): LogWorkTimeUseCase = get()
 }
 
 class SharedComponent : KoinComponent {
