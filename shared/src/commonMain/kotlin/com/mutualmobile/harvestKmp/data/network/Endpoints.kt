@@ -5,6 +5,7 @@ object Endpoint {
 
     private const val API_URL = "/api/v1"
     private const val ADMIN = "/admin"
+    private const val ORG_ADMIN = "/org-admin"
     const val UN_AUTH_API = "$API_URL/public"
     const val ORGANIZATIONS = "$UN_AUTH_API/organizations"
     const val UN_AUTH_ORGANISATION = "$UN_AUTH_API/organization"
@@ -21,6 +22,7 @@ object Endpoint {
     const val REFRESH_TOKEN = "$API_URL/refreshToken"
 
     const val USER = "$API_URL/user"
+    private const val USER_PROJECT = "$USER/project"
 
     const val NOTIFICATIONS = "$API_URL/notifications"
     const val NOTIFICATION_COUNT = "$API_URL/notificationCount"
@@ -34,6 +36,9 @@ object Endpoint {
 
     //ADMIN
     const val LIST_USERS = "$API_URL$ADMIN/users"
+    const val ASSIGN_PROJECT = "$API_URL$ORG_ADMIN/assign-user-project"
+
+    const val LOG_WORK = "$USER_PROJECT/log-work"
 
 
     object Params {

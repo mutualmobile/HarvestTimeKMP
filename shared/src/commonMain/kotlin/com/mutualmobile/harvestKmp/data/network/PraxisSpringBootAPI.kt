@@ -3,7 +3,6 @@ package com.mutualmobile.harvestKmp.data.network
 import com.mutualmobile.harvestKmp.domain.model.request.*
 import com.mutualmobile.harvestKmp.domain.model.response.*
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.datetime.LocalDate
 
 interface PraxisSpringBootAPI {
 

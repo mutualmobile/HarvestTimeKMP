@@ -37,6 +37,5 @@ object Routes {
                         "${Keys.orgId}=${id ?: ""}"
             )
         }
-
     }
 }
