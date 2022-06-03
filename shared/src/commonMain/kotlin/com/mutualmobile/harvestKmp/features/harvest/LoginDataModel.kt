@@ -1,7 +1,13 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.di.SharedComponent
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
@@ -15,9 +21,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
 
     private val useCasesComponent = SpringBootAuthUseCasesComponent()
     private val loginUseCase = useCasesComponent.provideLoginUseCase()
-    private val getUserUseCase = useCasesComponent.provideGetUserUseCase()
     private val saveSettingsUseCase = useCasesComponent.provideSaveSettingsUseCase()
-    private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
     override fun activate() {
     }
@@ -53,6 +57,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                         )
                     )
                 }
+                else -> {}
             }
         }
     }

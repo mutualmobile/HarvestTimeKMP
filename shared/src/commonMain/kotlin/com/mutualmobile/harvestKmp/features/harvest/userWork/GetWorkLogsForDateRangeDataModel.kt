@@ -1,18 +1,24 @@
-package com.mutualmobile.harvestKmp.features.harvest.userProject
+package com.mutualmobile.harvestKmp.features.harvest.userWork
 
-import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.di.UserProjectUseCaseComponent
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.di.UserWorkUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Unit) :
+class GetWorkLogsForDateRangeDataModel(private val onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
-    private val useCasesComponent = UserProjectUseCaseComponent()
+    private val userWorkUseCaseComponent = UserWorkUseCaseComponent()
 
     override fun activate() {
     }
@@ -24,24 +30,20 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
     override fun refresh() {
     }
 
-    fun assignProjectsToUsers(
-        projectMap: HashMap<String, List<String>>
+    fun getWorkLogsForDateRange(
+        startDate: String,
+        endDate: String,
+        userIds: List<String>?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
             when (val response =
-                useCasesComponent.provideAssignProjectsToUsersUseCase()(
-                    projectMap = projectMap
+                userWorkUseCaseComponent.provideGetWorkLogsForDateRangeUseCase()(
+                    startDate = startDate, endDate = endDate, userIds = userIds
                 )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(response.data))
-                    praxisCommand(
-                        ModalPraxisCommand(
-                            "Message",
-                            response.data.message ?: "Success!"
-                        )
-                    )
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(response.throwable))

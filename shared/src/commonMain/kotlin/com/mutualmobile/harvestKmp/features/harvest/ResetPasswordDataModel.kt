@@ -1,6 +1,12 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.request.ResetPasswordRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
@@ -54,6 +60,7 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(changePasswordResponse.throwable))
                 }
+                else -> {}
             }
         }
     }

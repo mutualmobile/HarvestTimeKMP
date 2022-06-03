@@ -31,7 +31,6 @@ import io.ktor.client.request.post
 import io.ktor.client.request.put
 import io.ktor.client.request.setBody
 import io.ktor.http.ContentType
-import io.ktor.http.HttpStatusCode
 import io.ktor.http.contentType
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
@@ -61,36 +60,20 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         email: String,
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return try {
-            val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
-                    contentType(ContentType.Application.Json)
-                    setBody(
-                        SignUpData(
-                            email = email,
-                            password = password,
-                            orgId = company,
-                            role = UserRole.ORG_USER.role,
-                            firstName = firstName,
-                            lastName = lastName
-                        )
+        return getSafeNetworkResponse {
+            httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    SignUpData(
+                        email = email,
+                        password = password,
+                        orgId = company,
+                        role = UserRole.ORG_USER.role,
+                        firstName = firstName,
+                        lastName = lastName
                     )
-                }
-            when (response.status) {
-                HttpStatusCode.OK -> {
-                    NetworkResponse.Success(response.body())
-                }
-                HttpStatusCode.Unauthorized -> {
-                    NetworkResponse.Unauthorized(Throwable("Failed to authorize"))
-                }
-                else -> {
-                    val responseMsg = response.body<ApiResponse<Unit>>().message
-                    NetworkResponse.Failure(Exception(responseMsg))
-                }
+                )
             }
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
         }
     }
 

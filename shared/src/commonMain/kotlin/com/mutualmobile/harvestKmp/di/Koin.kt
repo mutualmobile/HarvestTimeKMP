@@ -8,10 +8,14 @@ import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
 import com.mutualmobile.harvestKmp.data.network.*
 import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
 import com.mutualmobile.harvestKmp.data.network.org.UserProjectApi
+import com.mutualmobile.harvestKmp.data.network.org.UserWorkApi
 import com.mutualmobile.harvestKmp.data.network.org.impl.UserProjectApiImpl
+import com.mutualmobile.harvestKmp.data.network.org.impl.UserWorkApiImpl
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.AssignProjectsToUsersUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.LogWorkTimeUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userWork.GetWorkLogsForDateRangeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
@@ -29,7 +33,6 @@ import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
 import kotlinx.serialization.json.Json
-import org.koin.core.KoinApplication
 import org.koin.core.component.*
 
 fun initSharedDependencies() = startKoin {
@@ -60,6 +63,7 @@ val commonModule = module {
     single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
     single<UserProjectApi> { UserProjectApiImpl(get()) }
+    single<UserWorkApi> { UserWorkApiImpl(get()) }
     single { Settings() }
 }
 
@@ -85,6 +89,8 @@ val useCaseModule = module {
     single { DeleteProjectUseCase(get()) }
     single { FindUsersInOrgUseCase(get()) }
     single { AssignProjectsToUsersUseCase(get()) }
+    single { LogWorkTimeUseCase(get()) }
+    single { GetWorkLogsForDateRangeUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -115,6 +121,11 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
 
 class UserProjectUseCaseComponent : KoinComponent {
     fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
+    fun provideLogWorkTimeUseCase(): LogWorkTimeUseCase = get()
+}
+
+class UserWorkUseCaseComponent : KoinComponent {
+    fun provideGetWorkLogsForDateRangeUseCase(): GetWorkLogsForDateRangeUseCase = get()
 }
 
 class SharedComponent : KoinComponent {

@@ -1,14 +1,18 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.data.network.Constants
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
-import kotlinx.datetime.LocalDate
 import org.koin.core.component.KoinComponent
 
 class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
@@ -73,7 +77,7 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val updateProjectResponse = useCasesComponent.provideUpdateProjectUseCase()(
+            when (val response = useCasesComponent.provideUpdateProjectUseCase()(
                 id,
                 name,
                 client,
@@ -83,10 +87,10 @@ class OrgProjectDataModel(private val onDataState: (DataState) -> Unit) :
                 harvestLocal.getUser()?.orgId ?: throw RuntimeException("this should not be null")
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(updateProjectResponse.data))
+                    onDataState(SuccessState(response.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(updateProjectResponse.throwable))
+                    onDataState(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
