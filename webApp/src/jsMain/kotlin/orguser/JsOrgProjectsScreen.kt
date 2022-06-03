@@ -1,14 +1,12 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.listUsersWithProjectId
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.FindProjectsInOrgDataModel
-import com.mutualmobile.harvestKmp.features.harvest.OrgProjectDataModel
+import com.mutualmobile.harvestKmp.features.harvest.orgProjects.FindProjectsInOrgDataModel
 import csstype.*
-import emotion.react.css
 import kotlinx.browser.window
-import kotlinx.js.jso
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
@@ -114,6 +112,17 @@ val JsOrgProjectsScreen = VFC {
                                 secondary =
                                     ReactNode("Start Date: $start EndDate: $end")
                             }
+                            IconButton {
+                                mui.icons.material.ArrowForwardIos()
+                                onClick = {
+                                    navigator.invoke(
+                                        Routes.Screen.LIST_USERS_PROJECT.listUsersWithProjectId(
+                                            project.id
+                                        )
+                                    )
+                                }
+                            }
+
                             onClick = {
                                 selectedProject = project
                                 createRequested = true

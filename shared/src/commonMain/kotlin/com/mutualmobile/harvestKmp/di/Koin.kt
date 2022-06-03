@@ -7,12 +7,19 @@ import com.mutualmobile.harvestKmp.data.local.HarvestUserLocal
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
 import com.mutualmobile.harvestKmp.data.network.*
 import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
+import com.mutualmobile.harvestKmp.data.network.org.OrgProjectsApi
 import com.mutualmobile.harvestKmp.data.network.org.UserProjectApi
 import com.mutualmobile.harvestKmp.data.network.org.UserWorkApi
+import com.mutualmobile.harvestKmp.data.network.org.impl.OrgProjectsApiImpl
 import com.mutualmobile.harvestKmp.data.network.org.impl.UserProjectApiImpl
 import com.mutualmobile.harvestKmp.data.network.org.impl.UserWorkApiImpl
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.CreateProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.DeleteProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.FindProjectsInOrgUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.GetListOfUsersForAProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.UpdateProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.AssignProjectsToUsersUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.LogWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userWork.GetWorkLogsForDateRangeUseCase
@@ -64,6 +71,7 @@ val commonModule = module {
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
     single<UserProjectApi> { UserProjectApiImpl(get()) }
     single<UserWorkApi> { UserWorkApiImpl(get()) }
+    single<OrgProjectsApi> { OrgProjectsApiImpl(get()) }
     single { Settings() }
 }
 
@@ -91,6 +99,7 @@ val useCaseModule = module {
     single { AssignProjectsToUsersUseCase(get()) }
     single { LogWorkTimeUseCase(get()) }
     single { GetWorkLogsForDateRangeUseCase(get()) }
+    single { GetListOfUsersForAProjectUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -113,9 +122,6 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideGetUserUseCase(): GetUserUseCase = get()
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
     fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
-    fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
-    fun provideUpdateProjectUseCase(): UpdateProjectUseCase = get()
-    fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
 }
 
@@ -126,6 +132,14 @@ class UserProjectUseCaseComponent : KoinComponent {
 
 class UserWorkUseCaseComponent : KoinComponent {
     fun provideGetWorkLogsForDateRangeUseCase(): GetWorkLogsForDateRangeUseCase = get()
+}
+
+class OrgProjectsUseCaseComponent : KoinComponent {
+    fun provideCreateProjectUseCase(): CreateProjectUseCase = get()
+    fun provideUpdateProjectUseCase(): UpdateProjectUseCase = get()
+    fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
+    fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
+    fun provideGetListOfUsersForAProjectUseCase(): GetListOfUsersForAProjectUseCase = get()
 }
 
 class SharedComponent : KoinComponent {

@@ -1,10 +1,12 @@
 package orguser
 
+import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
 import csstype.px
 import mui.material.Typography
 import mui.system.Box
 import mui.system.sx
 import orguser.structure.Area
+import project.JSOrgProjectUsersList
 import react.*
 import react.dom.html.ReactHTML.main
 import react.router.Outlet
@@ -36,6 +38,10 @@ val OrgUserContent = VFC {
                 }
             }
 
+            Route{
+                this.path = com.mutualmobile.harvestKmp.datamodel.Routes.Screen.LIST_USERS_PROJECT
+                this.element = JSOrgProjectUsersList.create()
+            }
             Route {
                 path = "*"
                 element = Typography.create { +"404 Page Not Found" }

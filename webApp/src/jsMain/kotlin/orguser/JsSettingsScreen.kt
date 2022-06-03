@@ -4,10 +4,9 @@ import harvest.ChangePasswordUI
 import mui.material.Box
 import mui.material.ListItem
 import mui.material.ListItemText
-import mui.material.Typography
+import mui.material.List
 import react.ReactNode
 import react.VFC
-import react.router.dom.useSearchParams
 import react.router.useNavigate
 import react.useState
 
@@ -17,7 +16,7 @@ val JsSettingsScreen = VFC {
     val navigate = useNavigate()
 
     Box{
-        mui.material.List {
+        List {
             ListItem {
                 ListItemText {
                     primary = ReactNode("Change Password")

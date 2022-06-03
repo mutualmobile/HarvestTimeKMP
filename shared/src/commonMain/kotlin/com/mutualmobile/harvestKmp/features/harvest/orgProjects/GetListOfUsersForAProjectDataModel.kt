@@ -1,4 +1,4 @@
-package com.mutualmobile.harvestKmp.features.harvest
+package com.mutualmobile.harvestKmp.features.harvest.orgProjects
 
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
@@ -6,19 +6,20 @@ import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.Routes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
+import com.mutualmobile.harvestKmp.di.OrgProjectsUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
+class GetListOfUsersForAProjectDataModel(var onDataState: (DataState) -> Unit = {}) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
-    private val useCasesComponent = SpringBootAuthUseCasesComponent()
+    private val useCasesComponent = OrgProjectsUseCaseComponent()
 
     override fun activate() {
     }
@@ -30,28 +31,22 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
     override fun refresh() {
     }
 
-    fun findUsers(
-        userType: Int,
-        orgIdentifier: String?,
-        isUserDeleted: Boolean,
-        offset: Int,
-        limit: Int
+    fun getListOfUsersForAProject(
+        projectId: String
     ) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
+        currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
-            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(
-                userType = userType,
-                orgIdentifier = orgIdentifier,
-                isUserDeleted = isUserDeleted,
-                offset = offset,
-                limit = limit
-            )) {
+            when (val response =
+                useCasesComponent.provideGetListOfUsersForAProjectUseCase()(
+                    projectId = projectId
+                )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(findUsersInOrgResponse.data))
+                    onDataState(SuccessState(response.data))
+                    praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(findUsersInOrgResponse.throwable))
+                    onDataState(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
