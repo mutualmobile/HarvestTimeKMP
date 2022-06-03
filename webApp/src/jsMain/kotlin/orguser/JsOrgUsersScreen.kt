@@ -78,13 +78,13 @@ val JsOrgUsersScreen = VFC {
                 value = userType.unsafeCast<Nothing?>()
                 label = ReactNode("UserType")
                 onChange = { event, _ ->
-                    userType = event.target.value
-                    currentPage = 0
                     dataModel.findUsers(
-                        userType = userType.toInt(),
+                        userType = event.target.value.toInt(),
                         orgIdentifier = null, isUserDeleted = false,
                         0, limit, searchName
                     )
+                    userType = event.target.value
+                    currentPage = 0
                 }
                 MenuItem {
                     value = UserRole.ORG_ADMIN.role
