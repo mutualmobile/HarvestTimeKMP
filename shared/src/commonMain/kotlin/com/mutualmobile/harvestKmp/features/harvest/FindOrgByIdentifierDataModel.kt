@@ -6,9 +6,9 @@ import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
@@ -32,7 +32,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                     onDataState(SuccessState(response.data)) // TODO redundant
                     praxisCommand(
                         NavigationPraxisCommand(
-                            screen = Routes.Screen.LOGIN.withOrgId(
+                            screen = HarvestRoutes.Screen.LOGIN.withOrgId(
                                 response.data.data?.identifier,
                                 response.data.data?.id
                             )
@@ -57,7 +57,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
         if (isUserTokenAvailable()) {
             praxisCommand(
                 NavigationPraxisCommand(
-                    screen = Routes.Screen.ORG_USER_FETCH
+                    screen = HarvestRoutes.Screen.ORG_USER_FETCH
                 )
             )
         }

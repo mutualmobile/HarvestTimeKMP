@@ -6,9 +6,9 @@ import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
@@ -103,7 +103,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
         signUpResponse.data.data?.let {
             praxisCommand(
                 NavigationPraxisCommand(
-                    Routes.Screen.LOGIN.withOrgId(
+                    HarvestRoutes.Screen.LOGIN.withOrgId(
                         signUpResponse.data.data.identifier,
                         signUpResponse.data.data.id
                     )

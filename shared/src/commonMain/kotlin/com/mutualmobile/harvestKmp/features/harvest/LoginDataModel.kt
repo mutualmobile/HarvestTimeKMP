@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
@@ -43,7 +43,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     saveToken(loginResponse)
                     praxisCommand(
                         NavigationPraxisCommand(
-                            screen = Routes.Screen.ORG_USER_FETCH,
+                            screen = HarvestRoutes.Screen.ORG_USER_FETCH,
                             ""
                         )
                     )

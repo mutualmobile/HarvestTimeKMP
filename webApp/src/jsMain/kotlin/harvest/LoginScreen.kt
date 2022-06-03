@@ -1,11 +1,9 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
-import common.Themes
-import components.AppThemeContext
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -14,21 +12,13 @@ import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.MediaQueryList
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.EventListener
 import react.*
 import react.dom.*
-import react.dom.aria.ariaLabel
-import react.dom.html.InputMode
 import react.dom.html.InputType
 import react.router.NavigateFunction
-import react.router.NavigateOptions
 import react.router.dom.useSearchParams
-import react.router.useLocation
 import react.router.useNavigate
 import setupFcmPush
-import kotlin.js.Json
 
 
 val JSLoginScreen = VFC {
@@ -36,8 +26,8 @@ val JSLoginScreen = VFC {
     var email by useState("")
     val searchParams = useSearchParams();
 
-    val organizationId: String? = searchParams.component1().get(Routes.Keys.orgIdentifier)
-    val orgId: String? = searchParams.component1().get(Routes.Keys.orgId)
+    val organizationId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgIdentifier)
+    val orgId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgId)
 
     var password by useState("")
     val navigator = useNavigate()
@@ -135,7 +125,7 @@ val JSLoginScreen = VFC {
                     this.margin = Margin(12.px, 4.px)
                 }
                 onClick = {
-                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + Routes.Screen.FORGOT_PASSWORD)
+                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.FORGOT_PASSWORD)
                 }
                 +"Forgot Password"
             }
@@ -149,7 +139,7 @@ val JSLoginScreen = VFC {
                     onClick = {
                         navigator(
                             BROWSER_SCREEN_ROUTE_SEPARATOR +
-                                    Routes.Screen.SIGNUP.withOrgId(organizationId, orgId)
+                                    HarvestRoutes.Screen.SIGNUP.withOrgId(organizationId, orgId)
                         )
                     }
                 }

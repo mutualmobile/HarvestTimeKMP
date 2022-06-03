@@ -1,8 +1,8 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgId
-import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgIdentifier
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Keys.orgId
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Keys.orgIdentifier
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 import csstype.Margin

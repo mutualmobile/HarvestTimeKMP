@@ -13,7 +13,7 @@ import react.router.Outlet
 import react.router.Route
 import react.router.Routes
 
-private val DEFAULT_PADDING = 30.px
+val DEFAULT_PADDING = 30.px
 
 val OrgUserContent = VFC {
     val drawerItems = useContext(DrawerItemsContext)
@@ -36,11 +36,6 @@ val OrgUserContent = VFC {
                     path = key
                     element = Component.create()
                 }
-            }
-
-            Route{
-                this.path = com.mutualmobile.harvestKmp.datamodel.Routes.Screen.LIST_USERS_PROJECT
-                this.element = JSOrgProjectUsersList.create()
             }
             Route {
                 path = "*"
