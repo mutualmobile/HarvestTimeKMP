@@ -43,7 +43,8 @@ object AndroidDependencies {
     "androidx.activity:activity-compose:${AndroidDependencyVersions.composeActivity}",
     "com.google.firebase:firebase-auth-ktx",
     "androidx.core:core-splashscreen:${AndroidDependencyVersions.splashScreen}",
-    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}"
+    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}",
+    "org.jetbrains.kotlinx:kotlinx-datetime:${CommonDependencyVersions.kotlinxDateTime}",
   )
   val androidTestImplementation = listOf(
     "androidx.compose.ui:ui-test-junit4:${AndroidDependencyVersions.compose}"

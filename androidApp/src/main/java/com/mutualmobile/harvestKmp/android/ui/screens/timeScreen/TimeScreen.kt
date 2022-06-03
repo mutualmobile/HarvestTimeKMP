@@ -21,7 +21,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -45,7 +44,6 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPag
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
-import dev.chrisbanes.snapper.rememberLazyListSnapperLayoutInfo
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 
 const val MaxItemFling = 1
@@ -89,23 +87,26 @@ fun TimeScreen(
                 }
             )
 
-            val layoutInfo = rememberLazyListSnapperLayoutInfo(lazyRowState)
-
-            var currentWeekOffset by remember { mutableStateOf(0) }
-
-            LaunchedEffect(lazyRowState.isScrollInProgress) {
-                if (!lazyRowState.isScrollInProgress) {
-                    when (layoutInfo.currentItem?.index) {
-                        0 -> currentWeekOffset -= 1
-                        2 -> currentWeekOffset += 1
+            LaunchedEffect(lazyRowFlingBehavior.animationTarget) {
+                lazyRowFlingBehavior.animationTarget?.let { nnVal ->
+                    when (nnVal) {
+                        0 -> {
+                            onWeekScrolled(-1)
+                            pagerState.scrollToPage(pagerState.currentPage - 7)
+                        }
+                        2 -> {
+                            onWeekScrolled(1)
+                            pagerState.scrollToPage(pagerState.currentPage + 7)
+                        }
                         else -> Unit
                     }
-                    lazyRowState.scrollToItem(1)
                 }
             }
 
-            LaunchedEffect(currentWeekOffset) {
-                onWeekScrolled(currentWeekOffset)
+            LaunchedEffect(lazyRowState.isScrollInProgress) {
+                if (!lazyRowState.isScrollInProgress) {
+                    lazyRowState.scrollToItem(1)
+                }
             }
 
             LaunchedEffect(pagerState.currentPage) {
