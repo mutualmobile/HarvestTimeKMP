@@ -1,8 +1,5 @@
 package com.mutualmobile.harvestKmp.di
 
-
-import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
-import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocal
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
 import com.mutualmobile.harvestKmp.data.network.*
@@ -24,9 +21,6 @@ import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.GetUserAssignedProjectsUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.LogWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userWork.GetWorkLogsForDateRangeUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -52,12 +46,10 @@ fun initSqlDelightExperimentalDependencies() = startKoin {
 }
 
 val jsSqliteDeps = module {
-    single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
     single<HarvestUserLocal> { HarvestUserLocalImpl() }
 }
 
 val localDBRepos = module {
-    single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
     single<HarvestUserLocal> { HarvestUserLocalImpl(get()) }
 }
 
@@ -68,7 +60,6 @@ val networkModule = module {
 }
 
 val commonModule = module {
-    single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
     single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
     single<UserProjectApi> { UserProjectApiImpl(get()) }
     single<UserWorkApi> { UserWorkApiImpl(get()) }
@@ -77,9 +68,6 @@ val commonModule = module {
 }
 
 val useCaseModule = module {
-    single { FetchTrendingReposUseCase(get()) }
-    single { SaveTrendingReposUseCase(get()) }
-    single { GetLocalReposUseCase(get()) }
     single { LoginUseCase(get()) }
     single { ExistingOrgSignUpUseCase(get()) }
     single { NewOrgSignUpUseCase(get()) }
@@ -102,12 +90,6 @@ val useCaseModule = module {
     single { GetWorkLogsForDateRangeUseCase(get()) }
     single { GetListOfUsersForAProjectUseCase(get()) }
     single { GetUserAssignedProjectsUseCase(get()) }
-}
-
-class UseCasesComponent : KoinComponent {
-    fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
-    fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
-    fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
 }
 
 class SpringBootAuthUseCasesComponent : KoinComponent {
@@ -145,8 +127,6 @@ class OrgProjectsUseCaseComponent : KoinComponent {
 }
 
 class SharedComponent : KoinComponent {
-    fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
-    fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
     fun provideHarvestUserLocal(): HarvestUserLocal = get()
     fun provideSettings(): Settings = get()
 }

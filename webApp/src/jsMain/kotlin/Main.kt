@@ -8,9 +8,9 @@ import firebase.app.App
 import firebase.messaging.messaging
 import kotlinx.browser.document
 import kotlinx.browser.window
+import kotlinx.coroutines.DelicateCoroutinesApi
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import react.create
 import react.dom.client.createRoot
@@ -71,18 +71,15 @@ fun sendTokenToServer(it: String?) {
 
 
 suspend fun setupDriver() {
-    sharedComponent.provideGithubTrendingLocal().driver?.let {} ?: run {
+    sharedComponent.provideHarvestUserLocal().driver?.let {} ?: run {
         setupDriverInternal()
     }
-
 }
 
 private suspend fun setupDriverInternal() {
     try {
         val driver = DriverFactory().createDriverBlocking()
-        val trendingLocal = sharedComponent.provideGithubTrendingLocal()
         val harvestUser = sharedComponent.provideHarvestUserLocal()
-        trendingLocal.driver = driver
         harvestUser.driver = driver
     } catch (ex: Exception) {
         console.log(ex.message)
