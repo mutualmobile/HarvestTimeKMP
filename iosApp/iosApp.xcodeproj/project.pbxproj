@@ -11,7 +11,13 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		12F72EEE657317AD0347C1FB /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2653B26BCBC847F765B563C5 /* Pods_iosApp.framework */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
-		313E37C72837986800CA7E57 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E37C62837986800CA7E57 /* LaunchView.swift */; };
+		312A6921284A4234000A2CD9 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691C284A4234000A2CD9 /* AppError.swift */; };
+		312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691E284A4234000A2CD9 /* HarvestButton.swift */; };
+		312A6923284A4234000A2CD9 /* LabelledDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691F284A4234000A2CD9 /* LabelledDivider.swift */; };
+		312A6924284A4234000A2CD9 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6920284A4234000A2CD9 /* LoadingIndicator.swift */; };
+		312A6928284A4249000A2CD9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6926284A4248000A2CD9 /* LoginView.swift */; };
+		312A6929284A4249000A2CD9 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6927284A4248000A2CD9 /* LaunchView.swift */; };
+		312A692B284A4294000A2CD9 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 312A692A284A4294000A2CD9 /* Localizable.strings */; };
 		313E37C92837996E00CA7E57 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 313E37C82837996E00CA7E57 /* Colors.xcassets */; };
 		313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E37CA283799CF00CA7E57 /* ColorAssets.swift */; };
 		7555FF83242A565900829871 /* GithubTrendingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* GithubTrendingUI.swift */; };
@@ -25,7 +31,13 @@
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		2653B26BCBC847F765B563C5 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		313E37C62837986800CA7E57 /* LaunchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
+		312A691C284A4234000A2CD9 /* AppError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
+		312A691E284A4234000A2CD9 /* HarvestButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HarvestButton.swift; sourceTree = "<group>"; };
+		312A691F284A4234000A2CD9 /* LabelledDivider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelledDivider.swift; sourceTree = "<group>"; };
+		312A6920284A4234000A2CD9 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
+		312A6926284A4248000A2CD9 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		312A6927284A4248000A2CD9 /* LaunchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
+		312A692A284A4294000A2CD9 /* Localizable.strings */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; path = Localizable.strings; sourceTree = "<group>"; };
 		313E37C82837996E00CA7E57 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		313E37CA283799CF00CA7E57 /* ColorAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssets.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,11 +70,48 @@
 			path = "Preview Content";
 			sourceTree = "<group>";
 		};
+		312A691A284A4234000A2CD9 /* Reusable Common Components */ = {
+			isa = PBXGroup;
+			children = (
+				312A691B284A4234000A2CD9 /* Models */,
+				312A691D284A4234000A2CD9 /* Views */,
+			);
+			path = "Reusable Common Components";
+			sourceTree = "<group>";
+		};
+		312A691B284A4234000A2CD9 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				312A691C284A4234000A2CD9 /* AppError.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		312A691D284A4234000A2CD9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				312A691E284A4234000A2CD9 /* HarvestButton.swift */,
+				312A691F284A4234000A2CD9 /* LabelledDivider.swift */,
+				312A6920284A4234000A2CD9 /* LoadingIndicator.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		312A6925284A4248000A2CD9 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				312A6926284A4248000A2CD9 /* LoginView.swift */,
+				312A6927284A4248000A2CD9 /* LaunchView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
 		313E37CD28379EF800CA7E57 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
 				313E37CA283799CF00CA7E57 /* ColorAssets.swift */,
 				313E37C82837996E00CA7E57 /* Colors.xcassets */,
+				312A692A284A4294000A2CD9 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -111,7 +160,8 @@
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
 				058557D7273AAEEB004C7B11 /* Preview Content */,
 				89D8416F2779CFB200D08BC0 /* AppDelegate.swift */,
-				313E37C62837986800CA7E57 /* LaunchView.swift */,
+				312A691A284A4234000A2CD9 /* Reusable Common Components */,
+				312A6925284A4248000A2CD9 /* Views */,
 				313E37CD28379EF800CA7E57 /* Resources */,
 			);
 			path = iosApp;
@@ -188,6 +238,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				313E37C92837996E00CA7E57 /* Colors.xcassets in Resources */,
+				312A692B284A4294000A2CD9 /* Localizable.strings in Resources */,
 				058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */,
 				058557BB273AAA24004C7B11 /* Assets.xcassets in Resources */,
 			);
@@ -242,10 +293,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				312A6924284A4234000A2CD9 /* LoadingIndicator.swift in Sources */,
+				312A6923284A4234000A2CD9 /* LabelledDivider.swift in Sources */,
 				89D841702779CFB200D08BC0 /* AppDelegate.swift in Sources */,
-				313E37C72837986800CA7E57 /* LaunchView.swift in Sources */,
+				312A6929284A4249000A2CD9 /* LaunchView.swift in Sources */,
 				313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */,
 				89D841752779D8CD00D08BC0 /* UiRepo.swift in Sources */,
+				312A6928284A4249000A2CD9 /* LoginView.swift in Sources */,
+				312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */,
+				312A6921284A4234000A2CD9 /* AppError.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				89D841732779D83600D08BC0 /* GithubTrendingVM.swift in Sources */,
 				7555FF83242A565900829871 /* GithubTrendingUI.swift in Sources */,
