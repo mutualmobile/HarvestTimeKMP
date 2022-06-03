@@ -47,12 +47,16 @@ class OrgProjectsApiImpl(private val httpClient: HttpClient) : OrgProjectsApi {
         orgId: String?,
         offset: Int?,
         limit: Int?,
+        search: String?,
     ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>> = getSafeNetworkResponse {
         httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.ORG_PROJECT}") {
             contentType(ContentType.Application.Json)
             parameter("orgId", orgId)
             parameter("offset", offset)
             parameter("limit", limit)
+            search?.let {
+                parameter("search", search)
+            }
         }
     }
 

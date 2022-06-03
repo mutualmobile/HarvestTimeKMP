@@ -37,7 +37,7 @@ val JsProjectAssignScreen = VFC {
     var isLoadingUsers by useState(false)
     var isSaving by useState(false)
     var searchName by useState<String>()
-
+    var searchProject by useState<String>()
     val findProjectsInOrgDataModel = FindProjectsInOrgDataModel { stateNew: DataState ->
         isLoadingProjects = stateNew is LoadingState
         when (stateNew) {
@@ -124,7 +124,7 @@ val JsProjectAssignScreen = VFC {
         usersInOrgDataModel.activate()
 
         findProjectsInOrgDataModel.findProjectInOrg(
-            offset = currentProjectPage, limit = limit, orgId = null
+            orgId = null, offset = currentProjectPage, limit = limit, search = searchProject
         )
         usersInOrgDataModel.findUsers(
             userType = userType.toInt(),
@@ -139,15 +139,11 @@ val JsProjectAssignScreen = VFC {
         Box {
             sx {
                 display = Display.flex
-                justifyContent = JustifyContent.spaceBetween
+                justifyContent = JustifyContent.spaceAround
                 padding = 24.px
             }
 
             Box {
-                sx {
-                    width = 48.pc
-                }
-
                 Box {
                     sx {
                         position = Position.relative
@@ -159,12 +155,18 @@ val JsProjectAssignScreen = VFC {
 
 
 
+                    Box {
+                        sx {
+                            display = Display.flex
+                            justifyContent = JustifyContent.spaceAround
+                            justifyItems = JustifyItems.center
+                        }
                         FormControl {
                             InputLabel {
-                                +"Search"
+                                +"Search Users"
                             }
                             OutlinedInput {
-                                placeholder = "Search by name"
+                                placeholder = "Search Users by name"
                                 onChange = {
                                     val target = it.target as HTMLInputElement
                                     usersInOrgDataModel.findUsers(
@@ -177,6 +179,27 @@ val JsProjectAssignScreen = VFC {
                                 }
                             }
                         }
+
+                        FormControl {
+                            InputLabel {
+                                +"Search Projects"
+                            }
+                            OutlinedInput {
+                                placeholder = "Search Projects by name"
+                                onChange = {
+                                    val target = it.target as HTMLInputElement
+                                    findProjectsInOrgDataModel.findProjectInOrg(
+                                        offset = currentProjectPage,
+                                        limit = limit,
+                                        orgId = null,
+                                        search = target.value
+                                    )
+                                    currentUsersPage = 0
+                                    searchProject = target.value
+                                }
+                            }
+                        }
+                    }
 
                     if (isLoadingUsers) {
                         CircularProgress()
@@ -229,70 +252,67 @@ val JsProjectAssignScreen = VFC {
                 }
             }
             Box {
-                sx {
-                    width = 48.pc
-                }
-
-                Box {
-                    if (isLoadingProjects) {
-                        CircularProgress()
-                    } else {
-                        Box {
-                            sx {
-                                position = Position.relative
-                                transform = translatez(0.px)
-                                flexGrow = number(1.0)
-                                alignSelf = AlignSelf.flexEnd
-                                alignItems = AlignItems.baseline
+                if (isLoadingProjects) {
+                    CircularProgress()
+                } else {
+                    Box {
+                        sx {
+                            position = Position.relative
+                            transform = translatez(0.px)
+                            flexGrow = number(1.0)
+                            alignSelf = AlignSelf.flexEnd
+                            alignItems = AlignItems.baseline
+                        }
+                        Pagination {
+                            count = totalProjectPages
+                            page = currentProjectPage
+                            onChange = { event, value ->
+                                currentProjectPage = value.toInt()
+                                findProjectsInOrgDataModel.findProjectInOrg(
+                                    orgId = null,
+                                    offset = value.toInt().minus(1),
+                                    limit = limit,
+                                    search = searchProject
+                                )
                             }
-                            Pagination {
-                                count = totalProjectPages
-                                page = currentProjectPage
-                                onChange = { event, value ->
-                                    currentProjectPage = value.toInt()
-                                    findProjectsInOrgDataModel.findProjectInOrg(
-                                        offset = value.toInt().minus(1), limit = limit, orgId = null
-                                    )
-                                }
 
-                            }
-                            List {
-                                projects?.map { project ->
-                                    val format: dynamic = kotlinext.js.require("date-fns").format
-                                    val start =
-                                        format(
-                                            Date(project.startDate.toString()),
-                                            "yyyy-MM-dd"
-                                        ) as String
-                                    val end = format(
-                                        Date(project.endDate.toString()),
+                        }
+                        List {
+                            projects?.map { project ->
+                                val format: dynamic = kotlinext.js.require("date-fns").format
+                                val start =
+                                    format(
+                                        Date(project.startDate.toString()),
                                         "yyyy-MM-dd"
-                                    ) as? String
-                                    ListItem {
-                                        ListItemIcon {
-                                            Checkbox {
-                                                checked = projectSelection.contains(project.id)
-                                                tabIndex = -1
-                                                disableRipple = true
-                                                onChange = { ev, checked ->
-                                                    val newSelection = hashSetOf<String>().apply {
-                                                        addAll(projectSelection)
-                                                    }
-                                                    if (checked) {
-                                                        newSelection.add(project.id!!)
-                                                    } else {
-                                                        newSelection.remove(project.id)
-                                                    }
-                                                    projectSelection = newSelection
+                                    ) as String
+                                val end = format(
+                                    Date(project.endDate.toString()),
+                                    "yyyy-MM-dd"
+                                ) as? String
+                                ListItem {
+                                    ListItemIcon {
+                                        Checkbox {
+                                            checked = projectSelection.contains(project.id)
+                                            tabIndex = -1
+                                            disableRipple = true
+                                            onChange = { ev, checked ->
+                                                val newSelection = hashSetOf<String>().apply {
+                                                    addAll(projectSelection)
                                                 }
+                                                if (checked) {
+                                                    newSelection.add(project.id!!)
+                                                } else {
+                                                    newSelection.remove(project.id)
+                                                }
+                                                projectSelection = newSelection
                                             }
                                         }
-                                        ListItemText {
-                                            primary =
-                                                ReactNode("Name: ${project.name ?: ""}\nClient: ${project.client ?: ""}")
-                                            secondary =
-                                                ReactNode("Start Date: $start EndDate: $end")
-                                        }
+                                    }
+                                    ListItemText {
+                                        primary =
+                                            ReactNode("Name: ${project.name ?: ""}\nClient: ${project.client ?: ""}")
+                                        secondary =
+                                            ReactNode("Start Date: $start EndDate: $end")
                                     }
                                 }
                             }

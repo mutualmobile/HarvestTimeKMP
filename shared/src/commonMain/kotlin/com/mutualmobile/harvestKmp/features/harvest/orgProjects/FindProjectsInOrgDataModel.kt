@@ -33,16 +33,18 @@ class FindProjectsInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
     fun findProjectInOrg(
         orgId: String?,
         offset: Int?,
-        limit: Int?
+        limit: Int?,
+        search: String?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
             when (val findUsersInOrgResponse =
-                useCasesComponent.provideFindProjectsInOrgUseCase()(
+                useCasesComponent.provideFindProjectsInOrgUseCase().invoke(
                     orgId = orgId,
                     offset = offset,
-                    limit = limit
+                    limit = limit,
+                    search
                 )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))

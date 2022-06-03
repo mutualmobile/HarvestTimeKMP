@@ -10,13 +10,8 @@ import kotlinx.browser.window
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
-import orguser.structure.Area
-import project.JSOrgProjectUsersList
+import org.w3c.dom.HTMLInputElement
 import react.*
-import react.dom.html.ReactHTML
-import react.router.Outlet
-import react.router.Route
-import react.router.Routes
 import react.router.useNavigate
 import kotlin.js.Date
 
@@ -30,7 +25,7 @@ val JsOrgProjectsScreen = VFC {
     var currentPage by useState(0)
     var totalPages by useState(0)
     var isLoading by useState(false)
-
+    var searchProject by useState<String>()
     val dataState = { stateNew: DataState ->
         isLoading = stateNew is LoadingState
         when (stateNew) {
@@ -64,43 +59,67 @@ val JsOrgProjectsScreen = VFC {
     useEffectOnce {
         dataModel.activate()
         dataModel.findProjectInOrg(
-            offset = currentPage, limit = limit, orgId = null
+            orgId = null, offset = currentPage, limit = limit, search = searchProject
         )
     }
 
     Box {
-        if (isLoading) {
-            CircularProgress()
-        } else {
-            Box {
+        Box {
+            sx {
+                position = Position.relative
+                transform = translatez(0.px)
+                flexGrow = number(1.0)
+                alignSelf = AlignSelf.flexEnd
+                alignItems = AlignItems.baseline
+            }
+            Fab {
+                variant = FabVariant.extended
                 sx {
-                    position = Position.relative
                     transform = translatez(0.px)
-                    flexGrow = number(1.0)
-                    alignSelf = AlignSelf.flexEnd
-                    alignItems = AlignItems.baseline
+                    bottom = 16.px
+                    right = 16.px
                 }
-                Fab {
-                    variant = FabVariant.extended
-                    sx {
-                        transform = translatez(0.px)
-                        bottom = 16.px
-                        right = 16.px
-                    }
-                    color = FabColor.primary
-                    Add()
-                    onClick = {
-                        createRequested = true
-                    }
-                    +"Create Project"
+                color = FabColor.primary
+                Add()
+                onClick = {
+                    createRequested = true
                 }
+                +"Create Project"
+            }
+
+            FormControl {
+                InputLabel {
+                    +"Search Projects"
+                }
+                OutlinedInput {
+                    placeholder = "Search Projects by name"
+                    onChange = {
+                        val target = it.target as HTMLInputElement
+                        dataModel.findProjectInOrg(
+                            offset = currentPage,
+                            limit = limit,
+                            orgId = null,
+                            search = target.value
+                        )
+                        currentPage = 0
+                        searchProject = target.value
+                    }
+                }
+            }
+
+            if (isLoading) {
+                CircularProgress()
+            } else {
                 Pagination {
                     count = totalPages
                     page = currentPage
                     onChange = { event, value ->
                         currentPage = value.toInt()
                         dataModel.findProjectInOrg(
-                            offset = value.toInt().minus(1), limit = limit, orgId = null
+                            orgId = null,
+                            offset = value.toInt().minus(1),
+                            limit = limit,
+                            search = searchProject
                         )
                     }
 
@@ -110,7 +129,8 @@ val JsOrgProjectsScreen = VFC {
                         val format: dynamic = kotlinext.js.require("date-fns").format
                         val start =
                             format(Date(project.startDate.toString()), "yyyy-MM-dd") as String
-                        val end = format(Date(project.endDate.toString()), "yyyy-MM-dd") as? String
+                        val end =
+                            format(Date(project.endDate.toString()), "yyyy-MM-dd") as? String
                         ListItem {
                             ListItemText {
                                 primary =
@@ -118,7 +138,7 @@ val JsOrgProjectsScreen = VFC {
                                 secondary =
                                     ReactNode("Start Date: $start EndDate: $end")
                             }
-                            ListItemSecondaryAction{
+                            ListItemSecondaryAction {
                                 IconButton {
                                     mui.icons.material.ArrowForwardIos()
                                     onClick = {
@@ -141,8 +161,6 @@ val JsOrgProjectsScreen = VFC {
         }
 
 
-
-
         JsCreateProject {
             key = selectedProject?.id ?: "1"
             drawerOpen = createRequested
@@ -155,7 +173,7 @@ val JsOrgProjectsScreen = VFC {
                 selectedProject = null
                 currentPage = 0
                 dataModel.findProjectInOrg(
-                    offset = 0, limit = limit, orgId = null
+                    orgId = null, offset = 0, limit = limit, search = searchProject
                 )
             }
         }
