@@ -1,6 +1,7 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.listUsersWithProjectId
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.orgProjects.FindProjectsInOrgDataModel
@@ -111,6 +112,17 @@ val JsOrgProjectsScreen = VFC {
                                 secondary =
                                     ReactNode("Start Date: $start EndDate: $end")
                             }
+                            secondaryAction = IconButton.create() {
+                                mui.icons.material.Delete()
+                                onClick = {
+                                    navigator.invoke(
+                                        Routes.Screen.LIST_USERS_PROJECT.listUsersWithProjectId(
+                                            project.id
+                                        )
+                                    )
+                                }
+                            }
+
                             onClick = {
                                 selectedProject = project
                                 createRequested = true
