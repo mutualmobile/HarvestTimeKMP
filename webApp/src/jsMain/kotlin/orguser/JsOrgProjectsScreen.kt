@@ -1,7 +1,7 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.listUsersWithProjectId
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.listUsersWithProjectId
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.orgProjects.FindProjectsInOrgDataModel
@@ -10,7 +10,13 @@ import kotlinx.browser.window
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
+import orguser.structure.Area
+import project.JSOrgProjectUsersList
 import react.*
+import react.dom.html.ReactHTML
+import react.router.Outlet
+import react.router.Route
+import react.router.Routes
 import react.router.useNavigate
 import kotlin.js.Date
 
@@ -112,17 +118,18 @@ val JsOrgProjectsScreen = VFC {
                                 secondary =
                                     ReactNode("Start Date: $start EndDate: $end")
                             }
-                            IconButton {
-                                mui.icons.material.ArrowForwardIos()
-                                onClick = {
-                                    navigator.invoke(
-                                        Routes.Screen.LIST_USERS_PROJECT.listUsersWithProjectId(
-                                            project.id
+                            ListItemSecondaryAction{
+                                IconButton {
+                                    mui.icons.material.ArrowForwardIos()
+                                    onClick = {
+                                        navigator.invoke(
+                                            BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.LIST_USERS_PROJECT.listUsersWithProjectId(
+                                                project.id
+                                            )
                                         )
-                                    )
+                                    }
                                 }
                             }
-
                             onClick = {
                                 selectedProject = project
                                 createRequested = true

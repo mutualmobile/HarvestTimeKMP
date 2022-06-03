@@ -1,7 +1,7 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.data.network.UserRole
-import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import kotlinx.browser.window
 import orgadmin.JsProjectAssignScreen
@@ -23,19 +23,19 @@ fun useDrawerItems(): DrawerItems {
             UserRole.ORG_ADMIN.role -> {
                 return useMemo(callback = {
                     setOf(
-                        DrawerItem(Routes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
-                        DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
-                        DrawerItem(Routes.Screen.ASSIGN_PROJECT,"Project Assignments",JsProjectAssignScreen),
-                        DrawerItem(Routes.Screen.SETTINGS, "Settings", JsSettingsScreen)
+                        DrawerItem(HarvestRoutes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
+                        DrawerItem(HarvestRoutes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
+                        DrawerItem(HarvestRoutes.Screen.ASSIGN_PROJECT,"Project Assignments",JsProjectAssignScreen),
+                        DrawerItem(HarvestRoutes.Screen.SETTINGS, "Settings", JsSettingsScreen)
                     )
                 })
             }
             UserRole.ORG_USER.role -> {
                 return useMemo(callback = {
                     setOf(
-                        DrawerItem(Routes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
-                        DrawerItem(Routes.Screen.ORG_TIME, "Time", JsTimeLoggingScreen),
-                        DrawerItem(Routes.Screen.SETTINGS, "Settings", JsSettingsScreen)
+                        DrawerItem(HarvestRoutes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
+                        DrawerItem(HarvestRoutes.Screen.ORG_TIME, "Time", JsTimeLoggingScreen),
+                        DrawerItem(HarvestRoutes.Screen.SETTINGS, "Settings", JsSettingsScreen)
                     )
                 })
             }

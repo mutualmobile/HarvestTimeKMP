@@ -1,7 +1,5 @@
 package com.mutualmobile.harvestKmp.datamodel
 
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
-
 open class PraxisCommand
 
 const val BROWSER_SCREEN_ROUTE_SEPARATOR = "/"
@@ -11,7 +9,7 @@ const val BROWSER_AND = "&"
 data class NavigationPraxisCommand(val screen: String, val route: String? = null) : PraxisCommand()
 data class ModalPraxisCommand(val title: String, val message: String) : PraxisCommand()
 
-object Routes {
+object HarvestRoutes {
     object Keys {
         const val orgIdentifier = "orgIdentifier"
         const val orgId = "orgId"
@@ -32,7 +30,6 @@ object Routes {
         const val SETTINGS = "settings"
         const val ORG_USER_DASHBOARD = "user-dashboard"
         const val ORG_USER_FETCH = "user-data-fetch"
-        const val CREATE_PROJECT = "create-edit-project"
         const val LIST_USERS_PROJECT = "list-user-project"
         const val LIST_PROJECTS_USER = "list-projects-user"
 

@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
@@ -28,7 +28,7 @@ import react.useState
 val JSOrgProjectUsersList = VFC {
 
     val searchParams = useSearchParams()
-    val projectId: String? = searchParams.component1().get(Routes.Keys.id)
+    val projectId: String? = searchParams.component1().get(HarvestRoutes.Keys.id)
     var isLoading by useState(false)
     var message by useState("")
     var users by useState<List<GetUserResponse>>()

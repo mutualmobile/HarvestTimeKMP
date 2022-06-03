@@ -1,16 +1,14 @@
-import com.mutualmobile.harvestKmp.datamodel.BROWSER_QUERY
 import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
 import components.ThemeModule
 import harvest.*
 import react.router.Route
 import react.router.Routes
-import react.router.dom.HashRouter
 import react.FC
 import react.Props
 import react.create
 import react.router.dom.BrowserRouter
 import workspace.JsWorkspaceFindScreen
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import orguser.UserDashboardUI
@@ -68,6 +66,12 @@ val HarvestApp = FC<AppProps> {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.SIGNUP
                     this.element = JSSignupScreen.create()
                 }
+
+                Route{
+                    this.path = Screen.LIST_USERS_PROJECT
+                    this.element = JSOrgProjectUsersList.create()
+                }
+
                 Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.ORG_USER_DASHBOARD + "/*"
                     this.element = UserDashboardUI.create()

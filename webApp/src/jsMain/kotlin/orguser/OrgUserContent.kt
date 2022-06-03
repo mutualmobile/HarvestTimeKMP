@@ -7,14 +7,13 @@ import mui.system.Box
 import mui.system.sx
 import orguser.structure.Area
 import project.JSOrgProjectUsersList
-import project.JSUserProjectList
 import react.*
 import react.dom.html.ReactHTML.main
 import react.router.Outlet
 import react.router.Route
 import react.router.Routes
 
-private val DEFAULT_PADDING = 30.px
+val DEFAULT_PADDING = 30.px
 
 val OrgUserContent = VFC {
     val drawerItems = useContext(DrawerItemsContext)
@@ -37,15 +36,6 @@ val OrgUserContent = VFC {
                     path = key
                     element = Component.create()
                 }
-            }
-
-            Route {
-                this.path = com.mutualmobile.harvestKmp.datamodel.Routes.Screen.LIST_USERS_PROJECT
-                this.element = JSOrgProjectUsersList.create()
-            }
-            Route {
-                this.path = com.mutualmobile.harvestKmp.datamodel.Routes.Screen.LIST_PROJECTS_USER
-                this.element = JSUserProjectList.create()
             }
             Route {
                 path = "*"

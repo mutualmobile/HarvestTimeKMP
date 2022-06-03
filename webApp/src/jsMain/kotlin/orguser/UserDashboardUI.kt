@@ -22,7 +22,6 @@ import webKey
 
 
 val UserDashboardUI = VFC {
-    val mobileMode = useMediaQuery("(max-width:960px)")
 
     var isLoading by useState(false)
     val navigator = useNavigate()
@@ -64,10 +63,7 @@ val UserDashboardUI = VFC {
                 )
                 gridTemplateAreas = GridTemplateAreas(
                     arrayOf(Area.Header, Area.Header),
-                    if (mobileMode)
-                        arrayOf(Area.Content, Area.Content)
-                    else
-                        arrayOf(Area.Sidebar, Area.Content),
+                    arrayOf(Area.Content, Area.Content)
                 )
             }
 
@@ -86,7 +82,7 @@ val UserDashboardUI = VFC {
                     isNavDrawerOpen = !isNavDrawerOpen
                 }
             }
-            if (mobileMode) OrgUserDrawer {
+            OrgUserDrawer {
                 open = isNavDrawerOpen
                 onOpen = {
                     isNavDrawerOpen = true
@@ -94,7 +90,7 @@ val UserDashboardUI = VFC {
                 onClose = {
                     isNavDrawerOpen = false
                 }
-            } else OrgUserSidebar()
+            }
 
             OrgUserContent()
         }

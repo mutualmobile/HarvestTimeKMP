@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
@@ -33,7 +33,7 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
                     print("GetUser Successful, ${getUserResponse.data}")
                     harvestLocal.saveUser(getUserResponse.data)
                     onDataState(SuccessState(getUserResponse.data))
-                    praxisCommand(NavigationPraxisCommand(Routes.Screen.ORG_USER_DASHBOARD))
+                    praxisCommand(NavigationPraxisCommand(HarvestRoutes.Screen.ORG_USER_DASHBOARD))
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
