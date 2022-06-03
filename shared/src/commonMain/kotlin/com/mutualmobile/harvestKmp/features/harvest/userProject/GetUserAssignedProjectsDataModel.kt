@@ -42,12 +42,6 @@ class GetUserAssignedProjectsDataModel(private val onDataState: (DataState) -> U
                 )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(response.data))
-                    praxisCommand(
-                        ModalPraxisCommand(
-                            "Message",
-                            response.data.message ?: "Success!"
-                        )
-                    )
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(response.throwable))

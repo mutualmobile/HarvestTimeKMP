@@ -49,7 +49,7 @@ class UserProjectApiImpl(private val httpClient: HttpClient) : UserProjectApi {
         }
     }
 
-    override suspend fun getUserAssignedProjects(userId: String?): NetworkResponse<ApiResponse<OrgProjectResponse>> =
+    override suspend fun getUserAssignedProjects(userId: String?): NetworkResponse<ApiResponse<List<OrgProjectResponse>>> =
         getSafeNetworkResponse {
             httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER_ASSIGNED_PROJECTS}") {
                 contentType(ContentType.Application.Json)
