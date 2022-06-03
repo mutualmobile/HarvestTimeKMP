@@ -4,19 +4,13 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.listUsersWithProjectId
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.orgProjects.FindProjectsInOrgDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.FindProjectsInOrgDataModel
 import csstype.*
 import kotlinx.browser.window
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
-import orguser.structure.Area
-import project.JSOrgProjectUsersList
 import react.*
-import react.dom.html.ReactHTML
-import react.router.Outlet
-import react.router.Route
-import react.router.Routes
 import react.router.useNavigate
 import kotlin.js.Date
 

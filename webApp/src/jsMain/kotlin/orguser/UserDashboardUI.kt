@@ -1,7 +1,7 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.features.harvest.OrgUserDashboardDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LogoutDataModel
 import csstype.Display
 import kotlinx.browser.window
 import mui.system.sx
@@ -14,7 +14,6 @@ import csstype.GridTemplateAreas
 import csstype.array
 import firebase.messaging.messaging
 import firebaseApp
-import mui.material.useMediaQuery
 import mui.system.Box
 import orguser.structure.Area
 import orguser.structure.Sizes
@@ -27,7 +26,7 @@ val UserDashboardUI = VFC {
     val navigator = useNavigate()
     var isNavDrawerOpen by useState(false)
 
-    val dataModel = OrgUserDashboardDataModel(onDataState = { stateNew ->
+    val dataModel = LogoutDataModel(onDataState = { stateNew ->
         isLoading = stateNew is LoadingState
 
     })

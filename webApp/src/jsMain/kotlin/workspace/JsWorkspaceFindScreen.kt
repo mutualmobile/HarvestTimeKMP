@@ -3,7 +3,7 @@ package workspace
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
 import csstype.*
 import harvest.material.TopAppBar
 import kotlinx.browser.window

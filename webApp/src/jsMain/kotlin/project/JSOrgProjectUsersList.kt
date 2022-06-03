@@ -10,7 +10,7 @@ import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.features.harvest.orgProjects.GetListOfUsersForAProjectDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.GetListOfUsersForAProjectDataModel
 import harvest.material.TopAppBar
 import kotlinx.browser.window
 import mui.material.Box

@@ -1,7 +1,7 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.features.harvest.GetUserDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import harvest.material.TopAppBar
 import kotlinx.browser.window
 import mui.material.Box

@@ -56,7 +56,7 @@ import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.harvest.OnBoardingDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.OnBoardingDataModel
 
 val OnBoardingImages = listOf(
     R.drawable.onboarding_screen_1,

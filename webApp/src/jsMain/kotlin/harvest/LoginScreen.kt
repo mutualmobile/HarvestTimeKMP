@@ -3,7 +3,7 @@ package harvest
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -24,7 +24,7 @@ import setupFcmPush
 val JSLoginScreen = VFC {
     var message by useState("")
     var email by useState("")
-    val searchParams = useSearchParams();
+    val searchParams = useSearchParams()
 
     val organizationId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgIdentifier)
     val orgId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgId)

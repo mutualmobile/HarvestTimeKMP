@@ -2,8 +2,7 @@ package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.ChangePasswordDataModel
-import csstype.Color
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.ChangePasswordDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -11,13 +10,10 @@ import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
-import react.FC
-import react.Props
 import react.VFC
 import react.dom.html.InputType
 import react.dom.html.ReactHTML
 import react.dom.onChange
-import react.router.dom.useSearchParams
 import react.router.useNavigate
 import react.useState
 
