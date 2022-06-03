@@ -17,6 +17,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.findWorkspaceScreen.FindWorkspaceScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
@@ -53,6 +54,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(ScreenList.LandingScreen()) {
                             LandingScreen()
+                        }
+                        composable(ScreenList.FindWorkspaceScreen()) {
+                            FindWorkspaceScreen(navController = navController)
                         }
                     }
                 }

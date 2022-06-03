@@ -2,6 +2,7 @@ package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import io.ktor.client.call.NoTransformationFoundException
 import io.ktor.client.call.body
 import io.ktor.client.statement.HttpResponse
 import io.ktor.http.HttpStatusCode
@@ -27,6 +28,15 @@ suspend inline fun <reified T> getSafeNetworkResponse(
         }
     } catch (e: Exception) {
         println(e)
-        NetworkResponse.Failure(e)
+        when (e) {
+            is NoTransformationFoundException -> NetworkResponse.Failure(
+                Throwable(
+                    message = "Invalid response sent from the backend. It was probably supposed to" +
+                            " send an object of type 'ApiResponse' but seems like it didn't. Please" +
+                            " verify it with your backend engineers."
+                )
+            )
+            else -> NetworkResponse.Failure(e)
+        }
     }
 }
