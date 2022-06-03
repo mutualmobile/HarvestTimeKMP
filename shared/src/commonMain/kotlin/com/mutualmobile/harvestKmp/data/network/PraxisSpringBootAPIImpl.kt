@@ -180,7 +180,8 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,
+        searchName: String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>> =
         getSafeNetworkResponse {
             httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS") {
@@ -190,6 +191,9 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                 parameter("isUserDeleted", isUserDeleted)
                 parameter("offset", offset)
                 parameter("limit", limit)
+                searchName?.let {
+                    parameter("search", it)
+                }
             }
         }
 }

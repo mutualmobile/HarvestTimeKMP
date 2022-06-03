@@ -59,6 +59,7 @@ interface PraxisSpringBootAPI {
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,
+        searchName: String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>>
 }

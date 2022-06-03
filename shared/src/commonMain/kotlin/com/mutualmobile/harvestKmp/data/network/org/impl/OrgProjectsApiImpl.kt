@@ -46,7 +46,7 @@ class OrgProjectsApiImpl(private val httpClient: HttpClient) : OrgProjectsApi {
     override suspend fun findProjectsInOrg(
         orgId: String?,
         offset: Int?,
-        limit: Int?
+        limit: Int?,
     ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>> = getSafeNetworkResponse {
         httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.ORG_PROJECT}") {
             contentType(ContentType.Application.Json)

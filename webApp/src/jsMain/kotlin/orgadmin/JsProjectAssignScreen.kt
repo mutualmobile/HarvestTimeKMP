@@ -13,6 +13,7 @@ import kotlinx.browser.window
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
+import org.w3c.dom.HTMLInputElement
 import react.*
 import react.router.useNavigate
 import kotlin.js.Date
@@ -35,6 +36,7 @@ val JsProjectAssignScreen = VFC {
     var isLoadingProjects by useState(false)
     var isLoadingUsers by useState(false)
     var isSaving by useState(false)
+    var searchName by useState<String>()
 
     val findProjectsInOrgDataModel = FindProjectsInOrgDataModel { stateNew: DataState ->
         isLoadingProjects = stateNew is LoadingState
@@ -127,7 +129,7 @@ val JsProjectAssignScreen = VFC {
         usersInOrgDataModel.findUsers(
             userType = userType.toInt(),
             orgIdentifier = null, isUserDeleted = false,
-            currentUsersPage, limit
+            currentUsersPage, limit, searchName
         )
 
     }
@@ -155,6 +157,27 @@ val JsProjectAssignScreen = VFC {
                         alignItems = AlignItems.baseline
                     }
 
+
+
+                        FormControl {
+                            InputLabel {
+                                +"Search"
+                            }
+                            OutlinedInput {
+                                placeholder = "Search by name"
+                                onChange = {
+                                    val target = it.target as HTMLInputElement
+                                    usersInOrgDataModel.findUsers(
+                                        userType = userType.toInt(),
+                                        orgIdentifier = null, isUserDeleted = false,
+                                        0, limit, target.value
+                                    )
+                                    currentUsersPage = 0
+                                    searchName = target.value
+                                }
+                            }
+                        }
+
                     if (isLoadingUsers) {
                         CircularProgress()
                     } else {
@@ -166,7 +189,7 @@ val JsProjectAssignScreen = VFC {
                                 usersInOrgDataModel.findUsers(
                                     userType = userType.toInt(),
                                     orgIdentifier = null, isUserDeleted = false,
-                                    value.toInt().minus(1), limit
+                                    value.toInt().minus(1), limit, searchName
                                 )
                             }
 

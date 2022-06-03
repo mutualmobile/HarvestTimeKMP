@@ -35,18 +35,20 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,
+        searchName: String?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(
-                userType = userType,
-                orgIdentifier = orgIdentifier,
-                isUserDeleted = isUserDeleted,
-                offset = offset,
-                limit = limit
-            )) {
+            when (val findUsersInOrgResponse =
+                useCasesComponent.provideFindUsersByOrgUseCase().invoke(
+                    userType = userType,
+                    orgIdentifier = orgIdentifier,
+                    isUserDeleted = isUserDeleted,
+                    offset = offset,
+                    limit = limit, searchName
+                )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))
                 }

@@ -7,18 +7,19 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class FindUsersInOrgUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
     suspend operator fun invoke(
-        userType: Int,
-        orgIdentifier: String?,
-        isUserDeleted: Boolean,
-        offset: Int,
-        limit: Int
+        userType: kotlin.Int,
+        orgIdentifier: kotlin.String?,
+        isUserDeleted: kotlin.Boolean,
+        offset: kotlin.Int,
+        limit: kotlin.Int,
+        searchName: kotlin.String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>> {
         return praxisSpringBootAPI.findUsersInOrg(
             userType,
             orgIdentifier,
             isUserDeleted,
             offset,
-            limit
+            limit,searchName
         )
     }
 }
