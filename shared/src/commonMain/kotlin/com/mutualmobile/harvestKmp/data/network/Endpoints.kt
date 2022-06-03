@@ -23,6 +23,7 @@ object Endpoint {
 
     const val USER = "$API_URL/user"
     private const val USER_PROJECT = "$USER/project"
+    const val USER_ASSIGNED_PROJECTS = "$USER/assigned-projects"
 
     const val NOTIFICATIONS = "$API_URL/notifications"
     const val NOTIFICATION_COUNT = "$API_URL/notificationCount"
