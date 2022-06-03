@@ -118,8 +118,7 @@ val JsOrgUsersScreen = VFC {
                     ListItem {
                         ListItemText {
                             primary = ReactNode("${user.firstName ?: ""} ${user.lastName ?: ""}")
-                            secondary =
-                                ReactNode("${user.email}")
+                            secondary = ReactNode("${user.email}")
                         }
                     }
                 }

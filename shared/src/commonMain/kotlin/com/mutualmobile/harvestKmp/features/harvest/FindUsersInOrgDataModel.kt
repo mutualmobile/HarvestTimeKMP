@@ -40,7 +40,13 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
-            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(userType, orgIdentifier, isUserDeleted, offset, limit)) {
+            when (val findUsersInOrgResponse = useCasesComponent.provideFindUsersByOrgUseCase()(
+                userType = userType,
+                orgIdentifier = orgIdentifier,
+                isUserDeleted = isUserDeleted,
+                offset = offset,
+                limit = limit
+            )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))
                 }
@@ -49,7 +55,7 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
             }

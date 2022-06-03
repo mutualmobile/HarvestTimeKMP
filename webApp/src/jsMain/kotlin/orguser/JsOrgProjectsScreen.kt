@@ -112,8 +112,8 @@ val JsOrgProjectsScreen = VFC {
                                 secondary =
                                     ReactNode("Start Date: $start EndDate: $end")
                             }
-                            secondaryAction = IconButton.create() {
-                                mui.icons.material.Delete()
+                            IconButton {
+                                mui.icons.material.ArrowForwardIos()
                                 onClick = {
                                     navigator.invoke(
                                         Routes.Screen.LIST_USERS_PROJECT.listUsersWithProjectId(

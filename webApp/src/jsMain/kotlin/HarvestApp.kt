@@ -56,10 +56,6 @@ val HarvestApp = FC<AppProps> {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.RESET_PASSWORD
                     this.element = ResetPasswordScreen.create()
                 }
-                Route{
-                    this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.LIST_USERS_PROJECT
-                    this.element = JSOrgProjectUsersList.create()
-                }
                 Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.TRENDING_UI
                     this.element = TrendingUI.create()

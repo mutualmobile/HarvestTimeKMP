@@ -6,6 +6,7 @@ import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.Routes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.OrgProjectsUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
@@ -36,15 +37,16 @@ class GetListOfUsersForAProjectDataModel(var onDataState: (DataState) -> Unit = 
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
             onDataState(LoadingState)
-            when (val findUsersInOrgResponse =
+            when (val response =
                 useCasesComponent.provideGetListOfUsersForAProjectUseCase()(
                     projectId = projectId
                 )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(findUsersInOrgResponse.data))
+                    onDataState(SuccessState(response.data))
+                    praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(findUsersInOrgResponse.throwable))
+                    onDataState(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
