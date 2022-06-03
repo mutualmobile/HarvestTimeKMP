@@ -23,6 +23,7 @@ struct LoginView: View {
     
     @Environment(\.dismiss) var dismiss
     
+    @State private var signupPresented = false
     @State private var email = "anmol@mutualmobile.com"
     @State private var password = "passw"
     
@@ -108,7 +109,7 @@ struct LoginView: View {
             HStack {
                 Text("Don't have an account?")
                 Button {
-                    // TODO: (Nasir) Handle action
+                    signupPresented = true
                 } label: {
                     Text("Try Harvest Free")
                         .font(.headline)
@@ -124,6 +125,9 @@ struct LoginView: View {
             }
         }
         .foregroundColor(ColorAssets.white.color)
+        .sheet(isPresented: $signupPresented) {
+            SignupView()
+        }
     }
     
     private func performLogin() {

@@ -13,6 +13,7 @@ struct LaunchView: View {
     
     @State private var selection = 0
     @State private var loginPresented = false
+    @State private var signupPresented = false
     
     private var textList = [
         "launch-text-1",
@@ -76,7 +77,7 @@ struct LaunchView: View {
         HStack {
             Text("Don't have an account?")
             Button {
-                // TODO: (Nasir) Handle action
+                signupPresented = true
             } label: {
                 Text("Try Harvest Free")
                     .font(.headline)
@@ -84,6 +85,9 @@ struct LaunchView: View {
         }
         .foregroundColor(ColorAssets.white.color)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 0))
+        .sheet(isPresented: $signupPresented) {
+            SignupView()
+        }
     }
 }
 
