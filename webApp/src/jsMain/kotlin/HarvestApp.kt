@@ -14,6 +14,7 @@ import com.mutualmobile.harvestKmp.datamodel.Routes.Screen
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import orguser.UserDashboardUI
+import project.JSOrgProjectUsersList
 import react.useEffectOnce
 
 external interface AppProps : Props
@@ -54,6 +55,10 @@ val HarvestApp = FC<AppProps> {
                 Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.RESET_PASSWORD
                     this.element = ResetPasswordScreen.create()
+                }
+                Route{
+                    this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.LIST_USERS_PROJECT
+                    this.element = JSOrgProjectUsersList.create()
                 }
                 Route {
                     this.path = BROWSER_SCREEN_ROUTE_SEPARATOR + Screen.TRENDING_UI
