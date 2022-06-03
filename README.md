@@ -16,7 +16,7 @@ Build using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base p
 The Harvest API written in SpringBoot is WIP. Find the repo
 from [here](https://github.com/mutualmobile/HarvestAPISpring).
 
-- Authentication ð
+- Authentication :lock:
     - Find Organization ✅ DONE
     - Sign In User ✅ DONE
     - Sign Up User ✅ DONE
@@ -24,10 +24,10 @@ from [here](https://github.com/mutualmobile/HarvestAPISpring).
     - Forgot Password ✅ DONE
     - Change Password ✅ DONE
 
-- Organization ð
+- Organization :office:
     - Assign Projects ✅ DONE
     - Log Time ✅ DONE
-    - more ð WIP
+    - more are.. 🚧 WIP
 
 ## 🏗️️ Built with ❤️ using Kotlin
 --------------------------------------
@@ -65,9 +65,9 @@ from [here](https://github.com/mutualmobile/HarvestAPISpring).
 
 - [Android](#-android-screenshots)
 - [React](#web-screenshots-reactjs)
-- [IOS]()
-- [Desktop]() ð WIP
-- [MacOS]() ð WIP
+- [IOS](#ios-authentications-screen)
+- Desktop  🚧 WIP
+- MacOS  🚧 WIP
 
 ### Android Screenshots
 ---------------------
@@ -90,7 +90,7 @@ from [here](https://github.com/mutualmobile/HarvestAPISpring).
     <td><img src = "art/android_screenshots/android_onboarding_one.png" /></td> 
     <td><img src = "art/android_screenshots/android_onboarding_two.png" /></td>
     <td><img src = "art/android_screenshots/android_onboarding_three.png" /></td> 
-    <td><img src = "art/android_screenshots/android_onboarding_four.pngg" /></td>
+    <td><img src = "art/android_screenshots/android_onboarding_four.png" /></td>
   </tr>
 </table>
 
