@@ -1,11 +1,9 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
-import common.Themes
-import components.AppThemeContext
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
@@ -14,18 +12,13 @@ import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
-import org.w3c.dom.MediaQueryList
-import org.w3c.dom.events.Event
-import org.w3c.dom.events.EventListener
 import react.*
 import react.dom.*
-import react.dom.aria.ariaLabel
+import react.dom.html.InputType
 import react.router.NavigateFunction
-import react.router.NavigateOptions
 import react.router.dom.useSearchParams
-import react.router.useLocation
 import react.router.useNavigate
-import kotlin.js.Json
+import setupFcmPush
 
 
 val JSLoginScreen = VFC {
@@ -33,8 +26,8 @@ val JSLoginScreen = VFC {
     var email by useState("")
     val searchParams = useSearchParams();
 
-    val organizationId: String? = searchParams.component1().get(Routes.Keys.orgIdentifier)
-    val orgId: String? = searchParams.component1().get(Routes.Keys.orgId)
+    val organizationId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgIdentifier)
+    val orgId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgId)
 
     var password by useState("")
     val navigator = useNavigate()
@@ -63,6 +56,7 @@ val JSLoginScreen = VFC {
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+                setupFcmPush()
             }
             is ModalPraxisCommand -> {
                 window.alert(newCommand.title + "\n" + newCommand.message)
@@ -90,6 +84,7 @@ val JSLoginScreen = VFC {
             TextField {
                 this.variant = FormControlVariant.outlined
                 this.value = email
+                this.type = InputType.email
                 this.onChange = {
                     val target = it.target as HTMLInputElement
                     email = target.value
@@ -103,6 +98,7 @@ val JSLoginScreen = VFC {
             TextField {
                 this.variant = FormControlVariant.outlined
                 this.value = password
+                this.type = InputType.password
                 this.onChange = {
                     val target = it.target as HTMLInputElement
                     password = target.value
@@ -114,30 +110,36 @@ val JSLoginScreen = VFC {
             }
 
             Button {
-                onClick = {
-                    navigator("/forgotPassword")
+                this.variant = ButtonVariant.contained
+                sx {
+                    this.margin = Margin(12.px, 4.px)
                 }
-                +"Forgot Password"
-            }
-
-            Button {
                 this.onClick = {
                     dataModel.login(email, password)
                 }
                 +"Login"
             }
 
-            organizationId?.let {
+            Button {
+                sx {
+                    this.margin = Margin(12.px, 4.px)
+                }
+                onClick = {
+                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.FORGOT_PASSWORD)
+                }
+                +"Forgot Password"
+            }
+
+            organizationId?.takeIf { it.isNotEmpty() }?.let {
                 Button {
-                    this.variant = ButtonVariant.contained
                     sx {
-                        this.margin = Margin(24.px, 4.px)
+                        this.margin = Margin(12.px, 4.px)
                     }
                     +"Signup with $organizationId"
                     onClick = {
                         navigator(
                             BROWSER_SCREEN_ROUTE_SEPARATOR +
-                                    Routes.Screen.SIGNUP.withOrgId(organizationId, orgId)
+                                    HarvestRoutes.Screen.SIGNUP.withOrgId(organizationId, orgId)
                         )
                     }
                 }

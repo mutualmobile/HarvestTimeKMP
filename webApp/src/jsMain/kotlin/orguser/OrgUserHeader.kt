@@ -17,37 +17,39 @@ import react.dom.html.ReactHTML
 external interface HeaderProps : Props {
     var navDrawerToggle: () -> Unit
     var logout: () -> Unit
+    var isLoggingOut: Boolean
 }
 
 val Header = FC<HeaderProps> { props ->
-    val mobileMode = useMediaQuery("(max-width:960px)")
 
     AppBar {
         Container {
             Toolbar {
-                if (mobileMode) IconButton {
-                    ariaLabel = "menu"
-                    ariaHasPopup = AriaHasPopup.`false`
+                IconButton {
+                    Menu()
                     onClick = {
                         props.navDrawerToggle()
                     }
-                    Menu()
+
                 }
                 Typography {
                     sx { flexGrow = number(1.0) }
                     variant = TypographyVariant.h6
                     component = ReactHTML.div
 
-                    +"Organization User"
+                    +"Dashboard"
                 }
-                IconButton {
-                    ariaLabel = "logout"
-                    ariaHasPopup = AriaHasPopup.`false`
-                    onClick = {
-                        props.logout()
+                if (props.isLoggingOut) {
+                    CircularProgress()
+                } else {
+                    IconButton {
+                        Logout()
+                        onClick = {
+                            props.logout()
+                        }
                     }
-                    Logout()
                 }
+
             }
         }
     }

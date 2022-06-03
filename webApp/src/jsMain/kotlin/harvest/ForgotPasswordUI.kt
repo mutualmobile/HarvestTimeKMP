@@ -7,6 +7,7 @@ import components.AppThemeContext
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
+import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -31,7 +32,7 @@ val ForgotPasswordUI = VFC {
             }
             is SuccessState<*> -> {
                 message = "Request Complete"
-                navigator.invoke(to = "/")
+                navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR)
             }
             Complete -> {
                 message = "Completed loading!"
@@ -45,6 +46,16 @@ val ForgotPasswordUI = VFC {
         }
     })
 
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
 
     useEffectOnce {
         dataModel.activate()

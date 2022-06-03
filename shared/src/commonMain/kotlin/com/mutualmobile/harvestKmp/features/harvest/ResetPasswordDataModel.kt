@@ -1,8 +1,15 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.request.ResetPasswordRequest
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -39,11 +46,21 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                     )
                 )) {
                 is NetworkResponse.Success<*> -> {
+                    if (changePasswordResponse.data is ApiResponse<*>) {
+                        praxisCommand(
+                            ModalPraxisCommand(
+                                "Response",
+                                changePasswordResponse.data.message ?: "Woah!"
+                            )
+                        )
+                    }
                     onDataState(SuccessState(changePasswordResponse.data))
+                    praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(changePasswordResponse.throwable))
                 }
+                else -> {}
             }
         }
     }

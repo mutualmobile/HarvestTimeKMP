@@ -1,6 +1,7 @@
 package com.mutualmobile.harvestKmp.android.ui.theme
 
 import androidx.compose.material.Typography
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
@@ -83,5 +84,19 @@ val TimeScreenTypography = Typography(
     fontSize = 13.sp,
     fontWeight = FontWeight.Light,
     letterSpacing = 0.75.sp
+  ),
+)
+
+val FindWorkspaceScreenTypography = Typography(
+  h6 = TextStyle(
+    fontSize = 20.sp,
+    color = Color.White.copy(0.5f)
+  ),
+  subtitle1 = TextStyle(
+    fontSize = 14.sp,
+  ),
+  caption = TextStyle(
+    fontSize = 13.sp,
+    fontWeight = FontWeight.Light,
   ),
 )

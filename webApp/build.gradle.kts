@@ -28,4 +28,15 @@ kotlin {
             }
         }
     }
+    dependencies{
+        commonMainImplementation(enforcedPlatform(kotlinw("wrappers-bom:1.0.0-pre.340")))
+
+        commonMainImplementation(kotlinw("react"))
+        commonMainImplementation(kotlinw("react-dom"))
+        commonMainImplementation(kotlinw("react-router-dom"))
+
+        commonMainImplementation(kotlinw("emotion"))
+        commonMainImplementation(kotlinw("mui"))
+        commonMainImplementation(kotlinw("mui-icons"))
+    }
 }

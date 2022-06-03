@@ -9,5 +9,4 @@ class SaveSettingsUseCase(private val settings: Settings) {
         settings[Constants.JWT_TOKEN] = token ?: ""
         settings[Constants.REFRESH_TOKEN] = refreshToken ?: ""
     }
-
 }

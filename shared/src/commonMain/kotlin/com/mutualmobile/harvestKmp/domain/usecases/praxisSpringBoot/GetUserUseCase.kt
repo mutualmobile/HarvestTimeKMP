@@ -6,7 +6,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 class GetUserUseCase(private val praxisSpringBootAPI: PraxisSpringBootAPI) {
-    suspend operator fun invoke(): NetworkResponse<ApiResponse<GetUserResponse>>  {
+    suspend operator fun invoke(): NetworkResponse<GetUserResponse> {
         return praxisSpringBootAPI.getUser()
     }
 }

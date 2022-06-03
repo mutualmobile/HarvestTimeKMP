@@ -6,16 +6,17 @@ import mui.material.Typography
 import mui.system.Box
 import mui.system.sx
 import orguser.structure.Area
+import project.JSOrgProjectUsersList
 import react.*
 import react.dom.html.ReactHTML.main
 import react.router.Outlet
 import react.router.Route
 import react.router.Routes
 
-private val DEFAULT_PADDING = 30.px
+val DEFAULT_PADDING = 30.px
 
 val OrgUserContent = VFC {
-    val drawerItems = useContext(OrgUserDrawerItemsContext)
+    val drawerItems = useContext(DrawerItemsContext)
     Routes {
         Route {
             path = "/"
@@ -36,7 +37,6 @@ val OrgUserContent = VFC {
                     element = Component.create()
                 }
             }
-
             Route {
                 path = "*"
                 element = Typography.create { +"404 Page Not Found" }

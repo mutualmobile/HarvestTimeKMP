@@ -1,12 +1,17 @@
 package com.mutualmobile.harvestKmp.data.network
 
-import com.mutualmobile.harvestKmp.domain.model.request.*
-import com.mutualmobile.harvestKmp.domain.model.response.*
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
+import com.mutualmobile.harvestKmp.domain.model.request.ResetPasswordRequest
+import com.mutualmobile.harvestKmp.domain.model.request.User
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
 interface PraxisSpringBootAPI {
 
-    suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>>
+    suspend fun getUser(): NetworkResponse<GetUserResponse>
 
     suspend fun putUser(id: String): User
 
@@ -32,9 +37,9 @@ interface PraxisSpringBootAPI {
 
     suspend fun login(email: String, password: String): NetworkResponse<LoginResponse>
 
-    suspend fun logout(): NetworkResponse<LogoutData>
+    suspend fun logout(): NetworkResponse<ApiResponse<String>>
 
-    suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>>
+    suspend fun fcmToken(user: User): NetworkResponse<ApiResponse<LoginResponse>>
 
     suspend fun changePassword(
         password: String,
@@ -49,20 +54,12 @@ interface PraxisSpringBootAPI {
         resetPasswordRequest: ResetPasswordRequest
     ): NetworkResponse<ApiResponse<Unit>>
 
-    suspend fun createProject(
-        name: String,
-        client: String,
-        isIndefinite: Boolean,
-        startDate: String,
-        endDate: String
-    ): NetworkResponse<ApiResponse<CreateProjectResponse>>
-
     suspend fun findUsersInOrg(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
-    ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>>
-
+        limit: Int,
+        searchName: String?
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>>
 }

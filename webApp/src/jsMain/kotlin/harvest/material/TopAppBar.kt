@@ -5,39 +5,41 @@ import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
 import mui.system.sx
+import react.FC
 import react.Props
+import react.PropsWithChildren
 import react.dom.html.ReactHTML
 import react.fc
 
-external interface TopAppBarProps : Props {
+external interface TopAppBarProps : PropsWithChildren {
     var title: String
     var subtitle: String
 }
 
-val TopAppBar = fc<TopAppBarProps> { props ->
+val TopAppBar = FC<TopAppBarProps> { props ->
     Box {
-        this.attrs.sx { flexGrow = number(1.0) }
+        this.sx { flexGrow = number(1.0) }
 
         AppBar {
-            this.attrs.position = AppBarPosition.static
+            this.position = AppBarPosition.static
 
             Toolbar {
                 Stack {
-                    this.attrs.direction = responsive(StackDirection.column)
+                    this.direction = responsive(StackDirection.column)
+                    this.sx { flexGrow = number(1.0) }
                     Typography {
-                        this.attrs.sx { flexGrow = number(1.0) }
-                        this.attrs.variant = TypographyVariant.h6
-                        this.attrs.component = ReactHTML.div
+                        this.variant = TypographyVariant.h6
+                        this.component = ReactHTML.div
                         +props.title
                     }
 
                     Typography {
-                        this.attrs.sx { flexGrow = number(1.0) }
-                        this.attrs.variant = TypographyVariant.subtitle1
-                        this.attrs.component = ReactHTML.div
+                        this.variant = TypographyVariant.subtitle1
+                        this.component = ReactHTML.div
                         +props.subtitle
                     }
                 }
+                +props.children
 
             }
         }

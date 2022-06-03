@@ -1,8 +1,6 @@
 package workspace
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgIdentifier
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
@@ -108,7 +106,7 @@ val JsWorkspaceFindScreen = VFC {
                     WorkspaceComp {
                         this.name = workspaceName
                         this.nameUpdate = {
-                            workspaceName = it
+                            workspaceName = it.lowercase().trim()
                         }
                     }
                     Typography {
@@ -140,7 +138,7 @@ val JsWorkspaceFindScreen = VFC {
                     }
                     +"Organization Not yet registered ? Signup ?"
                     onClick = {
-                        navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + Routes.Screen.SIGNUP)
+                        navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.SIGNUP)
                     }
                 }
 

@@ -1,31 +1,38 @@
 package com.mutualmobile.harvestKmp.data.network
 
 import com.mutualmobile.harvestKmp.data.network.Endpoint.CHANGE_PASSWORD
-import com.mutualmobile.harvestKmp.data.network.Endpoint.CREATE_PROJECT
 import com.mutualmobile.harvestKmp.data.network.Endpoint.FORGOT_PASSWORD
 import com.mutualmobile.harvestKmp.data.network.Endpoint.ORG_USERS
 import com.mutualmobile.harvestKmp.data.network.Endpoint.RESET_PASSWORD_ENDPOINT
-import com.mutualmobile.harvestKmp.domain.model.request.*
-import com.mutualmobile.harvestKmp.domain.model.response.*
+import com.mutualmobile.harvestKmp.domain.model.request.ChangePassword
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
+import com.mutualmobile.harvestKmp.domain.model.request.LoginData
+import com.mutualmobile.harvestKmp.domain.model.request.ResetPasswordRequest
+import com.mutualmobile.harvestKmp.domain.model.request.SignUpData
+import com.mutualmobile.harvestKmp.domain.model.request.User
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
+import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import com.russhwolf.settings.Settings
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.request.*
-import io.ktor.http.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerAuthProvider
+import io.ktor.client.plugins.plugin
+import io.ktor.client.request.get
+import io.ktor.client.request.parameter
+import io.ktor.client.request.post
+import io.ktor.client.request.put
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
 
 class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
     PraxisSpringBootAPI {
 
-    override suspend fun getUser(): NetworkResponse<ApiResponse<GetUserResponse>> {
-        return try {
-            val response = httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
-            val responseBody = response.body<ApiResponse<GetUserResponse>>()
-            NetworkResponse.Success(responseBody)
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
-        }
+    override suspend fun getUser(): NetworkResponse<GetUserResponse> = getSafeNetworkResponse {
+        httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
     }
 
     override suspend fun putUser(id: String): User {
@@ -48,22 +55,20 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         email: String,
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return try {
-            NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
+        return getSafeNetworkResponse {
+            httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     SignUpData(
                         email = email,
                         password = password,
                         orgId = company,
+                        role = UserRole.ORG_USER.role,
                         firstName = firstName,
                         lastName = lastName
                     )
                 )
-            }.body())
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
+            }
         }
     }
 
@@ -76,8 +81,8 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         orgWebsite: String,
         orgIdentifier: String,
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return try {
-            NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
+        return getSafeNetworkResponse {
+            httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {
                 contentType(ContentType.Application.Json)
                 setBody(
                     SignUpData(
@@ -92,10 +97,7 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
                         )
                     )
                 )
-            }.body())
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
+            }
         }
     }
 
@@ -103,137 +105,95 @@ class PraxisSpringBootAPIImpl(private val httpClient: HttpClient) :
         email: String,
         password: String
     ): NetworkResponse<LoginResponse> {
-        return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGIN}") {
-                contentType(ContentType.Application.Json)
-                setBody(LoginData(email = email, password = password))
+        return getSafeNetworkResponse(
+            networkOperation = {
+                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGIN}") {
+                    contentType(ContentType.Application.Json)
+                    setBody(LoginData(email = email, password = password))
+                }
+            },
+            onSuccessOperations = {
+                httpClient
+                    .plugin(Auth)
+                    .providers
+                    .filterIsInstance<BearerAuthProvider>()
+                    .firstOrNull()?.clearToken()
             }
-            val responseBody = response.body<LoginResponse>()
-            NetworkResponse.Success(responseBody)
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
-        }
+        )
     }
 
-    override suspend fun logout(): NetworkResponse<LogoutData> {
-        return NetworkResponse.Success(httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
+    override suspend fun logout(): NetworkResponse<ApiResponse<String>> = getSafeNetworkResponse {
+        httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOGOUT}") {
             contentType(ContentType.Application.Json)
-        }.body())
-    }
-
-    override suspend fun fcmToken(): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return try {
-            NetworkResponse.Success(
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.FCM_TOKEN}").body()
-            )
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
         }
     }
+
+    override suspend fun fcmToken(user: User): NetworkResponse<ApiResponse<LoginResponse>> =
+        getSafeNetworkResponse {
+            httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.FCM_TOKEN}") {
+                contentType(ContentType.Application.Json)
+                setBody(user)
+            }
+        }
 
     override suspend fun changePassword(
         password: String,
         oldPassword: String,
-    ): NetworkResponse<ApiResponse<HarvestOrganization>> {
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> = getSafeNetworkResponse {
+        httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
+            contentType(ContentType.Application.Json)
+            setBody(ChangePassword(password = password, oldPass = oldPassword))
+        }
+    }
 
-        return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CHANGE_PASSWORD") {
+    override suspend fun findOrgByIdentifier(
+        identifier: String
+    ): NetworkResponse<ApiResponse<HarvestOrganization>> =
+        getSafeNetworkResponse {
+            httpClient.get(
+                urlString = "${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}"
+            ) {
                 contentType(ContentType.Application.Json)
-                setBody(ChangePassword(password = password, oldPass = oldPassword))
-
+                parameter("identifier", identifier)
             }
-            val responseBody = response.body<ApiResponse<HarvestOrganization>>()
-            NetworkResponse.Success(responseBody)
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
         }
-    }
 
-    override suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return try {
-            NetworkResponse.Success(
-                httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.UN_AUTH_ORGANISATION}?identifier=$identifier")
-                    .body()
-            )
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
+    override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> =
+        getSafeNetworkResponse {
+            httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}") {
+                contentType(ContentType.Application.Json)
+                parameter("email", email)
+            }
         }
-    }
-
-    override suspend fun forgotPassword(email: String): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        return try {
-            NetworkResponse.Success(
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${FORGOT_PASSWORD}/?email=$email")
-                    .body()
-            )
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
-        }
-    }
 
     override suspend fun resetPassword(
         resetPasswordRequest: ResetPasswordRequest
-    ): NetworkResponse<ApiResponse<Unit>> {
-        return try {
-            val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$RESET_PASSWORD_ENDPOINT") {
-                    contentType(ContentType.Application.Json)
-                    setBody(resetPasswordRequest)
-                }
-            val responseBody = response.body<ApiResponse<Unit>>()
-            NetworkResponse.Success(responseBody)
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
-        }
-    }
-
-    override suspend fun createProject(
-        name: String,
-        client: String,
-        isIndefinite: Boolean,
-        startDate: String,
-        endDate: String
-    ): NetworkResponse<ApiResponse<CreateProjectResponse>> {
-
-        return try {
-            val response = httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$CREATE_PROJECT") {
-                contentType(ContentType.Application.Json)
-                setBody(CreateProject(name, client, isIndefinite, startDate, endDate))
-
-            }
-            val responseBody = response.body<ApiResponse<CreateProjectResponse>>()
-            NetworkResponse.Success(responseBody)
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
+    ): NetworkResponse<ApiResponse<Unit>> = getSafeNetworkResponse {
+        httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$RESET_PASSWORD_ENDPOINT") {
+            contentType(ContentType.Application.Json)
+            setBody(resetPasswordRequest)
         }
     }
 
     override suspend fun findUsersInOrg(
         userType: Int,
-        orgIdentifier: String,
+        orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
-    ): NetworkResponse<ApiResponse<List<FindUsersInOrgResponse>>> {
-
-        return try {
-            val response =
-                httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS?userType=$userType&orgIdentifier=$orgIdentifier&isUserDeleted=$isUserDeleted&offset=$offset&limit=$limit") {
-                    contentType(ContentType.Application.Json)
-
+        limit: Int,
+        searchName: String?
+    ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>> =
+        getSafeNetworkResponse {
+            httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}$ORG_USERS") {
+                contentType(ContentType.Application.Json)
+                parameter("userType", userType)
+                parameter("orgIdentifier", orgIdentifier)
+                parameter("isUserDeleted", isUserDeleted)
+                parameter("offset", offset)
+                parameter("limit", limit)
+                searchName?.let {
+                    parameter("search", it)
                 }
-            val responseBody = response.body<ApiResponse<List<FindUsersInOrgResponse>>>()
-            NetworkResponse.Success(responseBody)
-        } catch (e: Exception) {
-            println(e)
-            NetworkResponse.Failure(e)
+            }
         }
-    }
 }

@@ -1,7 +1,14 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
@@ -17,7 +24,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
 
     fun findOrgByIdentifier(identifier: String) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch() {
+        currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
 
             when (val response = useCasesComponent.provideFindOrgByIdentifier()(identifier)) {
@@ -25,7 +32,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                     onDataState(SuccessState(response.data)) // TODO redundant
                     praxisCommand(
                         NavigationPraxisCommand(
-                            screen = Routes.Screen.LOGIN.withOrgId(
+                            screen = HarvestRoutes.Screen.LOGIN.withOrgId(
                                 response.data.data?.identifier,
                                 response.data.data?.id
                             )
@@ -37,6 +44,11 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                     onDataState(ErrorState(response.throwable))
                     println("FAILED, ${response.throwable.message}")
                 }
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
+                }
             }
         }
     }
@@ -45,7 +57,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
         if (isUserTokenAvailable()) {
             praxisCommand(
                 NavigationPraxisCommand(
-                    screen = Routes.Screen.ORG_USER_DASHBOARD
+                    screen = HarvestRoutes.Screen.ORG_USER_FETCH
                 )
             )
         }

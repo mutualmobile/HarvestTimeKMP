@@ -17,16 +17,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
 import com.mutualmobile.harvestKmp.datamodel.DataState
@@ -119,15 +114,6 @@ fun SignUpScreen(navController: NavHostController) {
                     )
                 }
             )
-            SurfaceTextButton(
-                text = buildAnnotatedString {
-                    append("Already have an account?")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append("Login")
-                    }
-                }.toString()
-            )
-            SurfaceTextButton(text = "View Tour", fontWeight = FontWeight.Medium)
         }
     }
 }

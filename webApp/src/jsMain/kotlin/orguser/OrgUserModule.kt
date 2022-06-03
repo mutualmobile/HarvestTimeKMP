@@ -4,12 +4,11 @@ import react.FC
 import react.PropsWithChildren
 import react.createContext
 
-val OrgUserDrawerItemsContext = createContext<DrawerItems>()
+val DrawerItemsContext = createContext<DrawerItems>()
 
-val OrgUserDrawerItemsModule = FC<PropsWithChildren> { props ->
-    val users = useOrgUserDrawerItems()
-
-    OrgUserDrawerItemsContext.Provider {
+val DrawerItemsModule = FC<PropsWithChildren> { props ->
+    val users = useDrawerItems()
+    DrawerItemsContext.Provider {
         value = users
         +props.children
     }

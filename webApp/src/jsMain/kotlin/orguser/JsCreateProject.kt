@@ -2,24 +2,29 @@ package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.CreateProjectDataModel
-import csstype.Color
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
+import com.mutualmobile.harvestKmp.features.harvest.orgProjects.OrgProjectsDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import kotlinx.browser.window
 import mui.material.*
-import mui.system.responsive
 import mui.system.sx
-import muix.pickers.DatePicker
+import muix.pickers.*
 import org.w3c.dom.HTMLInputElement
 import react.*
-import react.dom.html.ReactHTML
 import react.dom.onChange
 import react.router.useNavigate
+import kotlin.js.Date
+import kotlinext.js.require
+import mui.icons.material.CloseRounded
+import mui.icons.material.DeleteForever
+
 
 external interface CreateProjectProps : Props {
     var drawerOpen: Boolean
+    var myKey:String
+    var projectClicked: OrgProjectResponse?
     var onOpen: () -> Unit
     var onClose: () -> Unit
 }
@@ -28,14 +33,13 @@ external interface CreateProjectProps : Props {
 val JsCreateProject = FC<CreateProjectProps> { props ->
     var message by useState("")
     val navigator = useNavigate()
-
     var name by useState("")
     var client by useState("")
-    val isIndefinite by useState(false)
-    val startDate by useState("")
-    val endDate by useState("")
+    var startDate by useState<Date>()
+    var endDate by useState<Date?>(null)
+    val format: dynamic = require("date-fns").format
 
-    val dataModel = CreateProjectDataModel(onDataState = { stateNew ->
+    val dataModel = OrgProjectsDataModel(onDataState = { stateNew ->
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -51,8 +55,9 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
             }
             is SuccessState<*> -> {
                 val response = stateNew.data as ApiResponse<*>
-                message = "create project ${response.message}"
-
+                message = "${response.message}"
+                window.alert(message)
+                props.onClose()
             }
         }
     })
@@ -69,99 +74,158 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     }
 
     useEffectOnce {
+        message = ""
         dataModel.activate()
+        startDate =
+            if (props.projectClicked?.startDate != null) Date(props.projectClicked?.startDate!!.toString()) else Date()
+        endDate =
+            if (props.projectClicked?.endDate != null) Date(props.projectClicked?.endDate!!.toString()) else Date()
+        name = props.projectClicked?.name ?: ""
+        client = props.projectClicked?.client ?: ""
     }
 
+    fun saveNow()  {
+        props.projectClicked?.let {
+            dataModel.updateProject(
+                id = it.id!!,
+                name = name,
+                client = client,
+                isIndefinite = endDate == null,
+                startDate = format(startDate, "yyyy-MM-dd") as String,
+                endDate = format(endDate, "yyyy-MM-dd") as? String,
+            )
+        } ?: run {
+            dataModel.createProject(
+                name = name,
+                client = client,
+                isIndefinite = endDate == null,
+                startDate = format(startDate, "yyyy-MM-dd") as String,
+                endDate = format(endDate, "yyyy-MM-dd") as? String
+            )
+        }
+    }
 
-    Paper {
-        Drawer {
-            this.variant = DrawerVariant.temporary
-            this.anchor = DrawerAnchor.bottom
-            open = props.drawerOpen
-            onClose = { event, reason ->
-                props.onClose()
-            }
-            sx {
-                backgroundColor = Color("main")
-            }
+    Drawer {
+        key = props.myKey
+        open = props.drawerOpen
+        this.anchor = DrawerAnchor.bottom
+        onClose = { event, reason ->
+            props.onClose()
+        }
+        TopAppBar {
+            title = "Create Project"
+            subtitle = message
 
-            Box {
-                component = ReactHTML.nav
-                TopAppBar {
-                    title = "Create Project"
-                    subtitle = message
-                }
-                Divider {}
-                Card {
-                    sx {
-                        margin = Margin(24.px, 24.px)
+            props.projectClicked?.let { project ->
+                IconButton {
+                    DeleteForever()
+                    onClick = {
+                        dataModel.deleteProject(project.id!!)
                     }
-                    Stack {
-                        sx {
-                            margin = Margin(24.px, 24.px)
+                }
+            }
+
+            IconButton {
+                CloseRounded()
+                onClick = {
+                    props.onClose()
+                }
+            }
+
+        }
+        Box {
+            Stack {
+                sx {
+                    margin = Margin(8.px, 8.px)
+                }
+
+                TextField {
+                    this.variant = FormControlVariant.outlined
+                    this.value = name
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        name = target.value
+                        props.projectClicked?.name = name
+                    }
+                    this.placeholder = "Project Name"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
+                }
+
+                TextField {
+                    this.variant = FormControlVariant.outlined
+                    this.value = client
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        client = target.value
+                        props.projectClicked?.client = client
+                    }
+                    this.placeholder = "Client Name"
+                    sx {
+                        margin = Margin(12.px, 2.px)
+                    }
+                }
+
+                Typography {
+                    +"Start Date"
+                }
+                LocalizationProvider {
+                    dateAdapter = AdapterDateFns
+                    common.ui.CalendarPicker {
+                        this.date = startDate
+                        this.view = CalendarPickerView.day
+                        this.onChange = { date, _ ->
+                            if (date != null) {
+                                startDate = date
+                                props.projectClicked?.startDate =
+                                    format(date, "yyyy-MM-dd") as String
+                            }
                         }
-                        TextField {
-                            this.variant = FormControlVariant.outlined
-                            this.value = name
-                            this.onChange = {
-                                val target = it.target as HTMLInputElement
-                                name = target.value
-                            }
-                            this.placeholder = "Project Name"
-                            sx {
-                                margin = Margin(12.px, 2.px)
-                            }
-                        }
+                    }
 
-                        TextField {
-                            this.variant = FormControlVariant.outlined
-                            this.value = client
-                            this.onChange = {
-                                val target = it.target as HTMLInputElement
-                                client = target.value
-                            }
-                            this.placeholder = "Client Name"
-                            sx {
-                                margin = Margin(12.px, 2.px)
+
+                }
+                Typography {
+                    +"End Date"
+                }
+                LocalizationProvider {
+                    dateAdapter = AdapterDateFns
+                    common.ui.CalendarPicker {
+                        this.date = endDate
+                        this.view = CalendarPickerView.day
+                        this.onChange = { date, _ ->
+                            if (date != null) {
+                                endDate = date
+                                props.projectClicked?.endDate = format(date, "yyyy-MM-dd") as String
                             }
                         }
+                    }
+                }
 
+                DialogActions {
+                    Button {
+                        onClick = {
+                            saveNow()
 
-
-                        FormControlLabel {
-                            control = Checkbox.create().apply {
-                                this.props.checked = isIndefinite
-                            }
-                            label = ReactNode("Is Indefinite ?")
                         }
-
-                        Stack {
-                            this.direction = responsive(StackDirection.row)
-
-                            if (isIndefinite) {
-                                // don't show end date
-                            } else {
-                                //show end date
-                            }
-                        }
-
-
-                        Button {
-                            variant = ButtonVariant.contained
-                            this.onClick = {
-                                dataModel.createProject(
-                                    name = name,
-                                    client = client,
-                                    isIndefinite = isIndefinite,
-                                    startDate = startDate,
-                                    endDate = endDate
-                                )
-                            }
+                        props.projectClicked?.let {
+                            +"Update Project"
+                        } ?: run {
                             +"Create Project"
                         }
+
                     }
+                    Button {
+                        onClick = {
+                            props.onClose()
+                        }
+                        +"Close"
+                    }
+
                 }
             }
         }
     }
+
 }

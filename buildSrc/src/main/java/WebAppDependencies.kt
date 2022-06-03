@@ -11,26 +11,24 @@ object WebAppCommonMainDependencies {
     )
 }
 
+fun kotlinw(target: String): String =
+    "org.jetbrains.kotlin-wrappers:kotlin-$target"
+
 object WebAppDependencies {
     val implementation = listOf(
         "org.jetbrains.kotlinx:kotlinx-coroutines-core:${WebAppDependencyVersions.coroutines}",
         "org.jetbrains.kotlinx:kotlinx-serialization-json:${WebAppDependencyVersions.kotlinxSerialization}",
         "org.jetbrains.kotlinx:kotlinx-html-js:${WebAppDependencyVersions.kotlinxHtmlJs}",
         "org.jetbrains.kotlin-wrappers:kotlin-styled:5.3.5-pre.332-kotlin-1.6.21",
-        "org.jetbrains.kotlin-wrappers:kotlin-react:18.0.0-pre.332-kotlin-1.6.21",
-        "org.jetbrains.kotlin-wrappers:kotlin-react-dom:18.0.0-pre.332-kotlin-1.6.21",
-        "org.jetbrains.kotlin-wrappers:kotlin-emotion:11.9.0-pre.332-kotlin-1.6.21",
-        "org.jetbrains.kotlin-wrappers:kotlin-mui-icons:5.6.2-pre.332-kotlin-1.6.21",
-        "org.jetbrains.kotlin-wrappers:kotlin-mui:5.6.2-pre.332-kotlin-1.6.21",
-        "org.jetbrains.kotlin-wrappers:kotlin-react-router-dom:6.3.0-pre.332-kotlin-1.6.21",
     )
     val kotlin = listOf(
         "stdlib-js"
     )
     val npm = listOf(
         "copy-webpack-plugin" to "9.0.0",
-        "firebase" to "^8.3.1",
-        "firebaseui" to "^4.8.0"
+        "firebase" to "7.24.0",
+        "date-fns" to "2.28.0",
+        "@date-io/date-fns" to "2.14.0"
     )
 }
 

@@ -9,3 +9,10 @@ data class ApiResponse<T>(
     val data: T? = null,
 )
 
+@Serializable
+data class SpringError(
+    val error: String? = null,
+    val path: String? = null,
+    val status: Int? = null,
+    val timestamp: String? = null
+)

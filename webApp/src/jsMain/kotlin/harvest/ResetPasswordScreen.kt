@@ -5,18 +5,24 @@ import com.mutualmobile.harvestKmp.features.harvest.ResetPasswordDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
+import kotlinx.browser.window
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.FC
 import react.Props
+import react.dom.html.InputType
 import react.dom.onChange
+import react.router.dom.useSearchParams
+import react.router.useNavigate
 import react.useState
 
 val ResetPasswordScreen = FC<Props> {
     var message by useState("")
     var changePassword by useState("")
     var password by useState("")
+    val searchParams = useSearchParams()
+    val navigator  = useNavigate()
 
     val dataModel = ResetPasswordDataModel(onDataState = { stateNew ->
         when (stateNew) {
@@ -38,6 +44,17 @@ val ResetPasswordScreen = FC<Props> {
         }
     })
 
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+            }
+            is ModalPraxisCommand -> {
+                window.alert(newCommand.title + "\n" + newCommand.message)
+            }
+        }
+    }
+
     TopAppBar {
         title = "Reset Password Form"
         subtitle = message
@@ -54,6 +71,7 @@ val ResetPasswordScreen = FC<Props> {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = password
+                    this.type = InputType.password
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         password = target.value
@@ -67,6 +85,7 @@ val ResetPasswordScreen = FC<Props> {
                 TextField {
                     this.variant = FormControlVariant.outlined
                     this.value = changePassword
+                    this.type = InputType.password
                     this.onChange = {
                         val target = it.target as HTMLInputElement
                         changePassword = target.value
@@ -79,7 +98,10 @@ val ResetPasswordScreen = FC<Props> {
 
                 Button {
                     this.onClick = {
-                        dataModel.resetPassword(password, token = "") // TODO get this from url!
+                        dataModel.resetPassword(
+                            password,
+                            token = searchParams.component1().get("token") ?: ""
+                        )
                     }
                     +"Reset Password"
                 }

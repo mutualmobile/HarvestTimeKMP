@@ -1,7 +1,6 @@
 package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.harvest.OrgUserDashboardDataModel
 import csstype.Display
 import kotlinx.browser.window
@@ -13,37 +12,23 @@ import react.useState
 import csstype.Auto.auto
 import csstype.GridTemplateAreas
 import csstype.array
+import firebase.messaging.messaging
+import firebaseApp
 import mui.material.useMediaQuery
 import mui.system.Box
 import orguser.structure.Area
 import orguser.structure.Sizes
+import webKey
 
 
 val UserDashboardUI = VFC {
-    val mobileMode = useMediaQuery("(max-width:960px)")
 
-    var message by useState("")
+    var isLoading by useState(false)
     val navigator = useNavigate()
     var isNavDrawerOpen by useState(false)
 
     val dataModel = OrgUserDashboardDataModel(onDataState = { stateNew ->
-        when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            is SuccessState<*> -> {
-                message = (stateNew.data as LoginResponse).message ?: "Some message"
-            }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
-        }
+        isLoading = stateNew is LoadingState
 
     })
 
@@ -64,7 +49,7 @@ val UserDashboardUI = VFC {
 
 
 
-    OrgUserDrawerItemsModule {
+    DrawerItemsModule {
         Box {
 
             sx {
@@ -78,22 +63,26 @@ val UserDashboardUI = VFC {
                 )
                 gridTemplateAreas = GridTemplateAreas(
                     arrayOf(Area.Header, Area.Header),
-                    if (mobileMode)
-                        arrayOf(Area.Content, Area.Content)
-                    else
-                        arrayOf(Area.Sidebar, Area.Content),
+                    arrayOf(Area.Content, Area.Content)
                 )
             }
 
             Header {
+                this.isLoggingOut = isLoading
                 this.logout = {
-                    dataModel.logout()
+
+                    firebaseApp?.messaging()?.getToken(webKey)?.then {
+                        firebaseApp?.messaging()?.deleteToken(it)?.then {
+                            dataModel.logout()
+                        }
+                    }
+
                 }
                 this.navDrawerToggle = {
                     isNavDrawerOpen = !isNavDrawerOpen
                 }
             }
-            if (mobileMode) OrgUserDrawer {
+            OrgUserDrawer {
                 open = isNavDrawerOpen
                 onOpen = {
                     isNavDrawerOpen = true
@@ -101,7 +90,7 @@ val UserDashboardUI = VFC {
                 onClose = {
                     isNavDrawerOpen = false
                 }
-            } else OrgUserSidebar()
+            }
 
             OrgUserContent()
         }

@@ -3,13 +3,12 @@ package orguser
 import csstype.Color
 import csstype.None
 import emotion.react.css
-import kotlinx.js.jso
 import mui.material.*
-import mui.system.sx
 import react.*
 import react.dom.html.ReactHTML.nav
 import react.router.dom.NavLink
 import react.router.useLocation
+import react.router.useNavigate
 
 
 external interface OrgUserDrawerProps : Props {
@@ -18,10 +17,10 @@ external interface OrgUserDrawerProps : Props {
     var onClose: () -> Unit
 }
 
-val OrgUserDrawer = FC<OrgUserDrawerProps> { props->
-    val drawerItems = useContext(OrgUserDrawerItemsContext)
+val OrgUserDrawer = FC<OrgUserDrawerProps> { props ->
+    val drawerItems = useContext(DrawerItemsContext)
     val lastPathname = useLocation().pathname.substringAfterLast("/")
-
+    val navigate = useNavigate()
     SwipeableDrawer {
         anchor = DrawerAnchor.left
         open = props.open
@@ -39,22 +38,18 @@ val OrgUserDrawer = FC<OrgUserDrawerProps> { props->
                 for ((key, name) in drawerItems) {
                     ListItem {
                         disablePadding = true
-
-                        NavLink {
-                            to = key
-
-                            css {
-                                textDecoration = None.none
-                                color = Color.currentcolor
+                        ListItemButton {
+                            selected = lastPathname == key
+                            ListItemIcon {
+                                mui.icons.material.Group()
                             }
-
-                            ListItemButton {
-                                selected = lastPathname == key
-
-                                ListItemText {
-                                    primary = ReactNode(name)
-                                }
+                            ListItemText {
+                                primary = ReactNode(name)
                             }
+                        }
+                        onClick = {
+                            props.onClose()
+                            navigate(key)
                         }
                     }
                 }
