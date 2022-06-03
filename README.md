@@ -1,26 +1,36 @@
-# HarvestTime KMM 
+# HarvestTime KMM
+--------------------
+Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose,
+Kotlin-ReactJs Currently running on
 
-Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Kotlin-ReactJs Currently running on
+* Android (Jetpack Compose) 🚧 WIP
+* Web (ReactJS) 🚧 WIP
+* iOS (SwiftUI) 🚧 WIP
+* Desktop JVM (Jetpack Compose) 🚧 WIP
+* macOS (SwiftUI) 🚧 WIP
 
-* Desktop JVM (Jetpack Compose) 🚧  WIP
-* Android (Jetpack Compose) 🚧  WIP
-* iOS (SwiftUI) 🚧  WIP
-* macOS (SwiftUI) 🚧  WIP
-* Web (ReactJS) 🚧  WIP
-
-Build using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project. 
+Build using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project.
 
 ### API
+-----------
+The Harvest API written in SpringBoot is WIP. Find the repo
+from [here](https://github.com/mutualmobile/HarvestAPISpring).
 
-The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://github.com/mutualmobile/HarvestAPISpring).
-- Find Organization ✅ DONE
-- Sign In User  ✅ DONE
-- Sign Up User  ✅ DONE
-- Login User ✅ DONE
-- Forgot Password 🚧 WIP
-- Change Password 🚧 WIP
-- 
+- Authentication ð
+    - Find Organization ✅ DONE
+    - Sign In User ✅ DONE
+    - Sign Up User ✅ DONE
+    - Login User ✅ DONE
+    - Forgot Password ✅ DONE
+    - Change Password ✅ DONE
+
+- Organization ð
+    - Assign Projects ✅ DONE
+    - Log Time ✅ DONE
+    - more ð WIP
+
 ## 🏗️️ Built with ❤️ using Kotlin
+--------------------------------------
 
 | What            | How                        |
 |----------------	|------------------------------	|
@@ -34,43 +44,160 @@ The Harvest API written in SpringBoot is WIP. Find the repo from [here](https://
 | ð Storage       | [Settings](https://github.com/russhwolf/multiplatform-settings)                        |
 
 ## Aim :
-- To provide support for different platform with respective Native UI for each, and sharing the common business logic code base. 
-- To share common logic between different platforms. 
-- Dependency Injection using Koin 
-- Usage of latest Ktor framework for Networking. 
+------------------
+
+- To provide support for different platform with respective Native UI for each, and sharing the
+  common business logic code base.
+- To share common logic between different platforms.
+- Dependency Injection using Koin
+- Usage of latest Ktor framework for Networking.
 - Performing background task with Kotlin Coroutines.
 
 ### TODOs
+---------------
 
-1. Koin does not allow to return dependencies with await() which affects providing SqlDriver on JSPlatform. 
-   Figure out a way for proper DI for SQlDriver.
-   see issue here: https://github.com/InsertKoinIO/koin/issues/388
+1. Koin does not allow to return dependencies with await() which affects providing SqlDriver on
+   JSPlatform. Figure out a way for proper DI for SQlDriver. see issue
+   here: https://github.com/InsertKoinIO/koin/issues/388
 
 ### Screenshots
+-------------------------
 
-* Android (Jetpack Compose)
+- [Android](#-android-screenshots)
+- [React](#web-screenshots-reactjs)
+- [IOS]()
+- [Desktop]() ð WIP
+- [MacOS]() ð WIP
 
-Screenshots            | In Progress                        |
-|----------------	|------------------------------	|
-| <img src="art/android_screenshots/onboarding_android_one.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_onboarding_two.png" alt="" style="width:300px;" />|
-| <img src="art/android_screenshots/android_harvest_sign_in.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_harvest_sign_up.png" alt="" style="width:300px;" />|
-| <img src="art/android_screenshots/android_home_screen.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_new_entry_screen.png" alt="" style="width:300px;" />|
-| <img src="art/android_screenshots/android_report_screen.png" alt="" style="width:300px;" /> | <img src="art/android_screenshots/android_setting_screen.png" alt="" style="width:300px;" />|
+### Android Screenshots
+---------------------
 
-* iOS (SwiftUI)
+- [OnBoarding](#android-onboarding-screens)
+- [Authenticate](#android-authentication-screens)
+- [Home](#android-home-screens)
+- [Settings](#android-settings-screens)
 
-Screenshots            | In Progress                        |
-|----------------	|------------------------------	|
-| <img src="art/sign_in_ios_harvest_kmm.jpg" alt="" style="width:300px;"/> | <img src="art/ios_harvest_sign_in.png" alt="" style="width:300px;"/> |
+#### Android OnBoarding Screens
 
-* Web (ReactJS)
+<table style="width:100%">
+  <tr>
+    <th>1.OnBoarding One</th>
+    <th>2.OnBoarding Two</th> 
+    <th>3.OnBoarding Three</th>
+    <th>4.OnBoarding Four</th> 
+  </tr>
+  <tr>
+    <td><img src = "art/android_screenshots/android_onboarding_one.png" /></td> 
+    <td><img src = "art/android_screenshots/android_onboarding_two.png" /></td>
+    <td><img src = "art/android_screenshots/android_onboarding_three.png" /></td> 
+    <td><img src = "art/android_screenshots/android_onboarding_four.pngg" /></td>
+  </tr>
+</table>
 
-Screenshots            | 
-|----------------	|
-| <img src="art/react_js_find_org_screen.png" alt= "" /> |
-| <img src="art/react_js_sign_up_screen.png" alt= "" /> |
-| <img src="art/react_js_login_screen.png" alt= "" /> |
-| <img src="art/react_js_forgot_password_screen.png" alt= "" /> |
+#### Android Authentication Screens
+
+<table style="width:100%">
+  <tr>
+    <th>1.Enter Organization Screen</th>
+    <th>2.Sign up Screen</th> 
+    <th>3.Sign In Screen</th>
+  </tr>
+  <tr>
+    <td><img src = "art/android_screenshots/android_enter_org_screen.png" /></td> 
+    <td><img src = "art/android_screenshots/android_sign_up.png" /></td>
+    <td><img src = "art/android_screenshots/android_harvest_sign_in.png" /></td> 
+  </tr>
+</table>
+
+#### Android Home Screens
+
+<table style="width:100%">
+  <tr>
+    <th>1.Home Screen</th>
+    <th>2.New Entry Screen</th> 
+     <th>3.Home Drawer</th>
+  </tr>
+  <tr>
+    <td><img src = "art/android_screenshots/android_home_screen.png" /></td> 
+    <td><img src = "art/android_screenshots/android_new_entry_screen.png" /></td>
+    <td><img src = "art/android_screenshots/android_home_drawer.png" /></td> 
+  </tr>
+</table>
+
+#### Android Settings Screens
+
+<table style="width:100%">
+  <tr>
+    <th>1.Settings Screens</th>
+    <th>2.Report Screen</th> 
+  </tr>
+  <tr>
+    <td><img src = "art/android_screenshots/android_setting_screen.png" /></td> 
+    <td><img src = "art/android_screenshots/android_report_screen.png" /></td>
+  </tr>
+</table>
+
+### Web Screenshots (ReactJS)
+- Authentication Screens
+  - [Verify Organization Screen](#verify-organization-screen)
+  - [Sign Up Screen](#sign-up-screen)
+  - [Sign In Screen](#sign-in-screen) 
+  - [Log In Screen](#log-in-screen) 
+  - [Forgot Password Screen](#forgot-password-screen) 
+- Home Screens
+  - [Home Screen](#home-screen) 
+  - [Home Drawer Screen](#home-drawer-screen) 
+  - [All User Screen](#all-user-screen) 
+  - [All Projects Screen](#all-project-screen)
+  - [Settings Screen](#settings-screen)
+
+#### Verify Organization Screen
+![Verify Organization](art/react/web_enter_org_screen.png)
+
+#### Sign Up Screen
+![Sign Up Screen](art/react/web_sign_up_screen.png)
+
+#### Sign In Screen
+![Sign In Screen](art/react/web_sign_in_form.png)
+
+#### Log In Screen
+![Log In Screen](art/react/web_login_screen.png)
+
+#### Forgot Password Screen
+![Forgot Password](art/react/web_forgot_password_screen.png)
+
+#### Home Screen
+![Home Screen](art/react/web_home_Screen.png)
+
+#### Home Drawer Screen
+![Home Drawer Screen](art/react/web_drawer_screen.png)
+
+#### All User Screen
+![All User Screen](art/react/web_all_users.png)
+
+#### All Project Assignment Screen
+![All Project Assignment Screen](art/react/web_project_assignments_screen.png)
+
+#### Settings Screen
+![Settings Screen](art/react/web_settings_screen.png)
+
+
+### iOS Screenshots
+
+- [Authentications](#ios-authentications-screen)
+
+#### iOS Authentications Screen
+
+<table style="width:100%">
+  <tr>
+    <th>1.onBoarding Screen</th>
+    <th>2.Sign In Screen</th> 
+  </tr>
+  <tr>
+    <td><img src = "art/ios/ios_onBoarding_one.png" /></td> 
+    <td><img src = "art/ios/ios_sign_in.jpg" /></td>
+  </tr>
+</table>
 
 
 ### Languages, libraries and tools used
