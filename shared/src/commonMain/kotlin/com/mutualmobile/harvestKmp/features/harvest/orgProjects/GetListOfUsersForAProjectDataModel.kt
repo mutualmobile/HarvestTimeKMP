@@ -42,7 +42,6 @@ class GetListOfUsersForAProjectDataModel(var onDataState: (DataState) -> Unit = 
                 )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(response.data))
-                    praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(response.throwable))

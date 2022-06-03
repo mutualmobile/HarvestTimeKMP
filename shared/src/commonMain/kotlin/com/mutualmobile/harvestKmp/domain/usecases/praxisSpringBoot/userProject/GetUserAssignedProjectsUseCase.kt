@@ -8,7 +8,7 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 class GetUserAssignedProjectsUseCase(private val userProjectApi: UserProjectApi) {
     suspend operator fun invoke(
         userId: String?
-    ): NetworkResponse<ApiResponse<OrgProjectResponse>> {
+    ): NetworkResponse<ApiResponse<List<OrgProjectResponse>>> {
         return userProjectApi.getUserAssignedProjects(
             userId
         )

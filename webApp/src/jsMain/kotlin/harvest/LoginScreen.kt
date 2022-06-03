@@ -30,9 +30,11 @@ val JSLoginScreen = VFC {
     val orgId: String? = searchParams.component1().get(HarvestRoutes.Keys.orgId)
 
     var password by useState("")
+    var isLoading by useState(false)
     val navigator = useNavigate()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
+        isLoading = stateNew is LoadingState
         when (stateNew) {
             is LoadingState -> {
                 message = "Loading..."
@@ -109,16 +111,21 @@ val JSLoginScreen = VFC {
                 }
             }
 
-            Button {
-                this.variant = ButtonVariant.contained
-                sx {
-                    this.margin = Margin(12.px, 4.px)
+            if (isLoading) {
+                CircularProgress()
+            } else {
+                Button {
+                    this.variant = ButtonVariant.contained
+                    sx {
+                        this.margin = Margin(12.px, 4.px)
+                    }
+                    this.onClick = {
+                        dataModel.login(email, password)
+                    }
+                    +"Login"
                 }
-                this.onClick = {
-                    dataModel.login(email, password)
-                }
-                +"Login"
             }
+
 
             Button {
                 sx {

@@ -84,7 +84,7 @@ val JsOrgUsersScreen = VFC {
                         userType = event.target.value
                         currentPage = 0
                         dataModel.findUsers(
-                            userType = userType.toInt(),
+                            userType = event.target.value.toInt(),
                             orgIdentifier = null, isUserDeleted = false,
                             0, limit
                         )
