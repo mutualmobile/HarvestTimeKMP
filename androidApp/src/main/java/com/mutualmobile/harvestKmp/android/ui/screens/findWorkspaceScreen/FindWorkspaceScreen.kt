@@ -108,22 +108,40 @@ fun FindWorkspaceScreen(
                     style = FindWorkspaceScreenTypography.subtitle1
                 )
             }
-            IconLabelButton(
-                label = MR.strings.find_workspace_screen_btn_txt.get(),
+            Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(vertical = 4.dp)
                     .align(Alignment.BottomCenter),
-                isLoading = findOrgState is LoadingState,
-                errorMsg = when (findOrgState) {
-                    is ErrorState -> (findOrgState as ErrorState).throwable.message
-                        ?: MR.strings.generic_error_msg.get()
-                    else -> null
-                },
-                onClick = {
-                    findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = tfValue)
-                },
-            )
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.Top
+            ) {
+                IconLabelButton(
+                    label = MR.strings.find_workspace_screen_btn_txt.get(),
+                    modifier = Modifier
+                        .fillMaxWidth(if (findOrgState is ErrorState) 0.45f else 1f)
+                        .padding(vertical = 4.dp),
+                    isLoading = findOrgState is LoadingState,
+                    errorMsg = when (findOrgState) {
+                        is ErrorState -> (findOrgState as ErrorState).throwable.message
+                            ?: MR.strings.generic_error_msg.get()
+                        else -> null
+                    },
+                    onClick = {
+                        findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = tfValue)
+                    },
+                )
+                if (findOrgState is ErrorState) {
+                    IconLabelButton(
+                        label = MR.strings.find_workspace_screen_signup_btn_txt.get(),
+                        modifier = Modifier
+                            .fillMaxWidth(if (findOrgState is ErrorState) 0.9f else 0f)
+                            .padding(vertical = 4.dp),
+                        onClick = {
+                            navController.navigate(ScreenList.NewOrgSignUpScreen())
+                        },
+                    )
+                }
+            }
         }
     }
 }

@@ -20,15 +20,20 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
 
 @Composable
-fun NewOrgSignUpScreen(
-    signUpDataModel: SignUpDataModel
-) {
+fun NewOrgSignUpScreen(navController: NavHostController) {
+    var signUpState: DataState by remember { mutableStateOf(EmptyState) }
+    val signUpDataModel by remember { mutableStateOf(SignUpDataModel { updatedState ->
+        signUpState = updatedState
+    }) }
     var currentWorkEmail by remember { mutableStateOf("") }
     var currentPassword by remember { mutableStateOf("") }
     var currentFirstName by remember { mutableStateOf("") }
