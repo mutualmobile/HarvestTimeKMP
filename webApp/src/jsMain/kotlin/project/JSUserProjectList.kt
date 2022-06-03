@@ -1,13 +1,6 @@
 package project
 
-import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.Routes
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.harvest.userProject.GetUserAssignedProjectsDataModel
@@ -19,6 +12,7 @@ import mui.material.ListItem
 import mui.material.ListItemText
 import react.ReactNode
 import react.VFC
+import react.router.Routes
 import react.router.dom.useSearchParams
 import react.router.useNavigate
 import react.useEffectOnce
@@ -27,7 +21,7 @@ import react.useState
 val JSUserProjectList = VFC {
 
     val searchParams = useSearchParams()
-    val userId: String? = searchParams.component1().get(Routes.Keys.id)
+    val userId: String? = searchParams.component1().get(HarvestRoutes.Keys.id)
     var isLoading by useState(false)
     var message by useState("")
     var projects by useState<List<OrgProjectResponse>>()
