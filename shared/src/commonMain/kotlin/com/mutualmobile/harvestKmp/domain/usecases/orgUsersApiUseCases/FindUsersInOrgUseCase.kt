@@ -11,14 +11,16 @@ class FindUsersInOrgUseCase(private val orgUsersApi: OrgUsersApi) {
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,
+        searchName: kotlin.String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>> {
         return orgUsersApi.findUsersInOrg(
             userType = userType,
             orgIdentifier = orgIdentifier,
             isUserDeleted = isUserDeleted,
             offset = offset,
-            limit = limit
+            limit = limit,
+            searchName
         )
     }
 }

@@ -36,7 +36,8 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,
+        searchName: String?
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
@@ -46,7 +47,7 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
                 orgIdentifier = orgIdentifier,
                 isUserDeleted = isUserDeleted,
                 offset = offset,
-                limit = limit
+                limit = limit, searchName = searchName
             )) {
                 is NetworkResponse.Success -> {
                     onDataState(SuccessState(findUsersInOrgResponse.data))

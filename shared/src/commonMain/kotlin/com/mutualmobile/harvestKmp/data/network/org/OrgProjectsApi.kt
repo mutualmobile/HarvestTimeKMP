@@ -18,7 +18,8 @@ interface OrgProjectsApi {
     suspend fun findProjectsInOrg(
         orgId: String?,
         offset: Int?,
-        limit: Int?
+        limit: Int?,
+        search: String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<OrgProjectResponse>>>>
 
     suspend fun updateProject(

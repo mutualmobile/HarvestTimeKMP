@@ -1,0 +1,25 @@
+/* 
+  Localizable.strings
+  iosApp
+
+  Created by Nasir Ahmed Momin on 24/05/22.
+  Copyright © 2022 Mutual Mobile. All rights reserved.
+*/
+
+
+// Launch Screen
+"launch-title" = "H A R V E S T";
+
+"launch-text-1" = "Simple, powerful time tracking, reporting and invoicing";
+"launch-text-2" = "Track time easily, wherever you are";
+"launch-text-3" = "Enter expanses on go";
+"launch-text-4" = "Report on time for powerful insights";
+
+"Sign In" = "Sign In";
+"Don't have an account?" = "Don't have an account?";
+"Try Harvest Free" = "Try Harvest Free";
+
+
+// Login Screen
+"View Tour" = "View Tour";
+"Login failure" = "Login failure";
