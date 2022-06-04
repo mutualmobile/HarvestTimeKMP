@@ -29,9 +29,9 @@ class SignUpFormValidator {
         lastName: String,
         email: String,
         password: String,
-        orgName:String,
+        orgName: String,
         website: String,
-        orgIdentifier:String
+        orgIdentifier: String
     ) {
         if (firstName.isEmpty()) {
             throw EmptyFieldException("First Name")

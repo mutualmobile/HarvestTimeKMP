@@ -1,5 +1,7 @@
 package orguser
 
+import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import harvest.ChangePasswordUI
 import mui.material.Box
 import mui.material.ListItem
@@ -12,7 +14,6 @@ import react.useState
 
 val JsSettingsScreen = VFC {
     var message by useState("")
-    var changePassword by useState(false)
     val navigate = useNavigate()
 
     Box{
@@ -23,19 +24,9 @@ val JsSettingsScreen = VFC {
                     secondary =
                         ReactNode("Recommended: Update your password regularly or use a secure password manager")
                     onClick = {
-                        changePassword = true
+                        navigate(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.CHANGE_PASSWORD)
                     }
                 }
-            }
-        }
-
-        ChangePasswordUI{
-            drawerOpen = changePassword
-            onOpen = {
-                changePassword = true
-            }
-            onClose = {
-                changePassword = false
             }
         }
 

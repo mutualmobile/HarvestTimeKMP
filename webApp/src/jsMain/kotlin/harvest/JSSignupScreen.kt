@@ -4,7 +4,7 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Keys.orgId
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Keys.orgIdentifier
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar

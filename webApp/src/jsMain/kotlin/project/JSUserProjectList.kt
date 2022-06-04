@@ -3,7 +3,7 @@ package project
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.userProject.GetUserAssignedProjectsDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
 import harvest.material.TopAppBar
 import kotlinx.browser.window
 import mui.material.Box
@@ -12,7 +12,6 @@ import mui.material.ListItem
 import mui.material.ListItemText
 import react.ReactNode
 import react.VFC
-import react.router.Routes
 import react.router.dom.useSearchParams
 import react.router.useNavigate
 import react.useEffectOnce

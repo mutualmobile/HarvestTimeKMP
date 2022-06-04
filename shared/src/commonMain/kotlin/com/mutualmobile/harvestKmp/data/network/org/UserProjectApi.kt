@@ -21,6 +21,6 @@ interface UserProjectApi {
 
     suspend fun getUserAssignedProjects(
         userId: String? = null
-    ): NetworkResponse<ApiResponse<OrgProjectResponse>>
+    ): NetworkResponse<ApiResponse<List<OrgProjectResponse>>>
 
 }

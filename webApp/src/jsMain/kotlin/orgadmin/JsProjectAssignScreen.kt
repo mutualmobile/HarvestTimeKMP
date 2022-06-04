@@ -5,9 +5,9 @@ import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.harvest.orgProjects.FindProjectsInOrgDataModel
-import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
-import com.mutualmobile.harvestKmp.features.harvest.userProject.AssignProjectsToUsersDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.FindProjectsInOrgDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgUsersApiDataModels.FindUsersInOrgDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.AssignProjectsToUsersDataModel
 import csstype.*
 import kotlinx.browser.window
 import mui.icons.material.Add

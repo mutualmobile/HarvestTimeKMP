@@ -1,32 +1,46 @@
 package com.mutualmobile.harvestKmp.di
 
-
-import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocal
-import com.mutualmobile.harvestKmp.data.local.GithubTrendingLocalImpl
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocal
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
 import com.mutualmobile.harvestKmp.data.network.*
 import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
+import com.mutualmobile.harvestKmp.data.network.authUser.AuthApi
+import com.mutualmobile.harvestKmp.data.network.authUser.UserForgotPasswordApi
+import com.mutualmobile.harvestKmp.data.network.authUser.impl.AuthApiImpl
+import com.mutualmobile.harvestKmp.data.network.authUser.impl.UserForgotPasswordApiImpl
+import com.mutualmobile.harvestKmp.data.network.org.OrgApi
 import com.mutualmobile.harvestKmp.data.network.org.OrgProjectsApi
+import com.mutualmobile.harvestKmp.data.network.org.OrgUsersApi
 import com.mutualmobile.harvestKmp.data.network.org.UserProjectApi
 import com.mutualmobile.harvestKmp.data.network.org.UserWorkApi
+import com.mutualmobile.harvestKmp.data.network.org.impl.OrgApiImpl
 import com.mutualmobile.harvestKmp.data.network.org.impl.OrgProjectsApiImpl
+import com.mutualmobile.harvestKmp.data.network.org.impl.OrgUsersApiImpl
 import com.mutualmobile.harvestKmp.data.network.org.impl.UserProjectApiImpl
 import com.mutualmobile.harvestKmp.data.network.org.impl.UserWorkApiImpl
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.*
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.CreateProjectUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.DeleteProjectUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.FindProjectsInOrgUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.GetListOfUsersForAProjectUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.UpdateProjectUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.AssignProjectsToUsersUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.GetUserAssignedProjectsUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.LogWorkTimeUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userWork.GetWorkLogsForDateRangeUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.GetLocalReposUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.SaveTrendingReposUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.CurrentUserLoggedInUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.SaveSettingsUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userForgotPasswordApiUseCases.ForgotPasswordUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userForgotPasswordApiUseCases.ResetPasswordUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.ChangePasswordUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.ExistingOrgSignUpUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.FcmTokenUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.GetUserUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.LoginUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.LogoutUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.NewOrgSignUpUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgApiUseCases.FindOrgByIdentifierUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.CreateProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.DeleteProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.FindProjectsInOrgUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.GetListOfUsersForAProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.UpdateProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgUsersApiUseCases.FindUsersInOrgUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.AssignProjectsToUsersUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.GetUserAssignedProjectsUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.LogWorkTimeUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userWorkUseCases.GetWorkLogsForDateRangeUseCase
 import com.russhwolf.settings.Settings
 import io.ktor.client.*
 import io.ktor.client.call.*
@@ -40,24 +54,49 @@ import io.ktor.client.plugins.contentnegotiation.*
 import io.ktor.client.request.*
 import io.ktor.http.*
 import io.ktor.serialization.kotlinx.json.*
+import io.ktor.websocket.FrameType.Companion.get
 import kotlinx.serialization.json.Json
 import org.koin.core.component.*
 
 fun initSharedDependencies() = startKoin {
-    modules(commonModule, networkModule, localDBRepos, useCaseModule, platformModule())
+    modules(
+        commonModule,
+        networkModule,
+        localDBRepos,
+        useCaseModule,
+        authApiUseCaseModule,
+        orgApiUseCaseModule,
+        orgProjectsUseCaseModule,
+        orgUsersApiUseCaseModule,
+        forgotPasswordApiUseCaseModule,
+        userProjectUseCaseModule,
+        userWorkUseCaseModule,
+        platformModule()
+    )
 }
 
 fun initSqlDelightExperimentalDependencies() = startKoin {
-    modules(commonModule, networkModule, jsSqliteDeps, useCaseModule, platformModule())
+    modules(
+        commonModule,
+        networkModule,
+        jsSqliteDeps,
+        useCaseModule,
+        authApiUseCaseModule,
+        orgApiUseCaseModule,
+        orgProjectsUseCaseModule,
+        orgUsersApiUseCaseModule,
+        forgotPasswordApiUseCaseModule,
+        userProjectUseCaseModule,
+        userWorkUseCaseModule,
+        platformModule()
+    )
 }
 
 val jsSqliteDeps = module {
-    single<GithubTrendingLocal> { GithubTrendingLocalImpl() }
     single<HarvestUserLocal> { HarvestUserLocalImpl() }
 }
 
 val localDBRepos = module {
-    single<GithubTrendingLocal> { GithubTrendingLocalImpl(get()) }
     single<HarvestUserLocal> { HarvestUserLocalImpl(get()) }
 }
 
@@ -68,72 +107,85 @@ val networkModule = module {
 }
 
 val commonModule = module {
-    single<GithubTrendingAPI> { GithubTrendingAPIImpl(get()) }
-    single<PraxisSpringBootAPI> { PraxisSpringBootAPIImpl(get()) }
+    single<AuthApi> { AuthApiImpl(get()) }
+    single<UserForgotPasswordApi> { UserForgotPasswordApiImpl(get()) }
+    single<OrgApi> { OrgApiImpl(get()) }
+    single<OrgProjectsApi> { OrgProjectsApiImpl(get()) }
+    single<OrgUsersApi> { OrgUsersApiImpl(get()) }
     single<UserProjectApi> { UserProjectApiImpl(get()) }
     single<UserWorkApi> { UserWorkApiImpl(get()) }
-    single<OrgProjectsApi> { OrgProjectsApiImpl(get()) }
     single { Settings() }
 }
 
 val useCaseModule = module {
-    single { FetchTrendingReposUseCase(get()) }
-    single { SaveTrendingReposUseCase(get()) }
-    single { GetLocalReposUseCase(get()) }
-    single { LoginUseCase(get()) }
-    single { ExistingOrgSignUpUseCase(get()) }
-    single { NewOrgSignUpUseCase(get()) }
-    single { GetUserUseCase(get()) }
-    single { FindOrgByIdentifierUseCase(get()) }
-    single { LogoutUseCase(get(), get(), get(), get()) }
-    single { ChangePasswordUseCase(get()) }
-    single { FcmTokenUseCase(get()) }
-    single { ForgotPasswordUseCase(get()) }
-    single { ResetPasswordUseCase(get()) }
     single { SaveSettingsUseCase(get()) }
     single { CurrentUserLoggedInUseCase(get()) }
-    single { FindProjectsInOrgUseCase(get()) }
+}
+
+val authApiUseCaseModule = module {
+    single { ChangePasswordUseCase(get()) }
+    single { ExistingOrgSignUpUseCase(get()) }
+    single { FcmTokenUseCase(get()) }
+    single { GetUserUseCase(get()) }
+    single { LoginUseCase(get()) }
+    single { LogoutUseCase(get(), get(), get(), get()) }
+    single { NewOrgSignUpUseCase(get()) }
+}
+
+val orgApiUseCaseModule = module {
+    single { FindOrgByIdentifierUseCase(get()) }
+}
+
+val orgProjectsUseCaseModule = module {
     single { CreateProjectUseCase(get()) }
-    single { UpdateProjectUseCase(get()) }
     single { DeleteProjectUseCase(get()) }
-    single { FindUsersInOrgUseCase(get()) }
-    single { AssignProjectsToUsersUseCase(get()) }
-    single { LogWorkTimeUseCase(get()) }
-    single { GetWorkLogsForDateRangeUseCase(get()) }
+    single { FindProjectsInOrgUseCase(get()) }
     single { GetListOfUsersForAProjectUseCase(get()) }
+    single { UpdateProjectUseCase(get()) }
+}
+
+val orgUsersApiUseCaseModule = module {
+    single { FindUsersInOrgUseCase(get()) }
+}
+
+val forgotPasswordApiUseCaseModule = module {
+    single { ForgotPasswordUseCase(get()) }
+    single { ResetPasswordUseCase(get()) }
+}
+
+val userProjectUseCaseModule = module {
+    single { AssignProjectsToUsersUseCase(get()) }
     single { GetUserAssignedProjectsUseCase(get()) }
+    single { LogWorkTimeUseCase(get()) }
+}
+
+val userWorkUseCaseModule = module {
+    single { GetWorkLogsForDateRangeUseCase(get()) }
+}
+
+
+class SharedComponent : KoinComponent {
+    fun provideHarvestUserLocal(): HarvestUserLocal = get()
+    fun provideSettings(): Settings = get()
 }
 
 class UseCasesComponent : KoinComponent {
-    fun provideFetchTrendingReposUseCase(): FetchTrendingReposUseCase = get()
-    fun provideSaveTrendingReposUseCase(): SaveTrendingReposUseCase = get()
-    fun provideGetLocalReposUseCase(): GetLocalReposUseCase = get()
-}
-
-class SpringBootAuthUseCasesComponent : KoinComponent {
-    fun provideLoginUseCase(): LoginUseCase = get()
     fun provideSaveSettingsUseCase(): SaveSettingsUseCase = get()
-    fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
-    fun provideNewOrgSignUpUseCase(): NewOrgSignUpUseCase = get()
-    fun provideFindOrgByIdentifier(): FindOrgByIdentifierUseCase = get()
-    fun provideLogoutUseCase(): LogoutUseCase = get()
-    fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
-    fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
-    fun provideForgotPasswordUseCase(): ForgotPasswordUseCase = get()
-    fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
-    fun provideGetUserUseCase(): GetUserUseCase = get()
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
-    fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
 }
 
-class UserProjectUseCaseComponent : KoinComponent {
-    fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
-    fun provideLogWorkTimeUseCase(): LogWorkTimeUseCase = get()
-    fun provideGetUserAssignedProjectsUseCase(): GetUserAssignedProjectsUseCase = get()
+class AuthApiUseCaseComponent : KoinComponent {
+    fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
+    fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
+    fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
+    fun provideGetUserUseCase(): GetUserUseCase = get()
+    fun provideLoginUseCase(): LoginUseCase = get()
+    fun provideLogoutUseCase(): LogoutUseCase = get()
+    fun provideNewOrgSignUpUseCase(): NewOrgSignUpUseCase = get()
 }
 
-class UserWorkUseCaseComponent : KoinComponent {
-    fun provideGetWorkLogsForDateRangeUseCase(): GetWorkLogsForDateRangeUseCase = get()
+class OrgApiUseCaseComponent : KoinComponent {
+    fun provideFindOrgByIdentifier(): FindOrgByIdentifierUseCase = get()
 }
 
 class OrgProjectsUseCaseComponent : KoinComponent {
@@ -144,11 +196,23 @@ class OrgProjectsUseCaseComponent : KoinComponent {
     fun provideGetListOfUsersForAProjectUseCase(): GetListOfUsersForAProjectUseCase = get()
 }
 
-class SharedComponent : KoinComponent {
-    fun provideGithubTrendingAPI(): GithubTrendingAPI = get()
-    fun provideGithubTrendingLocal(): GithubTrendingLocal = get()
-    fun provideHarvestUserLocal(): HarvestUserLocal = get()
-    fun provideSettings(): Settings = get()
+class OrgUsersApiUseCaseComponent : KoinComponent {
+    fun provideFindUsersInOrgUseCase(): FindUsersInOrgUseCase = get()
+}
+
+class ForgotPasswordApiUseCaseComponent : KoinComponent {
+    fun provideForgotPasswordUseCase(): ForgotPasswordUseCase = get()
+    fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
+}
+
+class UserProjectUseCaseComponent : KoinComponent {
+    fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
+    fun provideLogWorkTimeUseCase(): LogWorkTimeUseCase = get()
+    fun provideGetUserAssignedProjectsUseCase(): GetUserAssignedProjectsUseCase = get()
+}
+
+class UserWorkUseCaseComponent : KoinComponent {
+    fun provideGetWorkLogsForDateRangeUseCase(): GetWorkLogsForDateRangeUseCase = get()
 }
 
 fun httpClient(

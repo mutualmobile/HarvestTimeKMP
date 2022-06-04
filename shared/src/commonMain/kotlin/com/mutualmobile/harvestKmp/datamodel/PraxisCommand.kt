@@ -17,7 +17,6 @@ object HarvestRoutes {
     }
 
     object Screen {
-        const val TRENDING_UI = "trendingui"
         const val FORGOT_PASSWORD = "forgot-password"
         const val RESET_PASSWORD = "resetPassword"
         const val CHANGE_PASSWORD = "change-password"
