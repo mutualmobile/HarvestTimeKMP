@@ -2,6 +2,8 @@ package orguser
 
 import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.listProjectsAssignedToUser
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.listUsersWithProjectId
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
@@ -141,6 +143,16 @@ val JsOrgUsersScreen = VFC {
                         ListItemText {
                             primary = ReactNode("${user.firstName ?: ""} ${user.lastName ?: ""}")
                             secondary = ReactNode("${user.email}")
+                        }
+                        IconButton {
+                            mui.icons.material.ArrowForwardIos()
+                            onClick = {
+                                navigator.invoke(
+                                    BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.LIST_PROJECTS_USER.listProjectsAssignedToUser(
+                                        userId = user.id
+                                    )
+                                )
+                            }
                         }
                     }
                 }

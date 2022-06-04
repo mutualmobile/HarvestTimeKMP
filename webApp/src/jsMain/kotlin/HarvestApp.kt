@@ -13,6 +13,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import orguser.UserDashboardUI
 import project.JSOrgProjectUsersList
+import project.JSUserProjectList
 import react.useEffectOnce
 
 external interface AppProps : Props
@@ -70,6 +71,11 @@ val HarvestApp = FC<AppProps> {
                 Route{
                     this.path = Screen.LIST_USERS_PROJECT
                     this.element = JSOrgProjectUsersList.create()
+                }
+
+                Route {
+                    this.path = Screen.LIST_PROJECTS_USER
+                    this.element = JSUserProjectList.create()
                 }
 
                 Route {

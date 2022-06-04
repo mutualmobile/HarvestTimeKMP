@@ -21,6 +21,7 @@ import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.GetListOfUsersForAProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.orgProjects.UpdateProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.AssignProjectsToUsersUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.GetUserAssignedProjectsUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userProject.LogWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.praxisSpringBoot.userWork.GetWorkLogsForDateRangeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.trendingrepos.FetchTrendingReposUseCase
@@ -100,6 +101,7 @@ val useCaseModule = module {
     single { LogWorkTimeUseCase(get()) }
     single { GetWorkLogsForDateRangeUseCase(get()) }
     single { GetListOfUsersForAProjectUseCase(get()) }
+    single { GetUserAssignedProjectsUseCase(get()) }
 }
 
 class UseCasesComponent : KoinComponent {
@@ -121,13 +123,13 @@ class SpringBootAuthUseCasesComponent : KoinComponent {
     fun provideResetPasswordUseCase(): ResetPasswordUseCase = get()
     fun provideGetUserUseCase(): GetUserUseCase = get()
     fun providerUserLoggedInUseCase(): CurrentUserLoggedInUseCase = get()
-    fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
     fun provideFindUsersByOrgUseCase(): FindUsersInOrgUseCase = get()
 }
 
 class UserProjectUseCaseComponent : KoinComponent {
     fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
     fun provideLogWorkTimeUseCase(): LogWorkTimeUseCase = get()
+    fun provideGetUserAssignedProjectsUseCase(): GetUserAssignedProjectsUseCase = get()
 }
 
 class UserWorkUseCaseComponent : KoinComponent {
