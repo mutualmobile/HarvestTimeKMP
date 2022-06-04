@@ -72,20 +72,7 @@ val JsOrgProjectsScreen = VFC {
                 alignSelf = AlignSelf.flexEnd
                 alignItems = AlignItems.baseline
             }
-            Fab {
-                variant = FabVariant.extended
-                sx {
-                    transform = translatez(0.px)
-                    bottom = 16.px
-                    right = 16.px
-                }
-                color = FabColor.primary
-                Add()
-                onClick = {
-                    createRequested = true
-                }
-                +"Create Project"
-            }
+
 
             FormControl {
                 InputLabel {
@@ -177,5 +164,22 @@ val JsOrgProjectsScreen = VFC {
                 )
             }
         }
+    }
+
+    Fab {
+        variant = FabVariant.extended
+        color = FabColor.primary
+        sx {
+            transform = translatez(0.px)
+            position = Position.absolute
+            bottom = 16.px
+            right = 16.px
+        }
+        color = FabColor.primary
+        Add()
+        onClick = {
+            createRequested = true
+        }
+        +"Create Project"
     }
 }
