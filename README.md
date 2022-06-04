@@ -1,20 +1,20 @@
 # HarvestTime KMM
 --------------------
-Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose,
-Kotlin-ReactJs Currently running on
+Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Kotlin/Js 
+
+Currently running on
 
 * Android (Jetpack Compose) 🚧 WIP
-* Web (ReactJS) 🚧 WIP
+* Web (Kotlin/JS + React + MUI) 🚧 WIP
 * iOS (SwiftUI) 🚧 WIP
 * Desktop JVM (Jetpack Compose) 🚧 WIP
 * macOS (SwiftUI) 🚧 WIP
 
-Build using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project.
+Built using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project.
 
 ### API
 -----------
-The Harvest API written in SpringBoot is WIP. Find the repo
-from [here](https://github.com/mutualmobile/HarvestAPISpring).
+The Harvest API written in Kotlin with SpringBoot. Find the repo [here](https://github.com/mutualmobile/HarvestAPISpring).
 
 - Authentication :lock:
     - Find Organization ✅ DONE
@@ -36,29 +36,21 @@ from [here](https://github.com/mutualmobile/HarvestAPISpring).
 |----------------	|------------------------------	|
 | 🎭 Android UI   | [Jetpack Compose](https://developer.android.com/jetpack/compose)                |
 | 🎭 IOS UI   | [Swift UI](https://developer.apple.com/documentation/swiftui/)                |
-| 🎭 Web UI   | [React JS with Kotlin](https://play.kotlinlang.org/hands-on/Building%20Web%20Applications%20with%20React%20and%20Kotlin%20JS/01_Introduction)                |
+| 🎭 Web UI   | [React JS with MUI](https://mui.com/)                |
 | 🏗 Architecture    | [Clean](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)                            |
 | 💉 DI                | [Koin](https://insert-koin.io/)                        |
-| 🌊 Async            | [Coroutines](https://kotlinlang.org/docs/coroutines-overview.html) + [Flow](https://kotlin.github.io/kotlinx.coroutines/kotlinx-coroutines-core/kotlinx.coroutines.flow/-flow/)                |
+| 🌊 Async            | [Coroutines, Flows, KMP Native Coroutines](https://github.com/rickclephas/KMP-NativeCoroutines)                |
 | 🌐 Networking        | [Ktor](https://ktor.io/)                        |
-| ð Storage       | [Settings](https://github.com/russhwolf/multiplatform-settings)                        |
+| ð Storage       | [Key Value, SqlDelight](https://github.com/russhwolf/multiplatform-settings)                        |
 
 ## Aim :
 ------------------
 
 - To provide support for different platform with respective Native UI for each, and sharing the
-  common business logic code base.
-- To share common logic between different platforms.
+  common business logic.
 - Dependency Injection using Koin
-- Usage of latest Ktor framework for Networking.
+- Usage of latest Ktor client for Networking.
 - Performing background task with Kotlin Coroutines.
-
-### TODOs
----------------
-
-1. Koin does not allow to return dependencies with await() which affects providing SqlDriver on
-   JSPlatform. Figure out a way for proper DI for SQlDriver. see issue
-   here: https://github.com/InsertKoinIO/koin/issues/388
 
 ### Screenshots
 -------------------------
@@ -200,15 +192,20 @@ from [here](https://github.com/mutualmobile/HarvestAPISpring).
 </table>
 
 
-### Languages, libraries and tools used
 
-* [Kotlin](https://kotlinlang.org/)
-* [Kotlin Coroutines](https://kotlinlang.org/docs/reference/coroutines-overview.html)
-* [Kotlinx Serialization](https://github.com/Kotlin/kotlinx.serialization)
-* [Ktor client library](https://github.com/ktorio/ktor)
-* [Android Architecture Components](https://developer.android.com/topic/libraries/architecture/index.html)
-* [Koin](https://github.com/InsertKoinIO/koin)
-* [SQLDelight](https://github.com/cashapp/sqldelight)
-* [Jetpack Compose](https://developer.android.com/jetpack/compose)
-* [SwiftUI](https://developer.apple.com/documentation/swiftui)
-* [KMP-NativeCoroutines](https://github.com/rickclephas/KMP-NativeCoroutines)
+
+License
+=======
+    Copyright 2022 Mutual Mobile
+
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+       http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
