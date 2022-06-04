@@ -11,7 +11,8 @@ interface OrgUsersApi {
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,
+        search:String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>>
 
 }

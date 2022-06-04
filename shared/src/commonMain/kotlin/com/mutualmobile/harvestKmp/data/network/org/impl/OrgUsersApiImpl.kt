@@ -19,7 +19,7 @@ class OrgUsersApiImpl(private val httpClient: HttpClient) : OrgUsersApi {
         orgIdentifier: String?,
         isUserDeleted: Boolean,
         offset: Int,
-        limit: Int
+        limit: Int,search:String?
     ): NetworkResponse<ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>> =
         getSafeNetworkResponse {
             httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.ORG_USERS}") {
@@ -29,6 +29,9 @@ class OrgUsersApiImpl(private val httpClient: HttpClient) : OrgUsersApi {
                 parameter("isUserDeleted", isUserDeleted)
                 parameter("offset", offset)
                 parameter("limit", limit)
+                search?.let{
+                    parameter("search", search)
+                }
             }
         }
 
