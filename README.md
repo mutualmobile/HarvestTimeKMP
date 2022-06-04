@@ -1,4 +1,4 @@
-# HarvestTime KMM
+# HarvestTime KMP
 --------------------
 Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Kotlin/Js 
 
