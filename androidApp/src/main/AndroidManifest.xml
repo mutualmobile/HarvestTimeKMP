@@ -13,12 +13,6 @@
         tools:ignore="RtlEnabled"
         android:usesCleartextTraffic="true">
         <activity
-            android:name=".ui.screens.newEntryScreen.NewEntryActivity"
-            android:exported="false"
-            android:label="@string/title_activity_new_entry"
-            android:windowSoftInputMode="adjustResize"
-            android:theme="@style/AppTheme" />
-        <activity
             android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/SplashScreen"

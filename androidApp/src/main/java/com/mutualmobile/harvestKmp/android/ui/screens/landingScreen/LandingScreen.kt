@@ -167,6 +167,9 @@ fun LandingScreen(navController: NavHostController) {
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
                     },
+                    goToNewEntryScreen = {
+                        navController.navigate(ScreenList.NewEntryScreen())
+                    }
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
