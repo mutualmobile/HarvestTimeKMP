@@ -59,13 +59,11 @@ val UserDashboardUI = VFC {
         Header {
             this.isLoggingOut = isLoggingOut
             this.logout = {
-
+                dataModel.logout()
                 firebaseApp?.messaging()?.getToken(webKey)?.then {
                     firebaseApp?.messaging()?.deleteToken(it)?.then {
-                        dataModel.logout()
                     }
                 }
-
             }
             this.navDrawerToggle = {
                 isNavDrawerOpen = !isNavDrawerOpen
