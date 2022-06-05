@@ -104,7 +104,9 @@ class AuthApiImpl(private val httpClient: HttpClient) : AuthApi {
     }
 
     override suspend fun getUser(): NetworkResponse<GetUserResponse> = getSafeNetworkResponse {
-        httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}")
+        httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.USER}"){
+            contentType(ContentType.Application.Json)
+        }
     }
 
     override suspend fun changePassword(

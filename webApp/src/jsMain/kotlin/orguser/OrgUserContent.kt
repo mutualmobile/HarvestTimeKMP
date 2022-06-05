@@ -14,9 +14,13 @@ import react.router.Routes
 
 val DEFAULT_PADDING = 30.px
 
-val OrgUserContent = VFC {
-    val drawerItems = useContext(DrawerItemsContext)
-    val themeContext = useContext(AppThemeContext)
+external interface OrgUserContentProps :Props{
+    var drawerItems:DrawerItems?
+}
+
+
+val OrgUserContent = FC<OrgUserContentProps> { props->
+    val themeContext by useContext(AppThemeContext)
     Routes {
         Route {
             path = "/"
@@ -27,13 +31,13 @@ val OrgUserContent = VFC {
                 }
                 Box{
                     sx{
-                        padding = themeContext.component1().mixins.toolbar
+                        padding = themeContext.mixins.toolbar
                     }
                 }
                 Outlet()
             }
 
-            drawerItems.forEachIndexed { i, (key, _, Component) ->
+            props.drawerItems?.forEachIndexed { i, (key, _, Component) ->
                 Route {
                     index = i == 0
                     path = key

@@ -47,7 +47,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     saveToken(loginResponse)
                     praxisCommand(
                         NavigationPraxisCommand(
-                            screen = HarvestRoutes.Screen.ORG_USER_FETCH,
+                            screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD,
                             ""
                         )
                     )

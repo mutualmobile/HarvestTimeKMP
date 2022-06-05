@@ -69,7 +69,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
         if (isUserTokenAvailable()) {
             praxisCommand(
                 NavigationPraxisCommand(
-                    screen = HarvestRoutes.Screen.ORG_USER_FETCH
+                    screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD
                 )
             )
         }

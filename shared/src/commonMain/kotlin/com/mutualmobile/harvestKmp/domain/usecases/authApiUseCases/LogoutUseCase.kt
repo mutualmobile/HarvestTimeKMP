@@ -21,7 +21,7 @@ class LogoutUseCase(
             settings.clear()
             harvestUserLocal.clear()
             httpClient.plugin(Auth).providers.filterIsInstance<BearerAuthProvider>().first()
-                .clearToken() // is this necessary ? When does Ktor clear the bearer token ?
+                .clearToken() // this will invalidate the tokens
         }
     }
 }
