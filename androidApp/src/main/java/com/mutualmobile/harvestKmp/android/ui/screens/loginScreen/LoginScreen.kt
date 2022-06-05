@@ -1,19 +1,9 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.loginScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.systemBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.MaterialTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -24,18 +14,12 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.OrDivider
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 
 @Composable
@@ -78,16 +62,6 @@ fun LoginScreen(navController: NavHostController) {
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconLabelButton(
-                icon = R.drawable.google_logo,
-                label = stringResource(MR.strings.login_screen_google_btn_txt.resourceId),
-                isLoading = currentLoginState is LoadingState,
-                errorMsg = (currentLoginState as? ErrorState)?.throwable?.message,
-                onClick = {
-                    loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim())
-                }
-            )
-            OrDivider()
             SignInTextField(
                 value = currentWorkEmail,
                 onValueChange = { updatedString -> currentWorkEmail = updatedString },
@@ -101,7 +75,9 @@ fun LoginScreen(navController: NavHostController) {
             )
             IconLabelButton(
                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
-                onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) }
+                onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) },
+                isLoading = currentLoginState is LoadingState,
+                errorMsg = (currentLoginState as? ErrorState)?.throwable?.message,
             )
             SurfaceTextButton(
                 text = buildAnnotatedString {
@@ -115,7 +91,12 @@ fun LoginScreen(navController: NavHostController) {
             SurfaceTextButton(
                 text = "View Tour",
                 fontWeight = FontWeight.Medium,
-                onClick = navController::navigateUp
+                onClick = {
+                    navController.navigateAndClear(
+                        clearRoute = ScreenList.LoginScreen(),
+                        navigateTo = ScreenList.OnBoardingScreen()
+                    )
+                }
             )
         }
     }
