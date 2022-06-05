@@ -47,7 +47,7 @@ fun SettingsScreen(navController: NavHostController) {
                 .navigationBarsPadding(),
         ) {
             NotificationsSection()
-            AccountSection()
+            AccountSection(navController = navController)
             AboutHarvestSection()
         }
     }

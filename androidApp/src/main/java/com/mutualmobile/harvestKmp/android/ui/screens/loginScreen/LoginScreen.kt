@@ -18,7 +18,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
-import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.harvest.LoginDataModel
 
@@ -37,10 +37,7 @@ fun LoginScreen(navController: NavHostController) {
                 currentLoginState = loginState
                 when (loginState) {
                     is SuccessState<*> -> {
-                        navController.navigateAndClear(
-                            clearRoute = ScreenList.LoginScreen(),
-                            navigateTo = ScreenList.LandingScreen()
-                        )
+                        navController clearBackStackAndNavigateTo ScreenList.LandingScreen()
                     }
                     else -> Unit
                 }
@@ -92,10 +89,7 @@ fun LoginScreen(navController: NavHostController) {
                 text = "View Tour",
                 fontWeight = FontWeight.Medium,
                 onClick = {
-                    navController.navigateAndClear(
-                        clearRoute = ScreenList.LoginScreen(),
-                        navigateTo = ScreenList.OnBoardingScreen()
-                    )
+                    navController clearBackStackAndNavigateTo ScreenList.OnBoardingScreen()
                 }
             )
         }
