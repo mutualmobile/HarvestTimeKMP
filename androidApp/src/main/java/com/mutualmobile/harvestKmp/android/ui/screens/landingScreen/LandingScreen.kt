@@ -1,37 +1,13 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.landingScreen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.with
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
-import androidx.compose.material.DrawerValue
-import androidx.compose.material.DropdownMenu
-import androidx.compose.material.DropdownMenuItem
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarHostState
-import androidx.compose.material.Text
+import androidx.compose.animation.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.rememberDrawerState
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -40,9 +16,11 @@ import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
@@ -50,15 +28,15 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
-import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import kotlin.time.Duration.Companion.days
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun LandingScreen() {
+fun LandingScreen(navController: NavHostController) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
     val scaffoldState = ScaffoldState(
@@ -164,6 +142,9 @@ fun LandingScreen() {
                 closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } },
                 onScreenChanged = { newScreen: LandingScreenDrawerItemType ->
                     currentDrawerScreen = newScreen
+                },
+                goToSettingsScreen = {
+                    navController.navigate(ScreenList.SettingsScreen())
                 }
             )
         },

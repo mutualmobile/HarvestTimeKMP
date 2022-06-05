@@ -1,7 +1,5 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components
 
-import android.app.Activity
-import android.content.Intent
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,17 +9,16 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsActivity
 
 @Composable
 fun LandingScreenDrawer(
     currentDrawerScreen: LandingScreenDrawerItemType,
     closeDrawer: () -> Unit,
     onScreenChanged: (LandingScreenDrawerItemType) -> Unit,
+    goToSettingsScreen: () -> Unit,
 ) {
     UserInfoSection()
 
@@ -43,12 +40,11 @@ fun LandingScreenDrawer(
         thickness = 0.6.dp
     )
 
-    SettingsButton()
+    SettingsButton(goToSettingsScreen = goToSettingsScreen)
 }
 
 @Composable
-private fun SettingsButton() {
-    val activity = LocalContext.current as Activity
+private fun SettingsButton(goToSettingsScreen: () -> Unit) {
     Text(
         text = stringResource(id = MR.strings.drawer_settings_btn_txt.resourceId),
         style = MaterialTheme.typography.subtitle2.copy(
@@ -56,9 +52,7 @@ private fun SettingsButton() {
         ),
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                activity.startActivity(Intent(activity, SettingsActivity::class.java))
-            }
+            .clickable { goToSettingsScreen() }
             .padding(16.dp),
     )
 }
