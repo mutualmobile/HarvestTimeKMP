@@ -50,8 +50,6 @@ val JsTimeLoggingScreen = FC<Props> {
                 padding = 20.px
                 borderRadius = 10.px
                 marginBottom = 10.px
-                display = Display.flex
-                flexDirection = FlexDirection.row
             }
 
             NewEntryButton {
@@ -59,26 +57,24 @@ val JsTimeLoggingScreen = FC<Props> {
                     showTimeLogDialog = true
                 }
             }
-            ToggleButtonGroup {
-                color = ToggleButtonGroupColor.primary
-                value = selectedDate
-                exclusive = true
-                onChange = { event, newDate ->
-                    selectedDate = newDate
+            Tabs {
+                indicatorColor = TabsIndicatorColor.primary
+                value = week.indexOf(selectedDate)
+                variant = TabsVariant.scrollable
+                scrollButtons = TabsScrollButtons.auto
+                onChange = { event, newValue ->
+                    selectedDate = week[newValue]
                 }
 
                 week.mapIndexed { index, date ->
                     val start =
                         format(Date(date.toString()), "do iii") as String
-                    ToggleButton {
-                        value = date
-                        +start
+                    Tab {
+                        value = index
+                        label = ReactNode(start)
                     }
                 }
-
-
             }
-
 
         }
 
@@ -141,10 +137,27 @@ val JsTimeLoggingScreen = FC<Props> {
                     variant = FormControlVariant.outlined
                 }
 
-                Button {
-                    variant = ButtonVariant.outlined
-                    Typography {
-                        +"Save Time"
+                Box {
+                    sx {
+                        display = Display.flex
+                        flexDirection = FlexDirection.row
+                        padding = 4.px
+                    }
+                    Button {
+                        variant = ButtonVariant.contained
+                        Typography {
+                            +"Save Time"
+                        }
+                        sx {
+                            paddingRight = 6.px
+                        }
+                    }
+
+                    Button {
+                        variant = ButtonVariant.outlined
+                        Typography {
+                            +"Cancel"
+                        }
                     }
                 }
 
@@ -161,16 +174,17 @@ external interface NewEntryButtonProps : Props {
 val NewEntryButton = FC<NewEntryButtonProps> { props ->
     Card {
         sx {
-            width = 80.px
-            height = 80.px
+            width = 40.px
+            height = 40.px
             backgroundColor = NamedColor.darkgreen
-            marginRight = 24.px
         }
         mui.icons.material.Add() {
             sx {
                 color = NamedColor.white
-                width = 80.px
-                height = 80.px
+                width = 30.px
+                height = 30.px
+                alignSelf = AlignSelf.center
+                padding = 4.px
             }
             onClick = {
                 props.clicked()
