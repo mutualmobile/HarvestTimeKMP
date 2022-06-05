@@ -42,7 +42,7 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = ScreenList.LandingScreen(),
+                        startDestination = ScreenList.OnBoardingScreen(),
                     ) {
                         composable(ScreenList.OnBoardingScreen()){
                             OnBoardingScreen(navController = navController)
