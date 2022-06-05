@@ -47,6 +47,12 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(response.throwable))
+                    praxisCommand(
+                        ModalPraxisCommand(
+                            "Message",
+                            response.throwable.message ?: "Failed!"
+                        )
+                    )
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

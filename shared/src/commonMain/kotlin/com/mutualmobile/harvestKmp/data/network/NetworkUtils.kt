@@ -15,9 +15,7 @@ suspend inline fun <reified T> getSafeNetworkResponse(
         val response = networkOperation()
         println("NetworkResponse: $response")
         when (response.status) {
-            HttpStatusCode.OK,
-            HttpStatusCode.ExpectationFailed // TODO Handle exception failed in a separate block to fetch the message for the user
-            -> {
+            HttpStatusCode.OK -> {
                 NetworkResponse.Success<T>(response.body()).apply(onSuccessOperations)
             }
             HttpStatusCode.Unauthorized -> {

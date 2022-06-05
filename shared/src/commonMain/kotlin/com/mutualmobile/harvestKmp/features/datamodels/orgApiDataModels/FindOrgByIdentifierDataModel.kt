@@ -48,6 +48,12 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                 }
                 is NetworkResponse.Failure -> {
                     onDataState(ErrorState(response.throwable))
+                    praxisCommand(
+                        ModalPraxisCommand(
+                            "Failed",
+                            response.throwable.message ?: "Failed to find workspace"
+                        )
+                    )
                     println("FAILED, ${response.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
