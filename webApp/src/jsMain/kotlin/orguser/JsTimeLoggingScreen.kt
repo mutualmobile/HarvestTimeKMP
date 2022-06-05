@@ -9,12 +9,10 @@ import kotlinx.datetime.internal.JSJoda.LocalDateTime
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
-import react.FC
-import react.Props
+import react.*
+import react.dom.html.InputType
 import react.dom.html.ReactHTML
 import react.router.useNavigate
-import react.useEffectOnce
-import react.useState
 import kotlin.js.Date
 
 val JsTimeLoggingScreen = FC<Props> {
@@ -23,6 +21,7 @@ val JsTimeLoggingScreen = FC<Props> {
     var selectedDate by useState(today)
     val navigate = useNavigate()
     var week by useState(mutableListOf<LocalDate>())
+    var showTimeLogDialog by useState(false)
     val days = mutableListOf("Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun")
     val format: dynamic = kotlinext.js.require("date-fns").format
 
@@ -43,31 +42,109 @@ val JsTimeLoggingScreen = FC<Props> {
         Typography {
             variant = TypographyVariant.h6
             this.component = ReactHTML.div
-            +"Time logging for ${format(Date(selectedDate.toString()),"MMMM d LLLL")}"
+            +"Time logging for ${format(Date(selectedDate.toString()), "MMMM d LLLL")}"
         }
 
         Container {
             sx {
-                background = NamedColor.white
                 padding = 20.px
                 borderRadius = 10.px
                 marginBottom = 10.px
+                display = Display.flex
+                flexDirection = FlexDirection.row
             }
 
-            ToggleButtonGroup{
+            NewEntryButton {
+                clicked = {
+                    showTimeLogDialog = true
+                }
+            }
+            ToggleButtonGroup {
                 color = ToggleButtonGroupColor.primary
                 value = selectedDate
                 exclusive = true
-                onChange = { event, newDate->
+                onChange = { event, newDate ->
                     selectedDate = newDate
                 }
 
                 week.mapIndexed { index, date ->
                     val start =
                         format(Date(date.toString()), "do iii") as String
-                    ToggleButton{
+                    ToggleButton {
                         value = date
                         +start
+                    }
+                }
+
+
+            }
+
+
+        }
+
+        Backdrop {
+            open = showTimeLogDialog
+
+            Card {
+                sx {
+                    display = Display.flex
+                    flexDirection = FlexDirection.column
+                    padding = 24.px
+                    borderRadius = 6.px
+                }
+                Typography {
+                    sx {
+                        display = Display.flex
+                        flexGrow = number(1.0)
+                        paddingBottom = 8.px
+                    }
+                    variant = TypographyVariant.h6
+                    this.component = ReactHTML.div
+                    +"New time entry for ${format(Date(selectedDate.toString()), "MMMM d LLLL")}"
+                }
+                Typography {
+                    sx {
+                        display = Display.flex
+                        flexGrow = number(1.0)
+                        paddingBottom = 8.px
+                    }
+                    variant = TypographyVariant.h4
+                    this.component = ReactHTML.div
+                    +"Project / Task"
+                }
+
+                @Suppress("UPPER_BOUND_VIOLATED")
+                Autocomplete<AutocompleteProps<String>> {
+                    disablePortal = true
+                    sx {
+                        width = 300.px
+                    }
+                    options = arrayOf("Project 1", "Project 2", "Project 3")
+                    renderInput = { params ->
+                        TextField.create {
+                            +params
+                            label = ReactNode("Projects")
+                        }
+                    }
+                }
+
+                TextField {
+                    multiline = true
+                    rows = 4
+                    placeholder = "Notes (Optional)"
+                    variant = FormControlVariant.outlined
+                }
+
+                TextField {
+                    placeholder = "0.00"
+                    type = InputType.number
+                    variant = FormControlVariant.outlined
+                }
+
+                Button {
+                    variant = ButtonVariant.outlined
+                    Typography {
+                        +"Save Time"
                     }
                 }
 
@@ -77,50 +154,29 @@ val JsTimeLoggingScreen = FC<Props> {
     }
 }
 
-external interface DayOfWeekViewProps : Props {
-    var weekDate: Int
-    var isToday: Boolean
-    var isSelected: Boolean
-    var weekTitle: String
-    var onSelected: ()->Unit
+external interface NewEntryButtonProps : Props {
+    var clicked: () -> Unit
 }
 
-
-val DayOfWeekView = FC<DayOfWeekViewProps> { props ->
-    Box {
-        component = ReactHTML.div
-        onClick = {
-            props.onSelected()
-        }
-
+val NewEntryButton = FC<NewEntryButtonProps> { props ->
+    Card {
         sx {
-            display = Display.flex
-            flexDirection = FlexDirection.column
-            alignItems = AlignItems.center
-            borderRadius = 25.px
-            margin = 12.px
+            width = 80.px
+            height = 80.px
+            backgroundColor = NamedColor.darkgreen
+            marginRight = 24.px
         }
-        Typography {
-            +props.weekTitle
+        mui.icons.material.Add() {
             sx {
-                padding = Padding(4.px, 4.px)
+                color = NamedColor.white
+                width = 80.px
+                height = 80.px
             }
-        }
-        Typography {
-            +props.weekDate.toString()
-            sx {
-                padding = Padding(4.px, 4.px)
-            }
-        }
-        if(props.isSelected){
-            Box{
-                sx {
-                    width = 10.px
-                    height = 10.px
-                    borderRadius = 25.px
-                    color = NamedColor.darkred
-                }
+            onClick = {
+                props.clicked()
             }
         }
     }
 }
+
+
