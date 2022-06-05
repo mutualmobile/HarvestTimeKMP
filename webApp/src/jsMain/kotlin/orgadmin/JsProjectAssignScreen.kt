@@ -137,10 +137,6 @@ val JsProjectAssignScreen = VFC {
 
 
     Box {
-        sx {
-            padding = 24.px
-        }
-
         projectSelection?.let {
             Typography {
                 variant = TypographyVariant.h6
@@ -349,7 +345,7 @@ val JsProjectAssignScreen = VFC {
             Add()
             onClick = {
                 projectSelection?.let {
-                    userSelection?.takeIf { it.isNotEmpty() }?.filter { it.id != null }
+                    userSelection.takeIf { it.isNotEmpty() }?.filter { it.id != null }
                         ?.map { it.id!! }?.let {
                             selectionInfo[projectSelection?.id!!] = it
                             assignDataModel.assignProjectsToUsers(selectionInfo)

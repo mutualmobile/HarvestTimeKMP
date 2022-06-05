@@ -25,7 +25,7 @@ fun useDrawerItems(): DrawerItems {
                     setOf(
                         DrawerItem(HarvestRoutes.Screen.ORG_USERS, "Users", JsOrgUsersScreen),
                         DrawerItem(HarvestRoutes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
-                        DrawerItem(HarvestRoutes.Screen.ASSIGN_PROJECT,"Project Assignments",JsProjectAssignScreen),
+                        DrawerItem(HarvestRoutes.Screen.ASSIGN_PROJECT,"Assignments",JsProjectAssignScreen),
                         DrawerItem(HarvestRoutes.Screen.SETTINGS, "Settings", JsSettingsScreen)
                     )
                 })

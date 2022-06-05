@@ -131,11 +131,10 @@ val JsWorkspaceFindScreen = VFC {
             }
 
             Button {
-                this.variant = ButtonVariant.contained
                 sx {
                     this.margin = Margin(24.px, 4.px)
                 }
-                +"Organization Not yet registered ? Signup ?"
+                +"Signup new organization ?"
                 onClick = {
                     navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.SIGNUP)
                 }

@@ -2,21 +2,14 @@ package orguser
 
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LogoutDataModel
-import csstype.Display
 import kotlinx.browser.window
-import mui.system.sx
 import react.VFC
 import react.router.useNavigate
 import react.useEffectOnce
 import react.useState
-import csstype.Auto.auto
-import csstype.GridTemplateAreas
-import csstype.array
 import firebase.messaging.messaging
 import firebaseApp
 import mui.system.Box
-import orguser.structure.Area
-import orguser.structure.Sizes
 import webKey
 
 
@@ -51,21 +44,6 @@ val UserDashboardUI = VFC {
     DrawerItemsModule {
         Box {
 
-            sx {
-                display = Display.grid
-                gridTemplateRows = array(
-                    Sizes.Header.Height,
-                    auto,
-                )
-                gridTemplateColumns = array(
-                    Sizes.Sidebar.Width, auto,
-                )
-                gridTemplateAreas = GridTemplateAreas(
-                    arrayOf(Area.Header, Area.Header),
-                    arrayOf(Area.Content, Area.Content)
-                )
-            }
-
             Header {
                 this.isLoggingOut = isLoading
                 this.logout = {
@@ -81,6 +59,7 @@ val UserDashboardUI = VFC {
                     isNavDrawerOpen = !isNavDrawerOpen
                 }
             }
+
             OrgUserDrawer {
                 open = isNavDrawerOpen
                 onOpen = {

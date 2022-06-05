@@ -1,12 +1,11 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
+import components.AppThemeContext
 import csstype.px
+import emotion.react.useTheme
 import mui.material.Typography
 import mui.system.Box
 import mui.system.sx
-import orguser.structure.Area
-import project.JSOrgProjectUsersList
 import react.*
 import react.dom.html.ReactHTML.main
 import react.router.Outlet
@@ -17,16 +16,20 @@ val DEFAULT_PADDING = 30.px
 
 val OrgUserContent = VFC {
     val drawerItems = useContext(DrawerItemsContext)
+    val themeContext = useContext(AppThemeContext)
     Routes {
         Route {
             path = "/"
             element = Box.create {
                 component = main
                 sx {
-                    gridArea = Area.Content
                     padding = DEFAULT_PADDING
                 }
-
+                Box{
+                    sx{
+                        padding = themeContext.component1().mixins.toolbar
+                    }
+                }
                 Outlet()
             }
 
