@@ -1,5 +1,6 @@
 package orguser
 
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
 import csstype.*
 import harvest.material.TopAppBar
 import kotlinx.css.whiteAlpha
@@ -24,6 +25,10 @@ val JsTimeLoggingScreen = FC<Props> {
     var showTimeLogDialog by useState(false)
     val days = mutableListOf("Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun")
     val format: dynamic = kotlinext.js.require("date-fns").format
+
+    val dataModel = LogWorkTimeDataModel(onDataState = {
+
+    })
 
     fun generateWeek() {
         val localWeek = mutableListOf<LocalDate>()
@@ -114,6 +119,7 @@ val JsTimeLoggingScreen = FC<Props> {
                     disablePortal = true
                     sx {
                         width = 300.px
+                        padding = 4.px
                     }
                     options = arrayOf("Project 1", "Project 2", "Project 3")
                     renderInput = { params ->
@@ -125,6 +131,9 @@ val JsTimeLoggingScreen = FC<Props> {
                 }
 
                 TextField {
+                    sx {
+                        padding = 4.px
+                    }
                     multiline = true
                     rows = 4
                     placeholder = "Notes (Optional)"
@@ -132,6 +141,9 @@ val JsTimeLoggingScreen = FC<Props> {
                 }
 
                 TextField {
+                    sx {
+                        padding = 4.px
+                    }
                     placeholder = "0.00"
                     type = InputType.number
                     variant = FormControlVariant.outlined
@@ -144,6 +156,9 @@ val JsTimeLoggingScreen = FC<Props> {
                         padding = 4.px
                     }
                     Button {
+                        sx {
+                            padding = 4.px
+                        }
                         variant = ButtonVariant.contained
                         Typography {
                             +"Save Time"
@@ -151,12 +166,22 @@ val JsTimeLoggingScreen = FC<Props> {
                         sx {
                             paddingRight = 6.px
                         }
+                        onClick = {
+                            showTimeLogDialog = false
+                            dataModel.logWorkTime(null,projectId,userId,workDate,workHours,note)
+                        }
                     }
 
                     Button {
+                        sx {
+                            padding = 4.px
+                        }
                         variant = ButtonVariant.outlined
                         Typography {
                             +"Cancel"
+                        }
+                        onClick = {
+                            showTimeLogDialog = false
                         }
                     }
                 }
@@ -177,6 +202,8 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
             width = 40.px
             height = 40.px
             backgroundColor = NamedColor.darkgreen
+            alignItems = AlignItems.center
+            display = Display.flex
         }
         mui.icons.material.Add() {
             sx {
@@ -184,7 +211,6 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
                 width = 30.px
                 height = 30.px
                 alignSelf = AlignSelf.center
-                padding = 4.px
             }
             onClick = {
                 props.clicked()
