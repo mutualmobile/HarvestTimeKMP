@@ -20,7 +20,7 @@ class ProjectListActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    ProjectScreen()
+                  //  ProjectScreen()
                 }
             }
         }

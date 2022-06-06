@@ -20,7 +20,7 @@ class NewEntryActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    NewEntryScreen()
+                  //  NewEntryScreen()
                 }
             }
         }

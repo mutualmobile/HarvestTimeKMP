@@ -39,7 +39,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
     fun signUp(
         firstName: String,
         lastName: String,
-        company: String,
+        confirmPassword: String,
         email: String,
         password: String
     ) {
@@ -49,7 +49,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
             when (val signUpResponse = existingOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
-                company = company,
+                company = confirmPassword,
                 email = email,
                 password = password
             )) {

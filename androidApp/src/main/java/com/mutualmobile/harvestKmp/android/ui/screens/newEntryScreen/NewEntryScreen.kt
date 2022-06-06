@@ -1,10 +1,6 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
 
 import android.app.Activity
-import android.content.Intent
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.ActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,31 +18,25 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.findNavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
-import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectListActivity
 
 val SELECTED_PROJECT = "SELECTED_PROJECT"
 
 @Composable
-fun NewEntryScreen() {
+fun NewEntryScreen(navController: NavController) {
     val activity = LocalContext.current as Activity
-    val selectedProject = remember { mutableStateOf("Android Department Work HYD") }
-
-    val startForResult =
-        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
-            if (result.resultCode == Activity.RESULT_OK) {
-                selectedProject.value = (result.data?.extras?.get(SELECTED_PROJECT) ?: "") as String
-            }
-        }
-
+    val selectedProject = remember { mutableStateOf("") }
+    selectedProject.value =
+        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT)
+            ?: "Android Department Work HYD"
 
     Scaffold(
+
         topBar = {
             TopAppBar(
                 title = {
@@ -88,8 +78,9 @@ fun NewEntryScreen() {
                     }
                 }
             }
-        }
-    ) { bodyPadding ->
+        },
+
+        ) { bodyPadding ->
         Column(
             modifier = Modifier
                 .padding(bodyPadding)
@@ -100,13 +91,7 @@ fun NewEntryScreen() {
             BucketSelector(
                 currentProject = selectedProject.value,
                 onDepartmentClick = {
-
-                    startForResult.launch(
-                        Intent(
-                            activity,
-                            ProjectListActivity::class.java
-                        )
-                    )
+                    navController.navigate(ScreenList.ProjectScreen())
                 },
                 onWorkClick = {})
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
