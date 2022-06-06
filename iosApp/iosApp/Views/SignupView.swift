@@ -43,11 +43,11 @@ struct SignupView: View {
     var body: some View {
         NavigationView {
             VStack {
-                googleSignInButton
-                LabelledDivider(label: "or with you email below", color:
-                                    colorScheme == . dark
-                                ? ColorAssets.white.color
-                                : .black)
+//                googleSignInButton
+//                LabelledDivider(label: "or with you email below", color:
+//                                    colorScheme == . dark
+//                                ? ColorAssets.white.color
+//                                : .black)
                 credentialView
                 signunButton
                 termsView

@@ -39,8 +39,8 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
-            googleSignInButton
-            LabelledDivider(label: "or", color: ColorAssets.white.color)
+//            googleSignInButton
+//            LabelledDivider(label: "or", color: ColorAssets.white.color)
             credentialView
             footerView
         }
@@ -151,7 +151,7 @@ struct LoginView: View {
         
         loginDataModel.praxisCommand = { command in
             if let navigationCommand = (command as? NavigationPraxisCommand) {
-                _ = navigationCommand.route
+                print("navigationCommand.route \(navigationCommand.route)")
             }
         }
     }
