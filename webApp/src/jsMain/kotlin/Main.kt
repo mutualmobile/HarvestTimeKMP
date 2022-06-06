@@ -1,6 +1,7 @@
 import com.mutualmobile.harvestKmp.db.DriverFactory
+import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
+import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
 import com.mutualmobile.harvestKmp.domain.model.request.DevicePlatform
 import com.mutualmobile.harvestKmp.domain.model.request.User
@@ -10,7 +11,6 @@ import kotlinx.browser.document
 import kotlinx.browser.window
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.await
 import kotlinx.coroutines.launch
 import react.create
 import react.dom.client.createRoot
@@ -64,25 +64,22 @@ fun setupFcmPush() {
 
 fun sendTokenToServer(it: String?) {
     GlobalScope.launch {
-        SpringBootAuthUseCasesComponent().provideFcmTokenUseCase()
+        AuthApiUseCaseComponent().provideFcmTokenUseCase()
             .invoke(User(platform = DevicePlatform.Web, pushToken = it))
     }
 }
 
 
 suspend fun setupDriver() {
-    sharedComponent.provideGithubTrendingLocal().driver?.let {} ?: run {
+    sharedComponent.provideHarvestUserLocal().driver?.let {} ?: run {
         setupDriverInternal()
     }
-
 }
 
 private suspend fun setupDriverInternal() {
     try {
         val driver = DriverFactory().createDriverBlocking()
-        val trendingLocal = sharedComponent.provideGithubTrendingLocal()
         val harvestUser = sharedComponent.provideHarvestUserLocal()
-        trendingLocal.driver = driver
         harvestUser.driver = driver
     } catch (ex: Exception) {
         console.log(ex.message)

@@ -2,12 +2,16 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="theme-color" content="#fa5d00" />
+
     <title>Harvest KMP</title>
 </head>
 <body>
 <script>
     if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('./firebase-messaging-sw.js')
+    navigator.serviceWorker.register('../firebase-messaging-sw.js')
   .then(function(registration) {
     console.log('Registration successful, scope is:', registration.scope);
   }).catch(function(err) {
@@ -15,8 +19,9 @@
   });
 }
 
+
 </script>
-<script src="webApp.js"></script>
+<script src="/webApp.js"></script>
 <div id="root"></div>
 </body>
 </html>

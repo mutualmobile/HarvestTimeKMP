@@ -1,7 +1,7 @@
 package harvest
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.features.harvest.ResetPasswordDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataModels.ResetPasswordDataModel
 import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
