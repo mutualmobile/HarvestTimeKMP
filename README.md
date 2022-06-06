@@ -14,7 +14,7 @@ Built using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base p
 
 ### API
 -----------
-The Harvest API written in Kotlin with SpringBoot. Find the repo [here](https://github.com/mutualmobile/HarvestAPISpring).
+The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https://github.com/mutualmobile/HarvestAPISpring).
 
 - Authentication :lock:
     - Find Organization ✅ DONE
@@ -24,10 +24,16 @@ The Harvest API written in Kotlin with SpringBoot. Find the repo [here](https://
     - Forgot Password ✅ DONE
     - Change Password ✅ DONE
 
-- Organization :office:
-    - Assign Projects ✅ DONE
-    - Log Time ✅ DONE
+- List Projects 📽
+    - Org admin can create projects ✅ DONE
+    - Org admin can list,search projects ✅ DONE
+    - Org admin can assign projects to users ✅ DONE
     - more are.. 🚧 WIP
+
+- Logging Time :office:
+    - Log Time 🚧 WIP 
+    - an other
+   
 
 ## 🏗️️ Built with ❤️ using Kotlin
 --------------------------------------
