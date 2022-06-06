@@ -130,16 +130,30 @@ struct LoginView: View {
     }
     
     private func performLogin() {
-        LoginDataModel { state in
+        let loginDataModel = LoginDataModel { state in
+            print("state \(state)")
             if state is LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
-            } else if let error = state as? ErrorState {
+            } else {
                 store.showLoading = false
-                store.loginError = AppError(title: "Error",
-                                            message: error.throwable.message ?? "Login failure")
+                
+                if let error = state as? ErrorState {
+                    store.loginError = AppError(title: "Error",
+                                                message: error.throwable.message ?? "Login failure")
+                } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
+                    
+                }
             }
-        }.login(email: email, password: password)
+        }
+        
+        loginDataModel.login(email: email, password: password)
+        
+        loginDataModel.praxisCommand = { command in
+            if let navigationCommand = (command as? NavigationPraxisCommand) {
+                _ = navigationCommand.route
+            }
+        }
     }
 }
 

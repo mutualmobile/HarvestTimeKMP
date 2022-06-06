@@ -169,6 +169,9 @@ struct SignupView: View {
                     store.signupError = AppError(message: error.throwable.message ?? "Signup failure")
                 } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
                     if let response =  responseState.data {
+                        
+
+                        
                         if let harvestOrganisation = response.data {
                             dismiss()
                         } else {

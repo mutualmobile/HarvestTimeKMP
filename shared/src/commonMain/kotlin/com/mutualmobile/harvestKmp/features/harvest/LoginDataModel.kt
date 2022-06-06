@@ -57,6 +57,15 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                         )
                     )
                 }
+                is NetworkResponse.Unauthorized -> {
+                    onDataState(ErrorState(loginResponse.throwable))
+                    praxisCommand(
+                        ModalPraxisCommand(
+                            title = "Error",
+                            loginResponse.throwable.message ?: "An Unknown error has happened"
+                        )
+                    )
+                }
                 else -> {}
             }
         }
