@@ -1,6 +1,13 @@
 package com.mutualmobile.harvestKmp.features.harvest
 
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.Routes
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.SpringBootAuthUseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
@@ -36,6 +43,7 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
                     settings.clear()
                     praxisCommand(ModalPraxisCommand("Unauthorized","Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
+                    onDataState(ErrorState(getUserResponse.throwable))
                 }
             }
         }

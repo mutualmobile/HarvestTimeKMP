@@ -46,20 +46,28 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = ScreenList.OnBoardingScreen(),
                     ) {
-                        composable(ScreenList.OnBoardingScreen()){
+                        composable(ScreenList.OnBoardingScreen()) {
                             OnBoardingScreen(navController = navController)
                         }
-                        composable(ScreenList.ExistingOrgSignUpScreen()){
+                        composable(ScreenList.ExistingOrgSignUpScreen()) {
                             SignUpScreen(navController = navController)
                         }
                         composable(ScreenList.NewOrgSignUpScreen()) {
                             NewOrgSignUpScreen(navController = navController)
                         }
-                        composable(ScreenList.LoginScreen()) {
-                            LoginScreen(navController = navController)
+                        composable(ScreenList.LoginScreen()) { backStackEntry ->
+                            LoginScreen(
+                                navController = navController,
+                                orgIdentifier = backStackEntry
+                                    .arguments?.getString(ScreenList.Keys.orgIdentifier)
+                            )
                         }
-                        composable(ScreenList.LandingScreen()) {
-                            LandingScreen(navController = navController)
+                        composable(ScreenList.LandingScreen()) { backStackEntry ->
+                            LandingScreen(
+                                navController = navController,
+                                orgIdentifier = backStackEntry
+                                    .arguments?.getString(ScreenList.Keys.orgIdentifier)
+                            )
                         }
                         composable(ScreenList.FindWorkspaceScreen()) {
                             FindWorkspaceScreen(navController = navController)

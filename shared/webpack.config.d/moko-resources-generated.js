@@ -1,6 +1,6 @@
 const path = require('path');
 
-const mokoResourcePath = path.resolve("C:\Users\shubham\AndroidStudioProjects\HarvestTimeKMP\shared\build\generated\moko\jsMain\commutualmobileharvestKmp\res");
+const mokoResourcePath = path.resolve("/Users/shubhamsingh/StudioProjects/HarvestTimeKMP/shared/build/generated/moko/jsMain/commutualmobileharvestKmp/res");
 
 config.module.rules.push(
     {

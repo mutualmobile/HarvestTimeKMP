@@ -69,7 +69,9 @@ fun FindWorkspaceScreen(
 
     LaunchedEffect(findOrgState) {
         if (findOrgState is SuccessState<*>) {
-            navController.navigate(ScreenList.LoginScreen())
+            navController.navigate(
+                ScreenList.LoginScreen.orgIdentifierRoute(orgIdentifier = tfValue)
+            )
         }
     }
 
