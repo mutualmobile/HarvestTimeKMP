@@ -159,19 +159,22 @@ struct SignupView: View {
     
     private func performSignup() {
         SignUpDataModel { state in
-            
-            print("state \(state)")
-            
             if state is LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
             } else {
                 store.showLoading = false
                 if let error = state as? ErrorState {
-                    store.signupError = AppError(title: "Error",
-                                                 message: error.throwable.message ?? "Signup failure")
-                } else if state is SuccessState<AnyObject> {
-                    
+                    // TODO: Handled error case with proper alert message visibility
+                    store.signupError = AppError(message: error.throwable.message ?? "Signup failure")
+                } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
+                    if let response =  responseState.data {
+                        if let harvestOrganisation = response.data {
+                            dismiss()
+                        } else {
+                            store.signupError = AppError(message: response.message ?? "Signup failure")
+                        }
+                    }
                 }
             }
         }.signUp(firstName: firstName,
