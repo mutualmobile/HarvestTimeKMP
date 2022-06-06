@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
+import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.NewSignUpTextField
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
@@ -65,48 +65,48 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                     .fillMaxHeight(),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                SignUpTextField(
+                NewSignUpTextField(
                     value = currentFirstName,
                     onValueChange = { updatedString -> currentFirstName = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_first_name_et_placeholder.resourceId),
+                    placeholderText = stringResource(MR.strings.signup_screen_first_name_et_placeholder.resourceId),
                 )
-                SignUpTextField(
+                NewSignUpTextField(
                     value = currentLastName,
                     onValueChange = { updatedString -> currentLastName = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_last_name_et_placeholder.resourceId)
+                    placeholderText = stringResource(MR.strings.signup_screen_last_name_et_placeholder.resourceId)
                 )
 
-                SignUpTextField(
+                NewSignUpTextField(
                     value = currentWorkEmail,
                     onValueChange = { updatedString -> currentWorkEmail = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_email_et_placeholder.resourceId)
+                    placeholderText = stringResource(MR.strings.signup_screen_email_et_placeholder.resourceId)
                 )
-                SignUpTextField(
+                NewSignUpTextField(
                     value = currentPassword,
                     onValueChange = { updatedString -> currentPassword = updatedString },
-                    hintText = stringResource(MR.strings.password_et_placeholder.resourceId),
+                    placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                     isPasswordTextField = true
                 )
-                SignUpTextField(
+                NewSignUpTextField(
                     value = confirmPassword,
                     onValueChange = { updatedString -> confirmPassword = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_confirm_password_et_placeholder.resourceId),
+                    placeholderText = stringResource(MR.strings.signup_screen_confirm_password_et_placeholder.resourceId),
                     isPasswordTextField = true
                 )
-                SignUpTextField(
+                NewSignUpTextField(
                     value = companyName,
                     onValueChange = { updatedString -> companyName = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_company_name_et_placeholder.resourceId)
+                    placeholderText = stringResource(MR.strings.signup_screen_company_name_et_placeholder.resourceId)
                 )
-                SignUpTextField(
+                NewSignUpTextField(
                     value = companyWebsite,
                     onValueChange = { updatedString -> companyWebsite = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_company_website_et_placeholder.resourceId)
+                    placeholderText = stringResource(MR.strings.signup_screen_company_website_et_placeholder.resourceId)
                 )
-                SignUpTextField(
+                NewSignUpTextField(
                     value = companyIdentifier,
                     onValueChange = { updatedString -> companyIdentifier = updatedString },
-                    hintText = stringResource(MR.strings.signup_screen_company_identifier_et_placeholder.resourceId)
+                    placeholderText = stringResource(MR.strings.signup_screen_company_identifier_et_placeholder.resourceId)
                 )
                 IconLabelButton(
                     modifier = Modifier.padding(
