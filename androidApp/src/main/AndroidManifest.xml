@@ -14,6 +14,10 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="donut">
         <activity
+            android:name=".ui.screens.projectScreen.ProjectListActivity"
+            android:exported="false"
+            android:theme="@style/AppTheme" />
+        <activity
             android:name=".ui.screens.newEntryScreen.NewEntryActivity"
             android:exported="false"
             android:label="@string/title_activity_new_entry"

@@ -96,7 +96,7 @@ fun LoginScreen(navController: NavHostController) {
             SignInTextField(
                 value = currentPassword,
                 onValueChange = { updatedString -> currentPassword = updatedString },
-                placeholderText = stringResource(MR.strings.login_screen_password_et_placeholder.resourceId),
+                placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
             IconLabelButton(

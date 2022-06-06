@@ -1,28 +1,19 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
 
 import android.app.Activity
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.imePadding
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
+import android.content.Intent
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
-import androidx.compose.material.TextButton
+import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -30,15 +21,31 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import androidx.navigation.findNavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
+import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectListActivity
+
+val SELECTED_PROJECT = "SELECTED_PROJECT"
 
 @Composable
 fun NewEntryScreen() {
     val activity = LocalContext.current as Activity
+    val selectedProject = remember { mutableStateOf("Android Department Work HYD") }
+
+    val startForResult =
+        rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result: ActivityResult ->
+            if (result.resultCode == Activity.RESULT_OK) {
+                selectedProject.value = (result.data?.extras?.get(SELECTED_PROJECT) ?: "") as String
+            }
+        }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,7 +97,18 @@ fun NewEntryScreen() {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BucketSelector()
+            BucketSelector(
+                currentProject = selectedProject.value,
+                onDepartmentClick = {
+
+                    startForResult.launch(
+                        Intent(
+                            activity,
+                            ProjectListActivity::class.java
+                        )
+                    )
+                },
+                onWorkClick = {})
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector()
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
@@ -101,4 +119,8 @@ fun NewEntryScreen() {
             )
         }
     }
+
 }
+
+
+

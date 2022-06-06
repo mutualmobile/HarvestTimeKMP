@@ -7,5 +7,6 @@ sealed class ScreenList(private val route: String) {
     object ExistingOrgSignUpScreen: ScreenList("existingOrgSignUpScreen")
     object NewOrgSignUpScreen: ScreenList("newOrgSignUpScreen")
     object FindWorkspaceScreen: ScreenList("findWorkspaceScreen")
+    object ProjectScreen: ScreenList("projectScreen")
     operator fun invoke() = route
 }
