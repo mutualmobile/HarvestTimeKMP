@@ -1,22 +1,36 @@
 package orguser
 
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
 import csstype.*
-import harvest.material.TopAppBar
-import kotlinx.css.whiteAlpha
 import kotlinx.datetime.internal.JSJoda.Clock
 import kotlinx.datetime.internal.JSJoda.LocalDate
-import kotlinx.datetime.internal.JSJoda.LocalDateTime
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.sx
+import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.html.InputType
 import react.dom.html.ReactHTML
+import react.dom.onChange
+import react.router.dom.useSearchParams
 import react.router.useNavigate
 import kotlin.js.Date
 
 val JsTimeLoggingScreen = FC<Props> {
+
+    val searchParams = useSearchParams()
+    val userId: String? = searchParams.component1().get(HarvestRoutes.Keys.id)
+    val projectId: String? = searchParams.component1().get(HarvestRoutes.Keys.id)
+
+    var isLoading by useState(false)
     var message by useState("")
     val today = LocalDate.now(Clock.systemDefaultZone())
     var selectedDate by useState(today)
@@ -25,10 +39,44 @@ val JsTimeLoggingScreen = FC<Props> {
     var showTimeLogDialog by useState(false)
     val days = mutableListOf("Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun")
     val format: dynamic = kotlinext.js.require("date-fns").format
+    var res by useState<Unit>()
+    val navigator = useNavigate()
 
-    val dataModel = LogWorkTimeDataModel(onDataState = {
+    var note by useState("")
+    var workHours by useState(0.00f)
+
+    val dataModel = LogWorkTimeDataModel(onDataState = { dataState: DataState ->
+        isLoading = dataState is LoadingState
+        when (dataState) {
+            is SuccessState<*> -> {
+                try {
+                    val response = (dataState.data as ApiResponse<Unit>)
+                    res = response.data
+                } catch (ex: Exception){
+                    ex.printStackTrace()
+                }
+            }
+            is ErrorState -> {
+                message = dataState.throwable.message.toString()
+            }
+            is LoadingState -> {
+                message = "Loading..."
+            }
+            else -> {}
+        }
 
     })
+
+    dataModel.praxisCommand = { newCommand ->
+        when (newCommand) {
+            is NavigationPraxisCommand -> {
+                /*TODO*/
+            }
+            is ModalPraxisCommand -> {
+                /*TODO*/
+            }
+        }
+    }
 
     fun generateWeek() {
         val localWeek = mutableListOf<LocalDate>()
@@ -136,17 +184,29 @@ val JsTimeLoggingScreen = FC<Props> {
                     }
                     multiline = true
                     rows = 4
-                    placeholder = "Notes (Optional)"
-                    variant = FormControlVariant.outlined
+                    this.placeholder = "Notes (Optional)"
+                    this.variant = FormControlVariant.outlined
+                    this.value = note
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        note = target.value
+                    }
                 }
 
                 TextField {
                     sx {
                         padding = 4.px
                     }
-                    placeholder = "0.00"
-                    type = InputType.number
-                    variant = FormControlVariant.outlined
+                    multiline = true
+                    rows = 4
+                    this.placeholder = "0.00"
+                    this.type = InputType.number
+                    this.variant = FormControlVariant.outlined
+                    this.value = workHours
+                    this.onChange = {
+                        val target = it.target as HTMLInputElement
+                        workHours = target.value.toFloat()
+                    }
                 }
 
                 Box {
@@ -168,7 +228,14 @@ val JsTimeLoggingScreen = FC<Props> {
                         }
                         onClick = {
                             showTimeLogDialog = false
-                            dataModel.logWorkTime(null,projectId,userId,workDate,workHours,note)
+                            dataModel.logWorkTime(
+                                null,
+                                projectId.toString(),
+                                userId.toString(),
+                                format(Date(selectedDate.toString()), "MMMM d LLLL") as String,
+                                workHours,
+                                note
+                            )
                         }
                     }
 
