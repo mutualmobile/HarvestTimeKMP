@@ -8,16 +8,31 @@
 
 import SwiftUI
 
-struct SignupView: View {
+class SignupStore: ObservableObject {
+    @Published var hasFocus: Bool = true
+    @Published var showLoading = false
     
+    @Published var signupError: AppError?
+}
+
+struct SignupView: View {
+    @ObservedObject private var store = SignupStore()
+
     @Environment(\.dismiss) var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     
     @State private var fullname = ""
     @State private var companyName = ""
     @State private var companyEmail = ""
     @State private var password = ""
     
-    
+    private var signupError: Binding<Bool> {
+        Binding {
+            store.signupError != nil
+        } set: { _ in
+            store.signupError = nil
+        }
+    }
     init() {
         UINavigationBar.appearance().backgroundColor = UIColor(ColorAssets.colorBackground.color)
         UINavigationBar.appearance().tintColor = UIColor(ColorAssets.white.color)
@@ -27,9 +42,13 @@ struct SignupView: View {
         NavigationView {
             VStack {
                 googleSignInButton
-                LabelledDivider(label: "or with you email below")
+                LabelledDivider(label: "or with you email below", color:
+                                    colorScheme == . dark
+                                ? ColorAssets.white.color
+                                : .black)
                 credentialView
                 signunButton
+                termsView
             }
             
             .navigationTitle("Sign Up")
@@ -103,7 +122,28 @@ struct SignupView: View {
         } label: {
             Text("SIGN UP")
         }
-        .harvestButton()
+        .harvestButton(color: ColorAssets.colorBackground.color)
+        .alert(isPresented: signupError, error: store.signupError) {
+            Text(store.signupError?.errorDescription ?? "")
+        }
+    }
+    
+    private var termsView: some View {
+        VStack {
+            Text("By signing up you agree to the")
+            HStack {
+                Button {
+                    // TODO: Handle Terms of service action later
+                } label: {
+                    Text("Terms of Service")
+                }
+                Button {
+                    // TODO: Handle privacy action later
+                } label: {
+                    Text("Privacy policy")
+                }
+            }.foregroundColor(.orange)
+        }.padding()
     }
 }
 

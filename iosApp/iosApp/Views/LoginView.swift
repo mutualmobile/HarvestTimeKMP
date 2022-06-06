@@ -35,7 +35,6 @@ struct LoginView: View {
         } set: { _ in
             store.loginError = nil
         }
-
     }
     
     var body: some View {
