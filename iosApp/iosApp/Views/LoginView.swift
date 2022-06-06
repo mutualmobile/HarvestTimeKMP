@@ -27,7 +27,7 @@ struct LoginView: View {
     @State private var email = "anmol@mutualmobile.com"
     @State private var password = "passw"
     
-    @FocusState private var nameIsFocused: Bool
+    @FocusState private var focusedField: Bool
     
     private var loginError: Binding<Bool> {
         Binding {
@@ -70,7 +70,7 @@ struct LoginView: View {
             VStack {
                 TextField("Work Email", text: $email)
                     .padding(.bottom)
-                    .focused($nameIsFocused)
+                    .focused($focusedField)
                 
                 SecureField("Password", text: $password)
             }
@@ -81,12 +81,12 @@ struct LoginView: View {
                 .padding(.vertical)
         }
         .padding(.horizontal)
-        .onChange(of: nameIsFocused) { newValue in
+        .onChange(of: focusedField) { newValue in
             self.store.hasFocus = newValue
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                nameIsFocused = self.store.hasFocus
+                focusedField = self.store.hasFocus
             }
         }
         .alert(isPresented: loginError, error: store.loginError) {

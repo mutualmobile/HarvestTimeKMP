@@ -7,6 +7,7 @@
 //
 
 import SwiftUI
+import shared
 
 class SignupStore: ObservableObject {
     @Published var hasFocus: Bool = true
@@ -21,10 +22,11 @@ struct SignupView: View {
     @Environment(\.dismiss) var dismiss
     @Environment(\.colorScheme) private var colorScheme
     
-    @State private var fullname = ""
-    @State private var companyName = ""
-    @State private var companyEmail = ""
-    @State private var password = ""
+    @State private var firstName = "tony"
+    @State private var lastName = "stark"
+    @State private var companyName = "Avenger"
+    @State private var companyEmail = "tony.stark@gmail.com"
+    @State private var password = "1234"
     
     private var signupError: Binding<Bool> {
         Binding {
@@ -63,6 +65,7 @@ struct SignupView: View {
                 }
             }
         }
+        .loadingIndicator(show: store.showLoading)
     }
     
     private var googleSignInButton: some View {
@@ -81,18 +84,26 @@ struct SignupView: View {
     
     private var credentialView: some View {
         VStack {
-            fullNameView
+            firstNameView
+            lastNameView
             companyNameView
             companyEmailView
             passwordView
         }.padding(.horizontal)
     }
     
-    private var fullNameView: some View {
+    private var firstNameView: some View {
         HStack {
-            Text("Full Name :")
-            TextField("Tony Stark", text: $fullname)
+            Text("First Name :")
+            TextField("Tony", text: $firstName)
         }.padding(.vertical)
+    }
+
+    private var lastNameView: some View {
+        HStack {
+            Text("Last Name :")
+            TextField("Stark", text: $lastName)
+        }.padding(.bottom)
     }
     
     private var companyNameView: some View {
@@ -118,11 +129,11 @@ struct SignupView: View {
     
     private var signunButton: some View {
         Button {
-            // TODO: Nasir, Handle action
+            performSignup()
         } label: {
             Text("SIGN UP")
+                .harvestButton(color: ColorAssets.colorBackground.color)
         }
-        .harvestButton(color: ColorAssets.colorBackground.color)
         .alert(isPresented: signupError, error: store.signupError) {
             Text(store.signupError?.errorDescription ?? "")
         }
@@ -144,6 +155,30 @@ struct SignupView: View {
                 }
             }.foregroundColor(.orange)
         }.padding()
+    }
+    
+    private func performSignup() {
+        SignUpDataModel { state in
+            
+            print("state \(state)")
+            
+            if state is LoadingState {
+                store.showLoading = true
+                store.hasFocus = false
+            } else {
+                store.showLoading = false
+                if let error = state as? ErrorState {
+                    store.signupError = AppError(title: "Error",
+                                                 message: error.throwable.message ?? "Signup failure")
+                } else if state is SuccessState<AnyObject> {
+                    
+                }
+            }
+        }.signUp(firstName: firstName,
+                 lastName: lastName,
+                 company: companyName,
+                 email: companyEmail,
+                 password: password)
     }
 }
 
