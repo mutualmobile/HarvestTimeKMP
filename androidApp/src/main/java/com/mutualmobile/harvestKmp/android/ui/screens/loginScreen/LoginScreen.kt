@@ -18,17 +18,16 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.common.noAccountAnnotatedString
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
@@ -129,16 +128,11 @@ fun LoginScreen(
                 errorMsg = currentErrorMsg,
             )
             SurfaceTextButton(
-                text = buildAnnotatedString {
-                    append("Don't have an account?")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append(" Try Harvest Free")
-                    }
-                },
+                text = noAccountAnnotatedString(),
                 onClick = { navController.navigate(HarvestRoutes.Screen.SIGNUP) }
             )
             SurfaceTextButton(
-                text = "View Tour",
+                text = MR.strings.view_tour.get(),
                 fontWeight = FontWeight.Medium,
                 onClick = {
                     navController clearBackStackAndNavigateTo HarvestRoutes.Screen.ON_BOARDING

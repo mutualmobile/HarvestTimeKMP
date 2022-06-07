@@ -60,4 +60,7 @@
     <string name="harvest_dialog_title">Alert</string>
     <string name="harvest_dialog_confirm_btn_txt">OK</string>
     <string name="harvest_dialog_dismiss_btn_txt">Cancel</string>
+    <string name="dont_have_an_account">Don\'t have an account?</string>
+    <string name="try_harvest_free">Try Harvest Free</string>
+    <string name="view_tour">View Tour</string>
 </resources>
