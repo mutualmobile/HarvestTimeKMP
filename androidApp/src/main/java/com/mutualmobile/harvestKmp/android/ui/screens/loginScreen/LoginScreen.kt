@@ -35,12 +35,16 @@ import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
 
 @Composable
-fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
+fun LoginScreen(
+    navController: NavHostController,
+    orgIdentifier: String?,
+) {
     var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
 
@@ -66,6 +70,19 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
                     }
                     else -> Unit
                 }
+            }.apply {
+                praxisCommand = { newCommand ->
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen == HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
+                                navController clearBackStackAndNavigateTo newCommand.screen.withOrgId(
+                                    identifier = orgIdentifier,
+                                    id = null
+                                )
+                            }
+                        }
+                    }
+                }
             }
         )
     }
@@ -77,18 +94,6 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
             currentLoginState is ErrorState -> (currentLoginState as ErrorState).throwable.message
             userState is ErrorState -> (userState as ErrorState).throwable.message
             else -> null
-        }
-    }
-
-    LaunchedEffect(userState) {
-        if (userState is SuccessState<*>) {
-            orgIdentifier?.let { nnOrgIdentifier ->
-                println("Identifier is: $nnOrgIdentifier")
-                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.ORG_USER_DASHBOARD.withOrgId(
-                    identifier = nnOrgIdentifier,
-                    id = null
-                )
-            }
         }
     }
 

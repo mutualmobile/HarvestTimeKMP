@@ -26,9 +26,8 @@ import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
 
 @Composable
@@ -47,11 +46,13 @@ fun SignUpScreen(navController: NavHostController) {
         mutableStateOf(
             SignUpDataModel { signUpState ->
                 currentSignUpState = signUpState
-                when (signUpState) {
-                    is SuccessState<*> -> {
-                        navController clearBackStackAndNavigateTo HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER
+            }.apply {
+                praxisCommand = { newCommand ->
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            navController clearBackStackAndNavigateTo newCommand.screen
+                        }
                     }
-                    else -> Unit
                 }
             }
         )

@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -49,13 +48,7 @@ import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
-import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.OnBoardingDataModel
 
 val OnBoardingImages = listOf(
@@ -70,25 +63,13 @@ val OnBoardingImages = listOf(
 fun OnBoardingScreen(navController: NavHostController) {
     val scaffoldState = rememberScaffoldState()
 
-    var currentBoardingState: DataState by remember {
-        mutableStateOf(EmptyState)
-    }
-
     val pagerState = rememberPagerState(
         initialPage = 0,
     )
 
     val onBoardingDataModel by remember {
         mutableStateOf(
-            OnBoardingDataModel { signUpState ->
-                currentBoardingState = signUpState
-                when (signUpState) {
-                    is SuccessState<*> -> {
-                        navController clearBackStackAndNavigateTo HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER
-                    }
-                    else -> Unit
-                }
-            }
+            OnBoardingDataModel {}
         )
     }
 
@@ -177,8 +158,6 @@ fun OnBoardingScreen(navController: NavHostController) {
                                     .fillMaxWidth(0.75f)
                                     .padding(top = 16.dp),
                                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
-                                isLoading = currentBoardingState is LoadingState,
-                                errorMsg = (currentBoardingState as? ErrorState)?.throwable?.message,
                                 onClick = { navController.navigate(HarvestRoutes.Screen.FIND_WORKSPACE) }
                             )
 

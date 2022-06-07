@@ -62,7 +62,7 @@ import kotlinx.datetime.toLocalDateTime
 @Composable
 fun LandingScreen(
     navController: NavHostController,
-    orgIdentifier: String?
+    orgIdentifier: String?,
 ) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
@@ -173,7 +173,7 @@ fun LandingScreen(
                 goToSettingsScreen = {
                     navController.navigate(HarvestRoutes.Screen.SETTINGS)
                 },
-                organizationName = orgIdentifier
+                orgIdentifier = orgIdentifier
             )
         },
         drawerBackgroundColor = DrawerBgColor,
