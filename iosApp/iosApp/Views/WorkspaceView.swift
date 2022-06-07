@@ -25,6 +25,7 @@ struct WorkspaceView: View {
     @State private var workspaceURLText = "MutualMobile"
     @State private var showLoader = false
     @State private var workspaceFindError: AppError?
+    @State private var presentLogin = false
     
     private var workspaceError: Binding<Bool> {
         Binding {
@@ -33,14 +34,9 @@ struct WorkspaceView: View {
             workspaceFindError = nil
         }
     }
-    
-    private let prefixString = "https://"
-    private let suffixString = ".harvestclone.com"
-    
+        
     var orgIdentifier: String {
-        let identifier =  prefixString + workspaceURLText + suffixString
-        print("identifier \(identifier.lowercased())")
-        return identifier.lowercased()
+        return workspaceURLText.lowercased()
     }
     
     var body: some View {
@@ -50,11 +46,11 @@ struct WorkspaceView: View {
                     .font(.footnote)
                 
                 HStack {
-                    Text(prefixString)
+                    Text("https://")
                     TextField("your-workspace", text: $workspaceURLText)
                         .frame(width: 100)
                         .textCase(.lowercase)
-                    Text(suffixString)
+                    Text(".harvestclone.com")
                 }
                 .font(.caption)
                 
@@ -87,16 +83,13 @@ struct WorkspaceView: View {
                     showLoader = true
                 } else {
                     showLoader = false
-                    // TODO: Below will be uncommented soon
-                    //                    if let error = state as? ErrorState {
-                    //                        workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
-                    //                        dismiss()
-                    //                        presentLogin = true
-                    //                    } else if let networkResponse = state as? SuccessState<NetworkResponse<AnyObject>> {
-                    //                        print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
-                    dismiss()
-                    foundWorkspace = true
-                    //                    }
+                    if let error = state as? ErrorState {
+                        workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
+                    } else if let networkResponse = state as? SuccessState<NetworkResponse<AnyObject>> {
+                        print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
+                        dismiss()
+                        foundWorkspace = true
+                    }
                 }
             }
             

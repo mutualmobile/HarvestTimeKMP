@@ -9,15 +9,8 @@
 import Foundation
 import SwiftUI
 
-extension Bool {
-    static var nahi: Bool { false }
-    static var han: Bool { true }
-}
-
 class LaunchStore: ObservableObject {
-    
-    // didFoundWorkspace
-    var sachMeyWorkspaceMilgaya: Bool = .nahi
+    var didFoundWorkspace = false
 }
 
 struct LaunchView: View {
@@ -75,7 +68,7 @@ struct LaunchView: View {
     
     var signinButton: some View {
         Button {
-            if store.sachMeyWorkspaceMilgaya == .han {
+            if store.didFoundWorkspace {
                 presentSignin = true
             } else {
                 presentWorkspace = true
@@ -90,7 +83,7 @@ struct LaunchView: View {
         .fullScreenCover(isPresented: $presentWorkspace,
                          onDismiss: {
             if foundWorkspace {
-                store.sachMeyWorkspaceMilgaya = .han
+                store.didFoundWorkspace = true
                 presentSignin = true
             }
         }, content: {
