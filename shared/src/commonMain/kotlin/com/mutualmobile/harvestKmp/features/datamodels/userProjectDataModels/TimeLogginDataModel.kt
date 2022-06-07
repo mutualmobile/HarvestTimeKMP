@@ -36,12 +36,13 @@ class TimeLogginDataModel(onDataState: (DataState) -> Unit = {}) :
     private val getWorkLogsForDateRangeUseCase =
         userWorkUseCaseComponent.provideGetWorkLogsForDateRangeUseCase()
 
+    val userId by lazy { getUser()?.uid }
 
     override fun activate() {
 
     }
 
-    fun getUser(): Harvest_user? {
+    private fun getUser(): Harvest_user? {
         return harvestLocal.getUser()
     }
 

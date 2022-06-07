@@ -31,25 +31,36 @@ import react.router.useNavigate
 import kotlin.Float
 import kotlin.js.Date
 
+fun generateWeek(date: LocalDate): MutableList<LocalDate> {
+    val localWeek = mutableListOf<LocalDate>()
+    for (i in 1..7) {
+        val first = date.minusDays(date.dayOfWeek().ordinal()).minusDays(1).plusDays(i)
+        localWeek.add(first)
+    }
+    return localWeek
+}
+val format: dynamic = kotlinext.js.require("date-fns").format
+
 val JsTimeLoggingScreen = FC<Props> {
 
     val today = LocalDate.now(Clock.systemDefaultZone())
     var selectedDate by useState(today)
-    var week by useState(mutableListOf<LocalDate>())
+    var week by useState {
+        generateWeek(selectedDate)
+    }
     var showTimeLogDialog by useState(false)
-    val format: dynamic = kotlinext.js.require("date-fns").format
     val navigator = useNavigate()
 
     var projects by useState<List<OrgProjectResponse>>()
     var work by useState<List<HarvestUserWorkResponse>>()
     var isLoadingWeekRecords by useState(false)
     var projectId by useState<String>()
-    var userId by useState<String>()
 
     var note by useState("")
     var workHours by useState(0.00f)
-
     val dataModel = TimeLogginDataModel()
+
+    val userId = dataModel.userId
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {
@@ -62,22 +73,15 @@ val JsTimeLoggingScreen = FC<Props> {
         }
     }
 
-    fun generateWeek(date: LocalDate) {
-        val localWeek = mutableListOf<LocalDate>()
-        for (i in 1..7) {
-            val first = date.minusDays(date.dayOfWeek().ordinal()).minusDays(1).plusDays(i)
-            localWeek.add(first)
-        }
-
-
+    useEffect(dependencies = arrayOf(week), effect = {
         userId?.let { userId ->
             fetchWeekRecords(
                 dataModel,
                 format(
-                    Date(localWeek.first().toString()),
+                    Date(week.first().toString()),
                     "yyyy-MM-dd"
                 ) as String, format(
-                    Date(localWeek.last().toString()),
+                    Date(week.last().toString()),
                     "yyyy-MM-dd"
                 ) as String, userId
             ) { dataState: DataState ->
@@ -90,35 +94,23 @@ val JsTimeLoggingScreen = FC<Props> {
                 }
             }
         }
-
-        week = localWeek
-    }
+    })
 
     useEffectOnce {
         dataModel.activate()
-        userId = dataModel.getUser()?.uid
         dataModel.getUserAssignedProjects(userId).onEach { dataState: DataState ->
-            if (dataState is SuccessState<*>) {
-                try {
+            when (dataState) {
+                is SuccessState<*> -> {
                     val successData = dataState.data
                     if (successData is ApiResponse<*>) {
                         if (successData.data is List<*>) {
                             projects = successData.data as List<OrgProjectResponse>
-                            projectId = projects?.firstOrNull()?.id
                         }
                     }
-
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
                 }
+                else -> {}
             }
-            else {}
         }.launchIn(mainScope)
-        generateWeek(selectedDate)
-    }
-
-    useEffect {
-
     }
 
     Box {
@@ -138,7 +130,7 @@ val JsTimeLoggingScreen = FC<Props> {
 
                     }
                     onClick = {
-                        generateWeek(week.first().minusWeeks(1))
+                        week = generateWeek(week.first().minusWeeks(1))
                     }
                 }
 
@@ -147,7 +139,7 @@ val JsTimeLoggingScreen = FC<Props> {
 
                     }
                     onClick = {
-                        generateWeek(week.first().plusWeeks(1))
+                        week = generateWeek(week.first().plusWeeks(1))
                     }
                 }
 
@@ -186,7 +178,7 @@ val JsTimeLoggingScreen = FC<Props> {
                     }
                 }
                 TabContext {
-                    value =  format(Date(selectedDate.toString()), "do iii") as String
+                    value = format(Date(selectedDate.toString()), "do iii") as String
                     Stack {
                         direction = responsive(StackDirection.column)
                         Box {
@@ -215,10 +207,13 @@ val JsTimeLoggingScreen = FC<Props> {
                         week.mapIndexed { item, date ->
                             TabPanel {
                                 value = format(Date(date.toString()), "do iii") as String
+
                                 DayContent {
                                     selectDate = date
+                                    selectDateString = format(Date(selectedDate.toString()), "yyyy-MM-dd") as String
                                     isLoading = isLoadingWeekRecords
                                     workWeek = work
+                                    assignedProjects = projects
                                 }
                             }
                         }
@@ -465,8 +460,10 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
 
 external interface DayContentProps : Props {
     var selectDate: LocalDate
+    var selectDateString: String
     var isLoading: Boolean
     var workWeek: List<HarvestUserWorkResponse>?
+    var assignedProjects: List<OrgProjectResponse>?
 }
 
 val DayContent = FC<DayContentProps> { props ->
@@ -486,12 +483,17 @@ val DayContent = FC<DayContentProps> { props ->
             }
         } else {
             List {
-                props.workWeek?.map { work ->
-                    ListItemText {
-                        primary = "Note: ${work.note.toString()}".toReactNode()
-                        secondary = "Time: ${work.workHours.toString()}".toReactNode()
+                props.workWeek?.filter {format(Date(it.workDate), "yyyy-MM-dd") as String == props.selectDateString }
+                    ?.map { work ->
+                        val projectName =
+                            props.assignedProjects?.firstOrNull { it.id == work.id }?.name ?: ""
+                        // TODO We don't want to do this, instead get the project name form the api response
+                        ListItemText {
+                            primary = "Project: $projectName ".toReactNode()
+                            secondary =
+                                "Time: ${work.workHours} Note: ${work.note.toString()}".toReactNode()
+                        }
                     }
-                }
             }
         }
 
