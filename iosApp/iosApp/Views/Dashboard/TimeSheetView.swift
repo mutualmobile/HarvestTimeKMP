@@ -11,23 +11,32 @@ import SwiftUI
 class TimeSheetStore: ObservableObject {
     @Published var selectedDay: Day?
     
-    var days: [Day] = [
-        .saturday(0.0, false, false),
-        .sunday(0.0, false, false),
-        .monday(8.0, true, false),
-        .tuesday(8.556, false, false),
-        .wednesday(9.87, false, false),
-        .thursday(0.0, false, false),
-        .friday(0.0, false, false)
-    ]
+    var days: [Day]
+
+    init() {
+        self.days = TimeSheetStore.getDays()
+    }
     
     
-    init() { }
+    // TODO: As of now it act as network service
+    static func getDays() -> [Day] {
+        return [
+            .saturday(0.0, false, false),
+            .sunday(0.0, false, false),
+            .monday(8.0, false, false),
+            .tuesday(8.556, false, false),
+            .wednesday(9.87, false, false),
+            .thursday(0.0, false, false),
+            .friday(0.0, false, false)
+        ]
+    }
     
     func validate(for day: Day?) {
         if var day = day {
             
             let index = day.index
+            
+            var days = TimeSheetStore.getDays()
             
             days.remove(at: index)
             
@@ -39,6 +48,7 @@ class TimeSheetStore: ObservableObject {
             
             days.insert(day, at: index)
 
+            self.days = days
             selectedDay = day
         }
     }

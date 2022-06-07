@@ -13,7 +13,7 @@ struct WeekView_Previews: PreviewProvider {
     static var days: [Day] = [
         .saturday(0.0, false, false),
         .sunday(0.0, false, false),
-        .monday(8.0, true, false),
+        .monday(8.0, false, false),
         .tuesday(8.556, false, false),
         .wednesday(9.87, false, false),
         .thursday(0.0, false, false),
