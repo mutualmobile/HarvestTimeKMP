@@ -1,6 +1,5 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
@@ -8,73 +7,45 @@ import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
 import csstype.*
 import kotlinx.browser.window
-import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.internal.JSJoda.Clock
 import kotlinx.datetime.internal.JSJoda.LocalDate
-import kotlinx.js.jso
+import mainScope
+import mui.icons.material.ArrowBackIos
+import mui.icons.material.ArrowForwardIos
 import mui.icons.material.Check
+import mui.lab.TabContext
+import mui.lab.TabPanel
 import mui.material.*
-import mui.material.MuiList.Companion.dense
 import mui.material.styles.TypographyVariant
+import mui.system.responsive
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
 import react.*
 import react.dom.html.InputType
 import react.dom.html.ReactHTML
 import react.dom.onChange
-import react.router.dom.useSearchParams
 import react.router.useNavigate
+import kotlin.Float
 import kotlin.js.Date
 
 val JsTimeLoggingScreen = FC<Props> {
 
-    var isLoading by useState(false)
-    var message by useState("")
     val today = LocalDate.now(Clock.systemDefaultZone())
     var selectedDate by useState(today)
-    val navigate = useNavigate()
     var week by useState(mutableListOf<LocalDate>())
     var showTimeLogDialog by useState(false)
-    val days = mutableListOf("Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun")
     val format: dynamic = kotlinext.js.require("date-fns").format
     val navigator = useNavigate()
     var projects by useState<List<OrgProjectResponse>>()
     var projectId by useState<String>()
     var userId by useState<String>()
-    val mainScope = MainScope()
 
     var note by useState("")
     var workHours by useState(0.00f)
 
-    val dataModel = LogWorkTimeDataModel(onDataState = { dataState: DataState ->
-        isLoading = dataState is LoadingState
-        when (dataState) {
-            is SuccessState<*> -> {
-                try {
-                    val successData = dataState.data
-                    if (successData is ApiResponse<*>) {
-                        if (successData.data is List<*>) {
-                            projects = successData.data as List<OrgProjectResponse>
-                            projectId = projects?.firstOrNull()?.id
-                        }
-                    }
-
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-            is ErrorState -> {
-                message = dataState.throwable.message.toString()
-            }
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            else -> {}
-        }
-
-    })
+    val dataModel = LogWorkTimeDataModel()
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {
@@ -87,10 +58,10 @@ val JsTimeLoggingScreen = FC<Props> {
         }
     }
 
-    fun generateWeek() {
+    fun generateWeek(date: LocalDate) {
         val localWeek = mutableListOf<LocalDate>()
         for (i in 1..7) {
-            val first = today.minusDays(today.dayOfWeek().ordinal()).minusDays(1).plusDays(i)
+            val first = date.minusDays(date.dayOfWeek().ordinal()).minusDays(1).plusDays(i)
             localWeek.add(first)
         }
         week = localWeek
@@ -99,16 +70,30 @@ val JsTimeLoggingScreen = FC<Props> {
     useEffectOnce {
         dataModel.activate()
         userId = dataModel.getUser()?.uid
-        dataModel.getUserAssignedProjects(userId)
-        generateWeek()
+        dataModel.getUserAssignedProjects(userId).onEach { dataState: DataState ->
+            when (dataState) {
+                is SuccessState<*> -> {
+                    try {
+                        val successData = dataState.data
+                        if (successData is ApiResponse<*>) {
+                            if (successData.data is List<*>) {
+                                projects = successData.data as List<OrgProjectResponse>
+                                projectId = projects?.firstOrNull()?.id
+                            }
+                        }
+
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }
+                else -> {}
+            }
+        }.launchIn(mainScope)
+
+        generateWeek(selectedDate)
     }
 
     Box {
-        Typography {
-            variant = TypographyVariant.h6
-            this.component = ReactHTML.div
-            +"Time logging for ${format(Date(selectedDate.toString()), "MMMM d LLLL")}"
-        }
 
         Container {
             sx {
@@ -117,29 +102,101 @@ val JsTimeLoggingScreen = FC<Props> {
                 marginBottom = 10.px
             }
 
-            NewEntryButton {
-                clicked = {
-                    showTimeLogDialog = true
-                }
-            }
-            Tabs {
-                indicatorColor = TabsIndicatorColor.primary
-                value = week.indexOf(selectedDate)
-                variant = TabsVariant.scrollable
-                scrollButtons = TabsScrollButtons.auto
-                onChange = { event, newValue ->
-                    selectedDate = week[newValue]
-                }
+            Stack {
+                this.direction = responsive(StackDirection.row)
 
-                week.mapIndexed { index, date ->
-                    val start =
-                        format(Date(date.toString()), "do iii") as String
-                    Tab {
-                        value = index
-                        label = ReactNode(start)
+                IconButton {
+                    ArrowBackIos {
+
+                    }
+                    onClick = {
+                        generateWeek(week.first().minusWeeks(1))
                     }
                 }
+
+                IconButton {
+                    ArrowForwardIos {
+
+                    }
+                    onClick = {
+                        generateWeek(week.first().plusWeeks(1))
+                    }
+                }
+
+                Typography {
+                    variant = TypographyVariant.h6
+                    this.component = ReactHTML.div
+                    +"${format(Date(selectedDate.toString()), "MMMM d LLLL")}"
+                }
             }
+
+
+
+
+            Box {
+
+                sx {
+                    margin = 12.px
+                    display = Display.flex
+                    justifyContent = JustifyContent.left
+                    flexDirection = FlexDirection.row
+                }
+
+                Stack {
+                    direction = responsive(StackDirection.column)
+                    NewEntryButton {
+                        clicked = {
+                            showTimeLogDialog = true
+                        }
+                    }
+                    Typography {
+                        sx {
+                            marginTop = 4.px
+                        }
+                        variant = TypographyVariant.subtitle2
+                        +"New Entry"
+                    }
+                }
+                TabContext {
+                    Stack {
+                        direction = responsive(StackDirection.column)
+                        Box {
+                            sx {
+                                borderBottom = 1.px
+                            }
+                            Tabs {
+                                indicatorColor = TabsIndicatorColor.primary
+                                value = week.indexOf(selectedDate)
+                                variant = TabsVariant.scrollable
+                                scrollButtons = TabsScrollButtons.auto
+                                onChange = { event, newValue ->
+                                    selectedDate = week[newValue]
+                                }
+
+                                week.mapIndexed { index, date ->
+                                    val start =
+                                        format(Date(date.toString()), "do iii") as String
+                                    Tab {
+                                        label = ReactNode(start)
+                                    }
+                                }
+                            }
+
+                        }
+                        week.mapIndexed { item, date ->
+                            TabPanel {
+                                value = format(Date(date.toString()), "do iii") as String
+                                DayContent {
+                                    selectDate = date
+                                }
+                            }
+                        }
+                    }
+                }
+
+
+            }
+
 
         }
 
@@ -241,47 +298,21 @@ val JsTimeLoggingScreen = FC<Props> {
                         flexDirection = FlexDirection.row
                         padding = 4.px
                     }
-                    Button {
-                        variant = ButtonVariant.contained
-                        Typography {
-                            +"Save Time"
+                    SaveTimeButton {
+                        onDone = {
+                            showTimeLogDialog = false
                         }
-                        sx {
-                            paddingRight = 6.px
-                            paddingTop = 4.px
-                            paddingLeft = 4.px
-                        }
-                        onClick = {
-                            projectId?.let {
-                                userId?.let {
-                                    dataModel.logWorkTime(
-                                        HarvestUserWorkRequest(
-                                            null,
-                                            projectId.toString(),
-                                            userId.toString(),
-                                            format(
-                                                Date(selectedDate.toString()),
-                                                "yyyy-MM-dd"
-                                            ) as String,
-                                            workHours,
-                                            note
-                                        )
-                                    ).onEach {
-                                        println(it)
-                                        when (it) {
-                                            is SuccessState<*> -> {
-                                                showTimeLogDialog = false
-                                            }
-                                        }
-                                    }.launchIn(mainScope)
-                                }?:run{
-                                    println("userid null")
-                                }
-                            }?:run{
-                                println("projectId null")
-                            }
-                        }
+                        saveProjectId = projectId
+                        saveuserId = userId
+                        this.dataModel = dataModel
+                        date = format(
+                            Date(selectedDate.toString()),
+                            "yyyy-MM-dd"
+                        ) as String
+                        this.note = note
+                        this.workHours = workHours
                     }
+
 
                     Button {
                         sx {
@@ -307,6 +338,64 @@ external interface NewEntryButtonProps : Props {
     var clicked: () -> Unit
 }
 
+external interface SaveTimeButtonProps : Props {
+    var saveProjectId: String?
+    var saveuserId: String?
+    var date: String
+    var note: String
+    var workHours: Float
+    var dataModel: LogWorkTimeDataModel
+    var onDone: () -> Unit
+}
+
+val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
+    var isSaving by useState(false)
+    if(isSaving){
+        CircularProgress()
+    }else{
+        Button {
+            variant = ButtonVariant.contained
+            Typography {
+                +"Save Time"
+            }
+            sx {
+                paddingRight = 6.px
+                paddingTop = 4.px
+                paddingLeft = 4.px
+            }
+            onClick = {
+                props.saveProjectId?.let {
+                    props.saveuserId?.let {
+                        props.dataModel.logWorkTime(
+                            HarvestUserWorkRequest(
+                                null,
+                                props.saveProjectId.toString(),
+                                props.saveuserId.toString(),
+                                props.date,
+                                props.workHours,
+                                props.note
+                            )
+                        ).onEach {
+                            isSaving = it is LoadingState
+                            println(it)
+                            when (it) {
+                                is SuccessState<*> -> {
+                                    props.onDone.invoke()
+                                }
+                            }
+                        }.launchIn(mainScope)
+                    } ?: run {
+                        println("userid null")
+                    }
+                } ?: run {
+                    println("projectId null")
+                }
+            }
+        }
+    }
+
+}
+
 val NewEntryButton = FC<NewEntryButtonProps> { props ->
     Card {
         sx {
@@ -315,13 +404,14 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
             backgroundColor = NamedColor.darkgreen
             alignItems = AlignItems.center
             display = Display.flex
+            borderRadius = 6.px
+
         }
         mui.icons.material.Add() {
             sx {
                 color = NamedColor.white
-                width = 30.px
-                height = 30.px
-                alignSelf = AlignSelf.center
+                width = 40.px
+                height = 40.px
             }
             onClick = {
                 props.clicked()
@@ -330,9 +420,20 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
     }
 }
 
-external interface ProjectAutoComplete {
-    var label: String
-    var id: String
+external interface DayContentProps : Props {
+    var selectDate: LocalDate
 }
 
+val DayContent = FC<DayContentProps> {
+    Container {
+        sx {
+            backgroundColor = NamedColor.lightgray
+            width = 100.pct
+            minHeight = 25.pct
+        }
 
+        Typography {
+            +"Time expands, then contracts, all in tune with the stirrings of the heart.\n– Haruki Murakami"
+        }
+    }
+}

@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class LogWorkTimeDataModel(private val onDataState: (DataState) -> Unit) :
+class LogWorkTimeDataModel(private val onDataState: (DataState) -> Unit = {}) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -73,19 +73,18 @@ class LogWorkTimeDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun getUserAssignedProjects(
         userId: String?
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
             when (val response =
                 getUserAssignedProjectsUseCase(
                     userId = userId
                 )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data))
+                    this.emit(SuccessState(response.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
+                    this.emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

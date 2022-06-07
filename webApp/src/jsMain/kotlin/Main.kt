@@ -20,11 +20,12 @@ val webKey =
     "BFmePGx52AaCaDZzf-0qq8-oF9VT6fATcprqeY4SBWxnJO7BKp1Snsixnt_M0pecIVaPpBN3I1vhPHZbFIu0w5Y" // TODO move this
 
 val sharedComponent = SharedComponent()
+val mainScope = MainScope()
 
 suspend fun main() {
     firebaseInit()
     initSqlDelightExperimentalDependencies()
-    MainScope().launch {
+    mainScope.launch {
         setupDriver()
     }
     window.onload = { _ ->
@@ -61,7 +62,7 @@ fun setupFcmPush() {
 }
 
 fun sendTokenToServer(it: String?) {
-    MainScope().launch {
+    mainScope.launch {
         AuthApiUseCaseComponent().provideFcmTokenUseCase()
             .invoke(User(platform = DevicePlatform.Web, pushToken = it))
     }
