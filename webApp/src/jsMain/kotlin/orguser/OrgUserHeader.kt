@@ -21,18 +21,16 @@ external interface HeaderProps : Props {
 }
 
 val Header = FC<HeaderProps> { props ->
-    val mobileMode = useMediaQuery("(max-width:960px)")
 
     AppBar {
         Container {
             Toolbar {
-                if (mobileMode) IconButton {
-                    ariaLabel = "menu"
-                    ariaHasPopup = AriaHasPopup.`false`
+                IconButton {
+                    Menu()
                     onClick = {
                         props.navDrawerToggle()
                     }
-                    Menu()
+
                 }
                 Typography {
                     sx { flexGrow = number(1.0) }
@@ -45,12 +43,10 @@ val Header = FC<HeaderProps> { props ->
                     CircularProgress()
                 } else {
                     IconButton {
-                        ariaLabel = "logout"
-                        ariaHasPopup = AriaHasPopup.`false`
+                        Logout()
                         onClick = {
                             props.logout()
                         }
-                        Logout()
                     }
                 }
 

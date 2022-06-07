@@ -1,11 +1,9 @@
 package workspace
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.datamodel.Routes.Keys.orgIdentifier
-import com.mutualmobile.harvestKmp.datamodel.Routes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
-import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
 import csstype.*
 import harvest.material.TopAppBar
 import kotlinx.browser.window
@@ -62,93 +60,89 @@ val JsWorkspaceFindScreen = VFC {
         subtitle = status
     }
 
-    Box {
-        Stack {
-            sx {
-                margin = Margin(24.px, 24.px)
-            }
-            Typography {
-                this.variant = TypographyVariant.h4
-                this.component = ReactHTML.div
-                +"Elevate your time tracking"
+    Stack {
+        sx {
+            margin = Margin(24.px, 24.px)
+        }
+        Typography {
+            this.variant = TypographyVariant.h4
+            this.component = ReactHTML.div
+            +"Elevate your time tracking"
+        }
+
+        Typography {
+            this.variant = TypographyVariant.h6
+            this.component = ReactHTML.div
+            +"Simple time tracking software and powerful reporting that helps your team thrive."
+        }
+
+        Box {
+            this.sx {
+                this.borderRadius = 25.px
+                this.borderColor = Color("#D3D3D3")
+                this.margin = Margin(56.px, 4.px)
             }
 
             Typography {
                 this.variant = TypographyVariant.h6
                 this.component = ReactHTML.div
-                +"Simple time tracking software and powerful reporting that helps your team thrive."
+                +"Find your organization by typing the org identifier!"
             }
-
-            Box {
+            Stack {
+                this.direction = responsive(StackDirection.row)
                 this.sx {
-                    this.borderRadius = 25.px
-                    this.borderColor = Color("#D3D3D3")
-                    this.margin = Margin(56.px, 4.px)
+                    this.alignItems = AlignItems.center
+                    this.alignContent = AlignContent.center
                 }
-
                 Typography {
                     this.variant = TypographyVariant.h6
                     this.component = ReactHTML.div
-                    +"Find your organization by typing the org identifier!"
-                }
-                Stack {
-                    this.direction = responsive(StackDirection.row)
+                    +"https://"
                     this.sx {
-                        this.alignItems = AlignItems.center
-                        this.alignContent = AlignContent.center
-                    }
-                    Typography {
-                        this.variant = TypographyVariant.h6
-                        this.component = ReactHTML.div
-                        +"http://"
-                        this.sx {
-                            margin = Margin(0.px, 4.px)
-                        }
-                    }
-                    WorkspaceComp {
-                        this.name = workspaceName
-                        this.nameUpdate = {
-                            workspaceName = it.lowercase().trim()
-                        }
-                    }
-                    Typography {
-                        this.sx {
-                            margin = Margin(0.px, 4.px)
-                        }
-                        this.variant = TypographyVariant.h6
-                        this.component = ReactHTML.div
-                        +".harvestclone.com"
-                    }
-
-                }
-
-                Button {
-                    this.variant = ButtonVariant.contained
-                    sx {
-                        this.margin = Margin(24.px, 4.px)
-                    }
-                    +"Find Workspace"
-                    onClick = {
-                        dataModel.findOrgByIdentifier(workspaceName)
+                        margin = Margin(0.px, 4.px)
                     }
                 }
-
-                Button {
-                    this.variant = ButtonVariant.contained
-                    sx {
-                        this.margin = Margin(24.px, 4.px)
-                    }
-                    +"Organization Not yet registered ? Signup ?"
-                    onClick = {
-                        navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + Routes.Screen.SIGNUP)
+                WorkspaceComp {
+                    this.name = workspaceName
+                    this.nameUpdate = {
+                        workspaceName = it.lowercase().trim()
                     }
                 }
-
+                Typography {
+                    this.sx {
+                        margin = Margin(0.px, 4.px)
+                    }
+                    this.variant = TypographyVariant.h6
+                    this.component = ReactHTML.div
+                    +".harvestkmp.com"
+                }
 
             }
+
+            Button {
+                this.variant = ButtonVariant.contained
+                sx {
+                    this.margin = Margin(24.px, 4.px)
+                }
+                +"Find Workspace"
+                onClick = {
+                    dataModel.findOrgByIdentifier(workspaceName)
+                }
+            }
+
+            Button {
+                sx {
+                    this.margin = Margin(24.px, 4.px)
+                }
+                +"Signup new organization ?"
+                onClick = {
+                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.SIGNUP)
+                }
+            }
+
+
         }
     }
-
 }
 
 
