@@ -18,7 +18,8 @@ class AuthStore: ObservableObject {
 }
 
 struct LoginView: View {
-    
+    @EnvironmentObject var rootStore: RootStore
+
     @ObservedObject private var store = AuthStore()
     
     @Environment(\.dismiss) var dismiss
@@ -140,20 +141,20 @@ struct LoginView: View {
                 if let error = state as? ErrorState {
                     store.loginError = AppError(title: "Error",
                                                 message: error.throwable.message ?? "Login failure")
-                } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
-                    
+                } else if let _ = state as? SuccessState<ApiResponse<HarvestOrganization>> {
+                    rootStore.isAuthenticateUser = true
                 }
             }
         }
         
         loginDataModel.login(email: email, password: password)
         
-        loginDataModel.praxisCommand = { command in
-            print("command \(command)  \(type(of: command)) ")
-            if let navigationCommand = (command as? NavigationPraxisCommand) {
-                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
-            }
-        }
+//        loginDataModel.praxisCommand = { command in
+//            print("command \(command)  \(type(of: command)) ")
+//            if let navigationCommand = (command as? NavigationPraxisCommand) {
+//                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
+//            }
+//        }
     }
 }
 
