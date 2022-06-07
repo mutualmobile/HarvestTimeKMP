@@ -122,9 +122,6 @@ fun SignUpScreen(navController: NavHostController) {
             onConfirm = {
                 signUpPraxisCommand = null
             },
-            onDismiss = {
-                signUpPraxisCommand = null
-            }
         )
     }
 }

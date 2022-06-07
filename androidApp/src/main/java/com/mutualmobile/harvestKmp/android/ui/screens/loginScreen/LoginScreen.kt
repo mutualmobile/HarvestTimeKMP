@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.common.noAccountAnnotatedString
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
@@ -35,6 +36,7 @@ import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
@@ -47,11 +49,17 @@ fun LoginScreen(
     var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
 
+    var currentNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
+
     var userState: DataState by remember { mutableStateOf(EmptyState) }
     val userDataModel by remember {
         mutableStateOf(
             GetUserDataModel { newState ->
                 userState = newState
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentNavigationCommand = newCommand
+                }
             }
         )
     }
@@ -71,6 +79,7 @@ fun LoginScreen(
                 }
             }.apply {
                 praxisCommand = { newCommand ->
+                    currentNavigationCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
                             if (newCommand.screen == HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
@@ -139,6 +148,12 @@ fun LoginScreen(
                 }
             )
         }
+        HarvestDialog(
+            praxisCommand = currentNavigationCommand,
+            onConfirm = {
+                currentNavigationCommand = null
+            },
+        )
     }
 }
 

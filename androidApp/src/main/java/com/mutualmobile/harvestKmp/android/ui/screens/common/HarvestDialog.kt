@@ -20,7 +20,7 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 fun HarvestDialog(
     praxisCommand: PraxisCommand?,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit,
+    onDismiss: (() -> Unit)? = null,
 ) {
     val command = praxisCommand as? ModalPraxisCommand
     val title by remember(command) { mutableStateOf(command?.title) }
@@ -28,7 +28,7 @@ fun HarvestDialog(
 
     if (command != null) {
         AlertDialog(
-            onDismissRequest = { onDismiss() },
+            onDismissRequest = { onDismiss?.invoke() },
             title = {
                 Text(
                     text = title ?: MR.strings.harvest_dialog_title.get(),
@@ -42,8 +42,10 @@ fun HarvestDialog(
                 }
             },
             dismissButton = {
-                TextButton(onClick = { onDismiss() }) {
-                    Text(text = MR.strings.harvest_dialog_dismiss_btn_txt.get())
+                onDismiss?.let { nnOnDismiss ->
+                    TextButton(onClick = { nnOnDismiss() }) {
+                        Text(text = MR.strings.harvest_dialog_dismiss_btn_txt.get())
+                    }
                 }
             }
         )
@@ -60,7 +62,6 @@ private fun HarvestDialogPreview() {
                 message = "An account with these credentials already exists"
             ),
             onConfirm = {},
-            onDismiss = {}
         )
     }
 }
