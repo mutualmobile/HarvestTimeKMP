@@ -31,18 +31,17 @@ object HarvestRoutes {
         const val LIST_USERS_PROJECT = "list-user-project"
         const val LIST_PROJECTS_USER = "list-projects-user"
 
-        fun String.listUsersWithProjectId(projectId:String?): String {
+        fun String.listUsersWithProjectId(projectId: String?): String {
             return this.plus(
-                BROWSER_QUERY + "${Keys.id}=${projectId?:""}"
+                BROWSER_QUERY + "${Keys.id}=${projectId ?: ""}"
             )
         }
 
-        fun String.listProjectsAssignedToUser(userId:String?): String {
+        fun String.listProjectsAssignedToUser(userId: String?): String {
             return this.plus(
-                BROWSER_QUERY + "${Keys.id}=${userId?:""}"
+                BROWSER_QUERY + "${Keys.id}=${userId ?: ""}"
             )
         }
-
 
         fun String.withOrgId(identifier: String?, id: String?): String {
             return this.plus(
