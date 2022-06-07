@@ -2,27 +2,27 @@ import SwiftUI
 import shared
 
 
-struct GithubTrendingScreen: View {
-    
-    @ObservedObject var ghVM = GithubTrendingVM()
-    @State private var searchText = ""
-
-	var body: some View {
-        NavigationView{
-            List{
-                ForEach(ghVM.repos){ repo in
-                    RepoItem(repo:repo)
-                }
-            }.refreshable {
-                ghVM.refresh()
-            }.onAppear{
-                ghVM.activate()
-            }.onDisappear(){
-                ghVM.destroy()
-            }.navigationTitle("Trending Repos")
-        }
-	}
-}
+//struct GithubTrendingScreen: View {
+//    
+//    @ObservedObject var ghVM = GithubTrendingVM()
+//    @State private var searchText = ""
+//
+//	var body: some View {
+//        NavigationView{
+//            List{
+//                ForEach(ghVM.repos){ repo in
+//                    RepoItem(repo:repo)
+//                }
+//            }.refreshable {
+//                ghVM.refresh()
+//            }.onAppear{
+//                ghVM.activate()
+//            }.onDisappear(){
+//                ghVM.destroy()
+//            }.navigationTitle("Trending Repos")
+//        }
+//	}
+//}
 
 struct RepoItem : View{
     
