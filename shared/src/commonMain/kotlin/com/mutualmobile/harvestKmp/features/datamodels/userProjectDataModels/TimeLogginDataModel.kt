@@ -9,18 +9,19 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.UserProjectUseCaseComponent
+import com.mutualmobile.harvestKmp.di.UserWorkUseCaseComponent
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import db.Harvest_user
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
 import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class LogWorkTimeDataModel(private val onDataState: (DataState) -> Unit = {}) :
+class TimeLogginDataModel(onDataState: (DataState) -> Unit = {}) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private var currentLoadingJob: Job? = null
@@ -30,6 +31,11 @@ class LogWorkTimeDataModel(private val onDataState: (DataState) -> Unit = {}) :
     private val getUserAssignedProjectsUseCase =
         userProjectUseCaseComponent.provideGetUserAssignedProjectsUseCase()
     private val harvestLocal = SharedComponent().provideHarvestUserLocal()
+
+    private val userWorkUseCaseComponent = UserWorkUseCaseComponent()
+    private val getWorkLogsForDateRangeUseCase =
+        userWorkUseCaseComponent.provideGetWorkLogsForDateRangeUseCase()
+
 
     override fun activate() {
 
@@ -79,6 +85,34 @@ class LogWorkTimeDataModel(private val onDataState: (DataState) -> Unit = {}) :
             when (val response =
                 getUserAssignedProjectsUseCase(
                     userId = userId
+                )) {
+                is NetworkResponse.Success -> {
+                    this.emit(SuccessState(response.data))
+                }
+                is NetworkResponse.Failure -> {
+                    this.emit(ErrorState(response.throwable))
+                }
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
+                }
+            }
+        }
+    }
+
+    fun getWorkLogsForDateRange(
+        startDate: String,
+        endDate: String,
+        userIds: List<String>?
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
+            when (val response =
+                getWorkLogsForDateRangeUseCase(
+                    startDate = startDate,
+                    endDate = endDate,
+                    userIds = userIds
                 )) {
                 is NetworkResponse.Success -> {
                     this.emit(SuccessState(response.data))

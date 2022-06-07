@@ -3,8 +3,9 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import csstype.*
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.launchIn
@@ -38,14 +39,17 @@ val JsTimeLoggingScreen = FC<Props> {
     var showTimeLogDialog by useState(false)
     val format: dynamic = kotlinext.js.require("date-fns").format
     val navigator = useNavigate()
+
     var projects by useState<List<OrgProjectResponse>>()
+    var work by useState<List<HarvestUserWorkResponse>>()
+    var isLoadingWeekRecords by useState(false)
     var projectId by useState<String>()
     var userId by useState<String>()
 
     var note by useState("")
     var workHours by useState(0.00f)
 
-    val dataModel = LogWorkTimeDataModel()
+    val dataModel = TimeLogginDataModel()
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {
@@ -64,6 +68,29 @@ val JsTimeLoggingScreen = FC<Props> {
             val first = date.minusDays(date.dayOfWeek().ordinal()).minusDays(1).plusDays(i)
             localWeek.add(first)
         }
+
+
+        userId?.let { userId ->
+            fetchWeekRecords(
+                dataModel,
+                format(
+                    Date(localWeek.first().toString()),
+                    "yyyy-MM-dd"
+                ) as String, format(
+                    Date(localWeek.last().toString()),
+                    "yyyy-MM-dd"
+                ) as String, userId
+            ) { dataState: DataState ->
+                isLoadingWeekRecords = dataState is LoadingState
+                if (dataState is SuccessState<*>) {
+                    val data = dataState.data
+                    if (data is ApiResponse<*>) {
+                        work = data.data as List<HarvestUserWorkResponse>
+                    }
+                }
+            }
+        }
+
         week = localWeek
     }
 
@@ -71,26 +98,27 @@ val JsTimeLoggingScreen = FC<Props> {
         dataModel.activate()
         userId = dataModel.getUser()?.uid
         dataModel.getUserAssignedProjects(userId).onEach { dataState: DataState ->
-            when (dataState) {
-                is SuccessState<*> -> {
-                    try {
-                        val successData = dataState.data
-                        if (successData is ApiResponse<*>) {
-                            if (successData.data is List<*>) {
-                                projects = successData.data as List<OrgProjectResponse>
-                                projectId = projects?.firstOrNull()?.id
-                            }
+            if (dataState is SuccessState<*>) {
+                try {
+                    val successData = dataState.data
+                    if (successData is ApiResponse<*>) {
+                        if (successData.data is List<*>) {
+                            projects = successData.data as List<OrgProjectResponse>
+                            projectId = projects?.firstOrNull()?.id
                         }
-
-                    } catch (ex: Exception) {
-                        ex.printStackTrace()
                     }
-                }
-                else -> {}
-            }
-        }.launchIn(mainScope)
 
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+            else {}
+        }.launchIn(mainScope)
         generateWeek(selectedDate)
+    }
+
+    useEffect {
+
     }
 
     Box {
@@ -158,6 +186,7 @@ val JsTimeLoggingScreen = FC<Props> {
                     }
                 }
                 TabContext {
+                    value =  format(Date(selectedDate.toString()), "do iii") as String
                     Stack {
                         direction = responsive(StackDirection.column)
                         Box {
@@ -188,6 +217,8 @@ val JsTimeLoggingScreen = FC<Props> {
                                 value = format(Date(date.toString()), "do iii") as String
                                 DayContent {
                                     selectDate = date
+                                    isLoading = isLoadingWeekRecords
+                                    workWeek = work
                                 }
                             }
                         }
@@ -334,6 +365,18 @@ val JsTimeLoggingScreen = FC<Props> {
     }
 }
 
+fun fetchWeekRecords(
+    dataModel: TimeLogginDataModel,
+    first: String,
+    last: String,
+    userId: String,
+    function: (DataState) -> Unit
+) {
+    dataModel.getWorkLogsForDateRange(first, last, listOf(userId)).onEach {
+        function(it)
+    }.launchIn(dataModel.dataModelScope)
+}
+
 external interface NewEntryButtonProps : Props {
     var clicked: () -> Unit
 }
@@ -344,15 +387,15 @@ external interface SaveTimeButtonProps : Props {
     var date: String
     var note: String
     var workHours: Float
-    var dataModel: LogWorkTimeDataModel
+    var dataModel: TimeLogginDataModel
     var onDone: () -> Unit
 }
 
 val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
     var isSaving by useState(false)
-    if(isSaving){
+    if (isSaving) {
         CircularProgress()
-    }else{
+    } else {
         Button {
             variant = ButtonVariant.contained
             Typography {
@@ -383,7 +426,7 @@ val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
                                     props.onDone.invoke()
                                 }
                             }
-                        }.launchIn(mainScope)
+                        }.launchIn(props.dataModel.dataModelScope)
                     } ?: run {
                         println("userid null")
                     }
@@ -422,18 +465,40 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
 
 external interface DayContentProps : Props {
     var selectDate: LocalDate
+    var isLoading: Boolean
+    var workWeek: List<HarvestUserWorkResponse>?
 }
 
-val DayContent = FC<DayContentProps> {
+val DayContent = FC<DayContentProps> { props ->
     Container {
         sx {
-            backgroundColor = NamedColor.lightgray
             width = 100.pct
             minHeight = 25.pct
         }
 
-        Typography {
-            +"Time expands, then contracts, all in tune with the stirrings of the heart.\n– Haruki Murakami"
+        if (props.isLoading) {
+            CircularProgress()
         }
+
+        if (props.workWeek.isNullOrEmpty()) {
+            Typography {
+                +"Time expands, then contracts, all in tune with the stirrings of the heart.\n– Haruki Murakami"
+            }
+        } else {
+            List {
+                props.workWeek?.map { work ->
+                    ListItemText {
+                        primary = "Note: ${work.note.toString()}".toReactNode()
+                        secondary = "Time: ${work.workHours.toString()}".toReactNode()
+                    }
+                }
+            }
+        }
+
+
     }
+}
+
+private fun String.toReactNode(): ReactNode {
+    return ReactNode(this)
 }
