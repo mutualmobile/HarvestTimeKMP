@@ -23,8 +23,8 @@ import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
-import com.mutualmobile.harvestKmp.features.harvest.GetUserDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
 
 @Composable
 fun LandingScreenDrawer(
