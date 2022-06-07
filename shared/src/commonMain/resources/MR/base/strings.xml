@@ -57,4 +57,7 @@
     <string name="find_workspace_screen_signup_btn_txt">New Organization?\nSign up instead</string>
     <string name="find_workspace_screen_placeholder_txt">your-workspace</string>
     <string name="generic_error_msg">Unexpected error occurred!</string>
+    <string name="harvest_dialog_title">Alert</string>
+    <string name="harvest_dialog_confirm_btn_txt">OK</string>
+    <string name="harvest_dialog_dismiss_btn_txt">Cancel</string>
 </resources>

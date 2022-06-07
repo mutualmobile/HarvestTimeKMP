@@ -20,6 +20,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
@@ -28,6 +29,7 @@ import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
 
 @Composable
@@ -42,12 +44,14 @@ fun SignUpScreen(navController: NavHostController) {
         mutableStateOf(EmptyState)
     }
 
+    var signUpPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val signUpDataModel by remember {
         mutableStateOf(
             SignUpDataModel { signUpState ->
                 currentSignUpState = signUpState
             }.apply {
                 praxisCommand = { newCommand ->
+                    signUpPraxisCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
                             navController clearBackStackAndNavigateTo newCommand.screen
@@ -113,5 +117,14 @@ fun SignUpScreen(navController: NavHostController) {
                 }
             )
         }
+        HarvestDialog(
+            praxisCommand = signUpPraxisCommand,
+            onConfirm = {
+                signUpPraxisCommand = null
+            },
+            onDismiss = {
+                signUpPraxisCommand = null
+            }
+        )
     }
 }
