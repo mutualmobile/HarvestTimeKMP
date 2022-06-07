@@ -44,7 +44,6 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
@@ -52,6 +51,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -171,7 +171,7 @@ fun LandingScreen(
                     currentDrawerScreen = newScreen
                 },
                 goToSettingsScreen = {
-                    navController.navigate(ScreenList.SettingsScreen())
+                    navController.navigate(HarvestRoutes.Screen.SETTINGS)
                 },
                 organizationName = orgIdentifier
             )
@@ -196,7 +196,7 @@ fun LandingScreen(
                         currentDayOffset = dayOffset
                     },
                     goToNewEntryScreen = {
-                        navController.navigate(ScreenList.NewEntryScreen())
+                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
                     }
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()

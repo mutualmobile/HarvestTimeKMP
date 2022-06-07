@@ -2,12 +2,27 @@ package com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen
 
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.Scaffold
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.rememberScaffoldState
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,15 +38,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
-import com.google.accompanist.pager.*
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.HorizontalPager
+import com.google.accompanist.pager.HorizontalPagerIndicator
+import com.google.accompanist.pager.PagerState
+import com.google.accompanist.pager.VerticalPager
+import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.R
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.OnBoardingDataModel
 
 val OnBoardingImages = listOf(
@@ -60,7 +84,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                 currentBoardingState = signUpState
                 when (signUpState) {
                     is SuccessState<*> -> {
-                        navController clearBackStackAndNavigateTo ScreenList.LandingScreen()
+                        navController clearBackStackAndNavigateTo HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER
                     }
                     else -> Unit
                 }
@@ -155,7 +179,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
                                 isLoading = currentBoardingState is LoadingState,
                                 errorMsg = (currentBoardingState as? ErrorState)?.throwable?.message,
-                                onClick = { navController.navigate(ScreenList.FindWorkspaceScreen()) }
+                                onClick = { navController.navigate(HarvestRoutes.Screen.FIND_WORKSPACE) }
                             )
 
                             SurfaceTextButton(
@@ -165,7 +189,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                                         append(" Try Harvest Free")
                                     }
                                 },
-                                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
+                                onClick = { navController.navigate(HarvestRoutes.Screen.SIGNUP) }
                             )
 
                             Spacer(modifier = Modifier.padding(bottom = 8.dp))

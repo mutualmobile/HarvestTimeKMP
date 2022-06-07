@@ -25,7 +25,6 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
@@ -33,6 +32,8 @@ import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
@@ -40,7 +41,7 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDa
 
 @Composable
 fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
-    var currentWorkEmail by remember { mutableStateOf("anmol@mutualmobile.com") }
+    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
 
     var userState: DataState by remember { mutableStateOf(EmptyState) }
@@ -83,8 +84,9 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
         if (userState is SuccessState<*>) {
             orgIdentifier?.let { nnOrgIdentifier ->
                 println("Identifier is: $nnOrgIdentifier")
-                navController clearBackStackAndNavigateTo ScreenList.LandingScreen.orgIdentifierRoute(
-                    orgIdentifier = nnOrgIdentifier
+                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.ORG_USER_DASHBOARD.withOrgId(
+                    identifier = nnOrgIdentifier,
+                    id = null
                 )
             }
         }
@@ -128,13 +130,13 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
                         append(" Try Harvest Free")
                     }
                 },
-                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
+                onClick = { navController.navigate(HarvestRoutes.Screen.SIGNUP) }
             )
             SurfaceTextButton(
                 text = "View Tour",
                 fontWeight = FontWeight.Medium,
                 onClick = {
-                    navController clearBackStackAndNavigateTo ScreenList.OnBoardingScreen()
+                    navController clearBackStackAndNavigateTo HarvestRoutes.Screen.ON_BOARDING
                 }
             )
         }

@@ -40,7 +40,6 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.FindWorkspaceScreenTypography
@@ -49,6 +48,8 @@ import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
@@ -70,7 +71,7 @@ fun FindWorkspaceScreen(
     LaunchedEffect(findOrgState) {
         if (findOrgState is SuccessState<*>) {
             navController.navigate(
-                ScreenList.LoginScreen.orgIdentifierRoute(orgIdentifier = tfValue)
+                HarvestRoutes.Screen.LOGIN.withOrgId(identifier = tfValue, id = null)
             )
         }
     }
@@ -139,7 +140,7 @@ fun FindWorkspaceScreen(
                             .fillMaxWidth(if (findOrgState is ErrorState) 0.9f else 0f)
                             .padding(vertical = 4.dp),
                         onClick = {
-                            navController.navigate(ScreenList.NewOrgSignUpScreen())
+                            navController.navigate(HarvestRoutes.Screen.NEW_ORG_SIGNUP)
                         },
                     )
                 }
