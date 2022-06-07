@@ -1,18 +1,22 @@
 package orguser
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.data.network.UserRole
+import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
 import csstype.*
+import kotlinx.browser.window
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.internal.JSJoda.Clock
 import kotlinx.datetime.internal.JSJoda.LocalDate
+import kotlinx.js.jso
+import mui.icons.material.Check
 import mui.material.*
+import mui.material.MuiList.Companion.dense
 import mui.material.styles.TypographyVariant
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -26,10 +30,6 @@ import kotlin.js.Date
 
 val JsTimeLoggingScreen = FC<Props> {
 
-    val searchParams = useSearchParams()
-    val userId: String? = searchParams.component1().get(HarvestRoutes.Keys.id)
-    val projectId: String? = searchParams.component1().get(HarvestRoutes.Keys.id)
-
     var isLoading by useState(false)
     var message by useState("")
     val today = LocalDate.now(Clock.systemDefaultZone())
@@ -39,8 +39,11 @@ val JsTimeLoggingScreen = FC<Props> {
     var showTimeLogDialog by useState(false)
     val days = mutableListOf("Mon", "Tues", "Wed", "Thu", "Fri", "Sat", "Sun")
     val format: dynamic = kotlinext.js.require("date-fns").format
-    var res by useState<Unit>()
     val navigator = useNavigate()
+    var projects by useState<List<OrgProjectResponse>>()
+    var projectId by useState<String>()
+    var userId by useState<String>()
+    val mainScope = MainScope()
 
     var note by useState("")
     var workHours by useState(0.00f)
@@ -50,9 +53,15 @@ val JsTimeLoggingScreen = FC<Props> {
         when (dataState) {
             is SuccessState<*> -> {
                 try {
-                    val response = (dataState.data as ApiResponse<Unit>)
-                    res = response.data
-                } catch (ex: Exception){
+                    val successData = dataState.data
+                    if (successData is ApiResponse<*>) {
+                        if (successData.data is List<*>) {
+                            projects = successData.data as List<OrgProjectResponse>
+                            projectId = projects?.firstOrNull()?.id
+                        }
+                    }
+
+                } catch (ex: Exception) {
                     ex.printStackTrace()
                 }
             }
@@ -70,10 +79,10 @@ val JsTimeLoggingScreen = FC<Props> {
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
-                /*TODO*/
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
             }
             is ModalPraxisCommand -> {
-                /*TODO*/
+                window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
     }
@@ -88,6 +97,9 @@ val JsTimeLoggingScreen = FC<Props> {
     }
 
     useEffectOnce {
+        dataModel.activate()
+        userId = dataModel.getUser()?.uid
+        dataModel.getUserAssignedProjects(userId)
         generateWeek()
     }
 
@@ -157,37 +169,53 @@ val JsTimeLoggingScreen = FC<Props> {
                         flexGrow = number(1.0)
                         paddingBottom = 8.px
                     }
-                    variant = TypographyVariant.h4
+                    variant = TypographyVariant.h5
                     this.component = ReactHTML.div
                     +"Project / Task"
                 }
 
-                @Suppress("UPPER_BOUND_VIOLATED")
-                Autocomplete<AutocompleteProps<String>> {
-                    disablePortal = true
-                    sx {
-                        width = 300.px
-                        padding = 4.px
+                projects?.let {
+                    MenuList {
+                        projects?.map { project ->
+                            MenuItem {
+                                if (project.id == projectId) {
+                                    ListItemIcon {
+                                        Check {
+
+                                        }
+                                    }
+                                }
+                                value = project.id
+                                ListItemText {
+                                    primary = ReactNode(project.name ?: "")
+                                }
+                                onClick = {
+                                    projectId = project.id
+                                    println(projectId)
+                                }
+                            }
+                        }
                     }
-                    options = arrayOf("Project 1", "Project 2", "Project 3")
-                    renderInput = { params ->
-                        TextField.create {
-                            +params
-                            label = ReactNode("Projects")
+                } ?: run {
+                    MenuItem {
+                        value = ""
+                        ListItemText {
+                            primary = ReactNode("Projects not available yet")
+                        }
+                        onClick = {
                         }
                     }
                 }
+
 
                 TextField {
                     sx {
                         padding = 4.px
                     }
-                    multiline = true
-                    rows = 4
-                    this.placeholder = "Notes (Optional)"
-                    this.variant = FormControlVariant.outlined
-                    this.value = note
-                    this.onChange = {
+                    placeholder = "Notes (Optional)"
+                    variant = FormControlVariant.outlined
+                    value = note
+                    onChange = {
                         val target = it.target as HTMLInputElement
                         note = target.value
                     }
@@ -197,13 +225,11 @@ val JsTimeLoggingScreen = FC<Props> {
                     sx {
                         padding = 4.px
                     }
-                    multiline = true
-                    rows = 4
-                    this.placeholder = "0.00"
-                    this.type = InputType.number
-                    this.variant = FormControlVariant.outlined
-                    this.value = workHours
-                    this.onChange = {
+                    placeholder = "0.00"
+                    type = InputType.number
+                    variant = FormControlVariant.outlined
+                    value = workHours
+                    onChange = {
                         val target = it.target as HTMLInputElement
                         workHours = target.value.toFloat()
                     }
@@ -216,26 +242,44 @@ val JsTimeLoggingScreen = FC<Props> {
                         padding = 4.px
                     }
                     Button {
-                        sx {
-                            padding = 4.px
-                        }
                         variant = ButtonVariant.contained
                         Typography {
                             +"Save Time"
                         }
                         sx {
                             paddingRight = 6.px
+                            paddingTop = 4.px
+                            paddingLeft = 4.px
                         }
                         onClick = {
-                            showTimeLogDialog = false
-                            dataModel.logWorkTime(
-                                null,
-                                projectId.toString(),
-                                userId.toString(),
-                                format(Date(selectedDate.toString()), "MMMM d LLLL") as String,
-                                workHours,
-                                note
-                            )
+                            projectId?.let {
+                                userId?.let {
+                                    dataModel.logWorkTime(
+                                        HarvestUserWorkRequest(
+                                            null,
+                                            projectId.toString(),
+                                            userId.toString(),
+                                            format(
+                                                Date(selectedDate.toString()),
+                                                "yyyy-MM-dd"
+                                            ) as String,
+                                            workHours,
+                                            note
+                                        )
+                                    ).onEach {
+                                        println(it)
+                                        when (it) {
+                                            is SuccessState<*> -> {
+                                                showTimeLogDialog = false
+                                            }
+                                        }
+                                    }.launchIn(mainScope)
+                                }?:run{
+                                    println("userid null")
+                                }
+                            }?:run{
+                                println("projectId null")
+                            }
                         }
                     }
 
@@ -284,6 +328,11 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
             }
         }
     }
+}
+
+external interface ProjectAutoComplete {
+    var label: String
+    var id: String
 }
 
 

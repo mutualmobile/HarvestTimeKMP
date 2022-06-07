@@ -21,7 +21,7 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
-    private val getUserUseCase = authApiUseCasesComponent.provideGetUserUseCase()
+    private val getUserUseCase = authApiUseCasesComponent.provideGetNetworkUserUseCase()
     private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
     fun getUser() {

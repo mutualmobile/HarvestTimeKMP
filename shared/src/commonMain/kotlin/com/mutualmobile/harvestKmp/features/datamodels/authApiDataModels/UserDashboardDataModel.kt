@@ -18,7 +18,8 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
     private val logoutUseCase = authApiUseCasesComponent.provideLogoutUseCase()
     private val userLoggedInUseCase = useCasesComponent.providerUserLoggedInUseCase()
-    private val getUserUseCase = authApiUseCasesComponent.provideGetUserUseCase()
+    private val getUserUseCase = authApiUseCasesComponent.provideGetNetworkUserUseCase()
+    private val harvestUserLocal = SharedComponent().provideHarvestUserLocal()
 
     override fun activate() {
         if (!userLoggedInUseCase.invoke()) {
@@ -33,6 +34,7 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
             onDataState(LoadingState)
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
+                    harvestUserLocal.saveUser(getUserResponse.data)
                     onDataState(SuccessState(getUserResponse.data))
                 }
                 is NetworkResponse.Failure -> {

@@ -27,24 +27,12 @@ class UserProjectApiImpl(private val httpClient: HttpClient) : UserProjectApi {
     }
 
     override suspend fun logWorkTime(
-        id: String?,
-        projectId: String,
-        userId: String,
-        workDate: String,
-        workHours: Float,
-        note: String?
+        harvestUserWorkRequest: HarvestUserWorkRequest
     ): NetworkResponse<ApiResponse<Unit>> = getSafeNetworkResponse {
         httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOG_WORK}") {
             contentType(ContentType.Application.Json)
             setBody(
-                HarvestUserWorkRequest(
-                    id = id,
-                    projectId = projectId,
-                    userId = userId,
-                    workDate = workDate,
-                    workHours = workHours,
-                    note = note
-                )
+                harvestUserWorkRequest
             )
         }
     }

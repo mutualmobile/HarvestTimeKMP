@@ -60,7 +60,7 @@ val JsWorkspaceFindScreen = VFC {
         subtitle = status
     }
 
-    Stack {
+    Container {
         sx {
             margin = Margin(24.px, 24.px)
         }
@@ -76,7 +76,7 @@ val JsWorkspaceFindScreen = VFC {
             +"Simple time tracking software and powerful reporting that helps your team thrive."
         }
 
-        Box {
+        Container {
             this.sx {
                 this.borderRadius = 25.px
                 this.borderColor = Color("#D3D3D3")
