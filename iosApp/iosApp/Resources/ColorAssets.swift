@@ -11,6 +11,7 @@ import SwiftUI
 enum ColorAssets: String {
     case colorBackground
     case white
+    case black
     
     var color: Color {
         Color(self.rawValue)

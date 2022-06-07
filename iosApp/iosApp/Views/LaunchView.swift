@@ -9,11 +9,25 @@
 import Foundation
 import SwiftUI
 
+extension Bool {
+    static var nahi: Bool { false }
+    static var han: Bool { true }
+}
+
+class LaunchStore: ObservableObject {
+    
+    // didFoundWorkspace
+    var sachMeyWorkspaceMilgaya: Bool = .nahi
+}
+
 struct LaunchView: View {
     
+    @ObservedObject var store = LaunchStore()
     @State private var selection = 0
-    @State private var loginPresented = false
-    @State private var signupPresented = false
+    @State private var presentWorkspace = false
+    @State private var foundWorkspace = false
+    @State private var presentSignin = false
+    @State private var presentSignup = false
     
     private var textList = [
         "launch-text-1",
@@ -61,14 +75,28 @@ struct LaunchView: View {
     
     var signinButton: some View {
         Button {
-            loginPresented = true
+            if store.sachMeyWorkspaceMilgaya == .han {
+                presentSignin = true
+            } else {
+                presentWorkspace = true
+            }
+            
         } label: {
             Text("Sign In")
                 .harvestButton()
         }
         .cornerRadius(15.0)
         .padding()
-        .fullScreenCover(isPresented: $loginPresented) {
+        .fullScreenCover(isPresented: $presentWorkspace,
+                         onDismiss: {
+            if foundWorkspace {
+                store.sachMeyWorkspaceMilgaya = .han
+                presentSignin = true
+            }
+        }, content: {
+            WorkspaceView(foundWorkspace: $foundWorkspace)
+        })
+        .fullScreenCover(isPresented: $presentSignin) {
             LoginView()
         }
     }
@@ -77,7 +105,7 @@ struct LaunchView: View {
         HStack {
             Text("Don't have an account?")
             Button {
-                signupPresented = true
+                presentSignup = true
             } label: {
                 Text("Try Harvest Free")
                     .font(.headline)
@@ -85,7 +113,7 @@ struct LaunchView: View {
         }
         .foregroundColor(ColorAssets.white.color)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 0))
-        .sheet(isPresented: $signupPresented) {
+        .sheet(isPresented: $presentSignup) {
             SignupView()
         }
     }

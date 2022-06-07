@@ -24,8 +24,8 @@ struct LoginView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var signupPresented = false
-    @State private var email = "anmol@mutualmobile.com"
-    @State private var password = "passw"
+    @State private var email = "anmol.verma4@gmail.com"
+    @State private var password = "password"
     
     @FocusState private var focusedField: Bool
     
@@ -131,7 +131,6 @@ struct LoginView: View {
     
     private func performLogin() {
         let loginDataModel = LoginDataModel { state in
-            print("state \(state)")
             if state is LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
@@ -150,8 +149,9 @@ struct LoginView: View {
         loginDataModel.login(email: email, password: password)
         
         loginDataModel.praxisCommand = { command in
+            print("command \(command)  \(type(of: command)) ")
             if let navigationCommand = (command as? NavigationPraxisCommand) {
-                print("navigationCommand.route \(navigationCommand.route)")
+                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
             }
         }
     }
