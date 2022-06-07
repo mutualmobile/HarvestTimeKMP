@@ -2,14 +2,16 @@ package orguser
 
 import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.listProjectsAssignedToUser
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
-import com.mutualmobile.harvestKmp.features.harvest.FindUsersInOrgDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgUsersApiDataModels.FindUsersInOrgDataModel
 import csstype.*
 import kotlinx.browser.window
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
+import org.w3c.dom.HTMLInputElement
 import react.*
 import react.router.useNavigate
 
@@ -21,12 +23,13 @@ val JsOrgUsersScreen = VFC {
     var currentPage by useState(0)
     val limit = 10
     var isLoading by useState(false)
+    var searchName by useState<String>()
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
         isLoading = stateNew is LoadingState
         when (stateNew) {
             is SuccessState<*> -> {
-                 try {
+                try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
                     users = response.data?.second
@@ -54,7 +57,7 @@ val JsOrgUsersScreen = VFC {
         dataModel.findUsers(
             userType = userType.toInt(),
             orgIdentifier = null, isUserDeleted = false,
-            0, limit
+            0, limit, searchName
         )
     }
 
@@ -67,39 +70,59 @@ val JsOrgUsersScreen = VFC {
             alignItems = AlignItems.baseline
         }
 
+        FormControl {
+            InputLabel {
+                +"User Type"
+            }
+
+            Select {
+                value = userType.unsafeCast<Nothing?>()
+                label = ReactNode("UserType")
+                onChange = { event, _ ->
+                    dataModel.findUsers(
+                        userType = event.target.value.toInt(),
+                        orgIdentifier = null, isUserDeleted = false,
+                        0, limit, searchName
+                    )
+                    userType = event.target.value
+                    currentPage = 0
+                }
+                MenuItem {
+                    value = UserRole.ORG_ADMIN.role
+                    +"Org Admins"
+                }
+                MenuItem {
+                    value = UserRole.ORG_USER.role
+                    +"Users"
+                }
+
+
+            }
+        }
+
+        FormControl {
+            InputLabel {
+                +"Search"
+            }
+            OutlinedInput {
+                placeholder = "Search by name"
+                onChange = {
+                    val target = it.target as HTMLInputElement
+                    searchName = target.value
+                    dataModel.findUsers(
+                        userType = userType.toInt(),
+                        orgIdentifier = null, isUserDeleted = false,
+                        0, limit, target.value
+                    )
+                    currentPage = 0
+                }
+            }
+        }
+
+
         if (isLoading) {
             CircularProgress()
         } else {
-            FormControl {
-                InputLabel {
-                    +"User Type"
-                }
-
-                Select {
-                    value = userType.unsafeCast<Nothing?>()
-                    label = ReactNode("UserType")
-                    onChange = { event, _ ->
-                        userType = event.target.value
-                        currentPage = 0
-                        dataModel.findUsers(
-                            userType = userType.toInt(),
-                            orgIdentifier = null, isUserDeleted = false,
-                            0, limit
-                        )
-                    }
-                    MenuItem {
-                        value = UserRole.ORG_ADMIN.role
-                        +"Org Admins"
-                    }
-                    MenuItem {
-                        value = UserRole.ORG_USER.role
-                        +"Users"
-                    }
-
-
-                }
-            }
-
             Pagination {
                 count = totalPages
                 page = currentPage
@@ -108,7 +131,7 @@ val JsOrgUsersScreen = VFC {
                     dataModel.findUsers(
                         userType = userType.toInt(),
                         orgIdentifier = null, isUserDeleted = false,
-                        value.toInt().minus(1), limit
+                        value.toInt().minus(1), limit, searchName
                     )
                 }
 
@@ -118,13 +141,23 @@ val JsOrgUsersScreen = VFC {
                     ListItem {
                         ListItemText {
                             primary = ReactNode("${user.firstName ?: ""} ${user.lastName ?: ""}")
-                            secondary =
-                                ReactNode("${user.email}")
+                            secondary = ReactNode("${user.email}")
+                        }
+                        IconButton {
+                            mui.icons.material.ArrowForwardIos()
+                            onClick = {
+                                navigator.invoke(
+                                    BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.LIST_PROJECTS_USER.listProjectsAssignedToUser(
+                                        userId = user.id
+                                    )
+                                )
+                            }
                         }
                     }
                 }
             }
         }
+
 
     }
     Fab {

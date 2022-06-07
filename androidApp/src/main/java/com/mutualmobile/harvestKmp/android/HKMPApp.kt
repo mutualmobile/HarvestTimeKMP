@@ -4,6 +4,7 @@ import android.app.Application
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.initSharedDependencies
+import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
@@ -22,9 +23,9 @@ class HKMPApp : Application() {
     }
 
     private suspend fun precheckSqlite() {
-        if (sharedComponent.provideGithubTrendingLocal().driver == null) {
+        if (sharedComponent.provideHarvestUserLocal().driver == null) {
             val driver = DriverFactory(context = this).createDriverBlocking()
-            sharedComponent.provideGithubTrendingLocal().driver = driver
+            sharedComponent.provideHarvestUserLocal().driver = driver
         }
     }
 }

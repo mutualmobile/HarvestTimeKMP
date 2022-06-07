@@ -9,14 +9,14 @@ const val BROWSER_AND = "&"
 data class NavigationPraxisCommand(val screen: String, val route: String? = null) : PraxisCommand()
 data class ModalPraxisCommand(val title: String, val message: String) : PraxisCommand()
 
-object Routes {
+object HarvestRoutes {
     object Keys {
         const val orgIdentifier = "orgIdentifier"
         const val orgId = "orgId"
+        const val id = "id"
     }
 
     object Screen {
-        const val TRENDING_UI = "trendingui"
         const val FORGOT_PASSWORD = "forgot-password"
         const val RESET_PASSWORD = "resetPassword"
         const val CHANGE_PASSWORD = "change-password"
@@ -28,8 +28,20 @@ object Routes {
         const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
         const val ORG_USER_DASHBOARD = "user-dashboard"
-        const val ORG_USER_FETCH = "user-data-fetch"
-        const val CREATE_PROJECT = "create-edit-project"
+        const val LIST_USERS_PROJECT = "list-user-project"
+        const val LIST_PROJECTS_USER = "list-projects-user"
+
+        fun String.listUsersWithProjectId(projectId: String?): String {
+            return this.plus(
+                BROWSER_QUERY + "${Keys.id}=${projectId ?: ""}"
+            )
+        }
+
+        fun String.listProjectsAssignedToUser(userId: String?): String {
+            return this.plus(
+                BROWSER_QUERY + "${Keys.id}=${userId ?: ""}"
+            )
+        }
 
         fun String.withOrgId(identifier: String?, id: String?): String {
             return this.plus(

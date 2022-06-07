@@ -51,7 +51,7 @@ import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.harvest.FindOrgByIdentifierDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
 
 @Composable
 fun FindWorkspaceScreen(

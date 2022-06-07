@@ -15,7 +15,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Ico
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.features.harvest.SignUpDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {

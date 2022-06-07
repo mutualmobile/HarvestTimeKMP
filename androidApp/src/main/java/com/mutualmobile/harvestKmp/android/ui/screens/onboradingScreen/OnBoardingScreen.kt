@@ -32,7 +32,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Sur
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.features.harvest.OnBoardingDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.OnBoardingDataModel
 
 val OnBoardingImages = listOf(
     R.drawable.onboarding_screen_1,

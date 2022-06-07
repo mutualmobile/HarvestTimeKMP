@@ -1,6 +1,8 @@
 package harvest.material
 
+import csstype.blur
 import csstype.number
+import csstype.px
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
@@ -22,6 +24,9 @@ val TopAppBar = FC<TopAppBarProps> { props ->
 
         AppBar {
             this.position = AppBarPosition.static
+            sx {
+                backdropFilter = blur(6.px)
+            }
 
             Toolbar {
                 Stack {
