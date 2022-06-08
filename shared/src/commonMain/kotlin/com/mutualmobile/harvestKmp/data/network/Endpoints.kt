@@ -42,7 +42,7 @@ object Endpoint {
     const val ASSIGN_PROJECT = "$API_URL$ORG_ADMIN/assign-user-project"
 
     const val LOG_WORK = "$USER_PROJECT/log-work"
-
+    const val GET_LOG_WORK = "$USER_PROJECT/get-work-log"
 
     object Params {
         const val START_DATE = "startDate"

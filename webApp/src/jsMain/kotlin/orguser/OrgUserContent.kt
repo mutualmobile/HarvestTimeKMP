@@ -14,13 +14,21 @@ import react.router.Routes
 
 val DEFAULT_PADDING = 30.px
 
-external interface OrgUserContentProps :Props{
-    var drawerItems:DrawerItems?
+external interface OrgUserContentProps : Props {
+    var drawerItems: DrawerItems?
+}
+
+val OffsetAppBar = VFC {
+    val themeContext by useContext(AppThemeContext)
+    Box {
+        sx {
+            padding = themeContext.mixins.toolbar
+        }
+    }
 }
 
 
-val OrgUserContent = FC<OrgUserContentProps> { props->
-    val themeContext by useContext(AppThemeContext)
+val OrgUserContent = FC<OrgUserContentProps> { props ->
     Routes {
         Route {
             path = "/"
@@ -29,20 +37,28 @@ val OrgUserContent = FC<OrgUserContentProps> { props->
                 sx {
                     padding = DEFAULT_PADDING
                 }
-                Box{
-                    sx{
-                        padding = themeContext.mixins.toolbar
-                    }
-                }
+                OffsetAppBar()
                 Outlet()
             }
 
             props.drawerItems?.forEachIndexed { i, (key, _, Component) ->
-                Route {
-                    index = i == 0
-                    path = key
-                    element = Component.create()
+                if (i == 0) {
+                    Route {
+                        index = true
+                        path = null
+                        element = Component.create()
+                    }
+                    Route {
+                        path = key
+                        element = Component.create()
+                    }
+                } else {
+                    Route {
+                        path = key
+                        element = Component.create()
+                    }
                 }
+
             }
             Route {
                 path = "*"

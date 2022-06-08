@@ -10,3 +10,7 @@
 .cxx
 local.properties
 kotlin-js-store
+*.xcbkptlist
+*.xcuserstate
+*.xcuserstate
+iosApp/iosApp.xcworkspace/xcuserdata/nasirahmedmomin.xcuserdatad/UserInterfaceState.xcuserstate

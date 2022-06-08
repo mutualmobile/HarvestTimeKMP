@@ -214,11 +214,10 @@ fun LandingScreen(
                     },
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
-                    },
-                    goToNewEntryScreen = {
-                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
                     }
-                )
+                ) {
+                    navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                }
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
         }

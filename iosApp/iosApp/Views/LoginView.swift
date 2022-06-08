@@ -23,10 +23,11 @@ struct LoginView: View {
     
     @Environment(\.dismiss) var dismiss
     
-    @State private var email = "anmol@mutualmobile.com"
-    @State private var password = "passw"
+    @State private var signupPresented = false
+    @State private var email = "anmol.verma4@gmail.com"
+    @State private var password = "password"
     
-    @FocusState private var nameIsFocused: Bool
+    @FocusState private var focusedField: Bool
     
     private var loginError: Binding<Bool> {
         Binding {
@@ -34,13 +35,12 @@ struct LoginView: View {
         } set: { _ in
             store.loginError = nil
         }
-
     }
     
     var body: some View {
         VStack {
-            googleSignInButton
-            LabelledDivider(label: "or", color: ColorAssets.white.color)
+//            googleSignInButton
+//            LabelledDivider(label: "or", color: ColorAssets.white.color)
             credentialView
             footerView
         }
@@ -70,7 +70,7 @@ struct LoginView: View {
             VStack {
                 TextField("Work Email", text: $email)
                     .padding(.bottom)
-                    .focused($nameIsFocused)
+                    .focused($focusedField)
                 
                 SecureField("Password", text: $password)
             }
@@ -81,12 +81,12 @@ struct LoginView: View {
                 .padding(.vertical)
         }
         .padding(.horizontal)
-        .onChange(of: nameIsFocused) { newValue in
+        .onChange(of: focusedField) { newValue in
             self.store.hasFocus = newValue
         }
         .onAppear {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
-                nameIsFocused = self.store.hasFocus
+                focusedField = self.store.hasFocus
             }
         }
         .alert(isPresented: loginError, error: store.loginError) {
@@ -108,7 +108,7 @@ struct LoginView: View {
             HStack {
                 Text("Don't have an account?")
                 Button {
-                    // TODO: (Nasir) Handle action
+                    signupPresented = true
                 } label: {
                     Text("Try Harvest Free")
                         .font(.headline)
@@ -124,19 +124,36 @@ struct LoginView: View {
             }
         }
         .foregroundColor(ColorAssets.white.color)
+        .sheet(isPresented: $signupPresented) {
+            SignupView()
+        }
     }
     
     private func performLogin() {
-        LoginDataModel { state in
+        let loginDataModel = LoginDataModel { state in
             if state is LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
-            } else if let error = state as? ErrorState {
+            } else {
                 store.showLoading = false
-                store.loginError = AppError(title: "Error",
-                                            message: error.throwable.message ?? "Login failure")
+                
+                if let error = state as? ErrorState {
+                    store.loginError = AppError(title: "Error",
+                                                message: error.throwable.message ?? "Login failure")
+                } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
+                    
+                }
             }
-        }.login(email: email, password: password)
+        }
+        
+        loginDataModel.login(email: email, password: password)
+        
+        loginDataModel.praxisCommand = { command in
+            print("command \(command)  \(type(of: command)) ")
+            if let navigationCommand = (command as? NavigationPraxisCommand) {
+                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
+            }
+        }
     }
 }
 
