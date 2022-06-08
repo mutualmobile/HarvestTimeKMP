@@ -1,17 +1,22 @@
 package com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.UserProjectUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
-class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Unit) :
+class AssignProjectsToUsersDataModel(var onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val userProjectUseCaseComponent = UserProjectUseCaseComponent()
     private val assignProjectsToUsersUseCase =
         userProjectUseCaseComponent.provideAssignProjectsToUsersUseCase()
@@ -28,16 +33,15 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
 
     fun assignProjectsToUsers(
         projectMap: HashMap<String, List<String>>
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
             when (val response =
                 assignProjectsToUsersUseCase(
                     projectMap = projectMap
                 )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data))
+                    this.emit(SuccessState(response.data))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Message",
@@ -46,7 +50,7 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
                     )
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
+                    this.emit(ErrorState(response.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Message",

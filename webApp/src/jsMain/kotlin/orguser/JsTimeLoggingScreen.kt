@@ -5,7 +5,7 @@ import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLoggingDataModel
 import csstype.*
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.launchIn
@@ -58,7 +58,7 @@ val JsTimeLoggingScreen = FC<Props> {
 
     var note by useState("")
     var workHours by useState(0.00f)
-    val dataModel = TimeLogginDataModel()
+    val dataModel = TimeLoggingDataModel()
 
     val userId = dataModel.userId
 
@@ -361,7 +361,7 @@ val JsTimeLoggingScreen = FC<Props> {
 }
 
 fun fetchWeekRecords(
-    dataModel: TimeLogginDataModel,
+    dataModel: TimeLoggingDataModel,
     first: String,
     last: String,
     userId: String,
@@ -382,7 +382,7 @@ external interface SaveTimeButtonProps : Props {
     var date: String
     var note: String
     var workHours: Float
-    var dataModel: TimeLogginDataModel
+    var dataModel: TimeLoggingDataModel
     var onDone: () -> Unit
 }
 

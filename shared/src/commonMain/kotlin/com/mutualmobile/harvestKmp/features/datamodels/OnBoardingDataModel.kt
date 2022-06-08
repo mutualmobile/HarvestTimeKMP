@@ -15,7 +15,6 @@ class OnBoardingDataModel(onDataState: (DataState) -> Unit) :
 
     override fun destroy() {
         dataModelScope.cancel()
-
     }
 
     override fun refresh() {

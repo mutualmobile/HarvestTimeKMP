@@ -9,34 +9,32 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.ForgotPasswordApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.component.KoinComponent
 
-class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
+class ForgotPasswordDataModel(var onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val forgotPasswordApiUseCaseComponent = ForgotPasswordApiUseCaseComponent()
     private val forgotPasswordUseCase =
         forgotPasswordApiUseCaseComponent.provideForgotPasswordUseCase()
 
-    fun forgotPassword(email: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    fun forgotPassword(email: String): Flow<DataState> {
+        return callbackFlow {
+            this.send(LoadingState)
 
             when (val response = forgotPasswordUseCase(
                 email = email
             )) {
                 is NetworkResponse.Success -> {
                     praxisCommand(ModalPraxisCommand("Response", response.data.message ?: "Woah!"))
-                    onDataState(SuccessState(response.data))
+                    this.send(SuccessState(response.data))
                     println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
+                    this.send(ErrorState(response.throwable))
                     println("FAILED, ${response.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {

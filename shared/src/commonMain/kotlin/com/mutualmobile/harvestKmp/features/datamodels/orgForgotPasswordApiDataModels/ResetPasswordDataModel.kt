@@ -11,15 +11,14 @@ import com.mutualmobile.harvestKmp.di.ForgotPasswordApiUseCaseComponent
 import com.mutualmobile.harvestKmp.domain.model.request.ResetPasswordRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.component.KoinComponent
 
-class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
+class ResetPasswordDataModel(var onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val forgotPasswordApiUseCaseComponent = ForgotPasswordApiUseCaseComponent()
     private val resetPasswordUseCase =
         forgotPasswordApiUseCaseComponent.provideResetPasswordUseCase()
@@ -35,10 +34,9 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
 
     }
 
-    fun resetPassword(password: String, token: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    fun resetPassword(password: String, token: String): Flow<DataState> {
+        return callbackFlow {
+            this.send(LoadingState)
             when (val changePasswordResponse =
                 resetPasswordUseCase(
                     ResetPasswordRequest(
@@ -55,11 +53,11 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                             )
                         )
                     }
-                    onDataState(SuccessState(changePasswordResponse.data))
+                    this.send(SuccessState(changePasswordResponse.data))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(changePasswordResponse.throwable))
+                    this.send(ErrorState(changePasswordResponse.throwable))
                 }
                 else -> {}
             }

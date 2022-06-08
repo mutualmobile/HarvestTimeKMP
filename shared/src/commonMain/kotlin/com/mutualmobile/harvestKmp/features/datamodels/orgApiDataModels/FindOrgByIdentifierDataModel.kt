@@ -12,30 +12,28 @@ import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.OrgApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.component.KoinComponent
 
-class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit) :
+class FindOrgByIdentifierDataModel(var onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val useCasesComponent = UseCasesComponent()
     private val userLoggedInUseCase = useCasesComponent.providerUserLoggedInUseCase()
     private val orgApiUseCasesComponent = OrgApiUseCaseComponent()
     private val findOrgByIdentifierUseCase = orgApiUseCasesComponent.provideFindOrgByIdentifier()
 
-    fun findOrgByIdentifier(identifier: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    fun findOrgByIdentifier(identifier: String): Flow<DataState> {
+        return callbackFlow {
+            this.send(LoadingState)
 
             when (val response = findOrgByIdentifierUseCase(
                 identifier = identifier
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data)) // TODO redundant
+                    this.send(SuccessState(response.data)) // TODO redundant
                     praxisCommand(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.LOGIN.withOrgId(
@@ -47,7 +45,7 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                     println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
+                    this.send(ErrorState(response.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Failed",

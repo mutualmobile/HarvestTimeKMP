@@ -13,18 +13,14 @@ import com.mutualmobile.harvestKmp.di.UserWorkUseCaseComponent
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import db.Harvest_user
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class TimeLogginDataModel(onDataState: (DataState) -> Unit = {}) :
+class TimeLoggingDataModel(onDataState: (DataState) -> Unit = {}) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val userProjectUseCaseComponent = UserProjectUseCaseComponent()
     private val logWorkTimeUseCase =
         userProjectUseCaseComponent.provideLogWorkTimeUseCase()

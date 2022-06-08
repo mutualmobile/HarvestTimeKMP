@@ -10,15 +10,14 @@ import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.OrgProjectsUseCaseComponent
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
-class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
+class OrgProjectsDataModel(var onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val orgProjectsUseCaseComponent = OrgProjectsUseCaseComponent()
     private val createProjectUseCase = orgProjectsUseCaseComponent.provideCreateProjectUseCase()
     private val updateProjectUseCase = orgProjectsUseCaseComponent.provideUpdateProjectUseCase()
@@ -41,10 +40,9 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
         isIndefinite: Boolean,
         startDate: String,
         endDate: String?
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
             when (val createProjectResponse = createProjectUseCase(
                 name = name,
                 client = client,
@@ -53,11 +51,11 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
                 endDate = endDate
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(createProjectResponse.data))
+                    this.emit(SuccessState(createProjectResponse.data))
                     println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(createProjectResponse.throwable))
+                    this.emit(ErrorState(createProjectResponse.throwable))
                     println("FAILED, ${createProjectResponse.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
@@ -76,10 +74,9 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
         startDate: String,
         endDate: String?,
         isIndefinite: Boolean,
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
             when (val updateProjectResponse = updateProjectUseCase(
                 id = id,
                 name = name,
@@ -91,10 +88,10 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
                     ?: throw RuntimeException("this should not be null")
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(updateProjectResponse.data))
+                    this.emit(SuccessState(updateProjectResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(updateProjectResponse.throwable))
+                    this.emit(ErrorState(updateProjectResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -107,18 +104,17 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun deleteProject(
         projectId: String
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
             when (val deleteProjectResponse = deleteProjectUseCase(
                 projectId = projectId
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(deleteProjectResponse.data))
+                    this.emit(SuccessState(deleteProjectResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(deleteProjectResponse.throwable))
+                    this.emit(ErrorState(deleteProjectResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

@@ -9,15 +9,14 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.OrgUsersApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
     PraxisDataModel(onDataState), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val orgUsersApiUseCaseComponent = OrgUsersApiUseCaseComponent()
     private val findUsersByOrgUseCase = orgUsersApiUseCaseComponent.provideFindUsersInOrgUseCase()
 
@@ -38,10 +37,9 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
         offset: Int,
         limit: Int,
         searchName: String?
-    ) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+    ): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
             when (val findUsersInOrgResponse = findUsersByOrgUseCase(
                 userType = userType,
                 orgIdentifier = orgIdentifier,
@@ -50,10 +48,10 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
                 limit = limit, searchName = searchName
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(findUsersInOrgResponse.data))
+                    this.emit(SuccessState(findUsersInOrgResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(findUsersInOrgResponse.throwable))
+                    this.emit(ErrorState(findUsersInOrgResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

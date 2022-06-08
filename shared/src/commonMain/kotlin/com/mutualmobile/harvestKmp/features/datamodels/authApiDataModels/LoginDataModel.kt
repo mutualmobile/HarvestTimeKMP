@@ -13,10 +13,11 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.callbackFlow
 import org.koin.core.component.KoinComponent
 
-class LoginDataModel(private val onDataState: (DataState) -> Unit) :
+class LoginDataModel(var onDataState: (DataState) -> Unit) :
     PraxisDataModel(onDataState), KoinComponent {
 
     private val useCasesComponent = UseCasesComponent()
@@ -35,15 +36,15 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
 
     }
 
-    fun login(email: String, password: String) {
-        dataModelScope.launch(exceptionHandler) {
-            onDataState(LoadingState)
+    fun login(email: String, password: String): Flow<DataState> {
+        return callbackFlow {
+            this.send(LoadingState)
             when (val loginResponse = loginUseCase(
                 email = email,
                 password = password
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(loginResponse.data))
+                    this.send(SuccessState(loginResponse.data))
                     saveToken(loginResponse)
                     praxisCommand(
                         NavigationPraxisCommand(
@@ -53,7 +54,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(loginResponse.throwable))
+                    this.send(ErrorState(loginResponse.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",
@@ -62,7 +63,7 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Unauthorized -> {
-                    onDataState(ErrorState(loginResponse.throwable))
+                    this.send(ErrorState(loginResponse.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",
