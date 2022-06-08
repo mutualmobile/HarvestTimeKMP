@@ -44,32 +44,30 @@ struct WeekView: View {
     private let verticalPadding: CGFloat = 4
     
     var body: some View {
-        List {
-            HStack(alignment: .center) {
-                ForEach(logHours.days) { day in
-                    Button {
-                        daySelection(day)
-                    } label: {
-                        VStack {
-                            Text(day.tuple.name)
-                                .padding(EdgeInsets(top: verticalPadding,
-                                                    leading: horizontalPadding,
-                                                    bottom: verticalPadding,
-                                                    trailing: horizontalPadding))
-                                .background(circleFilledColor(for: day))
-                                .clipShape(Circle())
-                                .foregroundColor(cicleTextColor(for: day))
-                            
-                            Text(day.tuple.hours)
-                                .foregroundColor(hourTextColor(for: day))
-                        }
-                        .frame(maxWidth: .infinity)
+        HStack(alignment: .center) {
+            ForEach(logHours.days) { day in
+                Button {
+                    daySelection(day)
+                } label: {
+                    VStack {
+                        Text(day.tuple.name)
+                            .padding(EdgeInsets(top: verticalPadding,
+                                                leading: horizontalPadding,
+                                                bottom: verticalPadding,
+                                                trailing: horizontalPadding))
+                            .background(circleFilledColor(for: day))
+                            .clipShape(Circle())
+                            .foregroundColor(cicleTextColor(for: day))
+                        
+                        Text(day.tuple.hours)
+                            .foregroundColor(hourTextColor(for: day))
                     }
-                    .buttonStyle(BorderlessButtonStyle())
+                    .frame(maxWidth: .infinity)
                 }
+                .buttonStyle(BorderlessButtonStyle())
             }
-            .font(.caption2)
         }
+        .font(.caption2)
     }
     
     private func circleFilledColor(for day: WeekLogHour.Day) -> Color? {

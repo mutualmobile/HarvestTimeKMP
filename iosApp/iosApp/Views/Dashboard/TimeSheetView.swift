@@ -30,8 +30,6 @@ class TimeSheetStore: ObservableObject {
             self.logHour.selectedDay = day
             self.logHour.today = nil
         }
-        
-
     }
 }
 
@@ -39,9 +37,55 @@ struct TimeSheetView: View {
     
     @ObservedObject var store = TimeSheetStore()
     
+    @State private var calenderTapped = false
+    @State private var infoTapped = false
+    @State private var moreTapped = false
+    
     var body: some View {
-        WeekView(logHours: store.logHour) { selectedDay in
-            store.validate(for: selectedDay)
+        VStack {
+            headerView
+            ScrollView(.horizontal) {
+                
+            }
         }
+    }
+    
+    private var headerView: some View {
+        VStack {
+            HStack {
+                Text("Monday, 06 June")
+                    .padding(.leading)
+                Spacer()
+                Button {
+                    calenderTapped = true
+                } label: {
+                    Image(systemName: "calendar")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding(.trailing)
+                
+                Button {
+                    infoTapped = true
+                } label: {
+                    Image(systemName: "info.circle")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding(.trailing)
+                
+                Button {
+                    moreTapped = true
+                } label: {
+                    Image(systemName: "ellipsis")
+                }
+                .buttonStyle(BorderlessButtonStyle())
+                .padding(.trailing)
+                
+            }
+            WeekView(logHours: store.logHour) { selectedDay in
+                store.validate(for: selectedDay)
+            }
+        }
+        .padding(.vertical)
+        .background(.quaternary)
     }
 }
