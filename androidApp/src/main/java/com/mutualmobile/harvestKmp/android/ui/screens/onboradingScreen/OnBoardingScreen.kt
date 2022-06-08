@@ -161,7 +161,7 @@ fun OnBoardingScreen(navController: NavHostController) {
 
                             SurfaceTextButton(
                                 text = noAccountAnnotatedString(),
-                                onClick = { navController.navigate(HarvestRoutes.Screen.SIGNUP) }
+                                onClick = { navController.navigate(HarvestRoutes.Screen.NEW_ORG_SIGNUP) }
                             )
 
                             Spacer(modifier = Modifier.padding(bottom = 8.dp))

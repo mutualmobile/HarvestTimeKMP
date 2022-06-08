@@ -189,17 +189,15 @@ fun LandingScreen(
         ) { drawerScreenState ->
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
-                    navController = navController,
                     onWeekScrolled = { weekOffset ->
                         currentDayOffset += weekOffset.times(WeekDays.values().size)
                     },
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
-                    },
-                    goToNewEntryScreen = {
-                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
                     }
-                )
+                ) {
+                    navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                }
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
         }
