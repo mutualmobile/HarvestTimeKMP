@@ -17,6 +17,9 @@ import com.google.accompanist.pager.PagerState
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import kotlin.math.absoluteValue
 import kotlin.math.max
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @SuppressLint("UnnecessaryComposedModifier")
 @OptIn(ExperimentalPagerApi::class)
@@ -68,14 +71,24 @@ fun Int.floorMod(other: Int): Int = when (other) {
     else -> this - floorDiv(other) * other
 }
 
+private val currentDayName = Clock
+    .System
+    .now()
+    .toLocalDateTime(TimeZone.currentSystemDefault())
+    .dayOfWeek
+    .name
+    .substring(startIndex = 0, endIndex = 3)
+
+val currentDayIndex = WeekDays.valueOf(currentDayName).ordinal
+
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.currentPageIndex(
     indexOffset: Int,
     numberOfDays: Int = WeekDays.values().size,
-) = (currentPage - indexOffset).floorMod(numberOfDays)
+) = (currentPage - indexOffset + currentDayIndex).floorMod(numberOfDays)
 
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.targetPageIndex(
     indexOffset: Int,
     numberOfDays: Int = WeekDays.values().size,
-) = (targetPage - indexOffset).floorMod(numberOfDays)
+) = (targetPage - indexOffset + currentDayIndex).floorMod(numberOfDays)
