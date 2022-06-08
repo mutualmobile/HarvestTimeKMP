@@ -9,48 +9,29 @@
 import SwiftUI
 
 class TimeSheetStore: ObservableObject {
-    @Published var selectedDay: Day?
-    
-    var days: [Day]
+    var logHour: WeekLogHour
 
     init() {
-        self.days = TimeSheetStore.getDays()
+        self.logHour = WeekLogHour(saturday: 0.0,
+                                   sunday: 0.0,
+                                   monday: 3.0,
+                                   tuesday: 8.00,
+                                   wednesday: 8.0,
+                                   thursday: 4.30,
+                                   friday: 1.2)
     }
     
-    
-    // TODO: As of now it act as network service
-    static func getDays() -> [Day] {
-        return [
-            .saturday(0.0, false, false),
-            .sunday(0.0, false, false),
-            .monday(8.0, false, false),
-            .tuesday(8.556, false, false),
-            .wednesday(9.87, false, false),
-            .thursday(0.0, false, false),
-            .friday(0.0, false, false)
-        ]
-    }
-    
-    func validate(for day: Day?) {
-        if var day = day {
-            
-            let index = day.index
-            
-            var days = TimeSheetStore.getDays()
-            
-            days.remove(at: index)
-            
-            if case .tuesday = day {
-                day.setMatched(true)
-            } else {
-                day.setSelected(true)
-            }
-            
-            days.insert(day, at: index)
-
-            self.days = days
-            selectedDay = day
+    func validate(for day: WeekLogHour.Day) {
+        objectWillChange.send()
+        if case .wednesday(_) = day {
+            self.logHour.today = day
+            self.logHour.selectedDay = nil
+        } else {
+            self.logHour.selectedDay = day
+            self.logHour.today = nil
         }
+        
+
     }
 }
 
@@ -58,16 +39,9 @@ struct TimeSheetView: View {
     
     @ObservedObject var store = TimeSheetStore()
     
-    var selectedDay: Binding<Day?> {
-        Binding {
-            store.selectedDay
-        } set: { value in
-            store.validate(for: value)
-        }
-
-    }
-    
     var body: some View {
-        WeekView(seletedDay: selectedDay, days: store.days)
+        WeekView(logHours: store.logHour) { selectedDay in
+            store.validate(for: selectedDay)
+        }
     }
 }
