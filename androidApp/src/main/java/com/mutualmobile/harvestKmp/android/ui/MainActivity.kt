@@ -20,12 +20,15 @@ import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.findWorkspaceScreen.FindWorkspaceScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.ForgotPasswordScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.password.ChangePasswordScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
-
+import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsScreen
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,10 +47,10 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = ScreenList.OnBoardingScreen(),
                     ) {
-                        composable(ScreenList.OnBoardingScreen()){
+                        composable(ScreenList.OnBoardingScreen()) {
                             OnBoardingScreen(navController = navController)
                         }
-                        composable(ScreenList.ExistingOrgSignUpScreen()){
+                        composable(ScreenList.ExistingOrgSignUpScreen()) {
                             SignUpScreen(navController = navController)
                         }
                         composable(ScreenList.NewOrgSignUpScreen()) {
@@ -57,10 +60,22 @@ class MainActivity : ComponentActivity() {
                             LoginScreen(navController = navController)
                         }
                         composable(ScreenList.LandingScreen()) {
-                            LandingScreen()
+                            LandingScreen(navController = navController)
                         }
                         composable(ScreenList.FindWorkspaceScreen()) {
                             FindWorkspaceScreen(navController = navController)
+                        }
+                        composable(ScreenList.NewEntryScreen()) {
+                            NewEntryScreen(navController = navController)
+                        }
+                        composable(ScreenList.ForgotPasswordScreen()) {
+                            ForgotPasswordScreen(navController = navController)
+                        }
+                        composable(ScreenList.ChangePasswordScreen()) {
+                            ChangePasswordScreen(navController = navController)
+                        }
+                        composable(ScreenList.SettingsScreen()) {
+                            SettingsScreen(navController = navController)
                         }
                     }
                 }

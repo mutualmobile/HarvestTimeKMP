@@ -57,4 +57,8 @@
     <string name="find_workspace_screen_signup_btn_txt">New Organization?\nSign up instead</string>
     <string name="find_workspace_screen_placeholder_txt">your-workspace</string>
     <string name="generic_error_msg">Unexpected error occurred!</string>
+    <string name="save">Save</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="request_reset_password">Request Reset Password</string>
+    <string name="change_password">Change Password</string>
 </resources>

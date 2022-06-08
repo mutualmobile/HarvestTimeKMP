@@ -21,7 +21,7 @@ class SettingsActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    SettingsScreen()
+                  //  SettingsScreen()
                 }
             }
         }

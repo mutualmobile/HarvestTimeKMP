@@ -9,6 +9,7 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.ForgotPasswordApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
+import io.ktor.util.network.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch

@@ -40,6 +40,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
+import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
@@ -53,7 +54,7 @@ import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun LandingScreen() {
+fun LandingScreen(navController: NavController) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
     val scaffoldState = ScaffoldState(
@@ -147,6 +148,7 @@ fun LandingScreen() {
         drawerShape = landingScreenDrawerShape(),
         drawerContent = {
             LandingScreenDrawer(
+                navController=navController,
                 currentDrawerScreen = currentDrawerScreen,
                 closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } },
                 onScreenChanged = { newScreen: LandingScreenDrawerItemType ->
@@ -167,6 +169,7 @@ fun LandingScreen() {
         ) { drawerScreenState ->
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
+                    navController = navController,
                     onWeekScrolled = { weekOffset ->
                         currentWeekOffset = weekOffset
                     },

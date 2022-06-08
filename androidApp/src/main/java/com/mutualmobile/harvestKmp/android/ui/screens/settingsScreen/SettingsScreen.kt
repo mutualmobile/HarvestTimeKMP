@@ -19,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
@@ -27,7 +29,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.components.
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.components.NotificationsSection
 
 @Composable
-fun SettingsScreen() {
+fun SettingsScreen(navController: NavHostController) {
     val activity = LocalContext.current as Activity
     Scaffold(
         topBar = {
@@ -54,7 +56,7 @@ fun SettingsScreen() {
                 .navigationBarsPadding(),
         ) {
             NotificationsSection()
-            AccountSection()
+            AccountSection(navController)
             AboutHarvestSection()
         }
     }

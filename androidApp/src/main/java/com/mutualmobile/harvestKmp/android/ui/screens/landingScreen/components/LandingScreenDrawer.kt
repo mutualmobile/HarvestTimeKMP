@@ -14,11 +14,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsActivity
 
 @Composable
 fun LandingScreenDrawer(
+    navController: NavController,
     currentDrawerScreen: LandingScreenDrawerItemType,
     closeDrawer: () -> Unit,
     onScreenChanged: (LandingScreenDrawerItemType) -> Unit,
@@ -43,12 +46,11 @@ fun LandingScreenDrawer(
         thickness = 0.6.dp
     )
 
-    SettingsButton()
+    SettingsButton(navController)
 }
 
 @Composable
-private fun SettingsButton() {
-    val activity = LocalContext.current as Activity
+private fun SettingsButton(navController: NavController) {
     Text(
         text = stringResource(id = MR.strings.drawer_settings_btn_txt.resourceId),
         style = MaterialTheme.typography.subtitle2.copy(
@@ -57,7 +59,7 @@ private fun SettingsButton() {
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                activity.startActivity(Intent(activity, SettingsActivity::class.java))
+                navController.navigate(ScreenList.SettingsScreen())
             }
             .padding(16.dp),
     )
