@@ -96,6 +96,8 @@ fun LandingScreen(
 
     var isWorkLoading by remember { mutableStateOf(false) }
 
+    var currentWeekLogsTotalTime by remember { mutableStateOf("0.00") }
+
     BackHandler(enabled = scaffoldDrawerState.isOpen) {
         coroutineScope.launch { scaffoldDrawerState.close() }
     }
@@ -180,7 +182,7 @@ fun LandingScreen(
                                     Text(
                                         text = stringResource(
                                             MR.strings.landing_screen_dropdown_week_total_option.resourceId,
-                                            "0.00"
+                                            currentWeekLogsTotalTime
                                         ),
                                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
                                     )
@@ -238,6 +240,9 @@ fun LandingScreen(
                     onWeekOffsetChanged = { updatedOffset ->
                         localWeekOffset += updatedOffset
                     },
+                    onUpdateWeekLogsTotalTime = { updatedTime ->
+                        currentWeekLogsTotalTime = updatedTime
+                    }
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }

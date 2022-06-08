@@ -45,6 +45,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.numberOfW
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
+import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
@@ -76,7 +77,8 @@ fun TimeScreen(
     goToNewEntryScreen: () -> Unit,
     isWorkLoading: (Boolean) -> Unit,
     navigateToFindWorkspaceScreen: () -> Unit,
-    onWeekOffsetChanged: (Int) -> Unit
+    onWeekOffsetChanged: (Int) -> Unit,
+    onUpdateWeekLogsTotalTime: (String) -> Unit
 ) {
     var getUserState: DataState by remember { mutableStateOf(EmptyState) }
     val getUserDataModel by remember { mutableStateOf(
@@ -125,7 +127,7 @@ fun TimeScreen(
                     timeLoggingDataModel.getWorkLogsForDateRange(
                         startDate = dateRangeStart.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
                         endDate = dateRangeEnd.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
-                        userIds = listOf(nnUserId)
+                        userIds = listOf("c8763569-8c61-44ac-94c2-b2786db5b7e7")
                     ).collect { newState ->
                         currentWeekWorkLogs = emptyList()
                         isWorkLoading(newState is LoadingState)
@@ -134,7 +136,12 @@ fun TimeScreen(
                                 (newState as? SuccessState<ApiResponse<List<HarvestUserWorkResponse>>>)
                                     ?.data?.data?.let { apiWorkLogs ->
                                         currentWeekWorkLogs = apiWorkLogs
-                                    }
+                                        var totalWeekTime = 0f
+                                        apiWorkLogs.forEach { apiWorkLog ->
+                                            totalWeekTime += apiWorkLog.workHours
+                                        }
+                                        onUpdateWeekLogsTotalTime(totalWeekTime.toDecimalString())
+                                    } ?: onUpdateWeekLogsTotalTime(0f.toDecimalString())
                             }
                             else -> Unit
                         }
