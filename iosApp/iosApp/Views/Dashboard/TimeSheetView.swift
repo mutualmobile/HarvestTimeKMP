@@ -41,6 +41,8 @@ struct TimeSheetView: View {
     @State private var infoTapped = false
     @State private var moreTapped = false
     
+    @DateHandler private var headerDate = Date()
+    
     var body: some View {
         VStack {
             headerView
@@ -53,7 +55,7 @@ struct TimeSheetView: View {
     private var headerView: some View {
         VStack {
             HStack {
-                Text("Monday, 06 June")
+                Text($headerDate)
                     .padding(.leading)
                 Spacer()
                 Button {

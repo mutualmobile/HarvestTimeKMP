@@ -26,6 +26,8 @@
 		312A6938284F6454000A2CD9 /* TimeSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6937284F6454000A2CD9 /* TimeSheetView.swift */; };
 		312A693A284F646D000A2CD9 /* ReportSheetView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6939284F646D000A2CD9 /* ReportSheetView.swift */; };
 		312A693C284F6476000A2CD9 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A693B284F6476000A2CD9 /* AccountView.swift */; };
+		313DE4A328509290004CC0B0 /* DateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A228509290004CC0B0 /* DateHandler.swift */; };
+		313DE4A6285092B6004CC0B0 /* StringTrimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A5285092B6004CC0B0 /* StringTrimmer.swift */; };
 		313E37C92837996E00CA7E57 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 313E37C82837996E00CA7E57 /* Colors.xcassets */; };
 		313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E37CA283799CF00CA7E57 /* ColorAssets.swift */; };
 		7555FF83242A565900829871 /* GithubTrendingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* GithubTrendingUI.swift */; };
@@ -54,6 +56,8 @@
 		312A6937284F6454000A2CD9 /* TimeSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeSheetView.swift; sourceTree = "<group>"; };
 		312A6939284F646D000A2CD9 /* ReportSheetView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReportSheetView.swift; sourceTree = "<group>"; };
 		312A693B284F6476000A2CD9 /* AccountView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountView.swift; sourceTree = "<group>"; };
+		313DE4A228509290004CC0B0 /* DateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHandler.swift; sourceTree = "<group>"; };
+		313DE4A5285092B6004CC0B0 /* StringTrimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringTrimmer.swift; sourceTree = "<group>"; };
 		313E37C82837996E00CA7E57 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		313E37CA283799CF00CA7E57 /* ColorAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssets.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -91,6 +95,7 @@
 			children = (
 				312A691B284A4234000A2CD9 /* Models */,
 				312A691D284A4234000A2CD9 /* Views */,
+				313DE4A428509299004CC0B0 /* Utils */,
 			);
 			path = "Reusable Common Components";
 			sourceTree = "<group>";
@@ -136,6 +141,15 @@
 				312A693B284F6476000A2CD9 /* AccountView.swift */,
 			);
 			path = Dashboard;
+			sourceTree = "<group>";
+		};
+		313DE4A428509299004CC0B0 /* Utils */ = {
+			isa = PBXGroup;
+			children = (
+				313DE4A228509290004CC0B0 /* DateHandler.swift */,
+				313DE4A5285092B6004CC0B0 /* StringTrimmer.swift */,
+			);
+			path = Utils;
 			sourceTree = "<group>";
 		};
 		313E37CD28379EF800CA7E57 /* Resources */ = {
@@ -338,7 +352,9 @@
 				312A6928284A4249000A2CD9 /* LoginView.swift in Sources */,
 				312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */,
 				312A6921284A4234000A2CD9 /* AppError.swift in Sources */,
+				313DE4A6285092B6004CC0B0 /* StringTrimmer.swift in Sources */,
 				312A693A284F646D000A2CD9 /* ReportSheetView.swift in Sources */,
+				313DE4A328509290004CC0B0 /* DateHandler.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				89D841732779D83600D08BC0 /* GithubTrendingVM.swift in Sources */,
 				312A692D284A4FB8000A2CD9 /* SignupView.swift in Sources */,
