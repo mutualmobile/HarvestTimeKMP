@@ -9,10 +9,18 @@
 import Foundation
 import SwiftUI
 
+class LaunchStore: ObservableObject {
+    var didFoundWorkspace = false
+}
+
 struct LaunchView: View {
     
+    @ObservedObject var store = LaunchStore()
     @State private var selection = 0
-    @State private var loginPresented = false
+    @State private var presentWorkspace = false
+    @State private var foundWorkspace = false
+    @State private var presentSignin = false
+    @State private var presentSignup = false
     
     private var textList = [
         "launch-text-1",
@@ -60,14 +68,28 @@ struct LaunchView: View {
     
     var signinButton: some View {
         Button {
-            loginPresented = true
+            if store.didFoundWorkspace {
+                presentSignin = true
+            } else {
+                presentWorkspace = true
+            }
+            
         } label: {
             Text("Sign In")
                 .harvestButton()
         }
         .cornerRadius(15.0)
         .padding()
-        .fullScreenCover(isPresented: $loginPresented) {
+        .fullScreenCover(isPresented: $presentWorkspace,
+                         onDismiss: {
+            if foundWorkspace {
+                store.didFoundWorkspace = true
+                presentSignin = true
+            }
+        }, content: {
+            WorkspaceView(foundWorkspace: $foundWorkspace)
+        })
+        .fullScreenCover(isPresented: $presentSignin) {
             LoginView()
         }
     }
@@ -76,7 +98,7 @@ struct LaunchView: View {
         HStack {
             Text("Don't have an account?")
             Button {
-                // TODO: (Nasir) Handle action
+                presentSignup = true
             } label: {
                 Text("Try Harvest Free")
                     .font(.headline)
@@ -84,6 +106,9 @@ struct LaunchView: View {
         }
         .foregroundColor(ColorAssets.white.color)
         .padding(EdgeInsets(top: 0, leading: 0, bottom: 40, trailing: 0))
+        .sheet(isPresented: $presentSignup) {
+            SignupView()
+        }
     }
 }
 
