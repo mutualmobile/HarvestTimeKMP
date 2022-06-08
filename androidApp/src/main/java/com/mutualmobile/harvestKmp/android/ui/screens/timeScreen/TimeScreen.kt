@@ -1,7 +1,11 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.timeScreen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -11,7 +15,12 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -23,10 +32,11 @@ import androidx.compose.ui.unit.sp
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
+import com.google.accompanist.pager.PagerState
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.TimeCard
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekScroller
+import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentDayIndex
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentPageIndex
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.floorMod
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
@@ -40,6 +50,8 @@ const val MaxItemFling = 1
 @OptIn(ExperimentalPagerApi::class, ExperimentalSnapperApi::class)
 @Composable
 fun TimeScreen(
+    pagerState: PagerState,
+    startIndex: Int,
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
     goToNewEntryScreen: () -> Unit,
@@ -60,10 +72,6 @@ fun TimeScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             val numberOfDays by remember { mutableStateOf(WeekDays.values().size) }
-
-            val startIndex by remember { mutableStateOf(Int.MAX_VALUE.div(2)) }
-
-            val pagerState = rememberPagerState(initialPage = startIndex)
 
             val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
 
@@ -138,7 +146,11 @@ fun TimeScreen(
                 modifier = Modifier.fillMaxSize(),
                 verticalAlignment = Alignment.CenterVertically,
             ) { currentPageIndex ->
-                val currentIndex = (currentPageIndex - startIndex).floorMod(numberOfDays)
+                val currentIndex by remember(currentPageIndex) {
+                    derivedStateOf {
+                        (currentPageIndex - startIndex + currentDayIndex).floorMod(numberOfDays)
+                    }
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()

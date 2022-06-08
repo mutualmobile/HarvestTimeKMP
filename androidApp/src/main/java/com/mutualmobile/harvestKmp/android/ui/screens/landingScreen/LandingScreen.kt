@@ -22,6 +22,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDrawerState
@@ -43,6 +44,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
@@ -58,7 +61,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun LandingScreen(
     navController: NavHostController,
@@ -83,6 +86,9 @@ fun LandingScreen(
         }
     }
     var isDropDownMenuShown by remember { mutableStateOf(false) }
+
+    val timeScreenStartIndex by remember { mutableStateOf(Int.MAX_VALUE.div(2)) }
+    val timeScreenPagerState = rememberPagerState(initialPage = timeScreenStartIndex)
 
     BackHandler(enabled = scaffoldDrawerState.isOpen) {
         coroutineScope.launch { scaffoldDrawerState.close() }
@@ -127,6 +133,18 @@ fun LandingScreen(
                 actions = {
                     when (currentDrawerScreen) {
                         LandingScreenDrawerItemType.Time -> {
+                            if (timeScreenPagerState.currentPage != timeScreenStartIndex) {
+                                IconButton(onClick = {
+                                    coroutineScope.launch {
+                                        timeScreenPagerState.scrollToPage(timeScreenStartIndex)
+                                    }
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.DateRange,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
                             IconButton(
                                 onClick = { isDropDownMenuShown = true },
                             ) {
@@ -189,6 +207,8 @@ fun LandingScreen(
         ) { drawerScreenState ->
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
+                    pagerState = timeScreenPagerState,
+                    startIndex = timeScreenStartIndex,
                     onWeekScrolled = { weekOffset ->
                         currentDayOffset += weekOffset.times(WeekDays.values().size)
                     },

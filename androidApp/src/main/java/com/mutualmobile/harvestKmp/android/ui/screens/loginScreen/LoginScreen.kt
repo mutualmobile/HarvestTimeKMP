@@ -40,7 +40,7 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDa
 
 @Composable
 fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
-    var currentWorkEmail by remember { mutableStateOf("anmol@mutualmobile.com") }
+    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
 
     var userState: DataState by remember { mutableStateOf(EmptyState) }
