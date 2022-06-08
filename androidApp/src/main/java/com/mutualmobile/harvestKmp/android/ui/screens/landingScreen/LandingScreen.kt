@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -36,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
@@ -54,6 +56,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
@@ -89,6 +92,8 @@ fun LandingScreen(
 
     val timeScreenStartIndex by remember { mutableStateOf(Int.MAX_VALUE.div(2)) }
     val timeScreenPagerState = rememberPagerState(initialPage = timeScreenStartIndex)
+
+    var isWorkLoading by remember { mutableStateOf(false) }
 
     BackHandler(enabled = scaffoldDrawerState.isOpen) {
         coroutineScope.launch { scaffoldDrawerState.close() }
@@ -133,6 +138,11 @@ fun LandingScreen(
                 actions = {
                     when (currentDrawerScreen) {
                         LandingScreenDrawerItemType.Time -> {
+                            if (isWorkLoading) {
+                                CircularProgressIndicator(
+                                    color = Color.White
+                                )
+                            }
                             if (timeScreenPagerState.currentPage != timeScreenStartIndex) {
                                 IconButton(onClick = {
                                     coroutineScope.launch {
@@ -214,10 +224,15 @@ fun LandingScreen(
                     },
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
-                    }
-                ) {
-                    navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
-                }
+                    },
+                    goToNewEntryScreen = {
+                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                    },
+                    isWorkLoading = { isLoading ->
+                        isWorkLoading = isLoading
+                    },
+                    navigateToFindWorkspaceScreen = { navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE }
+                )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
         }

@@ -34,6 +34,7 @@ import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.PagerState
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.TimeCard
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekScroller
@@ -43,6 +44,17 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.floorMod
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
+import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
 import kotlin.time.Duration.Companion.days
@@ -60,6 +72,8 @@ fun TimeScreen(
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
     goToNewEntryScreen: () -> Unit,
+    isWorkLoading: (Boolean) -> Unit,
+    navigateToFindWorkspaceScreen: () -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
@@ -78,12 +92,20 @@ fun TimeScreen(
         Column(modifier = Modifier.fillMaxSize()) {
             val numberOfDays by remember { mutableStateOf(WeekDays.values().size) }
             var localWeekOffset by remember { mutableStateOf(0) }
+
+            var getUserState: DataState by remember { mutableStateOf(EmptyState) }
+            val getUserDataModel by remember { mutableStateOf(
+                GetUserDataModel { newState ->
+                    getUserState = newState
+                }.activate()
+            ) }
+
+            //TODO: Make this business logic common/shared
             val dateRangeStart by remember(localWeekOffset) {
                 mutableStateOf(
                     Clock.System.now()
                         .minus(currentDayIndex.days)
                         .plus((localWeekOffset * 7).days)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
                 )
             }
             val dateRangeEnd by remember(localWeekOffset) {
@@ -91,8 +113,51 @@ fun TimeScreen(
                     Clock.System.now()
                         .plus((WeekDays.values().lastIndex - currentDayIndex).days)
                         .plus((localWeekOffset * 7).days)
-                        .toLocalDateTime(TimeZone.currentSystemDefault())
                 )
+            }
+
+            var currentWeekWorkLogs by remember {
+                mutableStateOf(emptyList<HarvestUserWorkResponse>())
+            }
+            var timeLoggingPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
+            val timeLoggingDataModel by remember { mutableStateOf(TimeLogginDataModel().apply {
+                praxisCommand = { newCommand ->
+                    timeLoggingPraxisCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navigateToFindWorkspaceScreen()
+                            }
+                        }
+                    }
+                }
+            }) }
+
+            LaunchedEffect(localWeekOffset, getUserState) {
+                when (getUserState) {
+                    is SuccessState<*> -> {
+                        (getUserState as? SuccessState<GetUserResponse>)?.data?.id?.let { nnUserId ->
+                            timeLoggingDataModel.getWorkLogsForDateRange(
+                                startDate = dateRangeStart.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                                endDate = dateRangeEnd.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                                userIds = listOf(nnUserId)
+                            ).collect { newState ->
+                                currentWeekWorkLogs = emptyList()
+                                isWorkLoading(newState is LoadingState)
+                                when (newState) {
+                                    is SuccessState<*> -> {
+                                        (newState as? SuccessState<ApiResponse<List<HarvestUserWorkResponse>>>)
+                                            ?.data?.data?.let { apiWorkLogs ->
+                                                currentWeekWorkLogs = apiWorkLogs
+                                            }
+                                    }
+                                    else -> Unit
+                                }
+                            }
+                        }
+                    }
+                    else -> Unit
+                }
             }
 
             val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
@@ -177,6 +242,18 @@ fun TimeScreen(
                         (currentPageIndex - startIndex + currentDayIndex).floorMod(numberOfDays)
                     }
                 }
+                val currentPageDate by remember(currentIndex) {
+                    mutableStateOf(dateRangeStart
+                        .plus(currentIndex.days)
+                        .toLocalDateTime(TimeZone.currentSystemDefault()))
+                }
+                val currentPageWorkLogs by remember(currentWeekWorkLogs, currentPageDate) {
+                    mutableStateOf(
+                        currentWeekWorkLogs.filter { work ->
+                            work.workDate.substring(0, 10) == currentPageDate.toString().substring(0, 10)
+                        }
+                    )
+                }
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
@@ -184,15 +261,17 @@ fun TimeScreen(
                         .background(SurfaceColor),
                     contentAlignment = Alignment.Center
                 ) {
-                    if (currentIndex % 2 == 0) {
+                    if (currentPageWorkLogs.isNotEmpty()) {
                         LazyColumn(modifier = Modifier.fillMaxSize()) {
-                            item {
-                                TimeCard(
-                                    organisationName = "Mutual Mobile",
-                                    bucketName = "Android Department Work HYD",
-                                    time = 8.00f,
-                                    taskType = "Work"
-                                )
+                            currentPageWorkLogs.forEach { workLog ->
+                                item {
+                                    TimeCard(
+                                        organisationName = "Mutual Mobile",
+                                        bucketName = "Android Department Work HYD",
+                                        time = workLog.workHours,
+                                        taskType = "Work"
+                                    )
+                                }
                             }
                             item { Spacer(modifier = Modifier.navigationBarsPadding()) }
                         }
@@ -211,6 +290,9 @@ fun TimeScreen(
                     }
                 }
             }
+            HarvestDialog(praxisCommand = timeLoggingPraxisCommand, onConfirm = {
+                timeLoggingPraxisCommand = null
+            })
         }
     }
 }
