@@ -29,7 +29,7 @@ fun drawerItems(role: String): DrawerItems {
         UserRole.ORG_USER.role -> {
             return setOf(
                 DrawerItem(HarvestRoutes.Screen.ORG_TIME, "Time", JsTimeLoggingScreen),
-                DrawerItem(HarvestRoutes.Screen.ORG_PROJECTS, "Projects", JsOrgProjectsScreen),
+                DrawerItem(HarvestRoutes.Screen.USER_REPORT, "Reports", JSUserReportScreen),
                 DrawerItem(HarvestRoutes.Screen.SETTINGS, "Settings", JsSettingsScreen)
             )
         }

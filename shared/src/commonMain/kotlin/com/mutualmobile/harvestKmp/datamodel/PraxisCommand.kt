@@ -27,6 +27,7 @@ object HarvestRoutes {
         const val ASSIGN_PROJECT = "assign-projects"
         const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
+        const val USER_REPORT = "user-reports"
         const val ORG_USER_DASHBOARD = "user-dashboard"
         const val LIST_USERS_PROJECT = "list-user-project"
         const val LIST_PROJECTS_USER = "list-projects-user"

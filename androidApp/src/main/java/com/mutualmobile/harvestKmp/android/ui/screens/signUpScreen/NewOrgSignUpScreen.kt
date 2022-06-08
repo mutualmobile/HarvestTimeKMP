@@ -119,7 +119,6 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                             lastName = currentLastName,
                             email = currentWorkEmail,
                             password = currentPassword,
-                            confirmPassword = confirmPassword,
                             orgName = companyName,
                             orgWebsite = companyWebsite,
                             orgIdentifier = companyIdentifier

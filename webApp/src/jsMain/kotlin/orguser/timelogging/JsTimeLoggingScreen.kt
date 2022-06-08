@@ -1,7 +1,6 @@
 package orguser.timelogging
 
 import com.mutualmobile.harvestKmp.datamodel.*
-import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
@@ -13,22 +12,10 @@ import kotlinx.coroutines.flow.onEach
 import kotlinx.datetime.internal.JSJoda.Clock
 import kotlinx.datetime.internal.JSJoda.LocalDate
 import mainScope
-import mui.icons.material.ArrowBackIos
-import mui.icons.material.ArrowForwardIos
-import mui.icons.material.Check
-import mui.lab.TabContext
-import mui.lab.TabPanel
 import mui.material.*
-import mui.material.styles.TypographyVariant
-import mui.system.responsive
 import mui.system.sx
-import org.w3c.dom.HTMLInputElement
 import react.*
-import react.dom.html.InputType
-import react.dom.html.ReactHTML
-import react.dom.onChange
 import react.router.useNavigate
-import kotlin.Float
 import kotlin.js.Date
 
 fun generateWeek(date: LocalDate): MutableList<LocalDate> {
@@ -74,7 +61,7 @@ val JsTimeLoggingScreen = FC<Props> {
         }
     }
 
-    useEffect(dependencies = arrayOf(week,showTimeLogDialog), effect = {
+    useEffect(dependencies = arrayOf(week, showTimeLogDialog), effect = {
         userId?.let { userId ->
             fetchWeekRecords(
                 dataModel,
@@ -123,33 +110,15 @@ val JsTimeLoggingScreen = FC<Props> {
                 marginBottom = 10.px
             }
 
-            Stack {
-                this.direction = responsive(StackDirection.row)
-
-                IconButton {
-                    ArrowBackIos {
-
-                    }
-                    onClick = {
-                        week = generateWeek(week.first().minusWeeks(1))
-                    }
-                }
-
-                IconButton {
-                    ArrowForwardIos {
-
-                    }
-                    onClick = {
-                        week = generateWeek(week.first().plusWeeks(1))
-                    }
-                }
-
-                Typography {
-                    variant = TypographyVariant.h6
-                    this.component = ReactHTML.div
-                    +"${format(Date(selectedDate.toString()), "MMMM d LLLL")}"
+            WeekSwitcher{
+                this.selectedDate = selectedDate
+                this.currentWeek = week
+                this.onWeekChange = {
+                    week = it
                 }
             }
+
+
 
 
 
@@ -163,93 +132,49 @@ val JsTimeLoggingScreen = FC<Props> {
                     flexDirection = FlexDirection.row
                 }
 
-                Stack {
-                    direction = responsive(StackDirection.column)
-                    NewEntryButton {
-                        clicked = {
-                            showTimeLogDialog = true
-                        }
-                    }
-                    Typography {
-                        sx {
-                            marginTop = 4.px
-                        }
-                        variant = TypographyVariant.subtitle2
-                        +"New Entry"
-                    }
-                }
-                TabContext {
-                    value = format(Date(selectedDate.toString()), "do iii") as String
-                    Stack {
-                        direction = responsive(StackDirection.column)
-                        Box {
-                            sx {
-                                borderBottom = 1.px
-                            }
-                            Tabs {
-                                indicatorColor = TabsIndicatorColor.primary
-                                value = week.indexOf(selectedDate)
-                                variant = TabsVariant.scrollable
-                                scrollButtons = TabsScrollButtons.auto
-                                onChange = { event, newValue ->
-                                    selectedDate = week[newValue]
-                                }
-
-                                week.mapIndexed { index, date ->
-                                    val start =
-                                        format(Date(date.toString()), "do iii") as String
-                                    Tab {
-                                        label = ReactNode(start)
-                                    }
-                                }
-                            }
-
-                        }
-                        week.mapIndexed { item, date ->
-                            TabPanel {
-                                value = format(Date(date.toString()), "do iii") as String
-
-                                DayContent {
-                                    selectDate = date
-                                    selectDateString = format(
-                                        Date(selectedDate.toString()),
-                                        "yyyy-MM-dd"
-                                    ) as String
-                                    isLoading = isLoadingWeekRecords
-                                    workWeek = work
-                                    assignedProjects = projects
-                                }
-                            }
-                        }
+                NewTimeEntryButton {
+                    this.onClicked = {
+                        showTimeLogDialog = true
                     }
                 }
 
-
+                TabsWeekDays{
+                    this.selectedDate = selectedDate
+                    this.isLoadingWeekRecords = isLoadingWeekRecords
+                    this.week = week
+                    this.work = work
+                    this.projects = projects
+                    this.onDateChange = {
+                        selectedDate = it
+                    }
+                }
             }
 
 
         }
 
-        BackdropTimeLogger {
-            this.dataModel = dataModel
-            this.showTimeLogDialog = showTimeLogDialog
-            this.selectedDate = selectedDate
-            this.projects = projects
-            this.projectId = projectId
-            this.userId = userId
-            this.projectIdNew = { it ->
-                projectId = it
-            }
-            this.workHours = workHours
-            this.onWorkHours = {
-                workHours = it
-            }
-            this.note = note
-            this.onNote = {
-                note = it
-            }
-            this.closeDialog = {
-                showTimeLogDialog = false
+        Backdrop {
+            open = showTimeLogDialog
+            BackdropTimeLogger {
+                this.dataModel = dataModel
+                this.selectedDate = selectedDate
+                this.projects = projects
+                this.projectId = projectId
+                this.userId = userId
+                this.projectIdNew = { it ->
+                    projectId = it
+                }
+                this.workHours = workHours
+                this.onWorkHours = {
+                    workHours = it
+                }
+                this.note = note
+                this.onNote = {
+                    note = it
+                }
+                this.closeDialog = {
+                    showTimeLogDialog = false
+                }
             }
         }
 

@@ -33,13 +33,11 @@ external interface BackdropTimeLoggerProps : Props {
     var projects: List<OrgProjectResponse>?
     var selectedDate: LocalDate
     var note: String
-    var showTimeLogDialog: Boolean
     var workHours: Float
 }
 
 val BackdropTimeLogger = FC<BackdropTimeLoggerProps> { props ->
-    Backdrop {
-        open = props.showTimeLogDialog
+
 
         Card {
             sx {
@@ -167,5 +165,5 @@ val BackdropTimeLogger = FC<BackdropTimeLoggerProps> { props ->
 
 
         }
-    }
+
 }

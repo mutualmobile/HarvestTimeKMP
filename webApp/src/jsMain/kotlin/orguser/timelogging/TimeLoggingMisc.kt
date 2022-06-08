@@ -145,7 +145,7 @@ val DayContent = FC<DayContentProps> { props ->
                 props.workWeek?.filter { format(Date(it.workDate), "yyyy-MM-dd") as String == props.selectDateString }
                     ?.map { work ->
                         val projectName =
-                            props.assignedProjects?.firstOrNull { it.id == work.id }?.name ?: ""
+                            props.assignedProjects?.firstOrNull { it.id == work.projectId }?.name ?: ""
                         // TODO We don't want to do this, instead get the project name form the api response
                         ListItemText {
                             primary = "Project: $projectName ".toReactNode()

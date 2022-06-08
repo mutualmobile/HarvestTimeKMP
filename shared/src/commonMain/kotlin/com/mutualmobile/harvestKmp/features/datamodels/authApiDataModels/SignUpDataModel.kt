@@ -62,7 +62,6 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
         lastName: String,
         email: String,
         password: String,
-        confirmPassword: String,
         orgName: String,
         orgWebsite: String,
         orgIdentifier: String,
