@@ -1,12 +1,7 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.timeScreen
 
-import android.content.Intent
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -16,12 +11,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -37,7 +27,6 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
-import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryActivity
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.TimeCard
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekScroller
@@ -63,8 +52,7 @@ fun TimeScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(onClick = {
-                                           navController.navigate(ScreenList.NewEntryScreen())
-               // ctx.startActivity(Intent(ctx, NewEntryActivity::class.java))
+                navController.navigate(ScreenList.NewEntryScreen())
             }, modifier = Modifier.navigationBarsPadding()) {
                 Icon(
                     imageVector = Icons.Default.Add,

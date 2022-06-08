@@ -115,14 +115,14 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                     label = stringResource(MR.strings.signup_screen_signup_btn_txt.resourceId),
                     onClick = {
                         signUpDataModel.signUp(
-                            currentFirstName,
-                            currentLastName,
-                            currentWorkEmail,
-                            currentPassword,
-                            confirmPassword,
-                            companyName,
-                            companyWebsite,
-                            companyIdentifier
+                            firstName = currentFirstName,
+                            lastName = currentLastName,
+                            email = currentWorkEmail,
+                            password = currentPassword,
+                            confirmPassword = confirmPassword,
+                            orgName = companyName,
+                            orgWebsite = companyWebsite,
+                            orgIdentifier = companyIdentifier
                         )
                     }
                 )

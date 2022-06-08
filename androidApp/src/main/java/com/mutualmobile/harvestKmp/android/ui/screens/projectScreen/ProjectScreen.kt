@@ -1,8 +1,6 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.projectScreen
 
 import android.app.Activity
-import android.content.Intent
-import android.os.Bundle
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -19,8 +17,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.navigation.NavController
-import androidx.navigation.NavOptions
-import androidx.navigation.Navigator
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
@@ -40,9 +36,9 @@ import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.Get
 @Composable
 fun ProjectScreen(navController: NavController) {
     val activity = LocalContext.current as Activity
-    var listMap =
+    var projectListMap =
         mapOf("P" to listOf("Praxis", "PraxisFlutter"), "M" to listOf("MagicMountain", "Treat"))
-    var filteredMap: Map<String, List<String>>
+    var filteredProjectListMap: Map<String, List<String>>
     val textState = remember { mutableStateOf(TextFieldValue("")) }
 
     var currentProjectScreenState: DataState by remember {
@@ -55,7 +51,7 @@ fun ProjectScreen(navController: NavController) {
                 when (projectState) {
                     is SuccessState<*> -> {
                         val apiResponse = (projectState.data as ApiResponse<*>)
-                        listMap = mapOf(
+                        projectListMap = mapOf(
                             "P" to listOf("Praxis", "PraxisFlutter"),
                             "M" to listOf("MagicMountain", "Treat")
                         )
@@ -93,25 +89,24 @@ fun ProjectScreen(navController: NavController) {
 
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 val searchedText = textState.value.text
-                filteredMap = if (searchedText.isEmpty()) {
-                    listMap
+                filteredProjectListMap = if (searchedText.isEmpty()) {
+                    projectListMap
                 } else {
-                    var resultList1 = emptyMap<String, List<String>>()
-
-                    listMap.filter { (key, value) ->
+                    var tempProjectListMap = emptyMap<String, List<String>>()
+                    projectListMap.filter { (key, value) ->
                         val list = value.filter { it.contains(searchedText, true) }
                         if (list.isEmpty().not()) {
-                            resultList1 = resultList1 + Pair(key, list)
+                            tempProjectListMap = tempProjectListMap + Pair(key, list)
                         }
 
-                        resultList1.isEmpty()
+                        tempProjectListMap.isEmpty()
 
 
                     }
-                    resultList1
+                    tempProjectListMap
                 }
 
-                filteredMap.forEach { (initial, contactsForInitial) ->
+                filteredProjectListMap.forEach { (initial, contactsForInitial) ->
                     stickyHeader {
                         ProjectListHeader(label = initial)
                     }
@@ -120,8 +115,12 @@ fun ProjectScreen(navController: NavController) {
                         ProjectListItem(
                             label = contact,
                             onItemClick = { selectedProject ->
-                                navController.previousBackStackEntry?.savedStateHandle?.set(SELECTED_PROJECT, selectedProject)
-                                navController.popBackStack(ScreenList.NewEntryScreen(),
+                                navController.previousBackStackEntry?.savedStateHandle?.set(
+                                    SELECTED_PROJECT,
+                                    selectedProject
+                                )
+                                navController.popBackStack(
+                                    ScreenList.NewEntryScreen(),
                                     inclusive = false,
                                     saveState = true
                                 )
