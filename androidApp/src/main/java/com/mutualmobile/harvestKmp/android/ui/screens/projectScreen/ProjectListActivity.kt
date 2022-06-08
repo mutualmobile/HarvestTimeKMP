@@ -1,4 +1,4 @@
-package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
+package com.mutualmobile.harvestKmp.android.ui.screens.projectScreen
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
 
-class NewEntryActivity : ComponentActivity() {
+class ProjectListActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -20,7 +20,7 @@ class NewEntryActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    NewEntryScreen()
+                  //  ProjectScreen()
                 }
             }
         }

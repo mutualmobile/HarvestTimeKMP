@@ -1,13 +1,6 @@
 package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
@@ -39,7 +32,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
     fun signUp(
         firstName: String,
         lastName: String,
-        company: String,
+        confirmPassword: String,
         email: String,
         password: String
     ) {
@@ -49,9 +42,9 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
             when (val signUpResponse = existingOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
-                company = company,
                 email = email,
-                password = password
+                password = password,
+                confirmPassword = confirmPassword,
             )) {
                 is NetworkResponse.Success -> {
                     handleSuccessSignup(signUpResponse)
@@ -69,6 +62,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
         lastName: String,
         email: String,
         password: String,
+        confirmPassword: String,
         orgName: String,
         orgWebsite: String,
         orgIdentifier: String,
