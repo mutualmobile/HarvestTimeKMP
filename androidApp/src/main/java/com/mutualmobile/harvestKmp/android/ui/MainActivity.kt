@@ -16,17 +16,19 @@ import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import androidx.navigation.navArgument
 import com.mutualmobile.harvestKmp.android.ui.screens.findWorkspaceScreen.FindWorkspaceScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 
 
 class MainActivity : ComponentActivity() {
@@ -44,31 +46,57 @@ class MainActivity : ComponentActivity() {
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = ScreenList.OnBoardingScreen(),
+                        startDestination = HarvestRoutes.Screen.ON_BOARDING,
                     ) {
-                        composable(ScreenList.OnBoardingScreen()){
+                        composable(HarvestRoutes.Screen.ON_BOARDING) {
                             OnBoardingScreen(navController = navController)
                         }
-                        composable(ScreenList.ExistingOrgSignUpScreen()){
+                        composable(HarvestRoutes.Screen.SIGNUP) {
                             SignUpScreen(navController = navController)
                         }
-                        composable(ScreenList.NewOrgSignUpScreen()) {
+                        composable(HarvestRoutes.Screen.NEW_ORG_SIGNUP) {
                             NewOrgSignUpScreen(navController = navController)
                         }
-                        composable(ScreenList.LoginScreen()) {
-                            LoginScreen(navController = navController)
+                        composable(
+                            HarvestRoutes.Screen.LOGIN_WITH_ORG_ID_IDENTIFIER,
+                            arguments = listOf(
+                                navArgument(HarvestRoutes.Keys.orgId) { nullable = true },
+                                navArgument(HarvestRoutes.Keys.orgIdentifier) { nullable = true },
+                            ),
+                        ) { backStackEntry ->
+                            LoginScreen(
+                                navController = navController,
+                                orgIdentifier = backStackEntry
+                                    .arguments?.getString(HarvestRoutes.Keys.orgIdentifier)
+                            )
                         }
-                        composable(ScreenList.LandingScreen()) {
-                            LandingScreen(navController = navController)
+                        composable(
+                            HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER,
+                            arguments = listOf(
+                                navArgument(HarvestRoutes.Keys.orgId) { nullable = true },
+                                navArgument(HarvestRoutes.Keys.orgIdentifier) { nullable = true },
+                            ),
+                        ) { backStackEntry ->
+                            LandingScreen(
+                                navController = navController,
+                                orgIdentifier = backStackEntry
+                                    .arguments?.getString(HarvestRoutes.Keys.orgIdentifier)
+                            )
                         }
-                        composable(ScreenList.FindWorkspaceScreen()) {
+                        composable(HarvestRoutes.Screen.FIND_WORKSPACE) {
                             FindWorkspaceScreen(navController = navController)
                         }
-                        composable(ScreenList.ProjectScreen()) {
+                        composable(HarvestRoutes.Screen.ORG_PROJECTS) {
                             ProjectScreen(navController=navController)
                         }
-                        composable(ScreenList.NewEntryScreen()) {
+                        composable(HarvestRoutes.Screen.WORK_ENTRY) {
                             NewEntryScreen(navController=navController)
+                        }
+                        composable(HarvestRoutes.Screen.SETTINGS) {
+                            SettingsScreen(navController = navController)
+                        }
+                        composable(HarvestRoutes.Screen.WORK_ENTRY) {
+                            NewEntryScreen(navController = navController)
                         }
                     }
                 }
