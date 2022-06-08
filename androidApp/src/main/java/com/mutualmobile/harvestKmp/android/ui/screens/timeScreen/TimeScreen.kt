@@ -278,7 +278,7 @@ fun TimeScreen(
                         (currentPageIndex - startIndex + currentDayIndex).floorMod(numberOfWeekDays)
                     }
                 }
-                val currentPageDate by remember(currentIndex) {
+                val currentPageDate by remember(currentIndex, currentWeekWorkLogs) {
                     mutableStateOf(dateRangeStart
                         .plus(currentIndex.days)
                         .toLocalDateTime(TimeZone.currentSystemDefault()))
