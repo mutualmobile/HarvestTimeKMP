@@ -45,6 +45,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.numberOfW
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
+import com.mutualmobile.harvestKmp.android.ui.utils.dateWithoutTimeZone
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
@@ -120,6 +121,39 @@ fun TimeScreen(
         }
     }) }
 
+    val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
+
+    val lazyRowFlingBehavior = rememberSnapperFlingBehavior(
+        lazyListState = lazyRowState,
+        snapIndex = { _, snapperStartIndex, targetIndex ->
+            targetIndex.coerceIn(
+                snapperStartIndex - MaxItemFling,
+                snapperStartIndex + MaxItemFling
+            )
+        }
+    )
+
+    val listOfWeekDayWorkHours by remember(currentWeekWorkLogs) {
+        mutableStateOf(
+            WeekDays.values().map { weekDay ->
+                val currentIndex = weekDay.ordinal
+                val currentPageDate by mutableStateOf(dateRangeStart
+                    .plus(currentIndex.days)
+                    .toLocalDateTime(TimeZone.currentSystemDefault()))
+                val currentPageWorkLogs by mutableStateOf(
+                    currentWeekWorkLogs.filter { work ->
+                        work.workDate.dateWithoutTimeZone() == currentPageDate.toString().dateWithoutTimeZone()
+                    }
+                )
+                var totalWorkHours by mutableStateOf(0f)
+                currentPageWorkLogs.map { workLog ->
+                    totalWorkHours += workLog.workHours
+                }
+                totalWorkHours
+            }
+        )
+    }
+
     LaunchedEffect(localWeekOffset, getUserState) {
         when (getUserState) {
             is SuccessState<*> -> {
@@ -127,7 +161,7 @@ fun TimeScreen(
                     timeLoggingDataModel.getWorkLogsForDateRange(
                         startDate = dateRangeStart.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
                         endDate = dateRangeEnd.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
-                        userIds = listOf("c8763569-8c61-44ac-94c2-b2786db5b7e7")
+                        userIds = listOf(nnUserId)
                     ).collect { newState ->
                         currentWeekWorkLogs = emptyList()
                         isWorkLoading(newState is LoadingState)
@@ -140,8 +174,7 @@ fun TimeScreen(
                                         apiWorkLogs.forEach { apiWorkLog ->
                                             totalWeekTime += apiWorkLog.workHours
                                         }
-                                        onUpdateWeekLogsTotalTime(totalWeekTime.toDecimalString())
-                                    } ?: onUpdateWeekLogsTotalTime(0f.toDecimalString())
+                                    }
                             }
                             else -> Unit
                         }
@@ -152,17 +185,9 @@ fun TimeScreen(
         }
     }
 
-    val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
-
-    val lazyRowFlingBehavior = rememberSnapperFlingBehavior(
-        lazyListState = lazyRowState,
-        snapIndex = { _, snapperStartIndex, targetIndex ->
-            targetIndex.coerceIn(
-                snapperStartIndex - MaxItemFling,
-                snapperStartIndex + MaxItemFling
-            )
-        }
-    )
+    LaunchedEffect(listOfWeekDayWorkHours) {
+        onUpdateWeekLogsTotalTime(listOfWeekDayWorkHours.sum().toDecimalString())
+    }
 
     LaunchedEffect(lazyRowFlingBehavior.animationTarget) {
         lazyRowFlingBehavior.animationTarget?.let { nnVal ->
@@ -229,13 +254,16 @@ fun TimeScreen(
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-
             LazyRow(
                 state = lazyRowState,
                 flingBehavior = lazyRowFlingBehavior,
             ) {
                 items(3) {
-                    WeekScroller(pagerState, startIndex)
+                    WeekScroller(
+                        pagerState,
+                        startIndex,
+                        listOfWeekDayWorkHours
+                    )
                 }
             }
 
@@ -258,7 +286,7 @@ fun TimeScreen(
                 val currentPageWorkLogs by remember(currentWeekWorkLogs, currentPageDate) {
                     mutableStateOf(
                         currentWeekWorkLogs.filter { work ->
-                            work.workDate.substring(0, 10) == currentPageDate.toString().substring(0, 10)
+                            work.workDate.dateWithoutTimeZone() == currentPageDate.toString().dateWithoutTimeZone()
                         }
                     )
                 }

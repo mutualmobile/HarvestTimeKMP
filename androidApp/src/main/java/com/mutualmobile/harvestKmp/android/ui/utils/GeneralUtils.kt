@@ -8,3 +8,5 @@ fun Number.toDecimalString(decimalPlaces: Int = 2) = "%.${decimalPlaces}f".forma
 
 @Composable
 fun StringResource.get() = stringResource(id = resourceId)
+
+fun String.dateWithoutTimeZone() = substring(0, 10)

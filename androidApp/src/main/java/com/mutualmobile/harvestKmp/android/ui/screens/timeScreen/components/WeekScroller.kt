@@ -21,6 +21,7 @@ import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.PagerState
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentPageIndex
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.pagerTabIndicatorOffsetForWeek
+import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 import kotlinx.coroutines.launch
 
 enum class WeekDays {
@@ -29,7 +30,7 @@ enum class WeekDays {
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun WeekScroller(pagerState: PagerState, indexOffset: Int) {
+fun WeekScroller(pagerState: PagerState, indexOffset: Int, listOfWeekDayWorkHours: List<Float>) {
     val coroutineScope = rememberCoroutineScope()
     val screenWidth = LocalConfiguration.current.screenWidthDp
         .plus(0.5f) // Because screenWidthDp calculates the size as half a dp less
@@ -74,7 +75,7 @@ fun WeekScroller(pagerState: PagerState, indexOffset: Int) {
                         modifier = Modifier.padding(top = 8.dp)
                     )
                     Text(
-                        "0.00",
+                        listOfWeekDayWorkHours[index].toDecimalString(),
                         style = MaterialTheme.typography.caption.copy(fontWeight = FontWeight.Light),
                         modifier = Modifier.padding(bottom = 8.dp)
                     )
