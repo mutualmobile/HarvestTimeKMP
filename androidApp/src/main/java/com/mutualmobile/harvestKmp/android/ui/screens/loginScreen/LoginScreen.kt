@@ -18,36 +18,48 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
+import com.mutualmobile.harvestKmp.android.ui.screens.common.noAccountAnnotatedString
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
 
 @Composable
-fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
-    var currentWorkEmail by remember { mutableStateOf("anmol@mutualmobile.com") }
+fun LoginScreen(
+    navController: NavHostController,
+    orgIdentifier: String?,
+) {
+    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
+
+    var currentNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
 
     var userState: DataState by remember { mutableStateOf(EmptyState) }
     val userDataModel by remember {
         mutableStateOf(
             GetUserDataModel { newState ->
                 userState = newState
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentNavigationCommand = newCommand
+                }
             }
         )
     }
@@ -65,6 +77,20 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
                     }
                     else -> Unit
                 }
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentNavigationCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen == HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
+                                navController clearBackStackAndNavigateTo newCommand.screen.withOrgId(
+                                    identifier = orgIdentifier,
+                                    id = null
+                                )
+                            }
+                        }
+                    }
+                }
             }
         )
     }
@@ -76,17 +102,6 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
             currentLoginState is ErrorState -> (currentLoginState as ErrorState).throwable.message
             userState is ErrorState -> (userState as ErrorState).throwable.message
             else -> null
-        }
-    }
-
-    LaunchedEffect(userState) {
-        if (userState is SuccessState<*>) {
-            orgIdentifier?.let { nnOrgIdentifier ->
-                println("Identifier is: $nnOrgIdentifier")
-                navController clearBackStackAndNavigateTo ScreenList.LandingScreen.orgIdentifierRoute(
-                    orgIdentifier = nnOrgIdentifier
-                )
-            }
         }
     }
 
@@ -122,22 +137,23 @@ fun LoginScreen(navController: NavHostController, orgIdentifier: String?) {
                 errorMsg = currentErrorMsg,
             )
             SurfaceTextButton(
-                text = buildAnnotatedString {
-                    append("Don't have an account?")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append(" Try Harvest Free")
-                    }
-                },
-                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
+                text = noAccountAnnotatedString(),
+                onClick = { navController.navigate(HarvestRoutes.Screen.SIGNUP) }
             )
             SurfaceTextButton(
-                text = "View Tour",
+                text = MR.strings.view_tour.get(),
                 fontWeight = FontWeight.Medium,
                 onClick = {
-                    navController clearBackStackAndNavigateTo ScreenList.OnBoardingScreen()
+                    navController clearBackStackAndNavigateTo HarvestRoutes.Screen.ON_BOARDING
                 }
             )
         }
+        HarvestDialog(
+            praxisCommand = currentNavigationCommand,
+            onConfirm = {
+                currentNavigationCommand = null
+            },
+        )
     }
 }
 

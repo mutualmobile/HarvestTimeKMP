@@ -4,8 +4,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 
 @Composable
 fun AccountSection(navController: NavHostController) {
@@ -27,7 +27,7 @@ fun AccountSection(navController: NavHostController) {
         title = stringResource(MR.strings.account_section_signout_item_title.resourceId),
         showTopDivider = true,
         onClick = {
-            navController clearBackStackAndNavigateTo ScreenList.LoginScreen()
+            navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
         }
     )
 }
