@@ -42,7 +42,11 @@ import com.mutualmobile.harvestKmp.MR
 
 @OptIn(ExperimentalComposeUiApi::class)
 @Composable
-fun BucketSelector() {
+fun BucketSelector(
+    currentProject: String,
+    onWorkClick: () -> Unit,
+    onDepartmentClick: () -> Unit = {}
+) {
     val screenConfig = LocalConfiguration.current
     var notesEtText by remember { mutableStateOf("") }
     var isStarClicked by remember { mutableStateOf(false) }
@@ -71,7 +75,8 @@ fun BucketSelector() {
             )
             Box(contentAlignment = Alignment.CenterStart) {
                 Column {
-                    BucketItem(title = "Android Department Work HYD")
+                    BucketItem(title = currentProject,
+                        onClick = { onDepartmentClick() })
                     Divider(
                         modifier = Modifier.alpha(0.5f),
                         startIndent = screenConfig.screenWidthDp.times(0.1f).dp,
@@ -123,12 +128,13 @@ fun BucketSelector() {
 private fun BucketItem(
     title: String,
     endIcon: ImageVector = Icons.Default.KeyboardArrowRight,
+    onClick: () -> Unit = {}
 ) {
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .offset(x = 16.dp)
-            .clickable {},
+            .clickable(onClick = onClick),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {

@@ -20,10 +20,12 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
+import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.TimeCard
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekScroller
@@ -40,6 +42,7 @@ const val MaxItemFling = 1
 @OptIn(ExperimentalPagerApi::class, ExperimentalSnapperApi::class)
 @Composable
 fun TimeScreen(
+    navController: NavController,
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
     goToNewEntryScreen: () -> Unit,

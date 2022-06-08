@@ -33,6 +33,7 @@ object HarvestRoutes {
         const val ASSIGN_PROJECT = "assign-projects"
         const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
+        const val USER_REPORT = "user-reports"
         const val ORG_USER_DASHBOARD = "user-dashboard"
         const val DASHBOARD_WITH_ORG_ID_IDENTIFIER = ORG_USER_DASHBOARD
             .plus(BROWSER_QUERY)

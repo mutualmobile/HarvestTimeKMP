@@ -189,6 +189,7 @@ fun LandingScreen(
         ) { drawerScreenState ->
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
+                    navController = navController,
                     onWeekScrolled = { weekOffset ->
                         currentDayOffset += weekOffset.times(WeekDays.values().size)
                     },

@@ -8,8 +8,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import io.ktor.client.HttpClient
-import io.ktor.client.request.get
-import io.ktor.client.request.setBody
+import io.ktor.client.request.*
 import io.ktor.http.ContentType
 import io.ktor.http.contentType
 
@@ -20,7 +19,7 @@ class UserWorkApiImpl(private val httpClient: HttpClient) : UserWorkApi {
         endDate: String,
         userIds: List<String>?
     ): NetworkResponse<ApiResponse<List<HarvestUserWorkResponse>>> = getSafeNetworkResponse {
-        httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LOG_WORK}") {
+        httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.GET_LOG_WORK}") {
             contentType(ContentType.Application.Json)
             setBody(
                 DateRangeWorkRequest(

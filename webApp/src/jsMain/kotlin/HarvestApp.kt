@@ -21,7 +21,7 @@ external interface AppProps : Props
 val HarvestApp = FC<AppProps> {
 
     useEffectOnce {
-        MainScope().launch {
+        mainScope.launch {
             setupDriver()
         }
     }
