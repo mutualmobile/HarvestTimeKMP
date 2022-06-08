@@ -11,7 +11,7 @@ import com.mutualmobile.harvestKmp.di.ForgotPasswordApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class ForgotPasswordDataModel(var onDataState: (DataState) -> Unit) :
@@ -22,19 +22,19 @@ class ForgotPasswordDataModel(var onDataState: (DataState) -> Unit) :
         forgotPasswordApiUseCaseComponent.provideForgotPasswordUseCase()
 
     fun forgotPassword(email: String): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
 
             when (val response = forgotPasswordUseCase(
                 email = email
             )) {
                 is NetworkResponse.Success -> {
                     praxisCommand(ModalPraxisCommand("Response", response.data.message ?: "Woah!"))
-                    this.send(SuccessState(response.data))
+                    emit(SuccessState(response.data))
                     println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    this.send(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                     println("FAILED, ${response.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {

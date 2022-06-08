@@ -53,17 +53,17 @@ class TimeLoggingDataModel(onDataState: (DataState) -> Unit = {}) :
         harvestUserWorkRequest: HarvestUserWorkRequest
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val response =
                 logWorkTimeUseCase(
                     harvestUserWorkRequest
                 )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(response.data))
+                    emit(SuccessState(response.data))
                     praxisCommand(ModalPraxisCommand("Success", response.data.message ?: ""))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -78,16 +78,16 @@ class TimeLoggingDataModel(onDataState: (DataState) -> Unit = {}) :
         userId: String?
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val response =
                 getUserAssignedProjectsUseCase(
                     userId = userId
                 )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(response.data))
+                    emit(SuccessState(response.data))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -104,7 +104,7 @@ class TimeLoggingDataModel(onDataState: (DataState) -> Unit = {}) :
         userIds: List<String>?
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val response =
                 getWorkLogsForDateRangeUseCase(
                     startDate = startDate,
@@ -112,10 +112,10 @@ class TimeLoggingDataModel(onDataState: (DataState) -> Unit = {}) :
                     userIds = userIds
                 )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(response.data))
+                    emit(SuccessState(response.data))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

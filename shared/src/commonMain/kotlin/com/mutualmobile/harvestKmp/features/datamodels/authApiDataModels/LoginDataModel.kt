@@ -14,7 +14,7 @@ import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class LoginDataModel(var onDataState: (DataState) -> Unit) :
@@ -37,14 +37,14 @@ class LoginDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     fun login(email: String, password: String): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val loginResponse = loginUseCase(
                 email = email,
                 password = password
             )) {
                 is NetworkResponse.Success -> {
-                    this.send(SuccessState(loginResponse.data))
+                    emit(SuccessState(loginResponse.data))
                     saveToken(loginResponse)
                     praxisCommand(
                         NavigationPraxisCommand(
@@ -54,7 +54,7 @@ class LoginDataModel(var onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Failure -> {
-                    this.send(ErrorState(loginResponse.throwable))
+                    emit(ErrorState(loginResponse.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",
@@ -63,7 +63,7 @@ class LoginDataModel(var onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Unauthorized -> {
-                    this.send(ErrorState(loginResponse.throwable))
+                    emit(ErrorState(loginResponse.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",

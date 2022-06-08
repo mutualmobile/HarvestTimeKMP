@@ -35,16 +35,16 @@ class GetUserAssignedProjectsDataModel(var onDataState: (DataState) -> Unit) :
         userId: String?
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val response =
                 getUserAssignedProjectsUseCase(
                     userId = userId
                 )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(response.data))
+                    emit(SuccessState(response.data))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

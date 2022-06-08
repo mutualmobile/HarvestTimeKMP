@@ -15,7 +15,7 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class SignUpDataModel(var onDataState: (DataState) -> Unit) :
@@ -42,8 +42,8 @@ class SignUpDataModel(var onDataState: (DataState) -> Unit) :
         email: String,
         password: String
     ): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val signUpResponse = existingOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
@@ -71,8 +71,8 @@ class SignUpDataModel(var onDataState: (DataState) -> Unit) :
         orgWebsite: String,
         orgIdentifier: String,
     ): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val signUpResponse = newOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
@@ -94,8 +94,8 @@ class SignUpDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     private fun handleFailure(signUpResponse: NetworkResponse.Failure): Flow<DataState> {
-        return callbackFlow {
-            this.send(ErrorState(signUpResponse.throwable))
+        return flow {
+            emit(ErrorState(signUpResponse.throwable))
             praxisCommand(
                 ModalPraxisCommand(
                     "Error",
@@ -107,8 +107,8 @@ class SignUpDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     private fun handleSuccessSignup(signUpResponse: NetworkResponse.Success<ApiResponse<HarvestOrganization>>): Flow<DataState> {
-        return callbackFlow {
-            this.send(SuccessState(signUpResponse.data))
+        return flow {
+            emit(SuccessState(signUpResponse.data))
             signUpResponse.data.data?.let {
                 praxisCommand(
                     NavigationPraxisCommand(

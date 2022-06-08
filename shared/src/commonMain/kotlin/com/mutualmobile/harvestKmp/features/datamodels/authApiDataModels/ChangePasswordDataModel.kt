@@ -11,7 +11,7 @@ import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class ChangePasswordDataModel(var onDataState: (DataState) -> Unit) :
@@ -32,19 +32,19 @@ class ChangePasswordDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     fun changePassWord(password: String, oldPassword: String): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val changePasswordResponse = changePasswordUseCase(
                 password = password,
                 oldPassword = oldPassword
             )) {
                 is NetworkResponse.Success -> {
                     print("ChangePassword Successful, ${changePasswordResponse.data.message}")
-                    this.send(SuccessState(changePasswordResponse.data))
+                    emit(SuccessState(changePasswordResponse.data))
                 }
                 is NetworkResponse.Failure -> {
                     print("ChangePassword Failed, ${changePasswordResponse.throwable.message}")
-                    this.send(ErrorState(changePasswordResponse.throwable))
+                    emit(ErrorState(changePasswordResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

@@ -14,7 +14,7 @@ import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class FindOrgByIdentifierDataModel(var onDataState: (DataState) -> Unit) :
@@ -26,14 +26,14 @@ class FindOrgByIdentifierDataModel(var onDataState: (DataState) -> Unit) :
     private val findOrgByIdentifierUseCase = orgApiUseCasesComponent.provideFindOrgByIdentifier()
 
     fun findOrgByIdentifier(identifier: String): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
 
             when (val response = findOrgByIdentifierUseCase(
                 identifier = identifier
             )) {
                 is NetworkResponse.Success -> {
-                    this.send(SuccessState(response.data)) // TODO redundant
+                    emit(SuccessState(response.data)) // TODO redundant
                     praxisCommand(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.LOGIN.withOrgId(
@@ -45,7 +45,7 @@ class FindOrgByIdentifierDataModel(var onDataState: (DataState) -> Unit) :
                     println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    this.send(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Failed",

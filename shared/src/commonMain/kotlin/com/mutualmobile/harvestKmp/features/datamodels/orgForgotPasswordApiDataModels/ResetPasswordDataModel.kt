@@ -14,6 +14,7 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class ResetPasswordDataModel(var onDataState: (DataState) -> Unit) :
@@ -35,8 +36,8 @@ class ResetPasswordDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     fun resetPassword(password: String, token: String): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val changePasswordResponse =
                 resetPasswordUseCase(
                     ResetPasswordRequest(
@@ -53,11 +54,11 @@ class ResetPasswordDataModel(var onDataState: (DataState) -> Unit) :
                             )
                         )
                     }
-                    this.send(SuccessState(changePasswordResponse.data))
+                    emit(SuccessState(changePasswordResponse.data))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
-                    this.send(ErrorState(changePasswordResponse.throwable))
+                    emit(ErrorState(changePasswordResponse.throwable))
                 }
                 else -> {}
             }

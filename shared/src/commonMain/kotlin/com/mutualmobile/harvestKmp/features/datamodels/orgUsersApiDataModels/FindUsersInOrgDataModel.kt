@@ -39,7 +39,7 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
         searchName: String?
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val findUsersInOrgResponse = findUsersByOrgUseCase(
                 userType = userType,
                 orgIdentifier = orgIdentifier,
@@ -48,10 +48,10 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
                 limit = limit, searchName = searchName
             )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(findUsersInOrgResponse.data))
+                    emit(SuccessState(findUsersInOrgResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(findUsersInOrgResponse.throwable))
+                    emit(ErrorState(findUsersInOrgResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

@@ -35,13 +35,13 @@ class AssignProjectsToUsersDataModel(var onDataState: (DataState) -> Unit) :
         projectMap: HashMap<String, List<String>>
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val response =
                 assignProjectsToUsersUseCase(
                     projectMap = projectMap
                 )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(response.data))
+                    emit(SuccessState(response.data))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Message",
@@ -50,7 +50,7 @@ class AssignProjectsToUsersDataModel(var onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(response.throwable))
+                    emit(ErrorState(response.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Message",

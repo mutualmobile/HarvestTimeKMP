@@ -13,7 +13,7 @@ import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class GetUserDataModel(var onDataState: (DataState) -> Unit) :
@@ -24,18 +24,18 @@ class GetUserDataModel(var onDataState: (DataState) -> Unit) :
     private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
     fun getUser(): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
                     print("GetUser Successful, ${getUserResponse.data}")
                     harvestLocal.saveUser(getUserResponse.data)
-                    this.send(SuccessState(getUserResponse.data))
+                    emit(SuccessState(getUserResponse.data))
                     praxisCommand(NavigationPraxisCommand(HarvestRoutes.Screen.ORG_USER_DASHBOARD))
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
-                    this.send(ErrorState(getUserResponse.throwable))
+                    emit(ErrorState(getUserResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

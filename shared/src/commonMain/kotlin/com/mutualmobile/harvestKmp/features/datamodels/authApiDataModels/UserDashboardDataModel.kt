@@ -17,6 +17,7 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse.Success
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class UserDashboardDataModel(var onDataState: (DataState) -> Unit) :
@@ -38,16 +39,16 @@ class UserDashboardDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     private fun fetchUserInternal(): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val getUserResponse = getUserUseCase()) {
                 is Success -> {
                     harvestUserLocal.saveUser(getUserResponse.data)
-                    this.send(SuccessState(getUserResponse.data))
+                    emit(SuccessState(getUserResponse.data))
                 }
                 is Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
-                    this.send(ErrorState(getUserResponse.throwable))
+                    emit(ErrorState(getUserResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -67,17 +68,17 @@ class UserDashboardDataModel(var onDataState: (DataState) -> Unit) :
     }
 
     fun logout(): Flow<DataState> {
-        return callbackFlow {
-            this.send(LogoutInProgress)
+        return flow {
+            emit(LogoutInProgress)
             when (val result = logoutUseCase.invoke()) {
                 is Success<*> -> {
                     println("logged out!")
-                    this.send(SuccessState(result.data))
+                    emit(SuccessState(result.data))
                     praxisCommand(NavigationPraxisCommand(screen = ""))
                 }
                 is Failure -> {
                     println("logg out failed!")
-                    this.send(ErrorState(result.throwable))
+                    emit(ErrorState(result.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",

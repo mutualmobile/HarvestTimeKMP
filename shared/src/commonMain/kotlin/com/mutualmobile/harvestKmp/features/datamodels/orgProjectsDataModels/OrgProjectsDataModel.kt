@@ -42,7 +42,7 @@ class OrgProjectsDataModel(var onDataState: (DataState) -> Unit) :
         endDate: String?
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val createProjectResponse = createProjectUseCase(
                 name = name,
                 client = client,
@@ -51,11 +51,11 @@ class OrgProjectsDataModel(var onDataState: (DataState) -> Unit) :
                 endDate = endDate
             )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(createProjectResponse.data))
+                    emit(SuccessState(createProjectResponse.data))
                     println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(createProjectResponse.throwable))
+                    emit(ErrorState(createProjectResponse.throwable))
                     println("FAILED, ${createProjectResponse.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
@@ -76,7 +76,7 @@ class OrgProjectsDataModel(var onDataState: (DataState) -> Unit) :
         isIndefinite: Boolean,
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val updateProjectResponse = updateProjectUseCase(
                 id = id,
                 name = name,
@@ -88,10 +88,10 @@ class OrgProjectsDataModel(var onDataState: (DataState) -> Unit) :
                     ?: throw RuntimeException("this should not be null")
             )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(updateProjectResponse.data))
+                    emit(SuccessState(updateProjectResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(updateProjectResponse.throwable))
+                    emit(ErrorState(updateProjectResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -106,15 +106,15 @@ class OrgProjectsDataModel(var onDataState: (DataState) -> Unit) :
         projectId: String
     ): Flow<DataState> {
         return flow {
-            this.emit(LoadingState)
+            emit(LoadingState)
             when (val deleteProjectResponse = deleteProjectUseCase(
                 projectId = projectId
             )) {
                 is NetworkResponse.Success -> {
-                    this.emit(SuccessState(deleteProjectResponse.data))
+                    emit(SuccessState(deleteProjectResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    this.emit(ErrorState(deleteProjectResponse.throwable))
+                    emit(ErrorState(deleteProjectResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
