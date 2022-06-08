@@ -21,6 +21,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -44,6 +45,10 @@ import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlin.time.Duration.Companion.days
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 const val MaxItemFling = 1
 
@@ -72,6 +77,23 @@ fun TimeScreen(
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             val numberOfDays by remember { mutableStateOf(WeekDays.values().size) }
+            var localWeekOffset by remember { mutableStateOf(0) }
+            val dateRangeStart by remember(localWeekOffset) {
+                mutableStateOf(
+                    Clock.System.now()
+                        .minus(currentDayIndex.days)
+                        .plus((localWeekOffset * 7).days)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            }
+            val dateRangeEnd by remember(localWeekOffset) {
+                mutableStateOf(
+                    Clock.System.now()
+                        .plus((WeekDays.values().lastIndex - currentDayIndex).days)
+                        .plus((localWeekOffset * 7).days)
+                        .toLocalDateTime(TimeZone.currentSystemDefault())
+                )
+            }
 
             val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
 
@@ -91,10 +113,12 @@ fun TimeScreen(
                         0 -> {
                             onWeekScrolled(-1)
                             pagerState.scrollToPage(pagerState.currentPage - 7)
+                            localWeekOffset -= 1
                         }
                         2 -> {
                             onWeekScrolled(1)
                             pagerState.scrollToPage(pagerState.currentPage + 7)
+                            localWeekOffset += 1
                         }
                         else -> Unit
                     }
@@ -117,6 +141,7 @@ fun TimeScreen(
                     pagerState.currentPageIndex(startIndex) == 0 &&
                     pagerState.targetPageIndex(startIndex) == numberOfDays - 1
                 ) {
+                    localWeekOffset -= 1
                     if (!lazyRowState.isScrollInProgress) {
                         lazyRowState.animateScrollToItem(0)
                     }
@@ -125,6 +150,7 @@ fun TimeScreen(
                     pagerState.currentPageIndex(startIndex) == numberOfDays - 1 &&
                     pagerState.targetPageIndex(startIndex) == 0
                 ) {
+                    localWeekOffset += 1
                     if (!lazyRowState.isScrollInProgress) {
                         lazyRowState.animateScrollToItem(2, 100)
                     }
