@@ -11,6 +11,7 @@ import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.UserProjectUseCaseComponent
 import com.mutualmobile.harvestKmp.di.UserWorkUseCaseComponent
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
+import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import db.Harvest_user
 import kotlinx.coroutines.Job
@@ -28,6 +29,7 @@ class TimeLogginDataModel(onDataState: (DataState) -> Unit = {}) :
     private val userProjectUseCaseComponent = UserProjectUseCaseComponent()
     private val logWorkTimeUseCase =
         userProjectUseCaseComponent.provideLogWorkTimeUseCase()
+    private val deleteWorkTimeUseCase = userProjectUseCaseComponent.provideDeleteWorkTimeUseCase()
     private val getUserAssignedProjectsUseCase =
         userProjectUseCaseComponent.provideGetUserAssignedProjectsUseCase()
     private val harvestLocal = SharedComponent().provideHarvestUserLocal()
@@ -117,6 +119,29 @@ class TimeLogginDataModel(onDataState: (DataState) -> Unit = {}) :
                 )) {
                 is NetworkResponse.Success -> {
                     this.emit(SuccessState(response.data))
+                }
+                is NetworkResponse.Failure -> {
+                    this.emit(ErrorState(response.throwable))
+                }
+                is NetworkResponse.Unauthorized -> {
+                    settings.clear()
+                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    praxisCommand(NavigationPraxisCommand(""))
+                }
+            }
+        }
+    }
+
+    fun deleteWork(harvestUserWorkResponse: HarvestUserWorkResponse): Flow<DataState> {
+        return flow {
+            this.emit(LoadingState)
+            when (val response =
+                deleteWorkTimeUseCase(
+                    harvestUserWorkResponse
+                )) {
+                is NetworkResponse.Success -> {
+                    this.emit(SuccessState(response.data))
+                    praxisCommand(ModalPraxisCommand("Success", response.data.message ?: ""))
                 }
                 is NetworkResponse.Failure -> {
                     this.emit(ErrorState(response.throwable))

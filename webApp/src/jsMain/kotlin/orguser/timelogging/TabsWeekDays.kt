@@ -15,6 +15,8 @@ import react.ReactNode
 import kotlin.js.Date
 
 external interface TabsWeekDaysProps : Props {
+    var onEditRequested: (HarvestUserWorkResponse)->Unit
+    var onDeleteRequested: (HarvestUserWorkResponse)->Unit
     var onDateChange: (LocalDate) -> Unit
     var projects: List<OrgProjectResponse>?
     var work: List<HarvestUserWorkResponse>?
@@ -28,7 +30,8 @@ val TabsWeekDays = FC<TabsWeekDaysProps> { props ->
         value = format(Date(props.selectedDate.toString()), "do iii") as String
         Stack {
             direction = responsive(StackDirection.column)
-            Box {
+            Stack {
+                direction = responsive(StackDirection.row)
                 sx {
                     borderBottom = 1.px
                 }
@@ -50,11 +53,14 @@ val TabsWeekDays = FC<TabsWeekDaysProps> { props ->
                     }
                 }
 
+                JSWeekTotal {
+                    this.workWeek = props.work
+                }
+
             }
             props.week.mapIndexed { item, date ->
                 TabPanel {
                     value = format(Date(date.toString()), "do iii") as String
-
                     DayContent {
                         selectDate = date
                         selectDateString = format(
@@ -64,6 +70,12 @@ val TabsWeekDays = FC<TabsWeekDaysProps> { props ->
                         isLoading = props.isLoadingWeekRecords
                         workWeek = props.work
                         assignedProjects = props.projects
+                        onEditRequested = {
+                            props.onEditRequested.invoke(it)
+                        }
+                        onDeleteRequested = {
+                            props.onDeleteRequested.invoke(it)
+                        }
                     }
                 }
             }

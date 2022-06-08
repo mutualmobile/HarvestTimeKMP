@@ -14,7 +14,7 @@ external interface NewTimeEntryButtonProps : Props {
     var onClicked: () -> Unit
 }
 
-val NewTimeEntryButton = FC<NewTimeEntryButtonProps> { props ->
+val JSNewTimeEntryButton = FC<NewTimeEntryButtonProps> { props ->
     Stack {
         direction = responsive(StackDirection.column)
         NewEntryButton {

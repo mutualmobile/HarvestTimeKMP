@@ -40,12 +40,13 @@ val JsTimeLoggingScreen = FC<Props> {
     val navigator = useNavigate()
 
     var projects by useState<List<OrgProjectResponse>>()
-    var work by useState<List<HarvestUserWorkResponse>>()
+    var work by useState<MutableList<HarvestUserWorkResponse>>()
     var isLoadingWeekRecords by useState(false)
     var projectId by useState<String>()
 
     var note by useState("")
     var workHours by useState(0.00f)
+    var workId by useState<String?>(null)
     val dataModel = TimeLogginDataModel()
 
     val userId = dataModel.userId
@@ -77,7 +78,7 @@ val JsTimeLoggingScreen = FC<Props> {
                 if (dataState is SuccessState<*>) {
                     val data = dataState.data
                     if (data is ApiResponse<*>) {
-                        work = data.data as List<HarvestUserWorkResponse>
+                        work = data.data as MutableList<HarvestUserWorkResponse>
                     }
                 }
             }
@@ -110,7 +111,7 @@ val JsTimeLoggingScreen = FC<Props> {
                 marginBottom = 10.px
             }
 
-            WeekSwitcher{
+            WeekSwitcher {
                 this.selectedDate = selectedDate
                 this.currentWeek = week
                 this.onWeekChange = {
@@ -132,13 +133,13 @@ val JsTimeLoggingScreen = FC<Props> {
                     flexDirection = FlexDirection.row
                 }
 
-                NewTimeEntryButton {
+                JSNewTimeEntryButton {
                     this.onClicked = {
                         showTimeLogDialog = true
                     }
                 }
 
-                TabsWeekDays{
+                TabsWeekDays {
                     this.selectedDate = selectedDate
                     this.isLoadingWeekRecords = isLoadingWeekRecords
                     this.week = week
@@ -146,6 +147,24 @@ val JsTimeLoggingScreen = FC<Props> {
                     this.projects = projects
                     this.onDateChange = {
                         selectedDate = it
+                    }
+                    this.onDeleteRequested = {
+                        dataModel.deleteWork(it).onEach { dataState ->
+                            isLoadingWeekRecords = dataState is LoadingState
+                            if (dataState is SuccessState<*>) {
+                                showTimeLogDialog = false
+                                work?.remove(it)
+                            }
+                        }.launchIn(dataModel.dataModelScope)
+                    }
+                    this.onEditRequested = {
+                        it.note?.let {
+                            note = it
+                        }
+                        workId = it.id
+                        workHours = it.workHours
+                        projectId = it.projectId
+                        showTimeLogDialog = true
                     }
                 }
             }
@@ -161,6 +180,7 @@ val JsTimeLoggingScreen = FC<Props> {
                 this.projects = projects
                 this.projectId = projectId
                 this.userId = userId
+                this.workId = workId
                 this.projectIdNew = { it ->
                     projectId = it
                 }
@@ -173,6 +193,17 @@ val JsTimeLoggingScreen = FC<Props> {
                     note = it
                 }
                 this.closeDialog = {
+                    workId = null
+                    note = ""
+                    workHours = 0f
+                    projectId = null
+                    showTimeLogDialog = false
+                }
+                this.closeDialogOnSave = {
+                    workId = null
+                    note = ""
+                    workHours = 0f
+                    projectId = null
                     showTimeLogDialog = false
                 }
             }
