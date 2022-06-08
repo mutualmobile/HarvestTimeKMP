@@ -8,9 +8,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -28,7 +25,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
+import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 
 val SELECTED_PROJECT = "SELECTED_PROJECT"
 
@@ -48,7 +45,7 @@ fun NewEntryScreen(navController: NavController) {
 
     val logWorkTimeDataModel by remember {
         mutableStateOf(
-            LogWorkTimeDataModel { logWorkTimeState ->
+            TimeLogginDataModel { logWorkTimeState ->
                 currentLogWorkTimeState = logWorkTimeState
                 when (logWorkTimeState) {
                     is SuccessState<*> -> {
@@ -90,14 +87,14 @@ fun NewEntryScreen(navController: NavController) {
                 ) {
                     TextButton(
                         onClick = {
-                            logWorkTimeDataModel.logWorkTime(
+                            /*logWorkTimeDataModel.logWorkTime(
                                 "ec397b08-b99f-44ac-ba16-c679cddff84c",
                                 "ec397b08-b99f-44ac-ba16-c679cddff84c",
                                 "ec397b08-b99f-44ac-ba16-c679cddff84c",
                                 "2022-06-06",
                                 durationEtText.value,
                                 "jhhj"
-                            )
+                            )*/
                         },
                         modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
                     ) {

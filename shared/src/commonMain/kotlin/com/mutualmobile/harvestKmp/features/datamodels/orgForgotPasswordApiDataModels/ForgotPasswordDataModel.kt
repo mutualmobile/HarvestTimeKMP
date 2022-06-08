@@ -1,15 +1,8 @@
 package com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.ForgotPasswordApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
-import io.ktor.util.network.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
@@ -25,28 +18,33 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun forgotPassword(email: String) {
         currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
-
-            when (val response = forgotPasswordUseCase(
-                email = email
-            )) {
-                is NetworkResponse.Success -> {
-                    praxisCommand(ModalPraxisCommand("Response", response.data.message ?: "Woah!"))
-                    onDataState(SuccessState(response.data))
-                    println("SUCCESS, ${response.data.message}")
-                }
-                is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
-                    println("FAILED, ${response.throwable.message}")
-                }
-                is NetworkResponse.Unauthorized -> {
-                    settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+        currentLoadingJob =
+            dataModelScope.launch(exceptionHandler) {
+                onDataState(LoadingState)
+                when (val response = forgotPasswordUseCase(
+                    email = email
+                )) {
+                    is NetworkResponse.Success -> {
+                        praxisCommand(
+                            ModalPraxisCommand(
+                                "Response",
+                                response.data.message ?: "Woah!"
+                            )
+                        )
+                        onDataState(SuccessState(response.data))
+                        println("SUCCESS, ${response.data.message}")
+                    }
+                    is NetworkResponse.Failure -> {
+                        onDataState(ErrorState(response.throwable))
+                        println("FAILED, ${response.throwable.message}")
+                    }
+                    is NetworkResponse.Unauthorized -> {
+                        settings.clear()
+                        praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                        praxisCommand(NavigationPraxisCommand(""))
+                    }
                 }
             }
-        }
     }
 
     override fun activate() {

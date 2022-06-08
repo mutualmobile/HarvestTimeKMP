@@ -12,6 +12,5 @@ sealed class ScreenList(private val route: String) {
     object ChangePasswordScreen: ScreenList("changePasswordScreen")
     object SettingsScreen: ScreenList("settingsScreen")
     object ProjectScreen: ScreenList("projectScreen")
-    object NewEntryScreen: ScreenList("newEntryScreen")
     operator fun invoke() = route
 }

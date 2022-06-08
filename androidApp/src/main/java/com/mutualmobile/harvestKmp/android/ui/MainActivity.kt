@@ -21,8 +21,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.findWorkspaceScreen.FindWo
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
-import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.ForgotPasswordScreen
-import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.password.ForgotPasswordScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.password.ChangePasswordScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectScreen
