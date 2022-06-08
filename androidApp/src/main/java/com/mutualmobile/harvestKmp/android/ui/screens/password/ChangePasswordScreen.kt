@@ -100,18 +100,20 @@ fun ChangePasswordScreen(navController: NavHostController) {
 
                 IconLabelButton(
                     label = stringResource(MR.strings.request_reset_password.resourceId),
-                    errorMsg = (changePasswordState as? ErrorState)?.throwable?.message
-                ) {
-                    scope.launch {
-                        changePasswordDataModel.changePassWord(
-                            currentPassword.trim(),
-                            currentConfirmPassword.trim()
-                        ).collect(
-                        )
-                    }
+                    errorMsg = (changePasswordState as? ErrorState)?.throwable?.message,
+                    onClick =
+                    {
+                        scope.launch {
+                            changePasswordDataModel.changePassWord(
+                                currentPassword.trim(),
+                                currentConfirmPassword.trim()
+                            ).collect {
+                                changePasswordState = it
+                            }
 
+                        }
 
-                }
+                    })
             }
         }
     }

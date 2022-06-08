@@ -28,15 +28,20 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mutualmobile.harvestKmp.MR
 import java.text.SimpleDateFormat
+import java.time.LocalDate
 import java.util.*
+
+val formatter = SimpleDateFormat("EEEE, d MMMM ", Locale.getDefault())
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun DateDurationSelector(onDurationChange: (String) -> Unit) {
-    val formatter = SimpleDateFormat("EEEE, d MMMM ", Locale.getDefault())
-
+fun DateDurationSelector(
+    onDurationChange: (String) -> Unit,
+    onWorkDateChange: (Date) -> Unit,
+    currentDate: Date
+) {
     var isDatePickerVisible by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf("Wednesday, 11 May") }
+    var selectedDate by remember { mutableStateOf(formatter.format(currentDate)) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = 2.dp
@@ -125,6 +130,7 @@ fun DateDurationSelector(onDurationChange: (String) -> Unit) {
     if (isDatePickerVisible) {
         DatePicker(onDateSelected = {
             selectedDate = formatter.format(it)
+            onWorkDateChange(it)
         }, onDismissRequest = { isDatePickerVisible = false })
     }
 }

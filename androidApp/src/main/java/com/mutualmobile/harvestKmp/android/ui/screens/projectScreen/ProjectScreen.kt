@@ -22,13 +22,15 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.SELECTED_PROJECT
-import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.ProjectListHeader
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.ProjectListItem
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.SearchView
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
 
 
@@ -36,11 +38,11 @@ import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.Get
 @Composable
 fun ProjectScreen(navController: NavController) {
     val activity = LocalContext.current as Activity
-    var projectListMap =
-        mapOf("P" to listOf("Praxis", "PraxisFlutter"), "M" to listOf("MagicMountain", "Treat"))
-    var filteredProjectListMap: Map<String, List<String>>
+    val projectListMap = remember { mutableStateOf(emptyList<OrgProjectResponse>()) }
+    var filteredProjectListMap: List<OrgProjectResponse>
     val textState = remember { mutableStateOf(TextFieldValue("")) }
 
+    var currentUserState: DataState by remember { mutableStateOf(EmptyState) }
     var currentProjectScreenState: DataState by remember {
         mutableStateOf(EmptyState)
     }
@@ -50,17 +52,32 @@ fun ProjectScreen(navController: NavController) {
                 currentProjectScreenState = projectState
                 when (projectState) {
                     is SuccessState<*> -> {
-                        val apiResponse = (projectState.data as ApiResponse<*>)
-                        projectListMap = mapOf(
-                            "P" to listOf("Praxis", "PraxisFlutter"),
-                            "M" to listOf("MagicMountain", "Treat")
-                        )
+                        projectListMap.value =
+                            (projectState.data as ApiResponse<*>).data as List<OrgProjectResponse>
                     }
                     else -> Unit
                 }
             }
         )
     }
+    val userStateModel by remember {
+        mutableStateOf(
+            GetUserDataModel { userState ->
+                currentUserState = userState
+                when (userState) {
+                    is SuccessState<*> -> {
+                        getUserAssignedProjectsDataModel.getUserAssignedProjects(
+                            (userState.data as GetUserResponse).id ?: ""
+                        )
+                    }
+                    else -> Unit
+                }
+            }.apply {
+                activate()
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,46 +107,30 @@ fun ProjectScreen(navController: NavController) {
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 val searchedText = textState.value.text
                 filteredProjectListMap = if (searchedText.isEmpty()) {
-                    projectListMap
+                    projectListMap.value
                 } else {
-                    var tempProjectListMap = emptyMap<String, List<String>>()
-                    projectListMap.filter { (key, value) ->
-                        val list = value.filter { it.contains(searchedText, true) }
-                        if (list.isEmpty().not()) {
-                            tempProjectListMap = tempProjectListMap + Pair(key, list)
-                        }
-
-                        tempProjectListMap.isEmpty()
-
-
-                    }
-                    tempProjectListMap
+                    projectListMap.value.filter { it.name?.contains(searchedText, true) == true }
+                }
+                items(filteredProjectListMap) { project ->
+                    ProjectListItem(
+                        label = project.name ?: "",
+                        onItemClick = { selectedProject ->
+                            navController.previousBackStackEntry?.savedStateHandle?.set(
+                                SELECTED_PROJECT,
+                                selectedProject
+                            )
+                            navController.popBackStack(
+                                ScreenList.NewEntryScreen(),
+                                inclusive = false,
+                                saveState = true
+                            )
+                        })
                 }
 
-                filteredProjectListMap.forEach { (initial, contactsForInitial) ->
-                    stickyHeader {
-                        ProjectListHeader(label = initial)
-                    }
-
-                    items(contactsForInitial) { contact ->
-                        ProjectListItem(
-                            label = contact,
-                            onItemClick = { selectedProject ->
-                                navController.previousBackStackEntry?.savedStateHandle?.set(
-                                    SELECTED_PROJECT,
-                                    selectedProject
-                                )
-                                navController.popBackStack(
-                                    ScreenList.NewEntryScreen(),
-                                    inclusive = false,
-                                    saveState = true
-                                )
-                            })
-                    }
-                }
             }
-
         }
-    }
 
+    }
 }
+
+

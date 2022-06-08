@@ -50,6 +50,7 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
                 }
             }
         }.catch {
+            this.emit(ErrorState(it))
             println(it)
             it.printStackTrace()
             praxisCommand(

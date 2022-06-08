@@ -8,10 +8,10 @@ class ChangePasswordFormValidator {
 
     operator fun invoke(password: String, confirmPassword: String) {
         if (password.isEmpty()) {
-            throw EmptyFieldException("First Name")
+            throw EmptyFieldException("Password")
         }
         if (confirmPassword.isEmpty()) {
-            throw EmptyFieldException("Last Name")
+            throw EmptyFieldException("Confirm Password")
         }
         if (!isValidPassword(password)) {
             throw InvalidPasswordException()

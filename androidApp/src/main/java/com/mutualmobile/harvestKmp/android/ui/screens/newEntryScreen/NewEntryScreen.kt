@@ -22,10 +22,16 @@ import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.formatter
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
+import java.util.*
 
 val SELECTED_PROJECT = "SELECTED_PROJECT"
 
@@ -34,15 +40,33 @@ fun NewEntryScreen(navController: NavController) {
     val activity = LocalContext.current as Activity
     val durationEtText = remember { mutableStateOf(0.0f) }
     val selectedProject = remember { mutableStateOf("") }
+    val selectedWorkDate = remember { mutableStateOf((Date())) }
+    var userResponse = GetUserResponse()
     selectedProject.value =
         navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT)
             ?: "Android Department Work HYD"
 
+    var currentUserState: DataState by remember { mutableStateOf(EmptyState) }
 
     var currentLogWorkTimeState: DataState by remember {
         mutableStateOf(EmptyState)
     }
 
+    val userStateModel by remember {
+        mutableStateOf(
+            GetUserDataModel { userState ->
+                currentUserState = userState
+                when (userState) {
+                    is SuccessState<*> -> {
+                        userResponse = (userState.data) as GetUserResponse
+                    }
+                    else -> Unit
+                }
+            }.apply {
+                activate()
+            }
+        )
+    }
     val logWorkTimeDataModel by remember {
         mutableStateOf(
             TimeLogginDataModel { logWorkTimeState ->
@@ -53,9 +77,13 @@ fun NewEntryScreen(navController: NavController) {
                     }
                     else -> Unit
                 }
+            }.apply {
+                activate()
             }
         )
     }
+
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -87,22 +115,22 @@ fun NewEntryScreen(navController: NavController) {
                 ) {
                     TextButton(
                         onClick = {
-                            /*logWorkTimeDataModel.logWorkTime(
-                                "ec397b08-b99f-44ac-ba16-c679cddff84c",
-                                "ec397b08-b99f-44ac-ba16-c679cddff84c",
-                                "ec397b08-b99f-44ac-ba16-c679cddff84c",
-                                "2022-06-06",
-                                durationEtText.value,
-                                "jhhj"
-                            )*/
+                            logWorkTimeDataModel.logWorkTime(
+                                HarvestUserWorkRequest(
+                                    id = userResponse.orgId,
+                                    projectId = "",
+                                    userId = userResponse.id ?: "",
+                                    workDate = formatter.format(selectedWorkDate.value),
+                                    workHours = durationEtText.value,
+                                    note = ""
+
+                                )
+                            )
                         },
                         modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
                     ) {
                         Text(
-                            text = if (durationEtText.value == 0.0f)
-                                stringResource(MR.strings.new_entry_screen_start_timer_btn_txt.resourceId)
-                            else
-                                stringResource(MR.strings.save.resourceId),
+                            text = stringResource(MR.strings.save.resourceId),
                             style = MaterialTheme.typography.button.copy(
                                 color = MaterialTheme.colors.onSurface
                             ),
@@ -126,9 +154,15 @@ fun NewEntryScreen(navController: NavController) {
                 },
                 onWorkClick = {})
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
-            DateDurationSelector(onDurationChange = { duration ->
-                durationEtText.value = duration.toFloat()
-            })
+            DateDurationSelector(
+                onDurationChange = { duration ->
+                    durationEtText.value = duration.toFloat()
+                },
+                currentDate = selectedWorkDate.value,
+                onWorkDateChange = {
+                    selectedWorkDate.value = it
+                }
+            )
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
             Text(
                 text = stringResource(MR.strings.new_entry_screen_end_view_text.resourceId),
