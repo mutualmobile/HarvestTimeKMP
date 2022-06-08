@@ -32,7 +32,7 @@ fun LandingScreenDrawer(
     closeDrawer: () -> Unit,
     onScreenChanged: (LandingScreenDrawerItemType) -> Unit,
     goToSettingsScreen: () -> Unit,
-    organizationName: String?,
+    orgIdentifier: String?,
 ) {
     var userState: DataState by remember { mutableStateOf(EmptyState) }
     remember {
@@ -56,7 +56,7 @@ fun LandingScreenDrawer(
 
     LaunchedEffect(userState) {
         if (userState is SuccessState<*>) {
-            organizationName?.let { nnOrganizationName ->
+            orgIdentifier?.let { nnOrganizationName ->
                 println("Org is: $nnOrganizationName")
                 findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = nnOrganizationName)
             }

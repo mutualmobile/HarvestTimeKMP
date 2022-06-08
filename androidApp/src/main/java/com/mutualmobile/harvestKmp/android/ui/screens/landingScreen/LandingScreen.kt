@@ -47,7 +47,6 @@ import com.google.accompanist.insets.ui.TopAppBar
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
@@ -55,6 +54,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
@@ -65,7 +65,7 @@ import kotlinx.datetime.toLocalDateTime
 @Composable
 fun LandingScreen(
     navController: NavHostController,
-    orgIdentifier: String?
+    orgIdentifier: String?,
 ) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
@@ -189,9 +189,9 @@ fun LandingScreen(
                     currentDrawerScreen = newScreen
                 },
                 goToSettingsScreen = {
-                    navController.navigate(ScreenList.SettingsScreen())
+                    navController.navigate(HarvestRoutes.Screen.SETTINGS)
                 },
-                organizationName = orgIdentifier
+                orgIdentifier = orgIdentifier
             )
         },
         drawerBackgroundColor = DrawerBgColor,
@@ -216,7 +216,7 @@ fun LandingScreen(
                         currentDayOffset = dayOffset
                     },
                     goToNewEntryScreen = {
-                        navController.navigate(ScreenList.NewEntryScreen())
+                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
                     }
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()

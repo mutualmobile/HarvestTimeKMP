@@ -26,7 +26,6 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,7 +39,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.FindWorkspaceScreenTypography
@@ -49,8 +48,10 @@ import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
 
 @Composable
@@ -58,21 +59,24 @@ fun FindWorkspaceScreen(
     navController: NavHostController
 ) {
     var tfValue by remember { mutableStateOf("") }
+
+    var currentFindOrgNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
     var findOrgState: DataState by remember { mutableStateOf(EmptyState) }
     val findOrgByIdentifierDataModel by remember {
         mutableStateOf(
             FindOrgByIdentifierDataModel { updatedState ->
                 findOrgState = updatedState
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentFindOrgNavigationCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            navController.navigate(newCommand.screen)
+                        }
+                    }
+                }
             }
         )
-    }
-
-    LaunchedEffect(findOrgState) {
-        if (findOrgState is SuccessState<*>) {
-            navController.navigate(
-                ScreenList.LoginScreen.orgIdentifierRoute(orgIdentifier = tfValue)
-            )
-        }
     }
 
     CompositionLocalProvider(LocalContentColor provides Color.White) {
@@ -139,11 +143,17 @@ fun FindWorkspaceScreen(
                             .fillMaxWidth(if (findOrgState is ErrorState) 0.9f else 0f)
                             .padding(vertical = 4.dp),
                         onClick = {
-                            navController.navigate(ScreenList.NewOrgSignUpScreen())
+                            navController.navigate(HarvestRoutes.Screen.NEW_ORG_SIGNUP)
                         },
                     )
                 }
             }
+            HarvestDialog(
+                praxisCommand = currentFindOrgNavigationCommand,
+                onConfirm = {
+                    currentFindOrgNavigationCommand = null
+                },
+            )
         }
     }
 }
