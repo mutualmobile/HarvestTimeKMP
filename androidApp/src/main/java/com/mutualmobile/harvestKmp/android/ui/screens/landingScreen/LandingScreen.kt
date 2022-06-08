@@ -79,6 +79,7 @@ fun LandingScreen(
     val coroutineScope = rememberCoroutineScope()
     var currentDrawerScreen by remember { mutableStateOf(LandingScreenDrawerItemType.Time) }
     var currentDayOffset by remember { mutableStateOf(0) }
+    var localWeekOffset by remember { mutableStateOf(0) }
 
     val currentDay by remember(currentDayOffset) {
         derivedStateOf {
@@ -145,6 +146,7 @@ fun LandingScreen(
                             }
                             if (timeScreenPagerState.currentPage != timeScreenStartIndex) {
                                 IconButton(onClick = {
+                                    localWeekOffset = 0
                                     coroutineScope.launch {
                                         timeScreenPagerState.scrollToPage(timeScreenStartIndex)
                                     }
@@ -231,7 +233,11 @@ fun LandingScreen(
                     isWorkLoading = { isLoading ->
                         isWorkLoading = isLoading
                     },
-                    navigateToFindWorkspaceScreen = { navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE }
+                    navigateToFindWorkspaceScreen = { navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE },
+                    localWeekOffset = localWeekOffset,
+                    onWeekOffsetChanged = { updatedOffset ->
+                        localWeekOffset += updatedOffset
+                    },
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }

@@ -41,6 +41,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.Week
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentDayIndex
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentPageIndex
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.floorMod
+import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.numberOfWeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
@@ -67,14 +68,145 @@ const val MaxItemFling = 1
 @OptIn(ExperimentalPagerApi::class, ExperimentalSnapperApi::class)
 @Composable
 fun TimeScreen(
+    localWeekOffset: Int,
     pagerState: PagerState,
     startIndex: Int,
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
     goToNewEntryScreen: () -> Unit,
     isWorkLoading: (Boolean) -> Unit,
-    navigateToFindWorkspaceScreen: () -> Unit
+    navigateToFindWorkspaceScreen: () -> Unit,
+    onWeekOffsetChanged: (Int) -> Unit
 ) {
+    var getUserState: DataState by remember { mutableStateOf(EmptyState) }
+    val getUserDataModel by remember { mutableStateOf(
+        GetUserDataModel { newState ->
+            getUserState = newState
+        }.activate()
+    ) }
+
+    //TODO: Make this business logic common/shared
+    val dateRangeStart by remember(localWeekOffset) {
+        mutableStateOf(
+            Clock.System.now()
+                .minus(currentDayIndex.days)
+                .plus((localWeekOffset * 7).days)
+        )
+    }
+    val dateRangeEnd by remember(localWeekOffset) {
+        mutableStateOf(
+            Clock.System.now()
+                .plus((WeekDays.values().lastIndex - currentDayIndex).days)
+                .plus((localWeekOffset * 7).days)
+        )
+    }
+
+    var currentWeekWorkLogs by remember {
+        mutableStateOf(emptyList<HarvestUserWorkResponse>())
+    }
+    var timeLoggingPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
+    val timeLoggingDataModel by remember { mutableStateOf(TimeLogginDataModel().apply {
+        praxisCommand = { newCommand ->
+            timeLoggingPraxisCommand = newCommand
+            when (newCommand) {
+                is NavigationPraxisCommand -> {
+                    if (newCommand.screen.isBlank()) {
+                        navigateToFindWorkspaceScreen()
+                    }
+                }
+            }
+        }
+    }) }
+
+    LaunchedEffect(localWeekOffset, getUserState) {
+        when (getUserState) {
+            is SuccessState<*> -> {
+                (getUserState as? SuccessState<GetUserResponse>)?.data?.id?.let { nnUserId ->
+                    timeLoggingDataModel.getWorkLogsForDateRange(
+                        startDate = dateRangeStart.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                        endDate = dateRangeEnd.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
+                        userIds = listOf(nnUserId)
+                    ).collect { newState ->
+                        currentWeekWorkLogs = emptyList()
+                        isWorkLoading(newState is LoadingState)
+                        when (newState) {
+                            is SuccessState<*> -> {
+                                (newState as? SuccessState<ApiResponse<List<HarvestUserWorkResponse>>>)
+                                    ?.data?.data?.let { apiWorkLogs ->
+                                        currentWeekWorkLogs = apiWorkLogs
+                                    }
+                            }
+                            else -> Unit
+                        }
+                    }
+                }
+            }
+            else -> Unit
+        }
+    }
+
+    val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
+
+    val lazyRowFlingBehavior = rememberSnapperFlingBehavior(
+        lazyListState = lazyRowState,
+        snapIndex = { _, snapperStartIndex, targetIndex ->
+            targetIndex.coerceIn(
+                snapperStartIndex - MaxItemFling,
+                snapperStartIndex + MaxItemFling
+            )
+        }
+    )
+
+    LaunchedEffect(lazyRowFlingBehavior.animationTarget) {
+        lazyRowFlingBehavior.animationTarget?.let { nnVal ->
+            when (nnVal) {
+                0 -> {
+                    onWeekScrolled(-1)
+                    pagerState.scrollToPage(pagerState.currentPage - 7)
+                    onWeekOffsetChanged(-1)
+                }
+                2 -> {
+                    onWeekScrolled(1)
+                    pagerState.scrollToPage(pagerState.currentPage + 7)
+                    onWeekOffsetChanged(1)
+                }
+                else -> Unit
+            }
+        }
+    }
+
+    LaunchedEffect(lazyRowState.isScrollInProgress) {
+        if (!lazyRowState.isScrollInProgress) {
+            lazyRowState.scrollToItem(1)
+        }
+    }
+
+    LaunchedEffect(pagerState.currentPage) {
+        val daysOffset = pagerState.currentPage - startIndex
+        onDayScrolled(daysOffset)
+    }
+
+    LaunchedEffect(pagerState.isScrollInProgress) {
+        if (
+            pagerState.currentPageIndex(startIndex) == 0 &&
+            pagerState.targetPageIndex(startIndex) == numberOfWeekDays - 1
+        ) {
+            onWeekOffsetChanged(-1)
+            if (!lazyRowState.isScrollInProgress) {
+                lazyRowState.animateScrollToItem(0)
+            }
+        }
+        if (
+            pagerState.currentPageIndex(startIndex) == numberOfWeekDays - 1 &&
+            pagerState.targetPageIndex(startIndex) == 0
+        ) {
+            onWeekOffsetChanged(1)
+            if (!lazyRowState.isScrollInProgress) {
+                lazyRowState.animateScrollToItem(2, 100)
+            }
+        }
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
@@ -90,137 +222,6 @@ fun TimeScreen(
         }
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            val numberOfDays by remember { mutableStateOf(WeekDays.values().size) }
-            var localWeekOffset by remember { mutableStateOf(0) }
-
-            var getUserState: DataState by remember { mutableStateOf(EmptyState) }
-            val getUserDataModel by remember { mutableStateOf(
-                GetUserDataModel { newState ->
-                    getUserState = newState
-                }.activate()
-            ) }
-
-            //TODO: Make this business logic common/shared
-            val dateRangeStart by remember(localWeekOffset) {
-                mutableStateOf(
-                    Clock.System.now()
-                        .minus(currentDayIndex.days)
-                        .plus((localWeekOffset * 7).days)
-                )
-            }
-            val dateRangeEnd by remember(localWeekOffset) {
-                mutableStateOf(
-                    Clock.System.now()
-                        .plus((WeekDays.values().lastIndex - currentDayIndex).days)
-                        .plus((localWeekOffset * 7).days)
-                )
-            }
-
-            var currentWeekWorkLogs by remember {
-                mutableStateOf(emptyList<HarvestUserWorkResponse>())
-            }
-            var timeLoggingPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
-            val timeLoggingDataModel by remember { mutableStateOf(TimeLogginDataModel().apply {
-                praxisCommand = { newCommand ->
-                    timeLoggingPraxisCommand = newCommand
-                    when (newCommand) {
-                        is NavigationPraxisCommand -> {
-                            if (newCommand.screen.isBlank()) {
-                                navigateToFindWorkspaceScreen()
-                            }
-                        }
-                    }
-                }
-            }) }
-
-            LaunchedEffect(localWeekOffset, getUserState) {
-                when (getUserState) {
-                    is SuccessState<*> -> {
-                        (getUserState as? SuccessState<GetUserResponse>)?.data?.id?.let { nnUserId ->
-                            timeLoggingDataModel.getWorkLogsForDateRange(
-                                startDate = dateRangeStart.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
-                                endDate = dateRangeEnd.toLocalDateTime(TimeZone.currentSystemDefault()).toString(),
-                                userIds = listOf(nnUserId)
-                            ).collect { newState ->
-                                currentWeekWorkLogs = emptyList()
-                                isWorkLoading(newState is LoadingState)
-                                when (newState) {
-                                    is SuccessState<*> -> {
-                                        (newState as? SuccessState<ApiResponse<List<HarvestUserWorkResponse>>>)
-                                            ?.data?.data?.let { apiWorkLogs ->
-                                                currentWeekWorkLogs = apiWorkLogs
-                                            }
-                                    }
-                                    else -> Unit
-                                }
-                            }
-                        }
-                    }
-                    else -> Unit
-                }
-            }
-
-            val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
-
-            val lazyRowFlingBehavior = rememberSnapperFlingBehavior(
-                lazyListState = lazyRowState,
-                snapIndex = { _, snapperStartIndex, targetIndex ->
-                    targetIndex.coerceIn(
-                        snapperStartIndex - MaxItemFling,
-                        snapperStartIndex + MaxItemFling
-                    )
-                }
-            )
-
-            LaunchedEffect(lazyRowFlingBehavior.animationTarget) {
-                lazyRowFlingBehavior.animationTarget?.let { nnVal ->
-                    when (nnVal) {
-                        0 -> {
-                            onWeekScrolled(-1)
-                            pagerState.scrollToPage(pagerState.currentPage - 7)
-                            localWeekOffset -= 1
-                        }
-                        2 -> {
-                            onWeekScrolled(1)
-                            pagerState.scrollToPage(pagerState.currentPage + 7)
-                            localWeekOffset += 1
-                        }
-                        else -> Unit
-                    }
-                }
-            }
-
-            LaunchedEffect(lazyRowState.isScrollInProgress) {
-                if (!lazyRowState.isScrollInProgress) {
-                    lazyRowState.scrollToItem(1)
-                }
-            }
-
-            LaunchedEffect(pagerState.currentPage) {
-                val daysOffset = pagerState.currentPage - startIndex
-                onDayScrolled(daysOffset)
-            }
-
-            LaunchedEffect(pagerState.isScrollInProgress) {
-                if (
-                    pagerState.currentPageIndex(startIndex) == 0 &&
-                    pagerState.targetPageIndex(startIndex) == numberOfDays - 1
-                ) {
-                    localWeekOffset -= 1
-                    if (!lazyRowState.isScrollInProgress) {
-                        lazyRowState.animateScrollToItem(0)
-                    }
-                }
-                if (
-                    pagerState.currentPageIndex(startIndex) == numberOfDays - 1 &&
-                    pagerState.targetPageIndex(startIndex) == 0
-                ) {
-                    localWeekOffset += 1
-                    if (!lazyRowState.isScrollInProgress) {
-                        lazyRowState.animateScrollToItem(2, 100)
-                    }
-                }
-            }
 
             LazyRow(
                 state = lazyRowState,
@@ -239,7 +240,7 @@ fun TimeScreen(
             ) { currentPageIndex ->
                 val currentIndex by remember(currentPageIndex) {
                     derivedStateOf {
-                        (currentPageIndex - startIndex + currentDayIndex).floorMod(numberOfDays)
+                        (currentPageIndex - startIndex + currentDayIndex).floorMod(numberOfWeekDays)
                     }
                 }
                 val currentPageDate by remember(currentIndex) {

@@ -81,14 +81,16 @@ private val currentDayName = Clock
 
 val currentDayIndex = WeekDays.valueOf(currentDayName).ordinal
 
+val numberOfWeekDays = WeekDays.values().size
+
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.currentPageIndex(
     indexOffset: Int,
-    numberOfDays: Int = WeekDays.values().size,
+    numberOfDays: Int = numberOfWeekDays,
 ) = (currentPage - indexOffset + currentDayIndex).floorMod(numberOfDays)
 
 @OptIn(ExperimentalPagerApi::class)
 fun PagerState.targetPageIndex(
     indexOffset: Int,
-    numberOfDays: Int = WeekDays.values().size,
+    numberOfDays: Int = numberOfWeekDays,
 ) = (targetPage - indexOffset + currentDayIndex).floorMod(numberOfDays)
