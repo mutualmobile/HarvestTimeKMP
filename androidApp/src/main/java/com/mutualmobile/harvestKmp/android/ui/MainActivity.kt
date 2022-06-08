@@ -22,8 +22,10 @@ import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScree
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.ForgotPasswordScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.password.ChangePasswordScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
@@ -47,10 +49,10 @@ class MainActivity : ComponentActivity() {
                         navController = navController,
                         startDestination = ScreenList.OnBoardingScreen(),
                     ) {
-                        composable(ScreenList.OnBoardingScreen()) {
+                        composable(ScreenList.OnBoardingScreen()){
                             OnBoardingScreen(navController = navController)
                         }
-                        composable(ScreenList.ExistingOrgSignUpScreen()) {
+                        composable(ScreenList.ExistingOrgSignUpScreen()){
                             SignUpScreen(navController = navController)
                         }
                         composable(ScreenList.NewOrgSignUpScreen()) {
@@ -64,6 +66,12 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(ScreenList.FindWorkspaceScreen()) {
                             FindWorkspaceScreen(navController = navController)
+                        }
+                        composable(ScreenList.ProjectScreen()) {
+                            ProjectScreen(navController=navController)
+                        }
+                        composable(ScreenList.NewEntryScreen()) {
+                            NewEntryScreen(navController=navController)
                         }
                         composable(ScreenList.NewEntryScreen()) {
                             NewEntryScreen(navController = navController)

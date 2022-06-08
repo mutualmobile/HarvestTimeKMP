@@ -5,13 +5,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.MaterialTheme
+import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusDirection
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.input.ImeAction
@@ -27,24 +28,26 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Car
 fun SignUpTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    placeholderText: String,
-    isPasswordTextField: Boolean = false,
+    placeholderText: String = "",
+    isPasswordTextField: Boolean = false
 ) {
     val focusManager = LocalFocusManager.current
     val keyboardManager = LocalSoftwareKeyboardController.current
-    TextField(
+    OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        placeholder = { Text(text = placeholderText) },
         shape = CardShape,
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = 4.dp),
-        colors = TextFieldDefaults.textFieldColors(
-            textColor = MaterialTheme.colors.surface,
+        colors = TextFieldDefaults.outlinedTextFieldColors(
+            textColor = Color.Black,
             backgroundColor = MaterialTheme.colors.surface.copy(alpha = 0.25f),
             cursorColor = MaterialTheme.colors.surface,
-            placeholderColor = MaterialTheme.colors.surface,
+            placeholderColor = MaterialTheme.colors.secondary,
+            focusedBorderColor = MaterialTheme.colors.primary,
+            unfocusedBorderColor = Color.Gray.copy(alpha = 0.50f)
+
         ),
         visualTransformation = if (isPasswordTextField) PasswordVisualTransformation()
         else VisualTransformation.None,
@@ -62,6 +65,13 @@ fun SignUpTextField(
             onNext = {
                 focusManager.moveFocus(FocusDirection.Down)
             }
-        )
+        ),
+        label = {
+            Text(
+                placeholderText,
+                color = Color.Gray.copy(alpha = 0.50f),
+            )
+        }
     )
 }
+

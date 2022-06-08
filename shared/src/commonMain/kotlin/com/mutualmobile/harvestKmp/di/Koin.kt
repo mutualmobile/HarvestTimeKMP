@@ -178,7 +178,7 @@ class AuthApiUseCaseComponent : KoinComponent {
     fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
     fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
     fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
-    fun provideGetUserUseCase(): GetUserUseCase = get()
+    fun provideGetNetworkUserUseCase(): GetUserUseCase = get()
     fun provideLoginUseCase(): LoginUseCase = get()
     fun provideLogoutUseCase(): LogoutUseCase = get()
     fun provideNewOrgSignUpUseCase(): NewOrgSignUpUseCase = get()

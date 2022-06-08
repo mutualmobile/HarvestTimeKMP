@@ -8,6 +8,9 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -19,6 +22,7 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 import com.mutualmobile.harvestKmp.datamodel.DataState
@@ -26,10 +30,16 @@ import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.LogWorkTimeDataModel
 
+val SELECTED_PROJECT = "SELECTED_PROJECT"
+
 @Composable
 fun NewEntryScreen(navController: NavController) {
     val activity = LocalContext.current as Activity
     val durationEtText = remember { mutableStateOf(0.0f) }
+    val selectedProject = remember { mutableStateOf("") }
+    selectedProject.value =
+        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT)
+            ?: "Android Department Work HYD"
 
 
     var currentLogWorkTimeState: DataState by remember {
@@ -112,7 +122,12 @@ fun NewEntryScreen(navController: NavController) {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BucketSelector()
+            BucketSelector(
+                currentProject = selectedProject.value,
+                onDepartmentClick = {
+                    navController.navigate(ScreenList.ProjectScreen())
+                },
+                onWorkClick = {})
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector(onDurationChange = { duration ->
                 durationEtText.value = duration.toFloat()

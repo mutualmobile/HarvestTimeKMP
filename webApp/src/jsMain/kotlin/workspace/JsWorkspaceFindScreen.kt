@@ -60,10 +60,14 @@ val JsWorkspaceFindScreen = VFC {
         subtitle = status
     }
 
-    Stack {
+    Card{
         sx {
-            margin = Margin(24.px, 24.px)
+            padding = 12.px
+            margin = 12.px
+            borderRadius = 4.px
+            minWidth = 100.px
         }
+
         Typography {
             this.variant = TypographyVariant.h4
             this.component = ReactHTML.div
@@ -76,72 +80,63 @@ val JsWorkspaceFindScreen = VFC {
             +"Simple time tracking software and powerful reporting that helps your team thrive."
         }
 
-        Box {
+        Typography {
+            this.variant = TypographyVariant.h6
+            this.component = ReactHTML.div
+            +"Find your organization by typing the org identifier!"
+        }
+        Stack {
+            this.direction = responsive(StackDirection.row)
             this.sx {
-                this.borderRadius = 25.px
-                this.borderColor = Color("#D3D3D3")
-                this.margin = Margin(56.px, 4.px)
+                this.alignItems = AlignItems.center
+                this.alignContent = AlignContent.center
             }
-
             Typography {
                 this.variant = TypographyVariant.h6
                 this.component = ReactHTML.div
-                +"Find your organization by typing the org identifier!"
-            }
-            Stack {
-                this.direction = responsive(StackDirection.row)
+                +"https://"
                 this.sx {
-                    this.alignItems = AlignItems.center
-                    this.alignContent = AlignContent.center
-                }
-                Typography {
-                    this.variant = TypographyVariant.h6
-                    this.component = ReactHTML.div
-                    +"https://"
-                    this.sx {
-                        margin = Margin(0.px, 4.px)
-                    }
-                }
-                WorkspaceComp {
-                    this.name = workspaceName
-                    this.nameUpdate = {
-                        workspaceName = it.lowercase().trim()
-                    }
-                }
-                Typography {
-                    this.sx {
-                        margin = Margin(0.px, 4.px)
-                    }
-                    this.variant = TypographyVariant.h6
-                    this.component = ReactHTML.div
-                    +".harvestkmp.com"
-                }
-
-            }
-
-            Button {
-                this.variant = ButtonVariant.contained
-                sx {
-                    this.margin = Margin(24.px, 4.px)
-                }
-                +"Find Workspace"
-                onClick = {
-                    dataModel.findOrgByIdentifier(workspaceName)
+                    margin = Margin(0.px, 4.px)
                 }
             }
-
-            Button {
-                sx {
-                    this.margin = Margin(24.px, 4.px)
-                }
-                +"Signup new organization ?"
-                onClick = {
-                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.SIGNUP)
+            WorkspaceComp {
+                this.name = workspaceName
+                this.nameUpdate = {
+                    workspaceName = it.lowercase().trim()
                 }
             }
-
+            Typography {
+                this.sx {
+                    margin = Margin(0.px, 4.px)
+                }
+                this.variant = TypographyVariant.h6
+                this.component = ReactHTML.div
+                +".harvestkmp.com"
+            }
 
         }
+
+        Button {
+            this.variant = ButtonVariant.contained
+            sx {
+                this.margin = Margin(24.px, 4.px)
+            }
+            +"Find Workspace"
+            onClick = {
+                dataModel.findOrgByIdentifier(workspaceName)
+            }
+        }
+
+        Button {
+            sx {
+                this.margin = Margin(24.px, 4.px)
+            }
+            +"Signup new organization ?"
+            onClick = {
+                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + HarvestRoutes.Screen.SIGNUP)
+            }
+        }
+
     }
 }
 

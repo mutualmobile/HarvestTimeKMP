@@ -41,14 +41,14 @@
     <string name="login_screen_signIn_btn_txt">Sign In</string>
     <string name="signup_screen_signup_btn_txt">Sign Up</string>
     <string name="login_screen_email_et_placeholder">Work email</string>
-    <string name="login_screen_password_et_placeholder">Password</string>
+    <string name="password_et_placeholder">Password</string>
     <string name="signup_screen_email_et_placeholder">Work email</string>
-    <string name="signup_screen_password_et_placeholder">Password</string>
+    <string name="signup_screen_confirm_password_et_placeholder">Confirm Password</string>
     <string name="signup_screen_first_name_et_placeholder">First Name</string>
     <string name="signup_screen_last_name_et_placeholder">Last Name</string>
     <string name="signup_screen_company_name_et_placeholder">Company Name</string>
-    <string name="signup_screen_company_website_et_placeholder">Company Name</string>
-    <string name="signup_screen_company_identifier_et_placeholder">Company Name</string>
+    <string name="signup_screen_company_website_et_placeholder">Company Website</string>
+    <string name="signup_screen_company_identifier_et_placeholder">Company Identifier</string>
     <string name="signup_screen_user_details_et_placeholder">Company Name</string>
     <string name="signup_screen_company_details_et_placeholder">Company Name</string>
     <string name="find_workspace_screen_title">Organization Identifier</string>
@@ -57,6 +57,8 @@
     <string name="find_workspace_screen_signup_btn_txt">New Organization?\nSign up instead</string>
     <string name="find_workspace_screen_placeholder_txt">your-workspace</string>
     <string name="generic_error_msg">Unexpected error occurred!</string>
+    <string name="sign_up_form">Sign up Form</string>
+    <string name="choose_project">Choose Project</string>
     <string name="save">Save</string>
     <string name="forgot_password">Forgot Password</string>
     <string name="request_reset_password">Request Reset Password</string>
