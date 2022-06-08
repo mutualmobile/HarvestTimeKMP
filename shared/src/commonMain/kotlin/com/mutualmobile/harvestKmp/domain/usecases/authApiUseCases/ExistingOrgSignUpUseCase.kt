@@ -10,7 +10,7 @@ class ExistingOrgSignUpUseCase(private val authApi: AuthApi) {
     suspend operator fun invoke(
         firstName: String,
         lastName: String,
-        confirmPassword: String,
+        company: String,
         email: String,
         password: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
@@ -23,7 +23,7 @@ class ExistingOrgSignUpUseCase(private val authApi: AuthApi) {
         return authApi.existingOrgSignUp(
             firstName = firstName,
             lastName = lastName,
-            confirmPassword = confirmPassword,
+            company = company,
             email = email,
             password = password
         )

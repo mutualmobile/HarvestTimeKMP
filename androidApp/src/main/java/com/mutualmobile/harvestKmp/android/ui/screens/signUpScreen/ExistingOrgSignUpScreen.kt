@@ -110,7 +110,7 @@ fun SignUpScreen(navController: NavHostController) {
                         signUpDataModel.signUp(
                             firstName = currentFirstName,
                             lastName = currentLastName,
-                            confirmPassword = currentConfirmPassword,
+                            company = currentConfirmPassword,
                             email = currentWorkEmail,
                             password = currentPassword
                         )

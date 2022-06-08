@@ -32,7 +32,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
     fun signUp(
         firstName: String,
         lastName: String,
-        confirmPassword: String,
+        company: String,
         email: String,
         password: String
     ) {
@@ -42,9 +42,9 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
             when (val signUpResponse = existingOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
+                company = company,
                 email = email,
-                password = password,
-                confirmPassword = confirmPassword,
+                password = password
             )) {
                 is NetworkResponse.Success -> {
                     handleSuccessSignup(signUpResponse)
