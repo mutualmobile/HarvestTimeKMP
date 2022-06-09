@@ -57,6 +57,9 @@ struct TimeSheetView: View {
             headerView
             Spacer()
             ContainerView(presentTimeEntrySheet: $presentTimeEntrySheet, quoteText: "Here goes some of great quote from data model")
+                .sheet(isPresented: $presentTimeEntrySheet) {
+                    ProjectListView()
+                }
             Spacer()
         }
     }
