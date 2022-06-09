@@ -1,14 +1,21 @@
 package com.mutualmobile.harvestKmp.android.ui
 
+//noinspection SuspiciousImport
+import android.R
 import android.animation.ObjectAnimator
 import android.os.Bundle
 import android.view.View
+import android.view.ViewTreeObserver
 import android.view.animation.LinearInterpolator
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -28,10 +35,17 @@ import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpS
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 
 
 class MainActivity : ComponentActivity() {
+    var getUserState: DataState by mutableStateOf(EmptyState)
+
     override fun onCreate(savedInstanceState: Bundle?) {
         setupSplashScreen()
         super.onCreate(savedInstanceState)
@@ -43,10 +57,21 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
+                    remember { mutableStateOf(
+                        GetUserDataModel { newState ->
+                            getUserState = newState
+                        }.activate()
+                    ) }
+
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
-                        startDestination = HarvestRoutes.Screen.ON_BOARDING,
+                        startDestination =
+                        if (getUserState is SuccessState<*>) {
+                            HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER
+                        } else {
+                            HarvestRoutes.Screen.ON_BOARDING
+                        },
                     ) {
                         composable(HarvestRoutes.Screen.ON_BOARDING) {
                             OnBoardingScreen(navController = navController)
@@ -102,6 +127,27 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+        removeSplashScreen()
+    }
+
+    private fun removeSplashScreen() {
+        // Set up an OnPreDrawListener to the root view.
+        val content: View = findViewById(R.id.content)
+        content.viewTreeObserver.addOnPreDrawListener(
+            object : ViewTreeObserver.OnPreDrawListener {
+                override fun onPreDraw(): Boolean {
+                    // Check if the initial data is ready.
+                    return if (getUserState !is EmptyState && getUserState !is LoadingState) {
+                        // The content is ready; start drawing.
+                        content.viewTreeObserver.removeOnPreDrawListener(this)
+                        true
+                    } else {
+                        // The content is not ready; suspend.
+                        false
+                    }
+                }
+            }
+        )
     }
 
     private fun setupSplashScreen() {
