@@ -10,6 +10,8 @@ import com.mutualmobile.harvestKmp.features.datamodels.orgUsersApiDataModels.Fin
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.AssignProjectsToUsersDataModel
 import csstype.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.icons.material.Add
 import mui.material.*
 import mui.material.styles.TypographyVariant
@@ -72,20 +74,7 @@ val JsProjectAssignScreen = VFC {
             }
         }
     }
-    val assignDataModel = AssignProjectsToUsersDataModel { stateNew: DataState ->
-        isSaving = stateNew is LoadingState
-        when (stateNew) {
-            is SuccessState<*> -> {
-                try {
-                    selectionInfo.clear()
-                    userSelection.clear()
-                    projectSelection = null
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
-            }
-        }
-    }
+    val assignDataModel = AssignProjectsToUsersDataModel()
 
     findProjectsInOrgDataModel.praxisCommand = { newCommand: PraxisCommand ->
         when (newCommand) {
@@ -118,12 +107,29 @@ val JsProjectAssignScreen = VFC {
         }
     }
 
+    assignDataModel.assignProjects.onEach { stateNew: DataState ->
+        isSaving = stateNew is LoadingState
+        when (stateNew) {
+            is SuccessState<*> -> {
+                try {
+                    selectionInfo.clear()
+                    userSelection.clear()
+                    projectSelection = null
+                } catch (ex: Exception) {
+                    ex.printStackTrace()
+                }
+            }
+            else -> {
 
+            }
+        }
+    }.launchIn(assignDataModel.dataModelScope)
 
     useEffectOnce {
         findProjectsInOrgDataModel.activate()
         usersInOrgDataModel.activate()
         assignDataModel.activate()
+
         findProjectsInOrgDataModel.findProjectInOrg(
             orgId = null, offset = currentProjectPage, limit = limit, search = searchProject
         )
