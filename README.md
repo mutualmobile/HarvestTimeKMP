@@ -1,3 +1,5 @@
+<div id="top"></div>
+
 # 🕓 HarvestTime KMP
 <p align="left"> Multi-Platform Harvest Time Tracking clone project built with SwiftUI, Jetpack Compose, Kotlin/Js </p>
 
@@ -6,37 +8,31 @@
 
 <p align="left">
     <a href="https://kotlinlang.org/docs/releases.html">
-      <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-1.6.21-blue.svg?style=for-the-badge&logo=appveyor"/>
-    </a>
-    <a href="https://opensource.org/licenses/Apache-2.0">
-      <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?style=for-the-badge&logo=appveyor"/>
+      <img alt="Kotlin" src="https://img.shields.io/badge/Kotlin-1.6.21-blue.svg?color=blue&style=for-the-badge"/>
     </a>
     <a href = "https://github.com/mutualmobile/HarvestTimeKMP/stargazers">
-        <img src="https://img.shields.io/github/stars/mutualmobile/HarvestTimeKMP?style=for-the-badge&logo=appveyor" />
-    </a>
-    <a href = "https://github.com/mutualmobile/HarvestTimeKMP/issues">
-        <img src="https://img.shields.io/github/issues/mutualmobile/HarvestTimeKMP?style=for-the-badge&logo=appveyor" />
+        <img src="https://img.shields.io/github/stars/mutualmobile/HarvestTimeKMP?color=green&style=for-the-badge" />
     </a>
     <a href = "https://github.com/mutualmobile/HarvestTimeKMP/network/members">
-        <img src="https://img.shields.io/github/forks/mutualmobile/HarvestTimeKMP?style=for-the-badge&logo=appveyor" />
+        <img src="https://img.shields.io/github/forks/mutualmobile/HarvestTimeKMP?color=green&style=for-the-badge" />
+    </a>
+    <a href = "https://github.com/mutualmobile/HarvestTimeKMP/issues">
+        <img src="https://img.shields.io/github/issues/mutualmobile/HarvestTimeKMP?color=orange&style=for-the-badge" />
     </a>
     <a href = "https://github.com/mutualmobile/HarvestTimeKMP/watchers">
-        <img src="https://img.shields.io/github/watchers/mutualmobile/HarvestTimeKMP?style=for-the-badge&logo=appveyor" />
+        <img src="https://img.shields.io/github/watchers/mutualmobile/HarvestTimeKMP?color=yellowgreen&style=for-the-badge" />
     </a>
 </p>
 <p align="left">
-    <a href="https://github.com/mutualmobile/HarvestTimeKMP/actions/workflows/build_firebase_deploy.yml">
-      <img alt="Build Status" src="https://github.com/mutualmobile/HarvestTimeKMP/actions/workflows/build_firebase_deploy.yml/badge.svg"/>
+    <a href="https://opensource.org/licenses/Apache-2.0">
+      <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg?color=yellowgreen&style=for-the-badge"/>
     </a>
     <a href="">
-        <img src="https://img.shields.io/badge/PRs-WELCOME-brightgreen.svg?style=flat-square&logo=appveyor"/>
-    </a>
-    <a href = "https://twitter.com/MutualMobile">
-        <img src = "https://img.shields.io/twitter/url?label=follow&style=social&url=https%3A%2F%2Ftwitter.com%MutualMobile" />
+        <img src="https://img.shields.io/badge/PRs-WELCOME-brightgreen.svg?color=yellow&style=for-the-badge"/>
     </a>
 </p>
 
-### 💡 The purpose of this repository:
+### The purpose of this repository:
 
 - Build cross-platform applications and share common code between Android, iOS, Web and Desktop.
 - Provide support for different platform with respective Native UI for each, and sharing the common business logic.
@@ -44,15 +40,28 @@
 - Usage of latest Ktor client for Networking.
 - Performing background task with Kotlin Coroutines.
 
-### 🔹 Currently running on:
+### Currently running on:
 
-* Android (Jetpack Compose) 🚧 WIP
-* Web (Kotlin/JS + React + MUI) 🚧 WIP
-* iOS (SwiftUI) 🚧 WIP
-* Desktop JVM (Jetpack Compose) 🚧 WIP
-* macOS (SwiftUI) 🚧 WIP
+- [x] <code><img height="20" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/android/android.png"></code> Android (Jetpack Compose)
+- [x] <code><img height="20" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/react/react.png"></code> Web (Kotlin/JS + React + MUI)
+- [x] <code><img height="20" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/swift/swift.png"></code> iOS (SwiftUI)
+- [ ] <code><img height="20" src="https://3.bp.blogspot.com/-VVp3WvJvl84/X0Vu6EjYqDI/AAAAAAAAPjU/ZOMKiUlgfg8ok8DY8Hc-ocOvGdB0z86AgCLcBGAsYHQ/s1600/jetpack%2Bcompose%2Bicon_RGB.png"></code> Desktop JVM (Jetpack Compose)
+- [x] <code><img height="20" src="https://raw.githubusercontent.com/github/explore/80688e429a7d4ef2fca1e82350fe8e3517d3494d/topics/swift/swift.png"></code> MacOS (SwiftUI)
 
 Built using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base project.
+
+<p align="right">[<a href="#top">Back to top</a>]</p>
+
+<details>
+  <summary>Table of content</summary>
+  <ul>
+    <li><a href="#%EF%B8%8F-architecture">Architecture</a></li>
+    <li><a href="#-api">API</a></li>
+    <li><a href="#%EF%B8%8F%EF%B8%8F-built-with-%EF%B8%8F-using-kotlin">Tech stack</a></li>
+    <li><a href="#-screenshots">Screenshots</a></li>
+    <li><a href="#-license">License</a></li>
+  </ul>
+</details>
 
 ## 🏛️ Architecture
 <table style="width:100%">
@@ -63,27 +72,30 @@ Built using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base p
 
 Architecture Diagram: [Here](https://lucid.app/lucidchart/f4b7e964-9b54-4b9f-b0b9-e797b6b4275a/edit?viewport_loc=158%2C690%2C2767%2C1340%2C0_0&invitationId=inv_0102040b-2279-46f6-ad6c-3228f375a17d#)
 
+<p align="right">[<a href="#top">Back to top</a>]</p>
+
 ## 🌐 API
 The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https://github.com/mutualmobile/HarvestAPISpring).
 
 - Authentication :lock:
-  - Find Organization ✅ DONE
-  - Sign In User ✅ DONE
-  - Sign Up User ✅ DONE
-  - Login User ✅ DONE
-  - Forgot Password ✅ DONE
-  - Change Password ✅ DONE
+  - [x] Find Organization
+  - [x] Sign In User
+  - [x] Sign Up User
+  - [x] Login User
+  - [x] Forgot Password
+  - [x] Change Password
 
 - List Projects 📽
-  - Org admin can create projects ✅ DONE
-  - Org admin can list,search projects ✅ DONE
-  - Org admin can assign projects to users ✅ DONE
-  - more are.. 🚧 WIP
+  - [x] Org admin can create projects
+  - [x] Org admin can list,search projects
+  - [x] Org admin can assign projects to users
+  - [ ] more are.. 🚧 WIP
 
 - Logging Time :office:
-  - Log Time 🚧 WIP
-  - an other
+  - [ ] Log Time 🚧 WIP
+  - [ ] an other
 
+<p align="right">[<a href="#top">Back to top</a>]</p>
 
 ## 🏗️️ Built with ❤️ using Kotlin
 | What            | How                        |
@@ -97,19 +109,24 @@ The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https
 | 🌐 Networking        | [Ktor](https://ktor.io/)                        |
 | ð Storage       | [Key Value, SqlDelight](https://github.com/russhwolf/multiplatform-settings)                        |
 
+<p align="right">[<a href="#top">Back to top</a>]</p>
 
 ## 📷 Screenshots
-- [Android](#android-screenshots)
-- [React](#web-screenshots-reactjs)
-- [IOS](#ios-screenshots)
-- Desktop  🚧 WIP
-- MacOS  🚧 WIP
+<ul>
+<li><a href="#android-screenshots">Android</a></li>
+<li><a href="#web-screenshots-reactjs">React</a></li>
+<li><a href="#ios-screenshots">IOS</a></li>
+<li><a href="#">Desktop 🚧 WIP</a></li>
+<li><a href="#">MacOS 🚧 WIP</a></li>
+</ul>
 
 ### Android Screenshots
 - [OnBoarding](#android-onboarding-screens)
 - [Authenticate](#android-authentication-screens)
 - [Home](#android-home-screens)
 - [Settings](#android-settings-screens)
+
+<p align="right">[<a href="#top">Back to top</a>]</p>
 
 #### Android OnBoarding Screens
 <table style="width:100%">
@@ -166,6 +183,8 @@ The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https
     <td><img src = "art/android_screenshots/android_report_screen.png" width=240/></td>
   </tr>
 </table>
+
+<p align="right">[<a href="#top">Back to top</a>]</p>
 
 ### Web Screenshots (ReactJS)
 - Authentication Screens
@@ -281,6 +300,7 @@ The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https
   </tr>
 </table>
 
+<p align="right">[<a href="#top">Back to top</a>]</p>
 
 ### iOS Screenshots
 - [Authentications](#ios-authentications-screen)
@@ -298,6 +318,7 @@ The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https
   </tr>
 </table>
 
+<p align="right">[<a href="#top">Back to top</a>]</p>
 
 ### 🪪 License
 ```
