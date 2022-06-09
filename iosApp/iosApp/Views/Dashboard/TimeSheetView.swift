@@ -28,13 +28,14 @@ class TimeSheetStore: ObservableObject {
                                    friday: 1.2)
     }
     
-    func validate(for day: WeekLogHour.Day) {
+    func validate(for selectedDay: WeekLogHour.Day) {
         objectWillChange.send()
-        if case .wednesday(_) = day {
-            self.logHour.today = day
+        
+        if selectedDay.isToday {
+            self.logHour.today = selectedDay
             self.logHour.selectedDay = nil
         } else {
-            self.logHour.selectedDay = day
+            self.logHour.selectedDay = selectedDay
             self.logHour.today = nil
         }
     }

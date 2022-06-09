@@ -158,5 +158,48 @@ extension WeekLogHour {
                 return ("F" , String(format: "%.2f", hours))
             }
         }
+        
+        var isToday: Bool {
+            guard let weekDay = Calendar.current.dateComponents([.weekday], from: Date()).weekday else {
+                return false
+            }
+
+            switch weekDay {
+            case 1:
+                return self == .sunday(hours)
+            case 2:
+                return self == .monday(hours)
+            case 3:
+                return self == .tuesday(hours)
+            case 4:
+                return self == .wednesday(hours)
+            case 5:
+                return self == .thursday(hours)
+            case 6:
+                return self == .friday(hours)
+            default:
+                return self == .saturday(hours)
+            }
+        }
+        
+        // TODO: Can be made public in future.
+        private var hours: Double {
+            switch self {
+            case .saturday(let hours):
+                return hours
+            case .sunday(let hours):
+                return hours
+            case .monday(let hours):
+                return hours
+            case .tuesday(let hours):
+                return hours
+            case .wednesday(let hours):
+                return hours
+            case .thursday(let hours):
+                return hours
+            case .friday(let hours):
+                return hours
+            }
+        }
     }
 }
