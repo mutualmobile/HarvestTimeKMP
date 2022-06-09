@@ -21,7 +21,11 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -43,7 +47,7 @@ import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
-import java.util.*
+import java.util.Date
 
 const val SELECTED_PROJECT = "SELECTED_PROJECT"
 
@@ -167,7 +171,11 @@ fun NewEntryScreen(navController: NavController) {
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector(
                 onDurationChange = { duration ->
-                    durationEtText.value = duration.toFloat()
+                    durationEtText.value = if (duration.isNotBlank()) {
+                        duration.toFloat()
+                    } else {
+                        0f
+                    }
                 },
                 currentDate = selectedWorkDate.value,
                 onWorkDateChange = {

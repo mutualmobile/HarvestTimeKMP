@@ -4,7 +4,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 
@@ -34,6 +33,6 @@ fun AccountSection(navController: NavHostController) {
     SettingsListItem(
         title = stringResource(MR.strings.change_password.resourceId),
         showTopDivider = true,
-        onClick = {navController.navigate(ScreenList.ChangePasswordScreen())}
+        onClick = { navController.navigate(HarvestRoutes.Screen.CHANGE_PASSWORD) }
     )
 }

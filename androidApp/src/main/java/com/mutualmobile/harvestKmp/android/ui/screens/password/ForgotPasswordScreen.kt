@@ -1,14 +1,27 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.password
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -17,13 +30,16 @@ import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
-import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataModels.ForgotPasswordDataModel
 
@@ -31,18 +47,21 @@ import com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataM
 fun ForgotPasswordScreen(navController: NavHostController) {
     var forgotPasswordState: DataState by remember { mutableStateOf(EmptyState) }
 
+    var forgotPasswordNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val forgotPasswordDataModel by remember {
         mutableStateOf(
             ForgotPasswordDataModel { passwordState ->
                 forgotPasswordState = passwordState
-                when (passwordState) {
-                    is SuccessState<*> -> {
-                        navController.navigateAndClear(
-                            clearRoute = ScreenList.LoginScreen(),
-                            navigateTo = ScreenList.LandingScreen()
-                        )
+            }.apply {
+                praxisCommand = { newCommand ->
+                    forgotPasswordNavigationCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
                     }
-                    else -> Unit
                 }
             }
         )
@@ -104,6 +123,15 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                     }
                 )
             }
+            HarvestDialog(praxisCommand = forgotPasswordNavigationCommand, onConfirm = {
+                forgotPasswordNavigationCommand = null
+                when (forgotPasswordState) {
+                    is SuccessState<*> -> {
+                        navController.navigateUp()
+                    }
+                    else -> Unit
+                }
+            })
         }
     }
 }

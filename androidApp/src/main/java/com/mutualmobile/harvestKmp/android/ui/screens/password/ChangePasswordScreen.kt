@@ -1,49 +1,71 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.password
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
+import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
-import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.ui.utils.showToast
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.ChangePasswordDataModel
 import kotlinx.coroutines.launch
 
 @Composable
 fun ChangePasswordScreen(navController: NavHostController) {
+    val ctx = LocalContext.current
     var changePasswordState: DataState by remember { mutableStateOf(EmptyState) }
     val scope = rememberCoroutineScope()
 
+    var changePasswordPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val changePasswordDataModel by remember {
         mutableStateOf(
-            ChangePasswordDataModel { passwordState ->
-                changePasswordState = passwordState
-                when (passwordState) {
-                    is SuccessState<*> -> {
-                        navController.navigateAndClear(
-                            clearRoute = ScreenList.LoginScreen(),
-                            navigateTo = ScreenList.LandingScreen()
-                        )
+            ChangePasswordDataModel {}.apply {
+                praxisCommand = { newCommand ->
+                    changePasswordPraxisCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
                     }
-                    else -> Unit
                 }
             }
         )
@@ -101,20 +123,34 @@ fun ChangePasswordScreen(navController: NavHostController) {
                 IconLabelButton(
                     label = stringResource(MR.strings.request_reset_password.resourceId),
                     errorMsg = (changePasswordState as? ErrorState)?.throwable?.message,
+                    isLoading = changePasswordState is LoadingState,
                     onClick =
                     {
                         scope.launch {
                             changePasswordDataModel.changePassWord(
                                 currentPassword.trim(),
                                 currentConfirmPassword.trim()
-                            ).collect {
-                                changePasswordState = it
+                            ).collect { passwordState ->
+                                changePasswordState = passwordState
+                                when (passwordState) {
+                                    is SuccessState<*> -> {
+                                        ctx.showToast("Change password successful!")
+                                        navController.navigateUp()
+                                    }
+                                    else -> Unit
+                                }
                             }
 
                         }
 
                     })
             }
+            HarvestDialog(
+                praxisCommand = changePasswordPraxisCommand,
+                onConfirm = {
+                    changePasswordPraxisCommand = null
+                },
+            )
         }
     }
 }
