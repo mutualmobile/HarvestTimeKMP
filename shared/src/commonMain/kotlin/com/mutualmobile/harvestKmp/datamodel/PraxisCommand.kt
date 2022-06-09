@@ -21,15 +21,30 @@ object HarvestRoutes {
         const val RESET_PASSWORD = "resetPassword"
         const val CHANGE_PASSWORD = "change-password"
         const val LOGIN = "login"
+        const val LOGIN_WITH_ORG_ID_IDENTIFIER = LOGIN
+            .plus(BROWSER_QUERY)
+            .plus("${Keys.orgId}={${Keys.orgId}}")
+            .plus(BROWSER_AND)
+            .plus("${Keys.orgIdentifier}={${Keys.orgIdentifier}}")
         const val SIGNUP = "signup"
+        const val NEW_ORG_SIGNUP = "new_org_signup"
         const val ORG_USERS = "users"
         const val ORG_PROJECTS = "projects"
         const val ASSIGN_PROJECT = "assign-projects"
         const val ORG_TIME = "time-log-screen"
         const val SETTINGS = "settings"
+        const val USER_REPORT = "user-reports"
         const val ORG_USER_DASHBOARD = "user-dashboard"
+        const val DASHBOARD_WITH_ORG_ID_IDENTIFIER = ORG_USER_DASHBOARD
+            .plus(BROWSER_QUERY)
+            .plus("${Keys.orgId}={${Keys.orgId}}")
+            .plus(BROWSER_AND)
+            .plus("${Keys.orgIdentifier}={${Keys.orgIdentifier}}")
         const val LIST_USERS_PROJECT = "list-user-project"
         const val LIST_PROJECTS_USER = "list-projects-user"
+        const val ON_BOARDING = "on_boarding"
+        const val FIND_WORKSPACE = "find-workspace"
+        const val WORK_ENTRY = "work-entry"
 
         fun String.listUsersWithProjectId(projectId: String?): String {
             return this.plus(

@@ -1,17 +1,30 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
 
-import android.app.Activity
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.*
+import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.Surface
+import androidx.compose.material.Text
+import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -19,25 +32,23 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.formatter
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
-import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import java.util.*
 
-val SELECTED_PROJECT = "SELECTED_PROJECT"
+const val SELECTED_PROJECT = "SELECTED_PROJECT"
 
 @Composable
 fun NewEntryScreen(navController: NavController) {
-    val activity = LocalContext.current as Activity
     val durationEtText = remember { mutableStateOf(0.0f) }
     val selectedProject = remember { mutableStateOf("") }
     val selectedWorkDate = remember { mutableStateOf((Date())) }
@@ -94,7 +105,7 @@ fun NewEntryScreen(navController: NavController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = activity::onBackPressed) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null
@@ -150,7 +161,7 @@ fun NewEntryScreen(navController: NavController) {
             BucketSelector(
                 currentProject = selectedProject.value,
                 onDepartmentClick = {
-                    navController.navigate(ScreenList.ProjectScreen())
+                    navController.navigate(HarvestRoutes.Screen.ORG_PROJECTS)
                 },
                 onWorkClick = {})
             Spacer(modifier = Modifier.padding(vertical = 12.dp))

@@ -2,6 +2,7 @@ package com.mutualmobile.harvestKmp.data.network.org
 
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 
@@ -17,5 +18,7 @@ interface UserProjectApi {
     suspend fun getUserAssignedProjects(
         userId: String? = null
     ): NetworkResponse<ApiResponse<List<OrgProjectResponse>>>
+
+    suspend fun deleteWorkTime(harvestUserWorkRequest: HarvestUserWorkResponse): NetworkResponse<ApiResponse<Unit>>
 
 }

@@ -22,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
@@ -77,7 +78,7 @@ fun IconLabelButton(
             var isExpanded by remember { mutableStateOf(false) }
             Text(
                 text = nnErrorMsg,
-                style = MaterialTheme.typography.body2.copy(color = MaterialTheme.colors.error),
+                style = MaterialTheme.typography.body2.copy(color = Color.Red),
                 modifier = Modifier
                     .padding(4.dp)
                     .clickable { isExpanded = !isExpanded },

@@ -26,18 +26,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.SubcomposeAsyncImage
 import coil.compose.SubcomposeAsyncImageContent
+import com.google.accompanist.placeholder.PlaceholderHighlight
+import com.google.accompanist.placeholder.material.placeholder
+import com.google.accompanist.placeholder.material.shimmer
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.R
 
 @Composable
 fun UserInfoSection(
-    avatarUrl: String = "https://placehold.jp/150x150.png",
+    avatarUrl: String? = "https://placehold.jp/150x150.png",
     contentPadding: PaddingValues = PaddingValues(16.dp),
     @DrawableRes errorImage: Int = R.drawable.ic_error,
     avatarSize: Dp = 44.dp,
     avatarCornerSize: Dp = 4.dp,
-    userName: String = "Shubham",
-    organisationName: String = "Mutual Mobile, Inc",
+    userName: String? = "Shubham",
+    organisationName: String? = "Mutual Mobile, Inc",
 ) {
     Row(
         modifier = Modifier
@@ -72,16 +75,20 @@ fun UserInfoSection(
             UserInfoSectionText(
                 text = stringResource(
                     id = MR.strings.user_info_section_username.resourceId,
-                    userName
-                )
+                    userName.orEmpty()
+                ),
+                isLoading = userName == null
             )
-            UserInfoSectionText(text = organisationName)
+            UserInfoSectionText(
+                text = organisationName.orEmpty(),
+                isLoading = organisationName == null,
+            )
         }
     }
 }
 
 @Composable
-private fun UserInfoSectionText(text: String) {
+private fun UserInfoSectionText(text: String, isLoading: Boolean) {
     Text(
         text = text,
         style = MaterialTheme.typography.subtitle2.copy(
@@ -89,6 +96,11 @@ private fun UserInfoSectionText(text: String) {
         ),
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = Modifier.fillMaxWidth(0.6f)
+        modifier = Modifier
+            .fillMaxWidth(0.6f)
+            .placeholder(
+                visible = isLoading,
+                highlight = PlaceholderHighlight.shimmer()
+            ),
     )
 }

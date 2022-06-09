@@ -16,23 +16,27 @@ class NewOrgSignUpUseCase(private val authApi: AuthApi) {
         orgWebsite: String,
         orgIdentifier: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        SignUpFormValidator()(
-            firstName = firstName,
-            lastName = lastName,
-            email = email,
-            password = password,
-            orgName = orgName,
-            website = orgWebsite,
-            orgIdentifier = orgIdentifier
-        )
-        return authApi.newOrgSignUp(
-            firstName = firstName,
-            lastName = lastName,
-            email = email,
-            password = password,
-            orgName = orgName,
-            orgWebsite = orgWebsite,
-            orgIdentifier = orgIdentifier
-        )
+        try {
+            SignUpFormValidator()(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                password = password,
+                orgName = orgName,
+                website = orgWebsite,
+                orgIdentifier = orgIdentifier
+            )
+            return authApi.newOrgSignUp(
+                firstName = firstName,
+                lastName = lastName,
+                email = email,
+                password = password,
+                orgName = orgName,
+                orgWebsite = orgWebsite,
+                orgIdentifier = orgIdentifier
+            )
+        } catch (e: Throwable) {
+            return NetworkResponse.Failure(e)
+        }
     }
 }

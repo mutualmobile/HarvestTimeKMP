@@ -2,7 +2,12 @@ package com.mutualmobile.harvestKmp.android.ui.screens.projectScreen
 
 import android.app.Activity
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
@@ -10,7 +15,11 @@ import androidx.compose.material.IconButton
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -20,12 +29,12 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.SELECTED_PROJECT
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.ProjectListItem
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.SearchView
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
@@ -34,7 +43,6 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUser
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun ProjectScreen(navController: NavController) {
     val activity = LocalContext.current as Activity
@@ -120,7 +128,7 @@ fun ProjectScreen(navController: NavController) {
                                 selectedProject
                             )
                             navController.popBackStack(
-                                ScreenList.NewEntryScreen(),
+                                HarvestRoutes.Screen.WORK_ENTRY,
                                 inclusive = false,
                                 saveState = true
                             )

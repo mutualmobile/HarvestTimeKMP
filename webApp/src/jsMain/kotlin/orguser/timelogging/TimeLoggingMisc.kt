@@ -1,6 +1,7 @@
 package orguser.timelogging
 
 import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.listUsersWithProjectId
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
@@ -36,6 +37,7 @@ external interface NewEntryButtonProps : Props {
 }
 
 external interface SaveTimeButtonProps : Props {
+    var workId: String?
     var saveProjectId: String?
     var saveuserId: String?
     var date: String
@@ -65,7 +67,7 @@ val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
                     props.saveuserId?.let {
                         props.dataModel.logWorkTime(
                             HarvestUserWorkRequest(
-                                null,
+                                props.workId,
                                 props.saveProjectId.toString(),
                                 props.saveuserId.toString(),
                                 props.date,
@@ -96,8 +98,8 @@ val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
 val NewEntryButton = FC<NewEntryButtonProps> { props ->
     Card {
         sx {
-            width = 40.px
-            height = 40.px
+            width = 60.px
+            height = 60.px
             backgroundColor = NamedColor.darkgreen
             alignItems = AlignItems.center
             display = Display.flex
@@ -107,8 +109,8 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
         mui.icons.material.Add() {
             sx {
                 color = NamedColor.white
-                width = 40.px
-                height = 40.px
+                width = 60.px
+                height = 60.px
             }
             onClick = {
                 props.clicked()
@@ -118,11 +120,15 @@ val NewEntryButton = FC<NewEntryButtonProps> { props ->
 }
 
 external interface DayContentProps : Props {
+
     var selectDate: LocalDate
     var selectDateString: String
     var isLoading: Boolean
     var workWeek: List<HarvestUserWorkResponse>?
     var assignedProjects: List<OrgProjectResponse>?
+    var onEditRequested:(HarvestUserWorkResponse)->Unit
+    var onDeleteRequested:(HarvestUserWorkResponse)->Unit
+
 }
 
 val DayContent = FC<DayContentProps> { props ->
@@ -145,12 +151,29 @@ val DayContent = FC<DayContentProps> { props ->
                 props.workWeek?.filter { format(Date(it.workDate), "yyyy-MM-dd") as String == props.selectDateString }
                     ?.map { work ->
                         val projectName =
-                            props.assignedProjects?.firstOrNull { it.id == work.id }?.name ?: ""
+                            props.assignedProjects?.firstOrNull { it.id == work.projectId }?.name ?: ""
                         // TODO We don't want to do this, instead get the project name form the api response
-                        ListItemText {
-                            primary = "Project: $projectName ".toReactNode()
-                            secondary =
-                                "Time: ${work.workHours} Note: ${work.note.toString()}".toReactNode()
+                        ListItem{
+                            ListItemText {
+                                primary = "Project: $projectName ".toReactNode()
+                                secondary =
+                                    "Time: ${work.workHours} Note: ${work.note.toString()}".toReactNode()
+                            }
+                            ListItemSecondaryAction{
+                                IconButton {
+                                    mui.icons.material.Edit()
+                                    onClick = {
+                                        props.onEditRequested(work)
+                                    }
+                                }
+
+                                IconButton {
+                                    mui.icons.material.Delete()
+                                    onClick = {
+                                        props.onDeleteRequested(work)
+                                    }
+                                }
+                            }
                         }
                     }
             }

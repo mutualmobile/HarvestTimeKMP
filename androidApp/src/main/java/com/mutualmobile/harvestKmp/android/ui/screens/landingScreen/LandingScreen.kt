@@ -26,6 +26,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,10 +38,9 @@ import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.LayoutDirection
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
@@ -48,13 +48,22 @@ import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.L
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
+import kotlinx.datetime.Clock
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
 
 @OptIn(ExperimentalAnimationApi::class)
 @Composable
-fun LandingScreen(navController: NavController) {
+fun LandingScreen(
+    navController: NavHostController,
+    orgIdentifier: String?,
+) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
     val scaffoldState = ScaffoldState(
@@ -63,8 +72,16 @@ fun LandingScreen(navController: NavController) {
     )
     val coroutineScope = rememberCoroutineScope()
     var currentDrawerScreen by remember { mutableStateOf(LandingScreenDrawerItemType.Time) }
-    var currentWeekOffset by remember { mutableStateOf(0) }
     var currentDayOffset by remember { mutableStateOf(0) }
+
+    val currentDay by remember(currentDayOffset) {
+        derivedStateOf {
+            val currentDateTime = Clock.System.now().plus(
+                currentDayOffset.days
+            ).toLocalDateTime(TimeZone.currentSystemDefault())
+            "${currentDateTime.dayOfWeek.name}, ${currentDateTime.dayOfMonth} ${currentDateTime.month.name}"
+        }
+    }
     var isDropDownMenuShown by remember { mutableStateOf(false) }
 
     BackHandler(enabled = scaffoldDrawerState.isOpen) {
@@ -80,7 +97,7 @@ fun LandingScreen(navController: NavController) {
                         when (currentDrawerScreen) {
                             LandingScreenDrawerItemType.Time -> {
                                 Text(
-                                    text = "WeekOffset: $currentWeekOffset, DaysOffset: $currentDayOffset",
+                                    text = currentDay,
                                     style = MaterialTheme.typography.body2.copy(
                                         color = MaterialTheme.colors.surface.copy(alpha = 0.5f)
                                     )
@@ -153,7 +170,11 @@ fun LandingScreen(navController: NavController) {
                 closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } },
                 onScreenChanged = { newScreen: LandingScreenDrawerItemType ->
                     currentDrawerScreen = newScreen
-                }
+                },
+                goToSettingsScreen = {
+                    navController.navigate(HarvestRoutes.Screen.SETTINGS)
+                },
+                orgIdentifier = orgIdentifier
             )
         },
         drawerBackgroundColor = DrawerBgColor,
@@ -169,14 +190,15 @@ fun LandingScreen(navController: NavController) {
         ) { drawerScreenState ->
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
-                    navController = navController,
                     onWeekScrolled = { weekOffset ->
-                        currentWeekOffset = weekOffset
+                        currentDayOffset += weekOffset.times(WeekDays.values().size)
                     },
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
-                    },
-                )
+                    }
+                ) {
+                    navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                }
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
         }

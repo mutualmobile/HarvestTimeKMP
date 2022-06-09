@@ -22,6 +22,9 @@ import kotlin.js.Date
 
 
 external interface BackdropTimeLoggerProps : Props {
+    var closeDialogOnSave :()->Unit
+
+    var workId: String?
     var closeDialog :()->Unit
     var projectIdNew: (id: String?) -> Unit
     var onNote: (note: String) -> Unit
@@ -33,13 +36,11 @@ external interface BackdropTimeLoggerProps : Props {
     var projects: List<OrgProjectResponse>?
     var selectedDate: LocalDate
     var note: String
-    var showTimeLogDialog: Boolean
     var workHours: Float
 }
 
 val BackdropTimeLogger = FC<BackdropTimeLoggerProps> { props ->
-    Backdrop {
-        open = props.showTimeLogDialog
+
 
         Card {
             sx {
@@ -137,10 +138,11 @@ val BackdropTimeLogger = FC<BackdropTimeLoggerProps> { props ->
                 }
                 SaveTimeButton {
                     onDone = {
-                        props.closeDialog()
+                        props.closeDialogOnSave()
                     }
                     saveProjectId = props.projectId
                     saveuserId = props.userId
+                    this.workId = props.workId
                     this.dataModel = props.dataModel
                     date = format(
                         Date(props.selectedDate.toString()),
@@ -167,5 +169,5 @@ val BackdropTimeLogger = FC<BackdropTimeLoggerProps> { props ->
 
 
         }
-    }
+
 }
