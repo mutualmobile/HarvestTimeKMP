@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -15,6 +16,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.material.Text
@@ -25,6 +27,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -36,44 +39,48 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
-import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.formatter
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import java.util.Date
+import kotlinx.coroutines.launch
 
-const val SELECTED_PROJECT = "SELECTED_PROJECT"
+const val SELECTED_PROJECT_NAME = "SELECTED_PROJECT_NAME"
+const val SELECTED_PROJECT_ID = "SELECTED_PROJECT_ID"
 
 @Composable
 fun NewEntryScreen(navController: NavController) {
+    val coroutineScope = rememberCoroutineScope()
+
     val durationEtText = remember { mutableStateOf(0.0f) }
-    val selectedProject = remember { mutableStateOf("") }
-    val selectedWorkDate = remember { mutableStateOf((Date())) }
-    var userResponse = GetUserResponse()
-    selectedProject.value =
-        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT)
-            ?: "Android Department Work HYD"
+    var selectedWorkDate by remember { mutableStateOf(Date()) }
+    var noteEtText by remember { mutableStateOf("") }
 
-    var currentUserState: DataState by remember { mutableStateOf(EmptyState) }
+    val selectedProjectName by remember(navController.currentBackStackEntry) { mutableStateOf(
+        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT_NAME).orEmpty()
+    ) }
+    val selectedProjectId: String? by remember(navController.currentBackStackEntry) { mutableStateOf(
+        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT_ID)
+    ) }
 
-    var currentLogWorkTimeState: DataState by remember {
-        mutableStateOf(EmptyState)
-    }
-
-    val userStateModel by remember {
+    var user: GetUserResponse? by remember { mutableStateOf(null) }
+    remember {
         mutableStateOf(
             GetUserDataModel { userState ->
-                currentUserState = userState
                 when (userState) {
                     is SuccessState<*> -> {
-                        userResponse = (userState.data) as GetUserResponse
+                        user = (userState.data) as GetUserResponse
                     }
                     else -> Unit
                 }
@@ -82,18 +89,15 @@ fun NewEntryScreen(navController: NavController) {
             }
         )
     }
+
+    var currentLogWorkTimeState: DataState by remember { mutableStateOf(EmptyState) }
+    var logWorkTimeNavigationCommands: PraxisCommand? by remember { mutableStateOf(null) }
     val logWorkTimeDataModel by remember {
         mutableStateOf(
-            TimeLogginDataModel { logWorkTimeState ->
-                currentLogWorkTimeState = logWorkTimeState
-                when (logWorkTimeState) {
-                    is SuccessState<*> -> {
-                        navController.popBackStack()
-                    }
-                    else -> Unit
+            TimeLogginDataModel {}.apply {
+                praxisCommand = { newCommand ->
+                    logWorkTimeNavigationCommands = newCommand
                 }
-            }.apply {
-                activate()
             }
         )
     }
@@ -130,17 +134,25 @@ fun NewEntryScreen(navController: NavController) {
                 ) {
                     TextButton(
                         onClick = {
-                            logWorkTimeDataModel.logWorkTime(
-                                HarvestUserWorkRequest(
-                                    id = userResponse.orgId,
-                                    projectId = "",
-                                    userId = userResponse.id ?: "",
-                                    workDate = formatter.format(selectedWorkDate.value),
-                                    workHours = durationEtText.value,
-                                    note = ""
-
-                                )
-                            )
+                            coroutineScope.launch {
+                                user?.let { nnUser ->
+                                    nnUser.id?.let { nnUserId ->
+                                        selectedProjectId?.let { nnSelectedProjectId ->
+                                            logWorkTimeDataModel.logWorkTime(
+                                                HarvestUserWorkRequest(
+                                                    projectId = nnSelectedProjectId,
+                                                    userId = nnUserId,
+                                                    workDate = serverDateFormatter.format(selectedWorkDate),
+                                                    workHours = durationEtText.value,
+                                                    note = noteEtText
+                                                )
+                                            ).collect { logWorkTimeState ->
+                                                currentLogWorkTimeState = logWorkTimeState
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         },
                         modifier = Modifier.padding(vertical = 4.dp, horizontal = 16.dp),
                     ) {
@@ -163,11 +175,14 @@ fun NewEntryScreen(navController: NavController) {
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             BucketSelector(
-                currentProject = selectedProject.value,
+                currentProject = selectedProjectName,
                 onDepartmentClick = {
                     navController.navigate(HarvestRoutes.Screen.ORG_PROJECTS)
                 },
-                onWorkClick = {})
+                onWorkClick = {},
+                note = noteEtText,
+                onNoteChanged = { updatedText -> noteEtText = updatedText }
+            )
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector(
                 onDurationChange = { duration ->
@@ -177,11 +192,14 @@ fun NewEntryScreen(navController: NavController) {
                         0f
                     }
                 },
-                currentDate = selectedWorkDate.value,
-                onWorkDateChange = {
-                    selectedWorkDate.value = it
+                currentDate = selectedWorkDate,
+                onWorkDateChange = { newDate ->
+                    selectedWorkDate = newDate
                 }
             )
+            AnimatedVisibility(visible = currentLogWorkTimeState is LoadingState) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
             Text(
                 text = stringResource(MR.strings.new_entry_screen_end_view_text.resourceId),
@@ -189,5 +207,14 @@ fun NewEntryScreen(navController: NavController) {
                 modifier = Modifier.alpha(0.5f)
             )
         }
+        HarvestDialog(praxisCommand = logWorkTimeNavigationCommands, onConfirm = {
+            logWorkTimeNavigationCommands = null
+            when (currentLogWorkTimeState) {
+                is SuccessState<*> -> {
+                    navController.popBackStack()
+                }
+                else -> Unit
+            }
+        })
     }
 }

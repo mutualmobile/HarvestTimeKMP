@@ -1,7 +1,7 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.projectScreen
 
 import android.app.Activity
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -12,6 +12,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -25,16 +26,22 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.SELECTED_PROJECT
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.SELECTED_PROJECT_ID
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.SELECTED_PROJECT_NAME
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.ProjectListItem
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.SearchView
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
@@ -44,7 +51,7 @@ import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.Get
 
 
 @Composable
-fun ProjectScreen(navController: NavController) {
+fun ProjectScreen(navController: NavHostController) {
     val activity = LocalContext.current as Activity
     val projectListMap = remember { mutableStateOf(emptyList<OrgProjectResponse>()) }
     var filteredProjectListMap: List<OrgProjectResponse>
@@ -54,6 +61,8 @@ fun ProjectScreen(navController: NavController) {
     var currentProjectScreenState: DataState by remember {
         mutableStateOf(EmptyState)
     }
+    var projectScreenNavigationCommands: PraxisCommand? by remember { mutableStateOf(null) }
+
     val getUserAssignedProjectsDataModel by remember {
         mutableStateOf(
             GetUserAssignedProjectsDataModel { projectState ->
@@ -64,6 +73,17 @@ fun ProjectScreen(navController: NavController) {
                             (projectState.data as ApiResponse<*>).data as List<OrgProjectResponse>
                     }
                     else -> Unit
+                }
+            }.apply {
+                praxisCommand = { newCommand ->
+                    projectScreenNavigationCommands = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
+                    }
                 }
             }
         )
@@ -82,6 +102,16 @@ fun ProjectScreen(navController: NavController) {
                 }
             }.apply {
                 activate()
+                praxisCommand = { newCommand ->
+                    projectScreenNavigationCommands = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
+                    }
+                }
             }
         )
     }
@@ -111,7 +141,9 @@ fun ProjectScreen(navController: NavController) {
         ) { bodyPadding ->
 
         Column(modifier = Modifier.padding(bodyPadding)) {
-
+            AnimatedVisibility(visible = currentProjectScreenState is LoadingState) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 val searchedText = textState.value.text
                 filteredProjectListMap = if (searchedText.isEmpty()) {
@@ -124,8 +156,12 @@ fun ProjectScreen(navController: NavController) {
                         label = project.name ?: "",
                         onItemClick = { selectedProject ->
                             navController.previousBackStackEntry?.savedStateHandle?.set(
-                                SELECTED_PROJECT,
+                                SELECTED_PROJECT_NAME,
                                 selectedProject
+                            )
+                            navController.previousBackStackEntry?.savedStateHandle?.set(
+                                SELECTED_PROJECT_ID,
+                                project.id
                             )
                             navController.popBackStack(
                                 HarvestRoutes.Screen.WORK_ENTRY,
@@ -137,8 +173,8 @@ fun ProjectScreen(navController: NavController) {
 
             }
         }
-
+        HarvestDialog(praxisCommand = projectScreenNavigationCommands, onConfirm = {
+            projectScreenNavigationCommands = null
+        })
     }
 }
-
-
