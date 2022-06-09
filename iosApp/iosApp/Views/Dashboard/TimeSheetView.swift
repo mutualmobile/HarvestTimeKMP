@@ -56,7 +56,7 @@ struct TimeSheetView: View {
         VStack(alignment: .center) {
             headerView
             Spacer()
-            ContainerView(presentTimeEntrySheet: $presentTimeEntrySheet, quoteText: "")
+            ContainerView(presentTimeEntrySheet: $presentTimeEntrySheet, quoteText: "Here goes some of great quote from data model")
             Spacer()
         }
     }
