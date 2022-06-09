@@ -8,6 +8,13 @@
 
 import SwiftUI
 
+struct TimeSheetView_Previews: PreviewProvider {
+    static var previews: some View {
+        TimeSheetView()
+    }
+}
+
+
 class TimeSheetStore: ObservableObject {
     var logHour: WeekLogHour
 
@@ -45,19 +52,11 @@ struct TimeSheetView: View {
     @DateHandler private var headerDate = Date()
     
     var body: some View {
-        VStack {
+        VStack(alignment: .center) {
             headerView
-            ScrollView(.horizontal) {
-                VStack {
-                Button {
-                    presentTimeEntrySheet = true
-                } label: {
-                    Text("Add New Entry")
-                        .foregroundColor(ColorAssets.primary.color)
-                        .harvestButton(color: ColorAssets.colorBackground.color)
-                }
-                }
-            }
+            Spacer()
+            ContainerView(presentTimeEntrySheet: $presentTimeEntrySheet, quoteText: "")
+            Spacer()
         }
     }
     
@@ -98,5 +97,28 @@ struct TimeSheetView: View {
         }
         .padding(.vertical)
         .background(.quaternary)
+    }
+}
+
+struct ContainerView: View {
+    
+    @Binding var presentTimeEntrySheet: Bool
+    var quoteText: String
+    
+    var body: some View {
+        VStack() {
+            Text(quoteText)
+                .multilineTextAlignment(.center)
+            Button {
+                presentTimeEntrySheet = true
+            } label: {
+                Text("Add New Entry")
+                    .padding()
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 15)
+                            .stroke(ColorAssets.colorBackground.color, lineWidth: 1)
+                    )
+            }
+        }
     }
 }
