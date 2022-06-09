@@ -141,15 +141,15 @@ val DayContent = FC<DayContentProps> { props ->
         if (props.isLoading) {
             CircularProgress()
         }
-
-        if (props.workWeek.isNullOrEmpty()) {
+        val workWeek = props.workWeek?.filter { format(Date(it.workDate), "yyyy-MM-dd") as String == props.selectDateString }
+        if (workWeek.isNullOrEmpty()) {
             Typography {
                 +"Time expands, then contracts, all in tune with the stirrings of the heart.\n– Haruki Murakami"
             }
         } else {
             List {
-                props.workWeek?.filter { format(Date(it.workDate), "yyyy-MM-dd") as String == props.selectDateString }
-                    ?.map { work ->
+                workWeek.filter { format(Date(it.workDate), "yyyy-MM-dd") as String == props.selectDateString }
+                    .map { work ->
                         val projectName =
                             props.assignedProjects?.firstOrNull { it.id == work.projectId }?.name ?: ""
                         // TODO We don't want to do this, instead get the project name form the api response
