@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -22,6 +23,7 @@ import androidx.compose.material.ScaffoldState
 import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.DateRange
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDrawerState
@@ -35,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Outline
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.stringResource
@@ -43,6 +46,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
+import com.google.accompanist.pager.ExperimentalPagerApi
+import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawer
 import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.LandingScreenDrawerItemType
@@ -51,6 +56,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
@@ -58,7 +64,7 @@ import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
-@OptIn(ExperimentalAnimationApi::class)
+@OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun LandingScreen(
     navController: NavHostController,
@@ -73,6 +79,7 @@ fun LandingScreen(
     val coroutineScope = rememberCoroutineScope()
     var currentDrawerScreen by remember { mutableStateOf(LandingScreenDrawerItemType.Time) }
     var currentDayOffset by remember { mutableStateOf(0) }
+    var localWeekOffset by remember { mutableStateOf(0) }
 
     val currentDay by remember(currentDayOffset) {
         derivedStateOf {
@@ -83,6 +90,13 @@ fun LandingScreen(
         }
     }
     var isDropDownMenuShown by remember { mutableStateOf(false) }
+
+    val timeScreenStartIndex by remember { mutableStateOf(Int.MAX_VALUE.div(2)) }
+    val timeScreenPagerState = rememberPagerState(initialPage = timeScreenStartIndex)
+
+    var isWorkLoading by remember { mutableStateOf(false) }
+
+    var currentWeekLogsTotalTime by remember { mutableStateOf("0.00") }
 
     BackHandler(enabled = scaffoldDrawerState.isOpen) {
         coroutineScope.launch { scaffoldDrawerState.close() }
@@ -127,6 +141,24 @@ fun LandingScreen(
                 actions = {
                     when (currentDrawerScreen) {
                         LandingScreenDrawerItemType.Time -> {
+                            if (isWorkLoading) {
+                                CircularProgressIndicator(
+                                    color = Color.White
+                                )
+                            }
+                            if (timeScreenPagerState.currentPage != timeScreenStartIndex) {
+                                IconButton(onClick = {
+                                    localWeekOffset = 0
+                                    coroutineScope.launch {
+                                        timeScreenPagerState.scrollToPage(timeScreenStartIndex)
+                                    }
+                                }) {
+                                    Icon(
+                                        imageVector = Icons.Default.DateRange,
+                                        contentDescription = null
+                                    )
+                                }
+                            }
                             IconButton(
                                 onClick = { isDropDownMenuShown = true },
                             ) {
@@ -150,7 +182,7 @@ fun LandingScreen(
                                     Text(
                                         text = stringResource(
                                             MR.strings.landing_screen_dropdown_week_total_option.resourceId,
-                                            "0.00"
+                                            currentWeekLogsTotalTime
                                         ),
                                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
                                     )
@@ -189,15 +221,29 @@ fun LandingScreen(
         ) { drawerScreenState ->
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
+                    pagerState = timeScreenPagerState,
+                    startIndex = timeScreenStartIndex,
                     onWeekScrolled = { weekOffset ->
                         currentDayOffset += weekOffset.times(WeekDays.values().size)
                     },
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
+                    },
+                    goToNewEntryScreen = {
+                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                    },
+                    isWorkLoading = { isLoading ->
+                        isWorkLoading = isLoading
+                    },
+                    navigateToFindWorkspaceScreen = { navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE },
+                    localWeekOffset = localWeekOffset,
+                    onWeekOffsetChanged = { updatedOffset ->
+                        localWeekOffset += updatedOffset
+                    },
+                    onUpdateWeekLogsTotalTime = { updatedTime ->
+                        currentWeekLogsTotalTime = updatedTime
                     }
-                ) {
-                    navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
-                }
+                )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
         }
