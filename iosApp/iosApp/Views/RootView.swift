@@ -9,7 +9,7 @@
 import SwiftUI
 
 class RootStore: ObservableObject {
-    @Published var isAuthenticateUser = true
+    @Published var isAuthenticateUser = false
 }
 
 struct RootView: View {
