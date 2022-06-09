@@ -40,6 +40,7 @@ struct TimeSheetView: View {
     @State private var calenderTapped = false
     @State private var infoTapped = false
     @State private var moreTapped = false
+    @State private var presentTimeEntrySheet = false
     
     @DateHandler private var headerDate = Date()
     
@@ -47,7 +48,15 @@ struct TimeSheetView: View {
         VStack {
             headerView
             ScrollView(.horizontal) {
-                
+                VStack {
+                Button {
+                    presentTimeEntrySheet = true
+                } label: {
+                    Text("Add New Entry")
+                        .foregroundColor(ColorAssets.primary.color)
+                        .harvestButton(color: ColorAssets.colorBackground.color)
+                }
+                }
             }
         }
     }

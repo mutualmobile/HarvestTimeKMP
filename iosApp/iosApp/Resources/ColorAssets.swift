@@ -12,6 +12,7 @@ enum ColorAssets: String {
     case colorBackground
     case white
     case black
+    case primary
     
     var color: Color {
         Color(self.rawValue)
