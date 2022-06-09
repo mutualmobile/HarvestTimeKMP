@@ -1,5 +1,7 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +26,7 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +35,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,9 +48,13 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
+import com.mutualmobile.harvestKmp.android.ui.utils.isAFloat
+import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
+import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
@@ -56,28 +65,37 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUser
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import java.util.Date
 import kotlinx.coroutines.launch
-import org.koin.androidx.compose.getViewModel
-
-const val SELECTED_PROJECT_NAME = "SELECTED_PROJECT_NAME"
-const val SELECTED_PROJECT_ID = "SELECTED_PROJECT_ID"
+import org.koin.androidx.compose.get
 
 @Composable
 fun NewEntryScreen(
     navController: NavController,
-    newEntryScreenViewModel: NewEntryScreenViewModel = getViewModel()
+    newEntryScreenViewModel: NewEntryScreenViewModel = get()
 ) {
+    val activity = LocalContext.current as Activity
     val coroutineScope = rememberCoroutineScope()
+    val currentWorkRequest = newEntryScreenViewModel.currentWorkRequest
 
-    val durationEtText = remember { mutableStateOf(0.0f) }
-    var selectedWorkDate by remember { mutableStateOf(Date()) }
-    var noteEtText by remember { mutableStateOf("") }
+    var durationEtText: String by remember {
+        mutableStateOf(
+            currentWorkRequest?.workHours?.toDecimalString() ?: ""
+        )
+    }
+    var selectedWorkDate: Date by remember {
+        mutableStateOf(currentWorkRequest?.workDate?.let { nnWorkDate ->
+            serverDateFormatter.parse(nnWorkDate)
+        } ?: Date())
+    }
+    var noteEtText: String by remember { mutableStateOf(currentWorkRequest?.note.orEmpty()) }
 
-    val selectedProjectName by remember(navController.currentBackStackEntry) { mutableStateOf(
-        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT_NAME).orEmpty()
-    ) }
-    val selectedProjectId: String? by remember(navController.currentBackStackEntry) { mutableStateOf(
-        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT_ID)
-    ) }
+    val selectedProjectName = newEntryScreenViewModel.currentProjectName
+    val selectedProjectId: String? = currentWorkRequest?.projectId
+
+    BackHandler {
+        newEntryScreenViewModel.resetAllItems {
+            navController.navigateUp()
+        }
+    }
 
     var user: GetUserResponse? by remember { mutableStateOf(null) }
     remember {
@@ -107,6 +125,11 @@ fun NewEntryScreen(
         )
     }
 
+    LaunchedEffect(Unit) {
+        if (selectedProjectName.isBlank() && currentWorkRequest != null) {
+            newEntryScreenViewModel.fetchProjectName(currentWorkRequest.projectId)
+        }
+    }
 
     Scaffold(
         topBar = {
@@ -118,7 +141,9 @@ fun NewEntryScreen(
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = { navController.navigateUp() }) {
+                    IconButton(onClick = {
+                        activity.onBackPressed()
+                    }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null
@@ -143,16 +168,42 @@ fun NewEntryScreen(
                                 user?.let { nnUser ->
                                     nnUser.id?.let { nnUserId ->
                                         selectedProjectId?.let { nnSelectedProjectId ->
-                                            logWorkTimeDataModel.logWorkTime(
-                                                HarvestUserWorkRequest(
-                                                    projectId = nnSelectedProjectId,
-                                                    userId = nnUserId,
-                                                    workDate = serverDateFormatter.format(selectedWorkDate),
-                                                    workHours = durationEtText.value,
-                                                    note = noteEtText
-                                                )
-                                            ).collect { logWorkTimeState ->
-                                                currentLogWorkTimeState = logWorkTimeState
+                                            when (newEntryScreenViewModel.currentWorkRequestType) {
+                                                WorkRequestType.CREATE -> {
+                                                    logWorkTimeDataModel.logWorkTime(
+                                                        HarvestUserWorkRequest(
+                                                            projectId = nnSelectedProjectId,
+                                                            userId = nnUserId,
+                                                            workDate = serverDateFormatter.format(
+                                                                selectedWorkDate
+                                                            ),
+                                                            workHours = durationEtText.toFloat(),
+                                                            note = noteEtText
+                                                        )
+                                                    ).collect { logWorkTimeState ->
+                                                        currentLogWorkTimeState = logWorkTimeState
+                                                    }
+                                                }
+                                                // TODO: Check why UPDATE is not working while CREATE is
+                                                WorkRequestType.UPDATE -> {
+                                                    newEntryScreenViewModel.currentWorkRequest?.let { nnCurrentWorkRequest ->
+                                                        logWorkTimeDataModel.logWorkTime(
+                                                            HarvestUserWorkRequest(
+                                                                id = nnCurrentWorkRequest.id,
+                                                                projectId = nnSelectedProjectId,
+                                                                userId = nnUserId,
+                                                                workDate = serverDateFormatter.format(
+                                                                    selectedWorkDate
+                                                                ),
+                                                                workHours = durationEtText.toFloat(),
+                                                                note = noteEtText
+                                                            )
+                                                        ).collect { logWorkTimeState ->
+                                                            currentLogWorkTimeState =
+                                                                logWorkTimeState
+                                                        }
+                                                    }
+                                                }
                                             }
                                         }
                                     }
@@ -190,11 +241,12 @@ fun NewEntryScreen(
             )
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector(
+                durationEtText = durationEtText,
                 onDurationChange = { duration ->
-                    durationEtText.value = if (duration.isNotBlank()) {
-                        duration.toFloat()
+                    durationEtText = if (duration.isNotBlank() && duration.isAFloat()) {
+                        duration
                     } else {
-                        0f
+                        ""
                     }
                 },
                 currentDate = selectedWorkDate,
@@ -206,6 +258,12 @@ fun NewEntryScreen(
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
+            AnimatedVisibility(visible = currentLogWorkTimeState is ErrorState) {
+                Text(
+                    text = (currentLogWorkTimeState as ErrorState).throwable.message.orEmpty(),
+                    style = MaterialTheme.typography.body2.copy(color = Color.Red)
+                )
+            }
             Text(
                 text = stringResource(MR.strings.new_entry_screen_end_view_text.resourceId),
                 style = MaterialTheme.typography.body2,
@@ -216,7 +274,9 @@ fun NewEntryScreen(
             logWorkTimeNavigationCommands = null
             when (currentLogWorkTimeState) {
                 is SuccessState<*> -> {
-                    navController.popBackStack()
+                    newEntryScreenViewModel.resetAllItems {
+                        navController.navigateUp()
+                    }
                 }
                 else -> Unit
             }

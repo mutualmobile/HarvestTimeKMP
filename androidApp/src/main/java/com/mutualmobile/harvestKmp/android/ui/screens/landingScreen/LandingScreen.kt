@@ -57,18 +57,21 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.Week
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.launch
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun LandingScreen(
     navController: NavHostController,
     orgIdentifier: String?,
+    newEntryScreenViewModel: NewEntryScreenViewModel = get()
 ) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
@@ -197,7 +200,7 @@ fun LandingScreen(
         drawerShape = landingScreenDrawerShape(),
         drawerContent = {
             LandingScreenDrawer(
-                navController=navController,
+                navController = navController,
                 currentDrawerScreen = currentDrawerScreen,
                 closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } },
                 onScreenChanged = { newScreen: LandingScreenDrawerItemType ->
@@ -230,8 +233,17 @@ fun LandingScreen(
                     onDayScrolled = { dayOffset ->
                         currentDayOffset = dayOffset
                     },
-                    goToNewEntryScreen = {
-                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                    goToNewEntryScreen = { workRequest, requestType ->
+                        newEntryScreenViewModel.updateCurrentWorkRequestType(
+                            workRequestType = requestType,
+                            onUpdateCompleted = {
+                                newEntryScreenViewModel.updateCurrentWorkRequest(
+                                    update = { workRequest },
+                                    onUpdateCompleted = {
+                                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                                    })
+                            }
+                        )
                     },
                     isWorkLoading = { isLoading ->
                         isWorkLoading = isLoading

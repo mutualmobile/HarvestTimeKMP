@@ -51,6 +51,7 @@ val serverDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
 fun DateDurationSelector(
+    durationEtText: String,
     onDurationChange: (String) -> Unit,
     onWorkDateChange: (Date) -> Unit,
     currentDate: Date
@@ -113,14 +114,12 @@ fun DateDurationSelector(
             DateDurationSelectorItem(
                 title = stringResource(MR.strings.dds_screen_duration_title.resourceId)
             ) {
-                var durationEtText by remember { mutableStateOf("") }
                 val keyboardController = LocalSoftwareKeyboardController.current
                 val focusManager = LocalFocusManager.current
                 TextField(
                     value = durationEtText,
                     onValueChange = { updatedDuration ->
-                        durationEtText = updatedDuration
-                        onDurationChange(durationEtText)
+                        onDurationChange(updatedDuration)
                     },
                     modifier = Modifier.fillMaxWidth(0.25f),
                     colors = TextFieldDefaults.textFieldColors(

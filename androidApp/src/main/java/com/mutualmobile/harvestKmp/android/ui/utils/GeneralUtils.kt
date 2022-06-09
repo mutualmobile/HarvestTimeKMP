@@ -8,6 +8,9 @@ import dev.icerock.moko.resources.StringResource
 
 fun Number.toDecimalString(decimalPlaces: Int = 2) = "%.${decimalPlaces}f".format(this)
 
+fun String.isNotAFloat(): Boolean = this.toFloatOrNull() == null
+fun String.isAFloat():Boolean = isNotAFloat().not()
+
 @Composable
 fun StringResource.get() = stringResource(id = resourceId)
 
