@@ -1,10 +1,10 @@
 package com.mutualmobile.harvestKmp.android
 
 import android.app.Application
+import com.mutualmobile.harvestKmp.android.di.viewModelModule
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.di.initSharedDependencies
-import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 import org.koin.android.ext.koin.androidContext
@@ -16,6 +16,7 @@ class HKMPApp : Application() {
         super.onCreate()
         initSharedDependencies().apply {
             androidContext(this@HKMPApp)
+            modules(viewModelModule)
         }
         GlobalScope.launch {
             precheckSqlite()

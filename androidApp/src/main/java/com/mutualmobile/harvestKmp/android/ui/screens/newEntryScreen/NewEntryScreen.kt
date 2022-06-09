@@ -43,6 +43,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
+import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
@@ -55,12 +56,16 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUser
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import java.util.Date
 import kotlinx.coroutines.launch
+import org.koin.androidx.compose.getViewModel
 
 const val SELECTED_PROJECT_NAME = "SELECTED_PROJECT_NAME"
 const val SELECTED_PROJECT_ID = "SELECTED_PROJECT_ID"
 
 @Composable
-fun NewEntryScreen(navController: NavController) {
+fun NewEntryScreen(
+    navController: NavController,
+    newEntryScreenViewModel: NewEntryScreenViewModel = getViewModel()
+) {
     val coroutineScope = rememberCoroutineScope()
 
     val durationEtText = remember { mutableStateOf(0.0f) }

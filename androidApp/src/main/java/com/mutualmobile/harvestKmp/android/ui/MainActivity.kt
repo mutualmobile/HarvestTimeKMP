@@ -121,9 +121,6 @@ class MainActivity : ComponentActivity() {
                         composable(HarvestRoutes.Screen.SETTINGS) {
                             SettingsScreen(navController = navController)
                         }
-                        composable(HarvestRoutes.Screen.WORK_ENTRY) {
-                            NewEntryScreen(navController = navController)
-                        }
                         composable(HarvestRoutes.Screen.FORGOT_PASSWORD) {
                             ForgotPasswordScreen(navController = navController)
                         }
