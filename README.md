@@ -70,7 +70,7 @@ Built using [PraxisKMP](https://github.com/mutualmobile/PraxisKMP) as the base p
   </tr>
 </table>
 
-Architecture Diagram: [Here](https://lucid.app/lucidchart/f4b7e964-9b54-4b9f-b0b9-e797b6b4275a/edit?viewport_loc=158%2C690%2C2767%2C1340%2C0_0&invitationId=inv_0102040b-2279-46f6-ad6c-3228f375a17d#)
+Architecture Diagram: [Here](https://drive.google.com/file/d/1aLgdk-3PUmAriNR_Z_mPNZBK-IrFpP1G/view?usp=sharing)
 
 <p align="right">[<a href="#top">Back to top</a>]</p>
 
