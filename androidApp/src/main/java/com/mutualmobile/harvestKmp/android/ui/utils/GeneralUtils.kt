@@ -11,6 +11,8 @@ fun Number.toDecimalString(decimalPlaces: Int = 2) = "%.${decimalPlaces}f".forma
 @Composable
 fun StringResource.get() = stringResource(id = resourceId)
 
+fun String.dateWithoutTimeZone() = substring(0, 10)
+
 fun Context.showToast(
     msg: String, isLongToast: Boolean = true
 ) {

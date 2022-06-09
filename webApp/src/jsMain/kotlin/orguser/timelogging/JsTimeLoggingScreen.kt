@@ -63,6 +63,9 @@ val JsTimeLoggingScreen = FC<Props> {
     }
 
     useEffect(dependencies = arrayOf(week, showTimeLogDialog), effect = {
+        if (showTimeLogDialog) {
+            return@useEffect
+        }
         userId?.let { userId ->
             fetchWeekRecords(
                 dataModel,

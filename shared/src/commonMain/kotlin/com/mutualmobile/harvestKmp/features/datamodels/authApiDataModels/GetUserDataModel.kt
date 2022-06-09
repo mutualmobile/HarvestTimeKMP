@@ -10,6 +10,7 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.SharedComponent
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -24,10 +25,28 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
     private val getUserUseCase = authApiUseCasesComponent.provideGetNetworkUserUseCase()
     private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
-    fun getUser() {
+    fun getUser(forceFetchFromNetwork: Boolean = false) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
+            if (!forceFetchFromNetwork) {
+                harvestLocal.getUser()?.let { nnUser ->
+                    onDataState(
+                        SuccessState(
+                            GetUserResponse(
+                                email = nnUser.email,
+                                firstName = nnUser.firstName,
+                                id = nnUser.uid,
+                                lastName = nnUser.lastName,
+                                modifiedTime = null,
+                                orgId = nnUser.orgId,
+                                role = nnUser.role
+                            )
+                        )
+                    )
+                    return@launch
+                }
+            }
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
                     print("GetUser Successful, ${getUserResponse.data}")
