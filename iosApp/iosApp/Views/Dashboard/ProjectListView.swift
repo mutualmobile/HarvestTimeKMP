@@ -32,13 +32,14 @@ struct ProjectListView: View {
                     }
                 }
             }
-            .searchable(text: $searchText, prompt: Text("Search here..."))
+            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search here..."))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
                         dismiss()
                     } label: {
                         Text("Cancel")
+                            .defaultAppColor()
                     }
                     
                 }
