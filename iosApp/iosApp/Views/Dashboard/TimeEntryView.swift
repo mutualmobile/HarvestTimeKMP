@@ -10,19 +10,28 @@ import SwiftUI
 
 struct TimeEntryView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeEntryView(selectedProject: "", selectedTask: "")
+        let store = TimeEntryStore(Date())
+        TimeEntryView(store: store, selectedProject: "", selectedTask: "")
     }
 }
 
 class TimeEntryStore: ObservableObject {
-    @Published var dateString: String = ""
+    @DateHandler var selectedDate: Date
     
-    init() {}
+    init(_ selectedDate: Date) {
+        self.selectedDate = selectedDate
+    }
+    
+    func update(to date: Date) {
+        // objectWillChange required to force the body redraw
+        objectWillChange.send()
+        selectedDate = date
+    }
 }
 
 struct TimeEntryView: View {
     
-    @ObservedObject private var store = TimeEntryStore()
+    @ObservedObject var store: TimeEntryStore
     
     @State private var notes = ""
     @State private var durationField = ""
@@ -30,6 +39,12 @@ struct TimeEntryView: View {
     
     let selectedProject: String
     let selectedTask: String
+    
+    // To Update the date from picker,
+    private var seletedDateBinding: Binding<String> {
+        Binding { store.$selectedDate }
+        set: { _ = $0 }
+    }
     
     var body: some View {
         List {
@@ -109,7 +124,8 @@ struct TimeEntryView: View {
                     Button {
                         // TODO: Handle Stepper action
                     } label: {
-                        Text(store.dateString).foregroundColor(ColorAssets.primary.color)
+                        Text(seletedDateBinding.wrappedValue)
+                            .foregroundColor(ColorAssets.primary.color)
                     }
                     .buttonStyle(BorderlessButtonStyle())
                 }

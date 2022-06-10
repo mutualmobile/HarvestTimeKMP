@@ -39,7 +39,10 @@ struct ProjectListView: View {
         NavigationView {
             VStack {
                 if store.isSelected {
-                    TimeEntryView(selectedProject: store.selectedProject ?? "",
+                    // TODO: Pass selected data here
+                    let timEntryStore = TimeEntryStore(Date())
+                    TimeEntryView(store: timEntryStore,
+                                  selectedProject: store.selectedProject ?? "",
                                   selectedTask: store.selectedTask ?? "")
                 } else {
                     List {
