@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ProjectTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        ProjectTaskView(selectedItem: .constant(""))
+        ProjectTaskView(selectedProject: .constant(""), selectedTask: .constant(""), project: "")
     }
 }
 
@@ -29,14 +29,17 @@ struct ProjectTaskView: View {
     @ObservedObject var store = ProjectTaskStore()
     
     @State private var searchText = ""
-    @Binding var selectedItem: String?
+    @Binding var selectedProject: String?
+    @Binding var selectedTask: String?
+    var project: String
     
     var body: some View {
         List {
             Section("Billable") {
                 ForEach(store.billableList, id: \.self) { item in
                     Button {
-                        selectedItem = item
+                        selectedTask = item
+                        selectedProject = project
                         dismiss()
                     } label: {
                         Text(item)
@@ -48,7 +51,8 @@ struct ProjectTaskView: View {
             Section("Non-Billable") {
                 ForEach(store.nonBillableList, id: \.self) { item in
                     Button {
-                        selectedItem = item
+                        selectedTask = item
+                        selectedProject = project
                         dismiss()
                     } label: {
                         Text(item)

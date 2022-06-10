@@ -10,7 +10,7 @@ import SwiftUI
 
 struct TimeEntryView_Previews: PreviewProvider {
     static var previews: some View {
-        TimeEntryView()
+        TimeEntryView(selectedProject: "", selectedTask: "")
     }
 }
 
@@ -27,6 +27,9 @@ struct TimeEntryView: View {
     @State private var notes = ""
     @State private var durationField = ""
     @FocusState private var focusedField: Bool
+    
+    let selectedProject: String
+    let selectedTask: String
     
     var body: some View {
         List {
@@ -55,7 +58,7 @@ struct TimeEntryView: View {
                         // TODO: Handle Project selection action
                     } label: {
                         HStack {
-                            Text("iOS Department work Hyd")
+                            Text(selectedProject)
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
@@ -69,7 +72,7 @@ struct TimeEntryView: View {
                         // TODO: Handle Project type selection action
                     } label: {
                         HStack {
-                            Text("Non-Billable")
+                            Text(selectedTask)
                             Spacer()
                             Image(systemName: "chevron.right")
                         }

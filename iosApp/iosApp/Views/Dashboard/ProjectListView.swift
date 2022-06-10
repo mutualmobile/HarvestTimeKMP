@@ -18,6 +18,13 @@ struct ProjectListView_Previews: PreviewProvider {
 class ProjectListStore: ObservableObject {
     let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
     
+    @Published var selectedProject: String?
+    @Published var selectedTask: String?
+    
+    var isSelected: Bool {
+        selectedTask != nil && selectedProject != nil
+    }
+    
     init() { }
 }
 
@@ -26,23 +33,25 @@ struct ProjectListView: View {
     @Environment(\.dismiss) private var dismiss
     @ObservedObject var store = ProjectListStore()
 
-    @State private var selectedItem: String?
     @State private var searchText = ""
     
     var body: some View {
         NavigationView {
             VStack {
-                if selectedItem != nil {
-                    TimeEntryView()
+                if store.isSelected {
+                    TimeEntryView(selectedProject: store.selectedProject ?? "",
+                                  selectedTask: store.selectedTask ?? "")
                 } else {
                     List {
                         Section("Mutual Mobile") {
                             
-                            ForEach(searchedResult, id:\.self) { item in
+                            ForEach(searchedResult, id:\.self) { project in
                                 NavigationLink {
-                                    ProjectTaskView(selectedItem: $selectedItem)
+                                    ProjectTaskView(selectedProject: $store.selectedProject,
+                                                    selectedTask: $store.selectedTask,
+                                                    project: project)
                                 } label: {
-                                    Text(item)
+                                    Text(project)
                                 }
                             }
                         }
@@ -63,7 +72,7 @@ struct ProjectListView: View {
                 }
                 
                 ToolbarItem(placement: .confirmationAction) {
-                    return selectedItem == nil
+                    return store.isSelected
                     ? nil
                     : Button(action: {
                         // TODO: Handle Start action
@@ -74,7 +83,7 @@ struct ProjectListView: View {
                     
                 }
             }
-            .navigationTitle(selectedItem == nil
+            .navigationTitle(store.isSelected
                              ? Text("Projects")
                              : Text("New Time Entry"))
         }
