@@ -51,10 +51,8 @@ struct WeekView: View {
                 } label: {
                     VStack {
                         Text(day.tuple.name)
-                            .padding(EdgeInsets(top: verticalPadding,
-                                                leading: horizontalPadding,
-                                                bottom: verticalPadding,
-                                                trailing: horizontalPadding))
+                            .padding(.vertical, verticalPadding)
+                            .padding(.horizontal, horizontalPadding)
                             .background(circleFilledColor(for: day))
                             .clipShape(Circle())
                             .foregroundColor(cicleTextColor(for: day))

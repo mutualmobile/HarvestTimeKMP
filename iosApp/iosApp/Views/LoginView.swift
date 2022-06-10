@@ -21,7 +21,7 @@ struct LoginView: View {
     
     @EnvironmentObject var rootStore: RootStore
     @Environment(\.dismiss) var dismiss
-    @ObservedObject private var store = AuthStore()
+    @StateObject private var store = AuthStore()
     
     @State private var signupPresented = false
     @State private var email = "anmol.verma4@gmail.com"

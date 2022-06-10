@@ -107,7 +107,7 @@ struct TimeSheetView: View {
 struct ContainerView: View {
     
     @Binding var presentTimeEntrySheet: Bool
-    var quoteText: String
+    let quoteText: String
     
     var body: some View {
         VStack() {
