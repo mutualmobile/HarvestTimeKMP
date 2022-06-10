@@ -47,12 +47,14 @@ import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.dateWithoutTimeZone
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
+import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
@@ -75,7 +77,7 @@ fun TimeScreen(
     startIndex: Int,
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
-    goToNewEntryScreen: () -> Unit,
+    goToNewEntryScreen: (workRequest: HarvestUserWorkRequest?, workRequestType: WorkRequestType) -> Unit,
     isWorkLoading: (Boolean) -> Unit,
     navigateToFindWorkspaceScreen: () -> Unit,
     onWeekOffsetChanged: (Int) -> Unit,
@@ -242,7 +244,9 @@ fun TimeScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = goToNewEntryScreen,
+                onClick = {
+                    goToNewEntryScreen(null, WorkRequestType.CREATE)
+                },
                 modifier = Modifier.navigationBarsPadding()
             ) {
                 Icon(
@@ -305,7 +309,20 @@ fun TimeScreen(
                                         organisationName = "Mutual Mobile",
                                         bucketName = "Android Department Work HYD",
                                         time = workLog.workHours,
-                                        taskType = "Work"
+                                        taskType = "Work",
+                                        onClick = {
+                                            goToNewEntryScreen(
+                                                HarvestUserWorkRequest(
+                                                    id = workLog.id,
+                                                    projectId = workLog.projectId,
+                                                    userId = workLog.userId,
+                                                    workDate = workLog.workDate,
+                                                    workHours = workLog.workHours,
+                                                    note = workLog.note
+                                                ),
+                                                WorkRequestType.UPDATE
+                                            )
+                                        }
                                     )
                                 }
                             }

@@ -47,7 +47,8 @@ object AndroidDependencies {
     "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}",
     "org.jetbrains.kotlinx:kotlinx-datetime:${CommonDependencyVersions.kotlinxDateTime}",
     "io.insert-koin:koin-core:${CommonDependencyVersions.koin}",
-    "io.insert-koin:koin-android:${CommonDependencyVersions.koin}"
+    "io.insert-koin:koin-android:${CommonDependencyVersions.koin}",
+    "io.insert-koin:koin-androidx-compose:${CommonDependencyVersions.koin}"
   )
   val androidTestImplementation = listOf(
     "androidx.compose.ui:ui-test-junit4:${AndroidDependencyVersions.compose}"

@@ -1,19 +1,13 @@
 package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.catch
 import org.koin.core.component.KoinComponent
 
 class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
@@ -55,6 +49,16 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
                     praxisCommand(NavigationPraxisCommand(""))
                 }
             }
+        }.catch {
+            this.emit(ErrorState(it))
+            println(it)
+            it.printStackTrace()
+            praxisCommand(
+                ModalPraxisCommand(
+                    title = "Error",
+                    it.message ?: "An Unknown error has happened"
+                )
+            )
         }
     }
 }

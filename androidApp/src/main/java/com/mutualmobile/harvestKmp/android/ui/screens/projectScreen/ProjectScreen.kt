@@ -1,7 +1,6 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.projectScreen
 
-import android.app.Activity
-import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -12,6 +11,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -21,55 +21,104 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.SELECTED_PROJECT
-import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.ProjectListHeader
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
+import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.ProjectListItem
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components.SearchView
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
+import java.util.Date
+import org.koin.androidx.compose.get
 
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun ProjectScreen(navController: NavController) {
-    val activity = LocalContext.current as Activity
-    var projectListMap =
-        mapOf("P" to listOf("Praxis", "PraxisFlutter"), "M" to listOf("MagicMountain", "Treat"))
-    var filteredProjectListMap: Map<String, List<String>>
+fun ProjectScreen(
+    navController: NavHostController,
+    newEntryScreenViewModel: NewEntryScreenViewModel = get()
+) {
+    val projectListMap = remember { mutableStateOf(emptyList<OrgProjectResponse>()) }
+    var filteredProjectListMap: List<OrgProjectResponse>
     val textState = remember { mutableStateOf(TextFieldValue("")) }
 
+    var currentUserState: DataState by remember { mutableStateOf(EmptyState) }
     var currentProjectScreenState: DataState by remember {
         mutableStateOf(EmptyState)
     }
+    var projectScreenNavigationCommands: PraxisCommand? by remember { mutableStateOf(null) }
+
     val getUserAssignedProjectsDataModel by remember {
         mutableStateOf(
             GetUserAssignedProjectsDataModel { projectState ->
                 currentProjectScreenState = projectState
                 when (projectState) {
                     is SuccessState<*> -> {
-                        val apiResponse = (projectState.data as ApiResponse<*>)
-                        projectListMap = mapOf(
-                            "P" to listOf("Praxis", "PraxisFlutter"),
-                            "M" to listOf("MagicMountain", "Treat")
-                        )
+                        projectListMap.value =
+                            (projectState.data as ApiResponse<*>).data as List<OrgProjectResponse>
                     }
                     else -> Unit
+                }
+            }.apply {
+                praxisCommand = { newCommand ->
+                    projectScreenNavigationCommands = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
+                    }
                 }
             }
         )
     }
+    val userStateModel by remember {
+        mutableStateOf(
+            GetUserDataModel { userState ->
+                currentUserState = userState
+                when (userState) {
+                    is SuccessState<*> -> {
+                        getUserAssignedProjectsDataModel.getUserAssignedProjects(
+                            (userState.data as GetUserResponse).id ?: ""
+                        )
+                    }
+                    else -> Unit
+                }
+            }.apply {
+                activate()
+                praxisCommand = { newCommand ->
+                    projectScreenNavigationCommands = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -80,7 +129,7 @@ fun ProjectScreen(navController: NavController) {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = activity::onBackPressed) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null
@@ -95,50 +144,47 @@ fun ProjectScreen(navController: NavController) {
         ) { bodyPadding ->
 
         Column(modifier = Modifier.padding(bodyPadding)) {
-
+            AnimatedVisibility(visible = currentProjectScreenState is LoadingState) {
+                LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+            }
             LazyColumn(modifier = Modifier.fillMaxWidth()) {
                 val searchedText = textState.value.text
                 filteredProjectListMap = if (searchedText.isEmpty()) {
-                    projectListMap
+                    projectListMap.value
                 } else {
-                    var tempProjectListMap = emptyMap<String, List<String>>()
-                    projectListMap.filter { (key, value) ->
-                        val list = value.filter { it.contains(searchedText, true) }
-                        if (list.isEmpty().not()) {
-                            tempProjectListMap = tempProjectListMap + Pair(key, list)
-                        }
-
-                        tempProjectListMap.isEmpty()
-
-
-                    }
-                    tempProjectListMap
+                    projectListMap.value.filter { it.name?.contains(searchedText, true) == true }
+                }
+                items(filteredProjectListMap) { project ->
+                    ProjectListItem(
+                        label = project.name ?: "",
+                        onItemClick = { selectedProject ->
+                            newEntryScreenViewModel.updateCurrentProjectName(selectedProject)
+                            project.id?.let { nnProjectId ->
+                                newEntryScreenViewModel.updateCurrentWorkRequest(
+                                    update = { existingRequest ->
+                                        existingRequest?.copy(
+                                            projectId = nnProjectId
+                                        ) ?: HarvestUserWorkRequest(
+                                            id = null,
+                                            projectId = nnProjectId,
+                                            userId = "",
+                                            workDate = serverDateFormatter.format(Date()),
+                                            workHours = 0f,
+                                            note = null
+                                        )
+                                    },
+                                    onUpdateCompleted = {
+                                        navController.navigateUp()
+                                    }
+                                )
+                            }
+                        })
                 }
 
-                filteredProjectListMap.forEach { (initial, contactsForInitial) ->
-                    stickyHeader {
-                        ProjectListHeader(label = initial)
-                    }
-
-                    items(contactsForInitial) { contact ->
-                        ProjectListItem(
-                            label = contact,
-                            onItemClick = { selectedProject ->
-                                navController.previousBackStackEntry?.savedStateHandle?.set(
-                                    SELECTED_PROJECT,
-                                    selectedProject
-                                )
-                                navController.popBackStack(
-                                    HarvestRoutes.Screen.WORK_ENTRY,
-                                    inclusive = false,
-                                    saveState = true
-                                )
-                            })
-                    }
-                }
             }
-
         }
+        HarvestDialog(praxisCommand = projectScreenNavigationCommands, onConfirm = {
+            projectScreenNavigationCommands = null
+        })
     }
-
 }
