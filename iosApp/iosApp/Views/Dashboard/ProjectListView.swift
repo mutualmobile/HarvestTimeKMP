@@ -21,14 +21,21 @@ struct ProjectListView: View {
     
     @State private var searchText = ""
     
+    @State var selectedItem: String?
+    
     let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
     
     var body: some View {
         NavigationView {
             List {
                 Section("Mutual Mobile") {
+                    
                     ForEach(searchedResult, id:\.self) { item in
-                        Text(item)
+                        NavigationLink {
+                            ProjectTypeView(selectedItem: $selectedItem)
+                        } label: {
+                            Text(item)
+                        }
                     }
                 }
             }
