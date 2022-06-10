@@ -40,20 +40,20 @@ val JSSignupScreen = VFC {
 
     val dataModel = SignUpDataModel(onDataState = { stateNew ->
         when (stateNew) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 val data = (stateNew.data as ApiResponse<*>)
                 message = data.message ?: "No Data found!"
             }
-            Complete -> {
+            PraxisDataModel.Complete ->  {
                 message = "Completed loading!"
             }
-            EmptyState -> {
+            PraxisDataModel.EmptyState -> {
                 message = "Empty state"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = stateNew.throwable.message ?: "Error"
             }
         }

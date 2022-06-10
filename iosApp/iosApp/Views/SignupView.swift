@@ -159,15 +159,15 @@ struct SignupView: View {
     
     private func performSignup() {
         SignUpDataModel { state in
-            if state is LoadingState {
+            if state is PraxisDataModel.LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
             } else {
                 store.showLoading = false
-                if let error = state as? ErrorState {
+                if let error = state as? PraxisDataModel.ErrorState {
                     // TODO: Handled error case with proper alert message visibility
                     store.signupError = AppError(message: error.throwable.message ?? "Signup failure")
-                } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
+                } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
                     if let response =  responseState.data {
                         
 

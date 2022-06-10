@@ -26,9 +26,9 @@ val JsOrgUsersScreen = VFC {
     var searchName by useState<String>()
 
     val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
-        isLoading = stateNew is LoadingState
+        isLoading = stateNew is PraxisDataModel.LoadingState
         when (stateNew) {
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)

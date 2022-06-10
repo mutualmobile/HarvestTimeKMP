@@ -40,4 +40,8 @@ interface OrgProjectsApi {
         projectId: String
     ): NetworkResponse<ApiResponse<List<GetUserResponse>>>
 
+    suspend fun getListOfProjectsForProjectIds(
+        projectIds: List<String>
+    ): NetworkResponse<ApiResponse<List<OrgProjectResponse>>>
+
 }

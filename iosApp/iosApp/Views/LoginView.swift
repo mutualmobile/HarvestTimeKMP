@@ -132,16 +132,16 @@ struct LoginView: View {
     
     private func performLogin() {
         let loginDataModel = LoginDataModel { state in
-            if state is LoadingState {
+            if state is PraxisDataModel.LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
             } else {
                 store.showLoading = false
                 
-                if let error = state as? ErrorState {
+                if let error = state as? PraxisDataModel.ErrorState {
                     store.loginError = AppError(title: "Error",
                                                 message: error.throwable.message ?? "Login failure")
-                } else if let _ = state as? SuccessState<ApiResponse<HarvestOrganization>> {
+                } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
                     rootStore.isAuthenticateUser = true
                 }
             }

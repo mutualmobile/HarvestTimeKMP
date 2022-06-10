@@ -26,10 +26,10 @@ val JSUserProjectList = VFC {
     var projects by useState<List<OrgProjectResponse>>()
     val navigator = useNavigate()
 
-    val dataModel = GetUserAssignedProjectsDataModel(onDataState = { dataState: DataState ->
-        isLoading = dataState is LoadingState
+    val dataModel = GetUserAssignedProjectsDataModel(onDataState = { dataState: PraxisDataModel.DataState ->
+        isLoading = dataState is PraxisDataModel.LoadingState
         when (dataState) {
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 try {
                     val response = (dataState.data as ApiResponse<List<OrgProjectResponse>>)
                     projects = response.data
@@ -39,10 +39,10 @@ val JSUserProjectList = VFC {
                     ex.printStackTrace()
                 }
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = dataState.throwable.message.toString()
             }
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
             else -> {}

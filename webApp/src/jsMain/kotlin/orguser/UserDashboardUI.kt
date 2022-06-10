@@ -3,6 +3,7 @@ package orguser
 import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.UserDashboardDataModel
+import components.AppThemeContext
 import csstype.NamedColor
 import kotlinx.browser.window
 import react.VFC
@@ -13,8 +14,12 @@ import firebase.messaging.messaging
 import firebaseApp
 import mui.material.Backdrop
 import mui.material.CircularProgress
+import mui.material.styles.useTheme
+import mui.material.useMediaQuery
 import mui.system.Box
+import mui.system.Breakpoint
 import mui.system.sx
+import react.useContext
 import webKey
 
 
@@ -25,11 +30,17 @@ val UserDashboardUI = VFC {
     val navigator = useNavigate()
     var isNavDrawerOpen by useState(false)
     var drawer by useState<DrawerItems>()
+    val themeContext by useContext(AppThemeContext)
+    val matchesSM = useMediaQuery(themeContext.breakpoints.up(Breakpoint.sm))
+    val matchesMD = useMediaQuery(themeContext.breakpoints.up(Breakpoint.md))
+    val matchesXS = useMediaQuery(themeContext.breakpoints.up(Breakpoint.xs))
+    val matchesLG = useMediaQuery(themeContext.breakpoints.up(Breakpoint.lg))
+    val matchesXL = useMediaQuery(themeContext.breakpoints.up(Breakpoint.xl))
 
     val dataModel = UserDashboardDataModel(onDataState = { stateNew ->
-        isLoggingOut = stateNew is LogoutInProgress
-        isLoadingUser = stateNew is LoadingState
-        if (stateNew is SuccessState<*>) {
+        isLoggingOut = stateNew is PraxisDataModel.LogoutInProgress
+        isLoadingUser = stateNew is PraxisDataModel.LoadingState
+        if (stateNew is PraxisDataModel.SuccessState<*>) {
             val data = stateNew.data
             if (data is GetUserResponse) {
                 drawer = data.role?.let { drawerItems(it) }
@@ -57,7 +68,9 @@ val UserDashboardUI = VFC {
 
     Box {
         Header {
+            this.showOptionsInHeader = matchesLG || matchesXL
             this.isLoggingOut = isLoggingOut
+            this.drawerItems = drawer
             this.logout = {
                 dataModel.logout()
                 firebaseApp?.messaging()?.getToken(webKey)?.then {
@@ -70,7 +83,7 @@ val UserDashboardUI = VFC {
             }
         }
 
-        if (!isLoadingUser && drawer != null) {
+        if (!isLoadingUser && drawer != null && (matchesSM || matchesXS || matchesMD)) {
             OrgUserDrawer {
                 open = isNavDrawerOpen
                 drawerItems = drawer

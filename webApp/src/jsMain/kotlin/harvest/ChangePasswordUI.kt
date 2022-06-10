@@ -20,27 +20,27 @@ import react.useState
 val ChangePasswordUI = VFC {
     var message by useState("")
     var changePassword by useState("")
-    var state by useState<DataState>()
+    var state by useState<PraxisDataModel.DataState>()
     var password by useState("")
     val navigator = useNavigate()
 
     val dataModel = ChangePasswordDataModel(onDataState = { stateNew ->
         when (stateNew) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
                 changePassword = ""
                 password = ""
             }
-            Complete -> {
+            PraxisDataModel.Complete -> {
                 message = "Completed loading!"
             }
-            EmptyState -> {
+            PraxisDataModel.EmptyState -> {
                 message = "Empty state"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = stateNew.throwable.message ?: "Error"
             }
         }

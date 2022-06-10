@@ -41,11 +41,23 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.mutualmobile.harvestKmp.MR
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+
+val formatter = SimpleDateFormat("EEEE, d MMMM ", Locale.getDefault())
+val serverDateFormatter = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
 
 @OptIn(ExperimentalFoundationApi::class, ExperimentalComposeUiApi::class)
 @Composable
-fun DateDurationSelector() {
+fun DateDurationSelector(
+    durationEtText: String,
+    onDurationChange: (String) -> Unit,
+    onWorkDateChange: (Date) -> Unit,
+    currentDate: Date
+) {
     var isDatePickerVisible by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(formatter.format(currentDate)) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = 2.dp
@@ -81,7 +93,7 @@ fun DateDurationSelector() {
                         }
                 ) {
                     Text(
-                        text = "Wednesday, 11 May",
+                        text = selectedDate,
                         style = MaterialTheme.typography.body1,
                         fontWeight = FontWeight.Normal
                     )
@@ -102,12 +114,13 @@ fun DateDurationSelector() {
             DateDurationSelectorItem(
                 title = stringResource(MR.strings.dds_screen_duration_title.resourceId)
             ) {
-                var durationEtText by remember { mutableStateOf("") }
                 val keyboardController = LocalSoftwareKeyboardController.current
                 val focusManager = LocalFocusManager.current
                 TextField(
                     value = durationEtText,
-                    onValueChange = { updatedDuration -> durationEtText = updatedDuration },
+                    onValueChange = { updatedDuration ->
+                        onDurationChange(updatedDuration)
+                    },
                     modifier = Modifier.fillMaxWidth(0.25f),
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.Transparent
@@ -129,7 +142,10 @@ fun DateDurationSelector() {
         }
     }
     if (isDatePickerVisible) {
-        DatePicker(onDateSelected = {}, onDismissRequest = { isDatePickerVisible = false })
+        DatePicker(onDateSelected = {
+            selectedDate = formatter.format(it)
+            onWorkDateChange(it)
+        }, onDismissRequest = { isDatePickerVisible = false })
     }
 }
 

@@ -29,19 +29,20 @@ import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.LandingScree
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.LoginScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.NewEntryScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.onboradingScreen.OnBoardingScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.password.ChangePasswordScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.password.ForgotPasswordScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
-
 
 class MainActivity : ComponentActivity() {
     var getUserState: DataState by mutableStateOf(EmptyState)
@@ -120,8 +121,14 @@ class MainActivity : ComponentActivity() {
                         composable(HarvestRoutes.Screen.SETTINGS) {
                             SettingsScreen(navController = navController)
                         }
-                        composable(HarvestRoutes.Screen.WORK_ENTRY) {
-                            NewEntryScreen(navController = navController)
+                        composable(HarvestRoutes.Screen.FORGOT_PASSWORD) {
+                            ForgotPasswordScreen(navController = navController)
+                        }
+                        composable(HarvestRoutes.Screen.CHANGE_PASSWORD) {
+                            ChangePasswordScreen(navController = navController)
+                        }
+                        composable(HarvestRoutes.Screen.SETTINGS) {
+                            SettingsScreen(navController = navController)
                         }
                     }
                 }

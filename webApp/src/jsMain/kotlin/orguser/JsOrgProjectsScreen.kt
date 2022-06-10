@@ -26,10 +26,10 @@ val JsOrgProjectsScreen = VFC {
     var totalPages by useState(0)
     var isLoading by useState(false)
     var searchProject by useState<String>()
-    val dataState = { stateNew: DataState ->
-        isLoading = stateNew is LoadingState
+    val dataState = { stateNew: PraxisDataModel.DataState ->
+        isLoading = stateNew is PraxisDataModel.LoadingState
         when (stateNew) {
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
