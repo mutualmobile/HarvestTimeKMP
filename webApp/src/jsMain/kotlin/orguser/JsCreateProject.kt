@@ -41,19 +41,19 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
 
     val dataModel = OrgProjectsDataModel(onDataState = { stateNew ->
         when (stateNew) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
-            is Complete -> {
+            is PraxisDataModel.Complete->  {
                 message = "Complete!"
             }
-            is EmptyState -> {
+            is PraxisDataModel.EmptyState -> {
                 message = "Initial State!"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = "Error State ${stateNew.throwable.message ?: "Error"}"
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 val response = stateNew.data as ApiResponse<*>
                 message = "${response.message}"
                 window.alert(message)

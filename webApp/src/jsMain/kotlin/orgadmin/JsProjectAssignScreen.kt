@@ -42,10 +42,10 @@ val JsProjectAssignScreen = VFC {
     var searchProject by useState<String>()
     val userType = UserRole.ORG_USER.role
 
-    val findProjectsInOrgDataModel = FindProjectsInOrgDataModel { stateNew: DataState ->
-        isLoadingProjects = stateNew is LoadingState
+    val findProjectsInOrgDataModel = FindProjectsInOrgDataModel { stateNew: PraxisDataModel.DataState ->
+        isLoadingProjects = stateNew is PraxisDataModel.LoadingState
         when (stateNew) {
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
@@ -57,10 +57,10 @@ val JsProjectAssignScreen = VFC {
             }
         }
     }
-    val usersInOrgDataModel = FindUsersInOrgDataModel { stateNew: DataState ->
-        isLoadingUsers = stateNew is LoadingState
+    val usersInOrgDataModel = FindUsersInOrgDataModel { stateNew: PraxisDataModel.DataState ->
+        isLoadingUsers = stateNew is PraxisDataModel.LoadingState
         when (stateNew) {
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 try {
                     val response =
                         (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
@@ -72,10 +72,10 @@ val JsProjectAssignScreen = VFC {
             }
         }
     }
-    val assignDataModel = AssignProjectsToUsersDataModel { stateNew: DataState ->
-        isSaving = stateNew is LoadingState
+    val assignDataModel = AssignProjectsToUsersDataModel { stateNew: PraxisDataModel.DataState ->
+        isSaving = stateNew is PraxisDataModel.LoadingState
         when (stateNew) {
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 try {
                     selectionInfo.clear()
                     userSelection.clear()

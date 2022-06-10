@@ -21,16 +21,16 @@ val JsWorkspaceFindScreen = VFC {
     var status by useState("")
     var workspaceName by useState("")
     val navigator = useNavigate()
-    val dataModel = FindOrgByIdentifierDataModel(onDataState = { dataState: DataState ->
+    val dataModel = FindOrgByIdentifierDataModel(onDataState = { dataState: PraxisDataModel.DataState ->
         when (dataState) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 status = "Loading..."
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 val organization = (dataState.data as ApiResponse<HarvestOrganization>).data
                 status = "Found organization! ${organization?.name}"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 status = dataState.throwable.message.toString()
             }
         }

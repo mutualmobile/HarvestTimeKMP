@@ -2,7 +2,6 @@ package com.mutualmobile.harvestKmp.features.datamodels
 
 import com.mutualmobile.harvestKmp.domain.model.OnBoardingItem
 import com.mutualmobile.harvestKmp.domain.model.onBoardingItem
-import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import kotlinx.coroutines.cancel
 import org.koin.core.component.KoinComponent

@@ -34,21 +34,21 @@ val JSLoginScreen = VFC {
     val navigator = useNavigate()
 
     val dataModel = LoginDataModel(onDataState = { stateNew ->
-        isLoading = stateNew is LoadingState
+        isLoading = stateNew is PraxisDataModel.LoadingState
         when (stateNew) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 message = (stateNew.data as LoginResponse).message ?: "Some message"
             }
-            Complete -> {
+            PraxisDataModel.Complete -> {
                 message = "Completed loading!"
             }
-            EmptyState -> {
+            PraxisDataModel.EmptyState -> {
                 message = "Empty state"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = stateNew.throwable.message ?: "Error"
             }
         }

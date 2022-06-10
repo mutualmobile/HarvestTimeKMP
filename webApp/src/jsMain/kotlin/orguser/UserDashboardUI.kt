@@ -38,9 +38,9 @@ val UserDashboardUI = VFC {
     val matchesXL = useMediaQuery(themeContext.breakpoints.up(Breakpoint.xl))
 
     val dataModel = UserDashboardDataModel(onDataState = { stateNew ->
-        isLoggingOut = stateNew is LogoutInProgress
-        isLoadingUser = stateNew is LoadingState
-        if (stateNew is SuccessState<*>) {
+        isLoggingOut = stateNew is PraxisDataModel.LogoutInProgress
+        isLoadingUser = stateNew is PraxisDataModel.LoadingState
+        if (stateNew is PraxisDataModel.SuccessState<*>) {
             val data = stateNew.data
             if (data is GetUserResponse) {
                 drawer = data.role?.let { drawerItems(it) }
