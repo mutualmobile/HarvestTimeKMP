@@ -8,6 +8,8 @@
 
 import shared
 import SwiftUI
+import KMPNativeCoroutinesCombine
+import Combine
 
 struct WorkspaceView_Previews: PreviewProvider {
     static var previews: some View {
@@ -21,7 +23,8 @@ struct WorkspaceView: View {
     @Environment(\.dismiss) private var dismiss
     
     @Binding var foundWorkspace: Bool
-    
+    let dataModel = FindOrgByIdentifierDataModel()
+
     @State private var workspaceURLText = "MutualMobile"
     @State private var showLoader = false
     @State private var workspaceFindError: AppError?
@@ -68,7 +71,11 @@ struct WorkspaceView: View {
             .alert(isPresented: workspaceError, error: workspaceFindError) {
                 Text(workspaceFindError?.errorDescription ?? "")
             }
-        }
+        }.onAppear(perform: {
+            dataModel.activate()
+        }).onDisappear(perform: {
+            dataModel.destroy()
+        })
         .frame(width: UIScreen.main.bounds.width,
                height: UIScreen.main.bounds.height,
                alignment: .center)
@@ -77,22 +84,25 @@ struct WorkspaceView: View {
     
     private func findWorkspace() {
         if !workspaceURLText.isEmpty {
-            let dataModel = FindOrgByIdentifierDataModel { state in
-                print("state \(state)")
-                if state is PraxisDataModel.LoadingState {
-                    showLoader = true
-                } else {
-                    showLoader = false
-                    if let error = state as? PraxisDataModel.ErrorState {
-                        workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
-                    } else if let networkResponse = state as? PraxisDataModelSuccessState<NetworkResponse<AnyObject>> {
-                        print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
-                        dismiss()
-                        foundWorkspace = true
+            let publisher = createPublisher(for: dataModel.dataFlowNative)
+            _ = publisher.sink { completion in
+                print(completion)
+            } receiveValue: { state in
+                    print("state \(state)")
+                    if state is PraxisDataModel.LoadingState {
+                        showLoader = true
+                    } else {
+                        showLoader = false
+                        if let error = state as? PraxisDataModel.ErrorState {
+                            workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
+                        } else if let networkResponse = state as? PraxisDataModelSuccessState<NetworkResponse<AnyObject>> {
+                            print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
+                            dismiss()
+                            foundWorkspace = true
+                        }
                     }
-                }
             }
-            
+
             dataModel.findOrgByIdentifier(identifier: orgIdentifier)
         } else {
             workspaceFindError = AppError(message: "Please a enter your workspace")

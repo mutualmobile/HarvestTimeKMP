@@ -8,6 +8,7 @@
 
 import SwiftUI
 import shared
+import KMPNativeCoroutinesCombine
 
 class SignupStore: ObservableObject {
     @Published var hasFocus: Bool = true
@@ -158,7 +159,10 @@ struct SignupView: View {
     }
     
     private func performSignup() {
-        SignUpDataModel { state in
+        let dataModel = SignUpDataModel()
+        let cancellable =   createPublisher(for: dataModel.dataFlowNative).sink { completion in
+            
+        } receiveValue: { state in
             if state is PraxisDataModel.LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
@@ -180,7 +184,9 @@ struct SignupView: View {
                     }
                 }
             }
-        }.signUp(firstName: firstName,
+        }
+
+            dataModel.signUp(firstName: firstName,
                  lastName: lastName,
                  company: companyName,
                  email: companyEmail,
