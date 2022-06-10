@@ -2,7 +2,7 @@ object CommonDependencyVersions {
     const val multiplatformSettings = "0.9"
     const val sqlDelight = "1.5.3"
     const val ktor = "2.0.1"
-    const val kotlinxDateTime = "0.3.1"
+    const val kotlinxDateTime = "0.3.2"
     const val kotlinxSerialization = "1.3.2"
     const val coroutines = "1.6.1"
     const val koin = "3.1.4"

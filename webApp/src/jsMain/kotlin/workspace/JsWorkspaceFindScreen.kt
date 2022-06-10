@@ -35,7 +35,7 @@ val JsWorkspaceFindScreen = VFC {
                 }
                 is PraxisDataModel.ErrorState -> {
                     status = dataState.throwable.message.toString()
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }

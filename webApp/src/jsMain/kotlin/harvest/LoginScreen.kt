@@ -53,7 +53,7 @@ val JSLoginScreen = VFC {
                 }
                 is PraxisDataModel.ErrorState -> {
                     message = stateNew.throwable.message ?: "Error"
-                }
+                }else -> {}
             } }.launchIn(this.dataModelScope)
     }
 

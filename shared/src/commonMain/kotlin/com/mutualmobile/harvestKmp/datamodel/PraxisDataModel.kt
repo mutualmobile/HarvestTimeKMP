@@ -1,12 +1,12 @@
 package com.mutualmobile.harvestKmp.datamodel
 
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.MainScope
+import com.rickclephas.kmp.nativecoroutines.NativeCoroutineScope
+import kotlinx.coroutines.*
 
 abstract class PraxisDataModel(
-    var dataModelScope: CoroutineScope = MainScope()
+    @NativeCoroutineScope
+    var dataModelScope: CoroutineScope = CoroutineScope(SupervisorJob() + Dispatchers.Default)
 ) {
 
     protected val settings = SharedComponent().provideSettings()

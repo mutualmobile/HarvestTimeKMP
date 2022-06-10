@@ -43,7 +43,7 @@ val ResetPasswordScreen = FC<Props> {
                 }
                 is PraxisDataModel.ErrorState -> {
                     message = stateNew.throwable.message ?: "Error"
-                }
+                }else -> {}
             } }.launchIn(this.dataModelScope)
     }
 

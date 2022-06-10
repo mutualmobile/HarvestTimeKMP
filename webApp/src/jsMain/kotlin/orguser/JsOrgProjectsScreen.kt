@@ -43,7 +43,7 @@ val JsOrgProjectsScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }

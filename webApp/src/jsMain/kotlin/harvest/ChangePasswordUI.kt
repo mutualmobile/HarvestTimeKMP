@@ -46,6 +46,7 @@ val ChangePasswordUI = VFC {
                 is PraxisDataModel.ErrorState -> {
                     message = stateNew.throwable.message ?: "Error"
                 }
+                PraxisDataModel.LogoutInProgress -> TODO()
             }
         }.launchIn(this.dataModelScope)
     }

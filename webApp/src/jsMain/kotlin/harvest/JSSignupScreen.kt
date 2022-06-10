@@ -59,6 +59,7 @@ val JSSignupScreen = VFC {
                 is PraxisDataModel.ErrorState -> {
                     message = stateNew.throwable.message ?: "Error"
                 }
+                else -> {}
             } }.launchIn(this.dataModelScope)
     }
 

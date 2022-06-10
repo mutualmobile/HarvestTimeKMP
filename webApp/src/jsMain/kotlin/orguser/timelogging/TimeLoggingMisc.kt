@@ -80,7 +80,7 @@ val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
                             when (it) {
                                 is PraxisDataModel.SuccessState<*> -> {
                                     props.onDone.invoke()
-                                }
+                                }else -> {}
                             }
                         }.launchIn(props.dataModel.dataModelScope)
                     } ?: run {

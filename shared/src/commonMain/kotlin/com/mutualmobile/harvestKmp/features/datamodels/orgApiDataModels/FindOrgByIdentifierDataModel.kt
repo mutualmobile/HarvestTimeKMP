@@ -14,9 +14,11 @@ import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class FindOrgByIdentifierDataModel() :
@@ -29,8 +31,12 @@ class FindOrgByIdentifierDataModel() :
     private val orgApiUseCasesComponent = OrgApiUseCaseComponent()
     private val findOrgByIdentifierUseCase = orgApiUseCasesComponent.provideFindOrgByIdentifier()
 
+    suspend fun doSomething(): Int {
+        return 1
+    }
+
     fun findOrgByIdentifier(identifier: String) {
-        dataModelScope.launch {
+        dataModelScope.launch(exceptionHandler) {
             _dataFlow.emit(LoadingState)
 
             when (val response = findOrgByIdentifierUseCase(

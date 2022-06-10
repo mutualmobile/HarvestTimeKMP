@@ -61,7 +61,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                     message = "${response.message}"
                     window.alert(message)
                     props.onClose()
-                }
+                }else -> {}
             } }.launchIn(dataModelScope)
     }
 

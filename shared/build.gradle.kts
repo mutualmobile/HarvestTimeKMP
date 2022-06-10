@@ -10,14 +10,12 @@ plugins {
 version = "1.0"
 
 kotlin {
-    targets{
+    targets {
         android()
         iosX64()
         iosArm64()
-        watchos()
         macosX64()
         macosArm64()
-        watchosSimulatorArm64()
         iosSimulatorArm64() // sure all ios dependencies support this target
         jvm("desktop") {
             compilations.all {
@@ -87,9 +85,6 @@ kotlin {
         val iosArm64Main by getting
         val iosSimulatorArm64Main by getting
 
-        val watchosSimulatorArm64Main by getting
-        val watchosMain by getting
-
         val macosX64Main by getting {
             dependencies {
                 MacOSMainDependencies.implementationx64.forEach(::implementation)
@@ -106,8 +101,6 @@ kotlin {
                 IOSMainDependencies.implementation.forEach(::implementation)
             }
             dependsOn(commonMain)
-            watchosMain.dependsOn(this)
-            watchosSimulatorArm64Main.dependsOn(this)
             iosX64Main.dependsOn(this)
             iosArm64Main.dependsOn(this)
             iosSimulatorArm64Main.dependsOn(this)

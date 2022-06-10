@@ -40,7 +40,7 @@ val JsOrgUsersScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(this.dataModelScope)
     }

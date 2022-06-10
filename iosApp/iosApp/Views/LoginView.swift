@@ -10,19 +10,44 @@ import Foundation
 import SwiftUI
 import shared
 import KMPNativeCoroutinesCombine
+import Combine
 
 class AuthStore: ObservableObject {
     @Published var hasFocus: Bool = true
     @Published var showLoading = false
-    
     @Published var loginError: AppError?
+    var anyCancellable: AnyCancellable? = nil
+
+    let loginDataModel = LoginDataModel()
+    
+    init() {
+        loginDataModel.activate()
+        anyCancellable =  createPublisher(for: loginDataModel.dataFlowNative).sink { completion in
+            debugPrint(completion)
+        } receiveValue: { [self] state in
+               if state is PraxisDataModel.LoadingState {
+                   showLoading = true
+                   hasFocus = false
+               } else {
+                   showLoading = false
+                   
+                   if let error = state as? PraxisDataModel.ErrorState {
+                       loginError = AppError(title: "Error",
+                                                   message: error.throwable.message ?? "Login failure")
+                   } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
+                       rootStore.isAuthenticateUser = true
+                   }
+               }
+        }
+    }
+
 }
 
 struct LoginView: View {
-    @EnvironmentObject var rootStore: RootStore
 
     @ObservedObject private var store = AuthStore()
-    
+    @EnvironmentObject var rootStore: RootStore
+
     @Environment(\.dismiss) var dismiss
     
     @State private var signupPresented = false
@@ -50,7 +75,9 @@ struct LoginView: View {
                height: UIScreen.main.bounds.height)
         .background(ColorAssets.colorBackground.color)
         .edgesIgnoringSafeArea(.all)
-        .loadingIndicator(show: store.showLoading)
+        .loadingIndicator(show: store.showLoading).onDisappear {
+            self.store.anyCancellable?.cancel()
+        }
     }
     
     private var googleSignInButton: some View {
@@ -132,26 +159,9 @@ struct LoginView: View {
     }
     
     private func performLogin() {
-        let loginDataModel = LoginDataModel()
-        let cancellable =   createPublisher(for: loginDataModel.dataFlowNative).sink { completion in
-            
-        } receiveValue: { state in
-               if state is PraxisDataModel.LoadingState {
-                   store.showLoading = true
-                   store.hasFocus = false
-               } else {
-                   store.showLoading = false
-                   
-                   if let error = state as? PraxisDataModel.ErrorState {
-                       store.loginError = AppError(title: "Error",
-                                                   message: error.throwable.message ?? "Login failure")
-                   } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
-                       rootStore.isAuthenticateUser = true
-                   }
-               }
-        }
+        
 
-        loginDataModel.login(email: email, password: password)
+        store.loginDataModel.login(email: email, password: password)
         
 //        loginDataModel.praxisCommand = { command in
 //            print("command \(command)  \(type(of: command)) ")

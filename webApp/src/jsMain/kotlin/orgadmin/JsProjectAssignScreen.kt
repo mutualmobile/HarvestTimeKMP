@@ -57,7 +57,7 @@ val JsProjectAssignScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }
@@ -74,7 +74,7 @@ val JsProjectAssignScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }
@@ -90,7 +90,7 @@ val JsProjectAssignScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }
