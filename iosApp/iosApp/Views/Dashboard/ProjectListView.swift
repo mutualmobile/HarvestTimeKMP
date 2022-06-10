@@ -31,19 +31,28 @@ struct ProjectListView: View {
     
     var body: some View {
         NavigationView {
-            List {
-                Section("Mutual Mobile") {
-                    
-                    ForEach(searchedResult, id:\.self) { item in
-                        NavigationLink {
-                            ProjectTypeView(selectedItem: $selectedItem)
-                        } label: {
-                            Text(item)
+            VStack {
+                if selectedItem != nil {
+                    TimeEntryView()
+                } else {
+                    List {
+                        Section("Mutual Mobile") {
+                            
+                            ForEach(searchedResult, id:\.self) { item in
+                                NavigationLink {
+                                    ProjectTypeView(selectedItem: $selectedItem)
+                                } label: {
+                                    Text(item)
+                                }
+                            }
                         }
+                        
                     }
+                    .searchable(text: $searchText,
+                                placement: .navigationBarDrawer(displayMode: .always),
+                                prompt: Text("Search here..."))
                 }
             }
-            .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search here..."))
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
                     Button {
@@ -52,6 +61,17 @@ struct ProjectListView: View {
                         Text("Cancel")
                             .defaultAppColor()
                     }
+                }
+                
+                ToolbarItem(placement: .confirmationAction) {
+                    return selectedItem == nil
+                    ? nil
+                    : Button(action: {
+                        // TODO: Handle Start action
+                    }, label: {
+                        Text("Start")
+                            .defaultAppColor()
+                    })
                     
                 }
             }
