@@ -22,23 +22,23 @@ val ResetPasswordScreen = FC<Props> {
     var changePassword by useState("")
     var password by useState("")
     val searchParams = useSearchParams()
-    val navigator  = useNavigate()
+    val navigator = useNavigate()
 
     val dataModel = ResetPasswordDataModel(onDataState = { stateNew ->
         when (stateNew) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 message = "Request Complete!"
             }
-            Complete -> {
+            PraxisDataModel.Complete -> {
                 message = "Completed loading!"
             }
-            EmptyState -> {
+            PraxisDataModel.EmptyState -> {
                 message = "Empty state"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = stateNew.throwable.message ?: "Error"
             }
         }

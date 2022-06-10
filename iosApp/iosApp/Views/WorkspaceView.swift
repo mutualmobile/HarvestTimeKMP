@@ -79,13 +79,13 @@ struct WorkspaceView: View {
         if !workspaceURLText.isEmpty {
             let dataModel = FindOrgByIdentifierDataModel { state in
                 print("state \(state)")
-                if state is LoadingState {
+                if state is PraxisDataModel.LoadingState {
                     showLoader = true
                 } else {
                     showLoader = false
-                    if let error = state as? ErrorState {
+                    if let error = state as? PraxisDataModel.ErrorState {
                         workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
-                    } else if let networkResponse = state as? SuccessState<NetworkResponse<AnyObject>> {
+                    } else if let networkResponse = state as? PraxisDataModelSuccessState<NetworkResponse<AnyObject>> {
                         print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
                         dismiss()
                         foundWorkspace = true

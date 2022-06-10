@@ -20,26 +20,26 @@ val ForgotPasswordUI = VFC {
     var email by useState("")
     val navigator = useNavigate()
 
-    val dataModel = ForgotPasswordDataModel(onDataState = { stateNew ->
+    val dataModel = ForgotPasswordDataModel { stateNew ->
         when (stateNew) {
-            is LoadingState -> {
+            is PraxisDataModel.LoadingState -> {
                 message = "Loading..."
             }
-            is SuccessState<*> -> {
+            is PraxisDataModel.SuccessState<*> -> {
                 message = "Request Complete"
                 navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR)
             }
-            Complete -> {
+            PraxisDataModel.Complete ->{
                 message = "Completed loading!"
             }
-            EmptyState -> {
+            PraxisDataModel.EmptyState -> {
                 message = "Empty state"
             }
-            is ErrorState -> {
+            is PraxisDataModel.ErrorState -> {
                 message = stateNew.throwable.message ?: "Error"
             }
         }
-    })
+    }
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {
