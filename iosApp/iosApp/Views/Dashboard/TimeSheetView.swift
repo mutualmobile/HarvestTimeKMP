@@ -14,8 +14,9 @@ struct TimeSheetView_Previews: PreviewProvider {
     }
 }
 
-
 class TimeSheetStore: ObservableObject {
+    
+    // TODO: This value can be later updated based on swipe of days
     var logHour: WeekLogHour
 
     init() {
