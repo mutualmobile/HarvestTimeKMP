@@ -15,27 +15,29 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class FindOrgByIdentifierDataModel() :
+    PraxisDataModel(), KoinComponent {
+    private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
-    private var currentLoadingJob: Job? = null
     private val useCasesComponent = UseCasesComponent()
     private val userLoggedInUseCase = useCasesComponent.providerUserLoggedInUseCase()
     private val orgApiUseCasesComponent = OrgApiUseCaseComponent()
     private val findOrgByIdentifierUseCase = orgApiUseCasesComponent.provideFindOrgByIdentifier()
 
     fun findOrgByIdentifier(identifier: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+        dataModelScope.launch {
+            _dataFlow.emit(LoadingState)
 
             when (val response = findOrgByIdentifierUseCase(
                 identifier = identifier
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data)) // TODO redundant
+                    _dataFlow.emit(SuccessState(response.data)) // TODO redundant
                     praxisCommand(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.LOGIN.withOrgId(
@@ -44,17 +46,15 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                             )
                         )
                     )
-                    println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
+                    _dataFlow.emit(ErrorState(response.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             "Failed",
                             response.throwable.message ?: "Failed to find workspace"
                         )
                     )
-                    println("FAILED, ${response.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

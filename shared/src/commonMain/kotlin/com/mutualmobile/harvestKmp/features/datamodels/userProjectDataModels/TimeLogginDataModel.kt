@@ -20,12 +20,13 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class TimeLogginDataModel(onDataState: (DataState) -> Unit = {}) :
-    PraxisDataModel(onDataState), KoinComponent {
+class TimeLogginDataModel() :
+    PraxisDataModel(), KoinComponent {
 
-    private var currentLoadingJob: Job? = null
     private val userProjectUseCaseComponent = UserProjectUseCaseComponent()
     private val logWorkTimeUseCase =
         userProjectUseCaseComponent.provideLogWorkTimeUseCase()

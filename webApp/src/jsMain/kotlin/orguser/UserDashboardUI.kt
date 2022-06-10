@@ -12,6 +12,8 @@ import react.useEffectOnce
 import react.useState
 import firebase.messaging.messaging
 import firebaseApp
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.Backdrop
 import mui.material.CircularProgress
 import mui.material.styles.useTheme
@@ -37,18 +39,20 @@ val UserDashboardUI = VFC {
     val matchesLG = useMediaQuery(themeContext.breakpoints.up(Breakpoint.lg))
     val matchesXL = useMediaQuery(themeContext.breakpoints.up(Breakpoint.xl))
 
-    val dataModel = UserDashboardDataModel(onDataState = { stateNew ->
-        isLoggingOut = stateNew is PraxisDataModel.LogoutInProgress
-        isLoadingUser = stateNew is PraxisDataModel.LoadingState
-        if (stateNew is PraxisDataModel.SuccessState<*>) {
-            val data = stateNew.data
-            if (data is GetUserResponse) {
-                drawer = data.role?.let { drawerItems(it) }
-                println("data role is ${data.role}")
-            }
+    val dataModel = UserDashboardDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            isLoggingOut = stateNew is PraxisDataModel.LogoutInProgress
+            isLoadingUser = stateNew is PraxisDataModel.LoadingState
+            if (stateNew is PraxisDataModel.SuccessState<*>) {
+                val data = stateNew.data
+                if (data is GetUserResponse) {
+                    drawer = data.role?.let { drawerItems(it) }
+                    println("data role is ${data.role}")
+                }
 
-        }
-    })
+            }
+        }.launchIn(this.dataModelScope)
+    }
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {

@@ -8,6 +8,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgUsersApiDataModels.FindUsersInOrgDataModel
 import csstype.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
@@ -25,21 +27,23 @@ val JsOrgUsersScreen = VFC {
     var isLoading by useState(false)
     var searchName by useState<String>()
 
-    val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
-        isLoading = stateNew is PraxisDataModel.LoadingState
-        when (stateNew) {
-            is PraxisDataModel.SuccessState<*> -> {
-                try {
-                    val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
-                    users = response.data?.second
-                    totalPages = response.data?.first ?: 0
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val dataModel = FindUsersInOrgDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            isLoading = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        val response =
+                            (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
+                        users = response.data?.second
+                        totalPages = response.data?.first ?: 0
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
-        }
-    })
+        }.launchIn(this.dataModelScope)
+    }
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {

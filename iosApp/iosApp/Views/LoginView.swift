@@ -9,6 +9,7 @@
 import Foundation
 import SwiftUI
 import shared
+import KMPNativeCoroutinesCombine
 
 class AuthStore: ObservableObject {
     @Published var hasFocus: Bool = true
@@ -131,22 +132,25 @@ struct LoginView: View {
     }
     
     private func performLogin() {
-        let loginDataModel = LoginDataModel { state in
-            if state is PraxisDataModel.LoadingState {
-                store.showLoading = true
-                store.hasFocus = false
-            } else {
-                store.showLoading = false
-                
-                if let error = state as? PraxisDataModel.ErrorState {
-                    store.loginError = AppError(title: "Error",
-                                                message: error.throwable.message ?? "Login failure")
-                } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
-                    rootStore.isAuthenticateUser = true
-                }
-            }
+        let loginDataModel = LoginDataModel()
+        let cancellable =   createPublisher(for: loginDataModel.dataFlowNative).sink { completion in
+            
+        } receiveValue: { state in
+               if state is PraxisDataModel.LoadingState {
+                   store.showLoading = true
+                   store.hasFocus = false
+               } else {
+                   store.showLoading = false
+                   
+                   if let error = state as? PraxisDataModel.ErrorState {
+                       store.loginError = AppError(title: "Error",
+                                                   message: error.throwable.message ?? "Login failure")
+                   } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
+                       rootStore.isAuthenticateUser = true
+                   }
+               }
         }
-        
+
         loginDataModel.login(email: email, password: password)
         
 //        loginDataModel.praxisCommand = { command in

@@ -17,6 +17,8 @@ import react.dom.onChange
 import react.router.useNavigate
 import kotlin.js.Date
 import kotlinext.js.require
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.icons.material.CloseRounded
 import mui.icons.material.DeleteForever
 
@@ -39,28 +41,29 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
     var endDate by useState<Date?>(null)
     val format: dynamic = require("date-fns").format
 
-    val dataModel = OrgProjectsDataModel(onDataState = { stateNew ->
-        when (stateNew) {
-            is PraxisDataModel.LoadingState -> {
-                message = "Loading..."
-            }
-            is PraxisDataModel.Complete->  {
-                message = "Complete!"
-            }
-            is PraxisDataModel.EmptyState -> {
-                message = "Initial State!"
-            }
-            is PraxisDataModel.ErrorState -> {
-                message = "Error State ${stateNew.throwable.message ?: "Error"}"
-            }
-            is PraxisDataModel.SuccessState<*> -> {
-                val response = stateNew.data as ApiResponse<*>
-                message = "${response.message}"
-                window.alert(message)
-                props.onClose()
-            }
-        }
-    })
+    val dataModel = OrgProjectsDataModel().apply {
+        dataFlow.onEach { stateNew ->
+            when (stateNew) {
+                is PraxisDataModel.LoadingState -> {
+                    message = "Loading..."
+                }
+                is PraxisDataModel.Complete->  {
+                    message = "Complete!"
+                }
+                is PraxisDataModel.EmptyState -> {
+                    message = "Initial State!"
+                }
+                is PraxisDataModel.ErrorState -> {
+                    message = "Error State ${stateNew.throwable.message ?: "Error"}"
+                }
+                is PraxisDataModel.SuccessState<*> -> {
+                    val response = stateNew.data as ApiResponse<*>
+                    message = "${response.message}"
+                    window.alert(message)
+                    props.onClose()
+                }
+            } }.launchIn(dataModelScope)
+    }
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {

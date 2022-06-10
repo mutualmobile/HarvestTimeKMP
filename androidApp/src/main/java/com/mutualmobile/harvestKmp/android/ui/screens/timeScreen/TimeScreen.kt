@@ -62,6 +62,8 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUser
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -85,9 +87,13 @@ fun TimeScreen(
 ) {
     var getUserState: DataState by remember { mutableStateOf(EmptyState) }
     val getUserDataModel by remember { mutableStateOf(
-        GetUserDataModel { newState ->
-            getUserState = newState
-        }.activate()
+        GetUserDataModel ().apply {
+            this.dataFlow.onEach {
+                    newState ->
+                getUserState = newState
+            }.launchIn(this.dataModelScope)
+            this.activate()
+        }
     ) }
 
     //TODO: Make this business logic common/shared

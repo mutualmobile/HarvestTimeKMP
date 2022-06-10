@@ -12,10 +12,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
-    PraxisDataModel(onDataState), KoinComponent {
+class FindUsersInOrgDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val orgUsersApiUseCaseComponent = OrgUsersApiUseCaseComponent()
@@ -41,7 +45,7 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val findUsersInOrgResponse = findUsersByOrgUseCase(
                 userType = userType,
                 orgIdentifier = orgIdentifier,
@@ -50,10 +54,10 @@ class FindUsersInOrgDataModel(var onDataState: (DataState) -> Unit = {}) :
                 limit = limit, searchName = searchName
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(findUsersInOrgResponse.data))
+                    _dataFlow.emit(SuccessState(findUsersInOrgResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(findUsersInOrgResponse.throwable))
+                    _dataFlow.emit(ErrorState(findUsersInOrgResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

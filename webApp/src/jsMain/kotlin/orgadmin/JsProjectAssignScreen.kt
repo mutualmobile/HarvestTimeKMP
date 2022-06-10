@@ -10,6 +10,8 @@ import com.mutualmobile.harvestKmp.features.datamodels.orgUsersApiDataModels.Fin
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.AssignProjectsToUsersDataModel
 import csstype.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.icons.material.Add
 import mui.material.*
 import mui.material.styles.TypographyVariant
@@ -42,49 +44,55 @@ val JsProjectAssignScreen = VFC {
     var searchProject by useState<String>()
     val userType = UserRole.ORG_USER.role
 
-    val findProjectsInOrgDataModel = FindProjectsInOrgDataModel { stateNew: PraxisDataModel.DataState ->
-        isLoadingProjects = stateNew is PraxisDataModel.LoadingState
-        when (stateNew) {
-            is PraxisDataModel.SuccessState<*> -> {
-                try {
-                    val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
-                    projects = response.data?.second
-                    totalProjectPages = response.data?.first ?: 0
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val findProjectsInOrgDataModel = FindProjectsInOrgDataModel().apply {
+        this.dataFlow.onEach { stateNew: PraxisDataModel.DataState ->
+            isLoadingProjects = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        val response =
+                            (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
+                        projects = response.data?.second
+                        totalProjectPages = response.data?.first ?: 0
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
-        }
+        }.launchIn(dataModelScope)
     }
-    val usersInOrgDataModel = FindUsersInOrgDataModel { stateNew: PraxisDataModel.DataState ->
-        isLoadingUsers = stateNew is PraxisDataModel.LoadingState
-        when (stateNew) {
-            is PraxisDataModel.SuccessState<*> -> {
-                try {
-                    val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
-                    users = response.data?.second
-                    totalUsersPages = response.data?.first ?: 0
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val usersInOrgDataModel = FindUsersInOrgDataModel().apply {
+        this.dataFlow.onEach { stateNew: PraxisDataModel.DataState ->
+            isLoadingUsers = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        val response =
+                            (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
+                        users = response.data?.second
+                        totalUsersPages = response.data?.first ?: 0
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
-        }
+        }.launchIn(dataModelScope)
     }
-    val assignDataModel = AssignProjectsToUsersDataModel { stateNew: PraxisDataModel.DataState ->
-        isSaving = stateNew is PraxisDataModel.LoadingState
-        when (stateNew) {
-            is PraxisDataModel.SuccessState<*> -> {
-                try {
-                    selectionInfo.clear()
-                    userSelection.clear()
-                    projectSelection = null
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val assignDataModel = AssignProjectsToUsersDataModel().apply {
+        this.dataFlow.onEach { stateNew: PraxisDataModel.DataState ->
+            isSaving = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        selectionInfo.clear()
+                        userSelection.clear()
+                        projectSelection = null
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
             }
-        }
+        }.launchIn(dataModelScope)
     }
 
     findProjectsInOrgDataModel.praxisCommand = { newCommand: PraxisCommand ->
@@ -143,11 +151,11 @@ val JsProjectAssignScreen = VFC {
                 +"Select users for assignment!"
             }
 
-            Box{
+            Box {
                 sx {
                     flexDirection = FlexDirection.row
                 }
-                Box{
+                Box {
                     sx {
                         flexDirection = FlexDirection.column
                     }

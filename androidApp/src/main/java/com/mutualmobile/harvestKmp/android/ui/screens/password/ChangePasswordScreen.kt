@@ -56,7 +56,7 @@ fun ChangePasswordScreen(navController: NavHostController) {
     var changePasswordPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val changePasswordDataModel by remember {
         mutableStateOf(
-            ChangePasswordDataModel {}.apply {
+            ChangePasswordDataModel().apply {
                 praxisCommand = { newCommand ->
                     changePasswordPraxisCommand = newCommand
                     when (newCommand) {

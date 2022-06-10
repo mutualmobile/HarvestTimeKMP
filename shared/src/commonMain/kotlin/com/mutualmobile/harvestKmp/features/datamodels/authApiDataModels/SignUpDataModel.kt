@@ -9,10 +9,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class SignUpDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val authApiUseCaseComponent = AuthApiUseCaseComponent()
@@ -38,7 +42,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val signUpResponse = existingOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
@@ -68,7 +72,7 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val signUpResponse = newOrgSignUpUseCase(
                 firstName = firstName,
                 lastName = lastName,
@@ -89,8 +93,8 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
         }
     }
 
-    private fun handleFailure(signUpResponse: NetworkResponse.Failure) {
-        onDataState(ErrorState(signUpResponse.throwable))
+    private suspend fun handleFailure(signUpResponse: NetworkResponse.Failure) {
+        _dataFlow.emit(ErrorState(signUpResponse.throwable))
         praxisCommand(
             ModalPraxisCommand(
                 "Error",
@@ -100,10 +104,10 @@ class SignUpDataModel(private val onDataState: (DataState) -> Unit) :
         println("FAILED, ${signUpResponse.throwable.message}")
     }
 
-    private fun handleSuccessSignup(signUpResponse: NetworkResponse.Success<ApiResponse<HarvestOrganization>>) {
-        onDataState(SuccessState(signUpResponse.data))
+    private suspend fun handleSuccessSignup(signUpResponse: NetworkResponse.Success<ApiResponse<HarvestOrganization>>) {
+        _dataFlow.emit(SuccessState(signUpResponse.data))
         signUpResponse.data.data?.let {
-            praxisCommand(
+            this.praxisCommand(
                 NavigationPraxisCommand(
                     HarvestRoutes.Screen.LOGIN.withOrgId(
                         signUpResponse.data.data.identifier,

@@ -7,6 +7,8 @@ import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -24,27 +26,29 @@ val ChangePasswordUI = VFC {
     var password by useState("")
     val navigator = useNavigate()
 
-    val dataModel = ChangePasswordDataModel(onDataState = { stateNew ->
-        when (stateNew) {
-            is PraxisDataModel.LoadingState -> {
-                message = "Loading..."
+    val dataModel = ChangePasswordDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            when (stateNew) {
+                is PraxisDataModel.LoadingState -> {
+                    message = "Loading..."
+                }
+                is PraxisDataModel.SuccessState<*> -> {
+                    message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
+                    changePassword = ""
+                    password = ""
+                }
+                PraxisDataModel.Complete -> {
+                    message = "Completed loading!"
+                }
+                PraxisDataModel.EmptyState -> {
+                    message = "Empty state"
+                }
+                is PraxisDataModel.ErrorState -> {
+                    message = stateNew.throwable.message ?: "Error"
+                }
             }
-            is PraxisDataModel.SuccessState<*> -> {
-                message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
-                changePassword = ""
-                password = ""
-            }
-            PraxisDataModel.Complete -> {
-                message = "Completed loading!"
-            }
-            PraxisDataModel.EmptyState -> {
-                message = "Empty state"
-            }
-            is PraxisDataModel.ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
-        }
-    })
+        }.launchIn(this.dataModelScope)
+    }
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {

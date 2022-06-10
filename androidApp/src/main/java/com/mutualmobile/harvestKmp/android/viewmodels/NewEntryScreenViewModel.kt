@@ -47,8 +47,7 @@ class NewEntryScreenViewModel : ViewModel() {
     fun fetchProjectName(projectId: String) {
         currentProjectName = "Loading..."
         viewModelScope.launch {
-            OrgProjectsDataModel {
-            }.apply {
+            OrgProjectsDataModel().apply {
                 getProjectsForProjectIds(projectIds = listOf(projectId)).collect { newState ->
                     when (newState) {
                         is SuccessState<*> -> {

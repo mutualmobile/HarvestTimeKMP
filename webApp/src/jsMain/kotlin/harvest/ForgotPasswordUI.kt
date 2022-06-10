@@ -6,6 +6,8 @@ import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -20,25 +22,27 @@ val ForgotPasswordUI = VFC {
     var email by useState("")
     val navigator = useNavigate()
 
-    val dataModel = ForgotPasswordDataModel { stateNew ->
-        when (stateNew) {
-            is PraxisDataModel.LoadingState -> {
-                message = "Loading..."
+    val dataModel = ForgotPasswordDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            when (stateNew) {
+                is PraxisDataModel.LoadingState -> {
+                    message = "Loading..."
+                }
+                is PraxisDataModel.SuccessState<*> -> {
+                    message = "Request Complete"
+                    navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR)
+                }
+                PraxisDataModel.Complete -> {
+                    message = "Completed loading!"
+                }
+                PraxisDataModel.EmptyState -> {
+                    message = "Empty state"
+                }
+                is PraxisDataModel.ErrorState -> {
+                    message = stateNew.throwable.message ?: "Error"
+                }
             }
-            is PraxisDataModel.SuccessState<*> -> {
-                message = "Request Complete"
-                navigator.invoke(to = BROWSER_SCREEN_ROUTE_SEPARATOR)
-            }
-            PraxisDataModel.Complete ->{
-                message = "Completed loading!"
-            }
-            PraxisDataModel.EmptyState -> {
-                message = "Empty state"
-            }
-            is PraxisDataModel.ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
-        }
+        }.launchIn(this.dataModelScope)
     }
 
     dataModel.praxisCommand = { newCommand ->
