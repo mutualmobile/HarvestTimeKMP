@@ -26,6 +26,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun LandingScreenDrawer(
@@ -39,8 +41,10 @@ fun LandingScreenDrawer(
     var userState: DataState by remember { mutableStateOf(EmptyState) }
     remember {
         mutableStateOf(
-            GetUserDataModel { newState ->
-                userState = newState
+            GetUserDataModel().apply {
+                this.dataFlow.onEach { newState ->
+                    userState = newState
+                }.launchIn(this.dataModelScope)
             }.activate()
         )
     }
@@ -48,8 +52,10 @@ fun LandingScreenDrawer(
     var organizationState: DataState by remember { mutableStateOf(EmptyState) }
     val findOrgByIdentifierDataModel by remember {
         mutableStateOf(
-            FindOrgByIdentifierDataModel { newState ->
-                organizationState = newState
+            FindOrgByIdentifierDataModel().apply {
+                this.dataFlow.onEach { newState ->
+                    organizationState = newState
+                }.launchIn(this.dataModelScope)
             }.apply {
                 activate()
             }

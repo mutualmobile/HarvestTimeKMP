@@ -6,11 +6,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
-
+class ForgotPasswordDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
     private var currentLoadingJob: Job? = null
     private val forgotPasswordApiUseCaseComponent = ForgotPasswordApiUseCaseComponent()
     private val forgotPasswordUseCase =
@@ -20,7 +23,7 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
         currentLoadingJob?.cancel()
         currentLoadingJob =
             dataModelScope.launch(exceptionHandler) {
-                onDataState(LoadingState)
+                _dataFlow.emit(LoadingState)
                 when (val response = forgotPasswordUseCase(
                     email = email
                 )) {
@@ -31,11 +34,11 @@ class ForgotPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                                 response.data.message ?: "Woah!"
                             )
                         )
-                        onDataState(SuccessState(response.data))
+                        _dataFlow.emit(SuccessState(response.data))
                         println("SUCCESS, ${response.data.message}")
                     }
                     is NetworkResponse.Failure -> {
-                        onDataState(ErrorState(response.throwable))
+                        _dataFlow.emit(ErrorState(response.throwable))
                         println("FAILED, ${response.throwable.message}")
                     }
                     is NetworkResponse.Unauthorized -> {

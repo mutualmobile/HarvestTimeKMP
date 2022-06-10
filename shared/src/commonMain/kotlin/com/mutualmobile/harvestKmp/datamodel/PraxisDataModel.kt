@@ -6,7 +6,6 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.MainScope
 
 abstract class PraxisDataModel(
-    onDataState: (DataState) -> Unit,
     var dataModelScope: CoroutineScope = MainScope()
 ) {
 
@@ -15,8 +14,6 @@ abstract class PraxisDataModel(
     var praxisCommand: (PraxisCommand) -> Unit = {}
 
     protected val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-        onDataState(ErrorState(throwable))
-        println(throwable)
         throwable.printStackTrace()
         praxisCommand(
             ModalPraxisCommand(

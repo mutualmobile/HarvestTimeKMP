@@ -9,10 +9,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse.Failure
 import com.mutualmobile.harvestKmp.features.NetworkResponse.Success
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class UserDashboardDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private val useCasesComponent = UseCasesComponent()
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
@@ -31,15 +35,15 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
 
     private fun fetchUserInternal() {
         dataModelScope.launch(exceptionHandler) {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
                     harvestUserLocal.saveUser(getUserResponse.data)
-                    onDataState(SuccessState(getUserResponse.data))
+                    _dataFlow.emit(SuccessState(getUserResponse.data))
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
-                    onDataState(ErrorState(getUserResponse.throwable))
+                    _dataFlow.emit(ErrorState(getUserResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -60,16 +64,16 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun logout() {
         dataModelScope.launch(exceptionHandler) {
-            onDataState(LogoutInProgress)
+            _dataFlow.emit(LogoutInProgress)
             when (val result = logoutUseCase.invoke()) {
                 is Success<*> -> {
                     println("logged out!")
-                    onDataState(SuccessState(result.data))
+                    _dataFlow.emit(SuccessState(result.data))
                     praxisCommand(NavigationPraxisCommand(screen = ""))
                 }
                 is Failure -> {
                     println("logg out failed!")
-                    onDataState(ErrorState(result.throwable))
+                    _dataFlow.emit(ErrorState(result.throwable))
                     praxisCommand(
                         ModalPraxisCommand(
                             title = "Error",

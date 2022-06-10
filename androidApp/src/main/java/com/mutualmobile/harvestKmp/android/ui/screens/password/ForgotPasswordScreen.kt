@@ -42,6 +42,8 @@ import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataModels.ForgotPasswordDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun ForgotPasswordScreen(navController: NavHostController) {
@@ -50,9 +52,10 @@ fun ForgotPasswordScreen(navController: NavHostController) {
     var forgotPasswordNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val forgotPasswordDataModel by remember {
         mutableStateOf(
-            ForgotPasswordDataModel { passwordState ->
-                forgotPasswordState = passwordState
-            }.apply {
+            ForgotPasswordDataModel().apply {
+                this.dataFlow.onEach { passwordState ->
+                    forgotPasswordState = passwordState
+                }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     forgotPasswordNavigationCommand = newCommand
                     when (newCommand) {

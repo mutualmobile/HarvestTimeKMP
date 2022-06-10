@@ -47,6 +47,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.Date
 import org.koin.androidx.compose.get
 
@@ -68,16 +70,16 @@ fun ProjectScreen(
 
     val getUserAssignedProjectsDataModel by remember {
         mutableStateOf(
-            GetUserAssignedProjectsDataModel { projectState ->
-                currentProjectScreenState = projectState
-                when (projectState) {
-                    is SuccessState<*> -> {
-                        projectListMap.value =
-                            (projectState.data as ApiResponse<*>).data as List<OrgProjectResponse>
-                    }
-                    else -> Unit
-                }
-            }.apply {
+            GetUserAssignedProjectsDataModel().apply {
+                this.dataFlow.onEach { projectState ->
+                    currentProjectScreenState = projectState
+                    when (projectState) {
+                        is SuccessState<*> -> {
+                            projectListMap.value =
+                                (projectState.data as ApiResponse<*>).data as List<OrgProjectResponse>
+                        }
+                        else -> Unit
+                    } }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     projectScreenNavigationCommands = newCommand
                     when (newCommand) {
@@ -93,18 +95,19 @@ fun ProjectScreen(
     }
     val userStateModel by remember {
         mutableStateOf(
-            GetUserDataModel { userState ->
-                currentUserState = userState
-                when (userState) {
-                    is SuccessState<*> -> {
-                        getUserAssignedProjectsDataModel.getUserAssignedProjects(
-                            (userState.data as GetUserResponse).id ?: ""
-                        )
-                    }
-                    else -> Unit
-                }
-            }.apply {
+            GetUserDataModel().apply {
                 activate()
+                this.dataFlow.onEach { userState ->
+                    currentUserState = userState
+                    when (userState) {
+                        is SuccessState<*> -> {
+                            getUserAssignedProjectsDataModel.getUserAssignedProjects(
+                                (userState.data as GetUserResponse).id ?: ""
+                            )
+                        }
+                        else -> Unit
+                    }
+                }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     projectScreenNavigationCommands = newCommand
                     when (newCommand) {

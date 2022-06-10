@@ -21,6 +21,8 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LogoutInProgress
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.UserDashboardDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun AccountSection(navController: NavHostController) {
@@ -28,9 +30,10 @@ fun AccountSection(navController: NavHostController) {
     var userLogoutState: DataState by remember { mutableStateOf(EmptyState) }
     val userDashboardDataModel: UserDashboardDataModel by remember {
         mutableStateOf(
-            UserDashboardDataModel { newState ->
-                userLogoutState = newState
-            }.apply {
+            UserDashboardDataModel().apply {
+                this.dataFlow.onEach { newState ->
+                    userLogoutState = newState
+                }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     currentPraxisCommand = newCommand
                     when (newCommand) {

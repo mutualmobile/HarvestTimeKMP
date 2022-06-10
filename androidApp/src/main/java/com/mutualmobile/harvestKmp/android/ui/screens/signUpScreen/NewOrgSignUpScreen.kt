@@ -35,6 +35,8 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun NewOrgSignUpScreen(navController: NavHostController) {
@@ -43,9 +45,10 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
     }
     var signUpState: DataState by remember { mutableStateOf(EmptyState) }
     val signUpDataModel by remember {
-        mutableStateOf(SignUpDataModel { newState ->
-            signUpState = newState
-        }.apply {
+        mutableStateOf(SignUpDataModel().apply {
+            this.dataFlow.onEach { newState ->
+                signUpState = newState
+            }.launchIn(this.dataModelScope)
             praxisCommand = { newCommand ->
                 println("Command is: $newCommand")
                 currentPraxisCommand = newCommand

@@ -14,10 +14,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class ResetPasswordDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val forgotPasswordApiUseCaseComponent = ForgotPasswordApiUseCaseComponent()
@@ -38,7 +42,7 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
     fun resetPassword(password: String, token: String) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val changePasswordResponse =
                 resetPasswordUseCase(
                     ResetPasswordRequest(
@@ -55,11 +59,11 @@ class ResetPasswordDataModel(private val onDataState: (DataState) -> Unit) :
                             )
                         )
                     }
-                    onDataState(SuccessState(changePasswordResponse.data))
+                    _dataFlow.emit(SuccessState(changePasswordResponse.data))
                     praxisCommand(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(changePasswordResponse.throwable))
+                    _dataFlow.emit(ErrorState(changePasswordResponse.throwable))
                 }
                 else -> {}
             }

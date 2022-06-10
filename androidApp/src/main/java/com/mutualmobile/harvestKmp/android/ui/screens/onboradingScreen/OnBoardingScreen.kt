@@ -67,7 +67,7 @@ fun OnBoardingScreen(navController: NavHostController) {
 
     val onBoardingDataModel by remember {
         mutableStateOf(
-            OnBoardingDataModel {}
+            OnBoardingDataModel()
         )
     }
 

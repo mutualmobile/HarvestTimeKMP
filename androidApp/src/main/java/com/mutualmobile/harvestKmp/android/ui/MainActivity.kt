@@ -43,6 +43,8 @@ import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 class MainActivity : ComponentActivity() {
     var getUserState: DataState by mutableStateOf(EmptyState)
@@ -58,11 +60,15 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    remember { mutableStateOf(
-                        GetUserDataModel { newState ->
-                            getUserState = newState
-                        }.activate()
-                    ) }
+                    remember {
+                        mutableStateOf(
+                            GetUserDataModel().apply {
+                                this.dataFlow.onEach { newState ->
+                                    getUserState = newState
+                                }.launchIn(this.dataModelScope)
+                            }.activate()
+                        )
+                    }
 
                     val navController = rememberNavController()
                     NavHost(
@@ -113,10 +119,10 @@ class MainActivity : ComponentActivity() {
                             FindWorkspaceScreen(navController = navController)
                         }
                         composable(HarvestRoutes.Screen.ORG_PROJECTS) {
-                            ProjectScreen(navController=navController)
+                            ProjectScreen(navController = navController)
                         }
                         composable(HarvestRoutes.Screen.WORK_ENTRY) {
-                            NewEntryScreen(navController=navController)
+                            NewEntryScreen(navController = navController)
                         }
                         composable(HarvestRoutes.Screen.SETTINGS) {
                             SettingsScreen(navController = navController)

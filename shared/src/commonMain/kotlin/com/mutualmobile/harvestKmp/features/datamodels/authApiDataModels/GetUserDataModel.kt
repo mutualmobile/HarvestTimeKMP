@@ -15,10 +15,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class GetUserDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
@@ -28,10 +32,10 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
     fun getUser(forceFetchFromNetwork: Boolean = false) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             if (!forceFetchFromNetwork) {
                 harvestLocal.getUser()?.let { nnUser ->
-                    onDataState(
+                    _dataFlow.emit(
                         SuccessState(
                             GetUserResponse(
                                 email = nnUser.email,
@@ -51,18 +55,18 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
                 is NetworkResponse.Success -> {
                     print("GetUser Successful, ${getUserResponse.data}")
                     harvestLocal.saveUser(getUserResponse.data)
-                    onDataState(SuccessState(getUserResponse.data))
+                    _dataFlow.emit(SuccessState(getUserResponse.data))
                     praxisCommand(NavigationPraxisCommand(HarvestRoutes.Screen.ORG_USER_DASHBOARD))
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
-                    onDataState(ErrorState(getUserResponse.throwable))
+                    _dataFlow.emit(ErrorState(getUserResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
                     praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
-                    onDataState(ErrorState(getUserResponse.throwable))
+                    _dataFlow.emit(ErrorState(getUserResponse.throwable))
                 }
             }
         }

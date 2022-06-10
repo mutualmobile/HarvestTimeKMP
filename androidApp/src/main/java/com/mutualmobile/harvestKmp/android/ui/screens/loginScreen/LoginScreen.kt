@@ -40,6 +40,8 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun LoginScreen(
@@ -54,9 +56,10 @@ fun LoginScreen(
     var userState: DataState by remember { mutableStateOf(EmptyState) }
     val userDataModel by remember {
         mutableStateOf(
-            GetUserDataModel { newState ->
-                userState = newState
-            }.apply {
+            GetUserDataModel().apply {
+                this.dataFlow.onEach { newState ->
+                    userState = newState
+                }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     currentNavigationCommand = newCommand
                 }
@@ -69,15 +72,16 @@ fun LoginScreen(
     }
     val loginDataModel by remember {
         mutableStateOf(
-            LoginDataModel { loginState ->
-                currentLoginState = loginState
-                when (loginState) {
-                    is SuccessState<*> -> {
-                        userDataModel.activate()
+            LoginDataModel().apply {
+                this.dataFlow.onEach { loginState ->
+                    currentLoginState = loginState
+                    when (loginState) {
+                        is SuccessState<*> -> {
+                            userDataModel.activate()
+                        }
+                        else -> Unit
                     }
-                    else -> Unit
-                }
-            }.apply {
+                }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     currentNavigationCommand = newCommand
                     when (newCommand) {

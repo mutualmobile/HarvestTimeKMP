@@ -13,6 +13,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.GetListOfUsersForAProjectDataModel
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.Box
 import mui.material.CircularProgress
 import mui.material.ListItem
@@ -34,27 +36,29 @@ val JSOrgProjectUsersList = VFC {
     var users by useState<List<GetUserResponse>>()
     val navigator = useNavigate()
 
-    val dataModel = GetListOfUsersForAProjectDataModel(onDataState = { dataState: DataState ->
-        isLoading = dataState is LoadingState
-        when (dataState) {
-            is SuccessState<*> -> {
-                try {
-                    val response = (dataState.data as ApiResponse<List<GetUserResponse>>)
-                    users = response.data
-                    message = "There are ${response.data?.size.toString()} users assigned to this project"
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val dataModel = GetListOfUsersForAProjectDataModel().apply{
+        this.dataFlow.onEach { dataState: DataState ->
+            isLoading = dataState is LoadingState
+            when (dataState) {
+                is SuccessState<*> -> {
+                    try {
+                        val response = (dataState.data as ApiResponse<List<GetUserResponse>>)
+                        users = response.data
+                        message = "There are ${response.data?.size.toString()} users assigned to this project"
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
+                is ErrorState -> {
+                    message = dataState.throwable.message.toString()
+                }
+                is LoadingState -> {
+                    message = "Loading..."
+                }
+                else -> {}
             }
-            is ErrorState -> {
-                message = dataState.throwable.message.toString()
-            }
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            else -> {}
-        }
-    })
+        }.launchIn(dataModelScope)
+    }
 
     dataModel.praxisCommand = { newCommand ->
         when (newCommand) {

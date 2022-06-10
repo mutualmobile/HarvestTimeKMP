@@ -12,10 +12,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class GetListOfUsersForAProjectDataModel(var onDataState: (DataState) -> Unit = {}) :
-    PraxisDataModel(onDataState), KoinComponent {
+class GetListOfUsersForAProjectDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val orgProjectsUseCaseComponent = OrgProjectsUseCaseComponent()
@@ -37,16 +41,16 @@ class GetListOfUsersForAProjectDataModel(var onDataState: (DataState) -> Unit = 
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch(exceptionHandler) {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val response =
                 getListOfUsersForAProjectUseCase(
                     projectId = projectId
                 )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data))
+                    _dataFlow.emit(SuccessState(response.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
+                    _dataFlow.emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

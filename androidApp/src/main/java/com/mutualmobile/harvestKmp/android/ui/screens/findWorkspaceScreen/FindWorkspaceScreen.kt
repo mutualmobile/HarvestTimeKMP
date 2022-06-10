@@ -53,6 +53,8 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun FindWorkspaceScreen(
@@ -64,9 +66,10 @@ fun FindWorkspaceScreen(
     var findOrgState: DataState by remember { mutableStateOf(EmptyState) }
     val findOrgByIdentifierDataModel by remember {
         mutableStateOf(
-            FindOrgByIdentifierDataModel { updatedState ->
-                findOrgState = updatedState
-            }.apply {
+            FindOrgByIdentifierDataModel().apply {
+                this.dataFlow.onEach { updatedState ->
+                    findOrgState = updatedState
+                }.launchIn(this.dataModelScope)
                 praxisCommand = { newCommand ->
                     currentFindOrgNavigationCommand = newCommand
                     when (newCommand) {

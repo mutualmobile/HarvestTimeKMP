@@ -63,6 +63,8 @@ import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import java.util.Date
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
@@ -100,14 +102,15 @@ fun NewEntryScreen(
     var user: GetUserResponse? by remember { mutableStateOf(null) }
     remember {
         mutableStateOf(
-            GetUserDataModel { userState ->
-                when (userState) {
-                    is SuccessState<*> -> {
-                        user = (userState.data) as GetUserResponse
+            GetUserDataModel().apply {
+                this.dataFlow.onEach { userState ->
+                    when (userState) {
+                        is SuccessState<*> -> {
+                            user = (userState.data) as GetUserResponse
+                        }
+                        else -> Unit
                     }
-                    else -> Unit
-                }
-            }.apply {
+                }.launchIn(this.dataModelScope)
                 activate()
             }
         )
@@ -117,7 +120,7 @@ fun NewEntryScreen(
     var logWorkTimeNavigationCommands: PraxisCommand? by remember { mutableStateOf(null) }
     val logWorkTimeDataModel by remember {
         mutableStateOf(
-            TimeLogginDataModel {}.apply {
+            TimeLogginDataModel().apply {
                 praxisCommand = { newCommand ->
                     logWorkTimeNavigationCommands = newCommand
                 }

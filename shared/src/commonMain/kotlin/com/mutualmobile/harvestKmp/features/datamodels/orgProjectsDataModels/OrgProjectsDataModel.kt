@@ -16,10 +16,14 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class OrgProjectsDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val orgProjectsUseCaseComponent = OrgProjectsUseCaseComponent()
@@ -48,7 +52,7 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val createProjectResponse = createProjectUseCase(
                 name = name,
                 client = client,
@@ -57,11 +61,11 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
                 endDate = endDate
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(createProjectResponse.data))
+                    _dataFlow.emit(SuccessState(createProjectResponse.data))
                     println("SUCCESS ${createProjectResponse.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(createProjectResponse.throwable))
+                    _dataFlow.emit(ErrorState(createProjectResponse.throwable))
                     println("FAILED, ${createProjectResponse.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
@@ -83,7 +87,7 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val updateProjectResponse = updateProjectUseCase(
                 id = id,
                 name = name,
@@ -95,10 +99,10 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
                     ?: throw RuntimeException("this should not be null")
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(updateProjectResponse.data))
+                    _dataFlow.emit(SuccessState(updateProjectResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(updateProjectResponse.throwable))
+                    _dataFlow.emit(ErrorState(updateProjectResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
@@ -114,15 +118,15 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val deleteProjectResponse = deleteProjectUseCase(
                 projectId = projectId
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(deleteProjectResponse.data))
+                    _dataFlow.emit(SuccessState(deleteProjectResponse.data))
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(deleteProjectResponse.throwable))
+                    _dataFlow.emit(ErrorState(deleteProjectResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
