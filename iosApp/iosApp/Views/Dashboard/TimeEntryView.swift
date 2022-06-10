@@ -15,6 +15,7 @@ struct TimeEntryView_Previews: PreviewProvider {
 }
 
 class TimeEntryStore: ObservableObject {
+    @Published var dateString: String = ""
     
     init() {}
 }
@@ -23,51 +24,107 @@ struct TimeEntryView: View {
     
     @ObservedObject private var store = TimeEntryStore()
     
+    @State private var notes = ""
+    @State private var durationField = ""
+    @FocusState private var focusedField: Bool
+    
     var body: some View {
-        
-        Form {
-            Section {
-                HStack {
-                    Button {
-                        // TODO: Handle favirote action
-                    } label: {
-                        Image(systemName: "star")
-                            .defaultAppColor()
-                            .padding(.trailing)
-                            .buttonStyle(BorderlessButtonStyle())
-                    }
+        List {
+            projectSelectionSection
+            noteSection
+            durationSection
+            footerView
+        }
+    }
+    
+    var projectSelectionSection: some View {
+        Section {
+            HStack {
+                Button {
+                    // TODO: Handle favirote action
+                } label: {
+                    Image(systemName: "star")
+                        .defaultAppColor()
+                        .padding(.trailing)
+                        .buttonStyle(BorderlessButtonStyle())
+                }
+                
+                VStack(alignment: .leading) {
                     
-                    VStack(alignment: .leading) {
-                        
-                        Button {
-                            // TODO: Handle Project selection action
-                        } label: {
-                            HStack {
-                                Text("iOS Department work Hyd")
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                            }
-                            .foregroundColor(.primary)
+                    Button {
+                        // TODO: Handle Project selection action
+                    } label: {
+                        HStack {
+                            Text("iOS Department work Hyd")
+                            Spacer()
+                            Image(systemName: "chevron.right")
                         }
-                        .buttonStyle(BorderlessButtonStyle())
-                        
-                        Divider()
-                        
-                        Button {
-                            // TODO: Handle Project type selection action
-                        } label: {
-                            HStack {
-                                Text("Non-Billable")
-                                Spacer()
-                                Image(systemName: "chevron.right")
-                            }
-                            .foregroundColor(.primary)
+                        .foregroundColor(.primary)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                    
+                    Divider()
+                    
+                    Button {
+                        // TODO: Handle Project type selection action
+                    } label: {
+                        HStack {
+                            Text("Non-Billable")
+                            Spacer()
+                            Image(systemName: "chevron.right")
                         }
-                        .buttonStyle(BorderlessButtonStyle())
+                        .foregroundColor(.primary)
+                    }
+                    .buttonStyle(BorderlessButtonStyle())
+                }
+            }
+            .padding(.vertical)
+        }
+    }
+    
+    var noteSection: some View {
+        ZStack(alignment: .topLeading) {
+            if notes.isEmpty && !focusedField {
+                Text("Notes (Optional)")
+                    .foregroundColor(.secondary)
+                    .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing:0))
+            }
+            TextEditor(text: $notes)
+                .focused($focusedField)
+                .frame(height: 80)
+                .multilineTextAlignment(.leading)
+        }
+    }
+    
+    var durationSection: some View {
+        Section {
+            VStack {
+                
+                HStack {
+                    Text("Date")
+                    Spacer()
+                    Button {
+                        // TODO: Handle Stepper action
+                    } label: {
+                        Text(store.dateString).foregroundColor(ColorAssets.primary.color)
                     }
                 }
-                .padding(.vertical)
+                
+                HStack {
+                    Text("Duration")
+                    TextField("", text: $durationField)
+                }
             }
+        }
+    }
+    
+    var footerView: some View {
+        HStack {
+            Spacer()
+            Text("Leave blank to start timer")
+                .font(.footnote)
+                .foregroundColor(.secondary)
+            Spacer()
         }
     }
 }
