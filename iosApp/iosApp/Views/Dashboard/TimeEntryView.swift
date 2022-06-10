@@ -24,6 +24,50 @@ struct TimeEntryView: View {
     @ObservedObject private var store = TimeEntryStore()
     
     var body: some View {
-        Text("Time Entry Editor")
+        
+        Form {
+            Section {
+                HStack {
+                    Button {
+                        // TODO: Handle favirote action
+                    } label: {
+                        Image(systemName: "star")
+                            .defaultAppColor()
+                            .padding(.trailing)
+                            .buttonStyle(BorderlessButtonStyle())
+                    }
+                    
+                    VStack(alignment: .leading) {
+                        
+                        Button {
+                            // TODO: Handle Project selection action
+                        } label: {
+                            HStack {
+                                Text("iOS Department work Hyd")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                            .foregroundColor(.primary)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                        
+                        Divider()
+                        
+                        Button {
+                            // TODO: Handle Project type selection action
+                        } label: {
+                            HStack {
+                                Text("Non-Billable")
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                            }
+                            .foregroundColor(.primary)
+                        }
+                        .buttonStyle(BorderlessButtonStyle())
+                    }
+                }
+                .padding(.vertical)
+            }
+        }
     }
 }

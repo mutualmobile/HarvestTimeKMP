@@ -75,7 +75,9 @@ struct ProjectListView: View {
                     
                 }
             }
-            .navigationTitle(Text("Projects"))
+            .navigationTitle(selectedItem == nil
+                             ? Text("Projects")
+                             : Text("New Time Entry"))
         }
     }
     
