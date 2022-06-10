@@ -2,7 +2,8 @@ package com.mutualmobile.harvestKmp.di
 
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocal
 import com.mutualmobile.harvestKmp.data.local.HarvestUserLocalImpl
-import com.mutualmobile.harvestKmp.data.network.*
+import com.mutualmobile.harvestKmp.data.network.Constants
+import com.mutualmobile.harvestKmp.data.network.Endpoint
 import com.mutualmobile.harvestKmp.data.network.Endpoint.REFRESH_TOKEN
 import com.mutualmobile.harvestKmp.data.network.authUser.AuthApi
 import com.mutualmobile.harvestKmp.data.network.authUser.UserForgotPasswordApi
@@ -21,8 +22,6 @@ import com.mutualmobile.harvestKmp.data.network.org.impl.UserWorkApiImpl
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.domain.usecases.CurrentUserLoggedInUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.SaveSettingsUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.userForgotPasswordApiUseCases.ForgotPasswordUseCase
-import com.mutualmobile.harvestKmp.domain.usecases.userForgotPasswordApiUseCases.ResetPasswordUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.ChangePasswordUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.ExistingOrgSignUpUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.FcmTokenUseCase
@@ -35,29 +34,40 @@ import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.CreatePro
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.DeleteProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.FindProjectsInOrgUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.GetListOfUsersForAProjectUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.GetProjectsFromIdsUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.UpdateProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgUsersApiUseCases.FindUsersInOrgUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userForgotPasswordApiUseCases.ForgotPasswordUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userForgotPasswordApiUseCases.ResetPasswordUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.AssignProjectsToUsersUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.DeleteWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.GetUserAssignedProjectsUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.LogWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userWorkUseCases.GetWorkLogsForDateRangeUseCase
 import com.russhwolf.settings.Settings
-import io.ktor.client.*
-import io.ktor.client.call.*
-import io.ktor.client.engine.*
-import io.ktor.client.plugins.auth.*
-import io.ktor.client.plugins.auth.providers.*
-import io.ktor.client.plugins.logging.*
+import io.ktor.client.HttpClient
+import io.ktor.client.call.body
+import io.ktor.client.engine.HttpClientEngine
+import io.ktor.client.plugins.auth.Auth
+import io.ktor.client.plugins.auth.providers.BearerTokens
+import io.ktor.client.plugins.auth.providers.RefreshTokensParams
+import io.ktor.client.plugins.auth.providers.bearer
+import io.ktor.client.plugins.contentnegotiation.ContentNegotiation
+import io.ktor.client.plugins.logging.DEFAULT
+import io.ktor.client.plugins.logging.LogLevel
+import io.ktor.client.plugins.logging.Logger
+import io.ktor.client.plugins.logging.Logging
+import io.ktor.client.request.post
+import io.ktor.client.request.setBody
+import io.ktor.http.ContentType
+import io.ktor.http.contentType
+import io.ktor.http.encodedPath
+import io.ktor.serialization.kotlinx.json.json
+import kotlinx.serialization.json.Json
+import org.koin.core.component.KoinComponent
+import org.koin.core.component.get
 import org.koin.core.context.startKoin
 import org.koin.dsl.module
-import io.ktor.client.plugins.contentnegotiation.*
-import io.ktor.client.request.*
-import io.ktor.http.*
-import io.ktor.serialization.kotlinx.json.*
-import io.ktor.websocket.FrameType.Companion.get
-import kotlinx.serialization.json.Json
-import org.koin.core.component.*
 
 fun initSharedDependencies() = startKoin {
     modules(
@@ -143,6 +153,7 @@ val orgProjectsUseCaseModule = module {
     single { FindProjectsInOrgUseCase(get()) }
     single { GetListOfUsersForAProjectUseCase(get()) }
     single { UpdateProjectUseCase(get()) }
+    single { GetProjectsFromIdsUseCase(get()) }
 }
 
 val orgUsersApiUseCaseModule = module {
@@ -196,6 +207,7 @@ class OrgProjectsUseCaseComponent : KoinComponent {
     fun provideDeleteProjectUseCase(): DeleteProjectUseCase = get()
     fun provideFindProjectsInOrgUseCase(): FindProjectsInOrgUseCase = get()
     fun provideGetListOfUsersForAProjectUseCase(): GetListOfUsersForAProjectUseCase = get()
+    fun provideGetProjectsFromIdsUseCase(): GetProjectsFromIdsUseCase = get()
 }
 
 class OrgUsersApiUseCaseComponent : KoinComponent {

@@ -4,7 +4,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
+import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
+import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
+import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.OrgProjectsDataModel
+import kotlinx.coroutines.launch
 
 enum class WorkRequestType {
     CREATE, UPDATE
@@ -38,9 +44,26 @@ class NewEntryScreenViewModel : ViewModel() {
         onUpdateCompleted()
     }
 
-    // TODO: Implement this
-    fun fetchProjectName(projectId: String = "") {
+    fun fetchProjectName(projectId: String) {
         currentProjectName = "Loading..."
+        viewModelScope.launch {
+            OrgProjectsDataModel {
+            }.apply {
+                getProjectsForProjectIds(projectIds = listOf(projectId)).collect { newState ->
+                    when (newState) {
+                        is SuccessState<*> -> {
+                            (newState as SuccessState<ApiResponse<List<OrgProjectResponse>>>)
+                                .data.data?.let { nnOrgList ->
+                                    nnOrgList.find { org -> org.id == projectId }?.let { nnOrg ->
+                                        currentProjectName = nnOrg.name.orEmpty()
+                                    }
+                                }
+                        }
+                        else -> Unit
+                    }
+                }
+            }
+        }
     }
 
     fun resetAllItems(onResetCompleted: () -> Unit = {}) {
