@@ -14,14 +14,12 @@ struct ProjectTypeView_Previews: PreviewProvider {
     }
 }
 
-
 class ProjectTypeStore: ObservableObject {
+    
     var billableList = ["Work"]
     var nonBillableList = ["Non-Billable"]
     
-    init() {
-        
-    }
+    init() { }
 }
 
 struct ProjectTypeView: View {

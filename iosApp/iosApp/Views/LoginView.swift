@@ -18,11 +18,10 @@ class AuthStore: ObservableObject {
 }
 
 struct LoginView: View {
-    @EnvironmentObject var rootStore: RootStore
-
-    @ObservedObject private var store = AuthStore()
     
+    @EnvironmentObject var rootStore: RootStore
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var store = AuthStore()
     
     @State private var signupPresented = false
     @State private var email = "anmol.verma4@gmail.com"
@@ -40,8 +39,6 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
-//            googleSignInButton
-//            LabelledDivider(label: "or", color: ColorAssets.white.color)
             credentialView
             footerView
         }
@@ -50,20 +47,6 @@ struct LoginView: View {
         .background(ColorAssets.colorBackground.color)
         .edgesIgnoringSafeArea(.all)
         .loadingIndicator(show: store.showLoading)
-    }
-    
-    private var googleSignInButton: some View {
-        Button {
-            // TODO: (Nasir) Need to handle
-        } label: {
-            // TODO: (Nasir) Need to remove this entire HStack for Google Sign In, Must use button provided by Google pod
-            HStack {
-                Image("Google-Icon").padding(.trailing)
-                Text("Sign In with Google").padding(.leading)
-            }
-            .harvestButton()
-        }
-        .padding(.bottom)
     }
     
     private var credentialView: some View {
@@ -131,7 +114,7 @@ struct LoginView: View {
     }
     
     private func performLogin() {
-        let loginDataModel = LoginDataModel { state in
+        LoginDataModel { state in
             if state is LoadingState {
                 store.showLoading = true
                 store.hasFocus = false
@@ -145,16 +128,7 @@ struct LoginView: View {
                     rootStore.isAuthenticateUser = true
                 }
             }
-        }
-        
-        loginDataModel.login(email: email, password: password)
-        
-//        loginDataModel.praxisCommand = { command in
-//            print("command \(command)  \(type(of: command)) ")
-//            if let navigationCommand = (command as? NavigationPraxisCommand) {
-//                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
-//            }
-//        }
+        }.login(email: email, password: password)
     }
 }
 

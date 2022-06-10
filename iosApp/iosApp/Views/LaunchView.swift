@@ -9,6 +9,12 @@
 import Foundation
 import SwiftUI
 
+struct LaunchView_Previews: PreviewProvider {
+    static var previews: some View {
+        LaunchView()
+    }
+}
+
 class LaunchStore: ObservableObject {
     var didFoundWorkspace = false
 }
@@ -16,6 +22,7 @@ class LaunchStore: ObservableObject {
 struct LaunchView: View {
     
     @ObservedObject var store = LaunchStore()
+    
     @State private var selection = 0
     @State private var presentWorkspace = false
     @State private var foundWorkspace = false
@@ -40,7 +47,8 @@ struct LaunchView: View {
         .frame(width: UIScreen.main.bounds.width,
                height: UIScreen.main.bounds.height,
                alignment: .center)
-        .background(ColorAssets.colorBackground.color).edgesIgnoringSafeArea(.all)
+        .background(ColorAssets.colorBackground.color)
+        .edgesIgnoringSafeArea(.all)
     }
     
     var headerView: some View {
@@ -111,11 +119,3 @@ struct LaunchView: View {
         }
     }
 }
-
-#if DEBUG
-struct LaunchView_Previews: PreviewProvider {
-    static var previews: some View {
-        LaunchView()
-    }
-}
-#endif

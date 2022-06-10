@@ -17,11 +17,11 @@ class SignupStore: ObservableObject {
 }
 
 struct SignupView: View {
+    
+    @Environment(\.dismiss) private var dismiss
+    @Environment(\.colorScheme) private var colorScheme
     @ObservedObject private var store = SignupStore()
 
-    @Environment(\.dismiss) var dismiss
-    @Environment(\.colorScheme) private var colorScheme
-    
     @State private var firstName = "tony"
     @State private var lastName = "stark"
     @State private var companyName = "Avenger"
@@ -35,6 +35,7 @@ struct SignupView: View {
             store.signupError = nil
         }
     }
+    
     init() {
         UINavigationBar.appearance().backgroundColor = UIColor(ColorAssets.colorBackground.color)
         UINavigationBar.appearance().tintColor = UIColor(ColorAssets.white.color)
@@ -43,11 +44,6 @@ struct SignupView: View {
     var body: some View {
         NavigationView {
             VStack {
-//                googleSignInButton
-//                LabelledDivider(label: "or with you email below", color:
-//                                    colorScheme == . dark
-//                                ? ColorAssets.white.color
-//                                : .black)
                 credentialView
                 signunButton
                 termsView
@@ -66,20 +62,6 @@ struct SignupView: View {
             }
         }
         .loadingIndicator(show: store.showLoading)
-    }
-    
-    private var googleSignInButton: some View {
-        Button {
-            // TODO: (Nasir) Need to handle
-        } label: {
-            // TODO: (Nasir) Need to remove this entire HStack for Google Sign In, Must use button provided by Google pod
-            HStack {
-                Image("Google-Icon").padding(.trailing)
-                Text("Sign In with Google").padding(.leading)
-            }
-            .harvestButton()
-        }
-        .padding(.bottom)
     }
     
     private var credentialView: some View {
@@ -169,10 +151,7 @@ struct SignupView: View {
                     store.signupError = AppError(message: error.throwable.message ?? "Signup failure")
                 } else if let responseState = state as? SuccessState<ApiResponse<HarvestOrganization>> {
                     if let response =  responseState.data {
-                        
-
-                        
-                        if let harvestOrganisation = response.data {
+                        if response.data != nil {
                             dismiss()
                         } else {
                             store.signupError = AppError(message: response.message ?? "Signup failure")

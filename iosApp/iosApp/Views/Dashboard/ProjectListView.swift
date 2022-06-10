@@ -15,15 +15,19 @@ struct ProjectListView_Previews: PreviewProvider {
     }
 }
 
+class ProjectListStore: ObservableObject {
+    let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
+    
+    init() { }
+}
+
 struct ProjectListView: View {
     
     @Environment(\.dismiss) private var dismiss
-    
+    @ObservedObject var store = ProjectListStore()
+
+    @State private var selectedItem: String?
     @State private var searchText = ""
-    
-    @State var selectedItem: String?
-    
-    let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
     
     var body: some View {
         NavigationView {
@@ -57,9 +61,9 @@ struct ProjectListView: View {
     
     private var searchedResult: [String] {
         if searchText.isEmpty {
-            return projects
+            return store.projects
         } else {
-            return projects.filter { $0.contains(searchText) }
+            return store.projects.filter { $0.contains(searchText) }
         }
     }
 }
