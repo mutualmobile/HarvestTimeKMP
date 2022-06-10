@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -17,51 +18,91 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.R
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
+import com.mutualmobile.harvestKmp.android.ui.screens.common.noAccountAnnotatedString
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.OrDivider
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SignInTextField
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
-import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
 
 @Composable
-fun LoginScreen(navController: NavHostController) {
+fun LoginScreen(
+    navController: NavHostController,
+    orgIdentifier: String?,
+) {
     var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
+
+    var currentNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
+
+    var userState: DataState by remember { mutableStateOf(EmptyState) }
+    val userDataModel by remember {
+        mutableStateOf(
+            GetUserDataModel { newState ->
+                userState = newState
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentNavigationCommand = newCommand
+                }
+            }
+        )
+    }
 
     var currentLoginState: DataState by remember {
         mutableStateOf(EmptyState)
     }
-
     val loginDataModel by remember {
         mutableStateOf(
             LoginDataModel { loginState ->
                 currentLoginState = loginState
                 when (loginState) {
                     is SuccessState<*> -> {
-                        navController.navigateAndClear(
-                            clearRoute = ScreenList.LoginScreen(),
-                            navigateTo = ScreenList.LandingScreen()
-                        )
+                        userDataModel.activate()
                     }
                     else -> Unit
                 }
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentNavigationCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen == HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
+                                navController clearBackStackAndNavigateTo newCommand.screen.withOrgId(
+                                    identifier = orgIdentifier,
+                                    id = null
+                                )
+                            }
+                        }
+                    }
+                }
             }
         )
+    }
+
+    var currentErrorMsg: String? by remember { mutableStateOf(null) }
+
+    LaunchedEffect(key1 = currentLoginState, key2 = userState) {
+        currentErrorMsg = when {
+            currentLoginState is ErrorState -> (currentLoginState as ErrorState).throwable.message
+            userState is ErrorState -> (userState as ErrorState).throwable.message
+            else -> null
+        }
     }
 
     Box(
@@ -78,16 +119,6 @@ fun LoginScreen(navController: NavHostController) {
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            IconLabelButton(
-                icon = R.drawable.google_logo,
-                label = stringResource(MR.strings.login_screen_google_btn_txt.resourceId),
-                isLoading = currentLoginState is LoadingState,
-                errorMsg = (currentLoginState as? ErrorState)?.throwable?.message,
-                onClick = {
-                    loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim())
-                }
-            )
-            OrDivider()
             SignInTextField(
                 value = currentWorkEmail,
                 onValueChange = { updatedString -> currentWorkEmail = updatedString },
@@ -96,28 +127,33 @@ fun LoginScreen(navController: NavHostController) {
             SignInTextField(
                 value = currentPassword,
                 onValueChange = { updatedString -> currentPassword = updatedString },
-                placeholderText = stringResource(MR.strings.login_screen_password_et_placeholder.resourceId),
+                placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
             IconLabelButton(
                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
-                onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) }
+                onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) },
+                isLoading = currentLoginState is LoadingState || userState is LoadingState,
+                errorMsg = currentErrorMsg,
             )
             SurfaceTextButton(
-                text = buildAnnotatedString {
-                    append("Don't have an account?")
-                    withStyle(SpanStyle(fontWeight = FontWeight.Medium)) {
-                        append(" Try Harvest Free")
-                    }
-                },
-                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
+                text = noAccountAnnotatedString(),
+                onClick = { navController.navigate(HarvestRoutes.Screen.SIGNUP) }
             )
             SurfaceTextButton(
-                text = "View Tour",
+                text = MR.strings.view_tour.get(),
                 fontWeight = FontWeight.Medium,
-                onClick = navController::navigateUp
+                onClick = {
+                    navController clearBackStackAndNavigateTo HarvestRoutes.Screen.ON_BOARDING
+                }
             )
         }
+        HarvestDialog(
+            praxisCommand = currentNavigationCommand,
+            onConfirm = {
+                currentNavigationCommand = null
+            },
+        )
     }
 }
 

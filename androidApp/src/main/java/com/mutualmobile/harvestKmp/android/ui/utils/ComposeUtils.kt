@@ -20,10 +20,7 @@ fun Activity.SetupSystemUiController() {
     }
 }
 
-fun NavHostController.navigateAndClear(clearRoute: String, navigateTo: String) {
-    navigate(navigateTo) {
-        popUpTo(clearRoute) {
-            inclusive = true
-        }
-    }
+infix fun NavHostController.clearBackStackAndNavigateTo(destination: String) {
+    backQueue.clear()
+    navigate(destination)
 }

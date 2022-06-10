@@ -1,7 +1,6 @@
 import com.mutualmobile.harvestKmp.db.DriverFactory
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.SharedComponent
-import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.di.initSqlDelightExperimentalDependencies
 import com.mutualmobile.harvestKmp.domain.model.request.DevicePlatform
 import com.mutualmobile.harvestKmp.domain.model.request.User
@@ -9,7 +8,6 @@ import firebase.app.App
 import firebase.messaging.messaging
 import kotlinx.browser.document
 import kotlinx.browser.window
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.launch
 import react.create
@@ -22,11 +20,12 @@ val webKey =
     "BFmePGx52AaCaDZzf-0qq8-oF9VT6fATcprqeY4SBWxnJO7BKp1Snsixnt_M0pecIVaPpBN3I1vhPHZbFIu0w5Y" // TODO move this
 
 val sharedComponent = SharedComponent()
+val mainScope = MainScope()
 
 suspend fun main() {
     firebaseInit()
     initSqlDelightExperimentalDependencies()
-    MainScope().launch {
+    mainScope.launch {
         setupDriver()
     }
     window.onload = { _ ->
@@ -63,7 +62,7 @@ fun setupFcmPush() {
 }
 
 fun sendTokenToServer(it: String?) {
-    GlobalScope.launch {
+    mainScope.launch {
         AuthApiUseCaseComponent().provideFcmTokenUseCase()
             .invoke(User(platform = DevicePlatform.Web, pushToken = it))
     }

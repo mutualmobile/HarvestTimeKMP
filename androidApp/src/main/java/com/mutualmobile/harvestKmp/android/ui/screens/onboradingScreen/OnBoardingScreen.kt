@@ -22,17 +22,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -46,16 +42,11 @@ import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.R
-import com.mutualmobile.harvestKmp.android.ui.screens.ScreenList
+import com.mutualmobile.harvestKmp.android.ui.screens.common.noAccountAnnotatedString
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
-import com.mutualmobile.harvestKmp.android.ui.utils.navigateAndClear
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.features.datamodels.OnBoardingDataModel
 
 val OnBoardingImages = listOf(
@@ -70,28 +61,13 @@ val OnBoardingImages = listOf(
 fun OnBoardingScreen(navController: NavHostController) {
     val scaffoldState = rememberScaffoldState()
 
-    var currentBoardingState: DataState by remember {
-        mutableStateOf(EmptyState)
-    }
-
     val pagerState = rememberPagerState(
         initialPage = 0,
     )
 
     val onBoardingDataModel by remember {
         mutableStateOf(
-            OnBoardingDataModel { signUpState ->
-                currentBoardingState = signUpState
-                when (signUpState) {
-                    is SuccessState<*> -> {
-                        navController.navigateAndClear(
-                            clearRoute = ScreenList.ExistingOrgSignUpScreen(),
-                            navigateTo = ScreenList.LandingScreen(),
-                        )
-                    }
-                    else -> Unit
-                }
-            }
+            OnBoardingDataModel {}
         )
     }
 
@@ -180,19 +156,12 @@ fun OnBoardingScreen(navController: NavHostController) {
                                     .fillMaxWidth(0.75f)
                                     .padding(top = 16.dp),
                                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
-                                isLoading = currentBoardingState is LoadingState,
-                                errorMsg = (currentBoardingState as? ErrorState)?.throwable?.message,
-                                onClick = { navController.navigate(ScreenList.FindWorkspaceScreen()) }
+                                onClick = { navController.navigate(HarvestRoutes.Screen.FIND_WORKSPACE) }
                             )
 
                             SurfaceTextButton(
-                                text = buildAnnotatedString {
-                                    append("Don't have an account?")
-                                    withStyle(SpanStyle(fontWeight = FontWeight.Bold)) {
-                                        append(" Try Harvest Free")
-                                    }
-                                },
-                                onClick = { navController.navigate(ScreenList.ExistingOrgSignUpScreen()) }
+                                text = noAccountAnnotatedString(),
+                                onClick = { navController.navigate(HarvestRoutes.Screen.NEW_ORG_SIGNUP) }
                             )
 
                             Spacer(modifier = Modifier.padding(bottom = 8.dp))

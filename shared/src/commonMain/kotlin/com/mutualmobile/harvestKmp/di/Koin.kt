@@ -38,6 +38,7 @@ import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.GetListOf
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.UpdateProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgUsersApiUseCases.FindUsersInOrgUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.AssignProjectsToUsersUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.DeleteWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.GetUserAssignedProjectsUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userProjectUseCases.LogWorkTimeUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.userWorkUseCases.GetWorkLogsForDateRangeUseCase
@@ -155,6 +156,7 @@ val forgotPasswordApiUseCaseModule = module {
 
 val userProjectUseCaseModule = module {
     single { AssignProjectsToUsersUseCase(get()) }
+    single { DeleteWorkTimeUseCase(get()) }
     single { GetUserAssignedProjectsUseCase(get()) }
     single { LogWorkTimeUseCase(get()) }
 }
@@ -178,7 +180,7 @@ class AuthApiUseCaseComponent : KoinComponent {
     fun provideChangePasswordUseCase(): ChangePasswordUseCase = get()
     fun provideExistingOrgSignUpUseCase(): ExistingOrgSignUpUseCase = get()
     fun provideFcmTokenUseCase(): FcmTokenUseCase = get()
-    fun provideGetUserUseCase(): GetUserUseCase = get()
+    fun provideGetNetworkUserUseCase(): GetUserUseCase = get()
     fun provideLoginUseCase(): LoginUseCase = get()
     fun provideLogoutUseCase(): LogoutUseCase = get()
     fun provideNewOrgSignUpUseCase(): NewOrgSignUpUseCase = get()
@@ -208,6 +210,7 @@ class ForgotPasswordApiUseCaseComponent : KoinComponent {
 class UserProjectUseCaseComponent : KoinComponent {
     fun provideAssignProjectsToUsersUseCase(): AssignProjectsToUsersUseCase = get()
     fun provideLogWorkTimeUseCase(): LogWorkTimeUseCase = get()
+    fun provideDeleteWorkTimeUseCase(): DeleteWorkTimeUseCase = get()
     fun provideGetUserAssignedProjectsUseCase(): GetUserAssignedProjectsUseCase = get()
 }
 

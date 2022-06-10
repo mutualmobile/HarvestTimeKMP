@@ -1,6 +1,5 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen
 
-import android.app.Activity
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -23,23 +22,33 @@ import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+
+const val SELECTED_PROJECT = "SELECTED_PROJECT"
 
 @Composable
-fun NewEntryScreen() {
-    val activity = LocalContext.current as Activity
+fun NewEntryScreen(navController: NavController) {
+    val selectedProject = remember { mutableStateOf("") }
+    selectedProject.value =
+        navController.currentBackStackEntry?.savedStateHandle?.get<String>(SELECTED_PROJECT)
+            ?: "Android Department Work HYD"
+
     Scaffold(
+
         topBar = {
             TopAppBar(
                 title = {
@@ -49,7 +58,7 @@ fun NewEntryScreen() {
                     )
                 },
                 navigationIcon = {
-                    IconButton(onClick = activity::onBackPressed) {
+                    IconButton(onClick = { navController.navigateUp() }) {
                         Icon(
                             imageVector = Icons.Default.ArrowBack,
                             contentDescription = null
@@ -81,8 +90,9 @@ fun NewEntryScreen() {
                     }
                 }
             }
-        }
-    ) { bodyPadding ->
+        },
+
+        ) { bodyPadding ->
         Column(
             modifier = Modifier
                 .padding(bodyPadding)
@@ -90,7 +100,12 @@ fun NewEntryScreen() {
                 .verticalScroll(rememberScrollState()),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            BucketSelector()
+            BucketSelector(
+                currentProject = selectedProject.value,
+                onDepartmentClick = {
+                    navController.navigate(HarvestRoutes.Screen.ORG_PROJECTS)
+                },
+                onWorkClick = {})
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector()
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
@@ -101,4 +116,8 @@ fun NewEntryScreen() {
             )
         }
     }
+
 }
+
+
+

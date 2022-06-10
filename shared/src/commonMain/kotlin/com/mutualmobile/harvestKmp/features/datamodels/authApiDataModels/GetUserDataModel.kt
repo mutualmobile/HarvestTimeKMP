@@ -2,14 +2,15 @@ package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.SuccessState
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.SharedComponent
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
@@ -21,13 +22,31 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
-    private val getUserUseCase = authApiUseCasesComponent.provideGetUserUseCase()
+    private val getUserUseCase = authApiUseCasesComponent.provideGetNetworkUserUseCase()
     private val harvestLocal = SharedComponent().provideHarvestUserLocal()
 
-    fun getUser() {
+    fun getUser(forceFetchFromNetwork: Boolean = false) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
             onDataState(LoadingState)
+            if (!forceFetchFromNetwork) {
+                harvestLocal.getUser()?.let { nnUser ->
+                    onDataState(
+                        SuccessState(
+                            GetUserResponse(
+                                email = nnUser.email,
+                                firstName = nnUser.firstName,
+                                id = nnUser.uid,
+                                lastName = nnUser.lastName,
+                                modifiedTime = null,
+                                orgId = nnUser.orgId,
+                                role = nnUser.role
+                            )
+                        )
+                    )
+                    return@launch
+                }
+            }
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
                     print("GetUser Successful, ${getUserResponse.data}")
@@ -43,6 +62,7 @@ class GetUserDataModel(private val onDataState: (DataState) -> Unit) :
                     settings.clear()
                     praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
                     praxisCommand(NavigationPraxisCommand(""))
+                    onDataState(ErrorState(getUserResponse.throwable))
                 }
             }
         }

@@ -31,6 +31,7 @@ object AndroidDependencies {
     "com.google.accompanist:accompanist-insets-ui:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
     "com.google.accompanist:accompanist-pager:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
     "com.google.accompanist:accompanist-pager-indicators:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
+    "com.google.accompanist:accompanist-placeholder-material:${AndroidDependencyVersions.ACCOMPANIST_VERSION}",
     "dev.chrisbanes.snapper:snapper:${AndroidDependencyVersions.snapper}",
     "com.google.android.material:material:${AndroidDependencyVersions.material}",
     "androidx.appcompat:appcompat:${AndroidDependencyVersions.appCompat}",
@@ -43,7 +44,10 @@ object AndroidDependencies {
     "androidx.activity:activity-compose:${AndroidDependencyVersions.composeActivity}",
     "com.google.firebase:firebase-auth-ktx",
     "androidx.core:core-splashscreen:${AndroidDependencyVersions.splashScreen}",
-    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}"
+    "androidx.navigation:navigation-compose:${AndroidDependencyVersions.navigation}",
+    "org.jetbrains.kotlinx:kotlinx-datetime:${CommonDependencyVersions.kotlinxDateTime}",
+    "io.insert-koin:koin-core:${CommonDependencyVersions.koin}",
+    "io.insert-koin:koin-android:${CommonDependencyVersions.koin}"
   )
   val androidTestImplementation = listOf(
     "androidx.compose.ui:ui-test-junit4:${AndroidDependencyVersions.compose}"

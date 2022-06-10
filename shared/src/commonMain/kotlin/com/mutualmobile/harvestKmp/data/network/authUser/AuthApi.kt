@@ -14,9 +14,9 @@ interface AuthApi {
     suspend fun existingOrgSignUp(
         firstName: String,
         lastName: String,
-        company: String,
         email: String,
-        password: String
+        password: String,
+        company: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>>
 
     suspend fun newOrgSignUp(

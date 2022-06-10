@@ -1,11 +1,50 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.components
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material.LinearProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.navigation.NavHostController
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.datamodel.DataState
+import com.mutualmobile.harvestKmp.datamodel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.LogoutInProgress
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
+import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.UserDashboardDataModel
 
 @Composable
-fun AccountSection() {
+fun AccountSection(navController: NavHostController) {
+    var currentPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
+    var userLogoutState: DataState by remember { mutableStateOf(EmptyState) }
+    val userDashboardDataModel: UserDashboardDataModel by remember {
+        mutableStateOf(
+            UserDashboardDataModel { newState ->
+                userLogoutState = newState
+            }.apply {
+                praxisCommand = { newCommand ->
+                    currentPraxisCommand = newCommand
+                    when (newCommand) {
+                        is NavigationPraxisCommand -> {
+                            if (newCommand.screen.isBlank()) {
+                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                            }
+                        }
+                    }
+                }
+            }
+        )
+    }
+
     ColoredText(text = stringResource(MR.strings.account_section_title.resourceId))
     SettingsListItem(title = stringResource(MR.strings.account_section_refer_friend_item_title.resourceId))
     SettingsListItem(
@@ -22,6 +61,15 @@ fun AccountSection() {
     )
     SettingsListItem(
         title = stringResource(MR.strings.account_section_signout_item_title.resourceId),
-        showTopDivider = true
+        showTopDivider = true,
+        onClick = {
+            userDashboardDataModel.logout()
+        }
     )
+    AnimatedVisibility(visible = userLogoutState is LogoutInProgress) {
+        LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+    }
+    HarvestDialog(praxisCommand = currentPraxisCommand, onConfirm = {
+        currentPraxisCommand = null
+    })
 }

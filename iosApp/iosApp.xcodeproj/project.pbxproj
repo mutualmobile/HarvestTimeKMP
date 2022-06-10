@@ -31,10 +31,7 @@
 		313DE4A828522B07004CC0B0 /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A728522B07004CC0B0 /* ProjectListView.swift */; };
 		313E37C92837996E00CA7E57 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 313E37C82837996E00CA7E57 /* Colors.xcassets */; };
 		313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E37CA283799CF00CA7E57 /* ColorAssets.swift */; };
-		7555FF83242A565900829871 /* GithubTrendingUI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7555FF82242A565900829871 /* GithubTrendingUI.swift */; };
 		89D841702779CFB200D08BC0 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D8416F2779CFB200D08BC0 /* AppDelegate.swift */; };
-		89D841732779D83600D08BC0 /* GithubTrendingVM.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D841722779D83600D08BC0 /* GithubTrendingVM.swift */; };
-		89D841752779D8CD00D08BC0 /* UiRepo.swift in Sources */ = {isa = PBXBuildFile; fileRef = 89D841742779D8CD00D08BC0 /* UiRepo.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -63,11 +60,8 @@
 		313E37C82837996E00CA7E57 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		313E37CA283799CF00CA7E57 /* ColorAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssets.swift; sourceTree = "<group>"; };
 		7555FF7B242A565900829871 /* iosApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = iosApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		7555FF82242A565900829871 /* GithubTrendingUI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubTrendingUI.swift; sourceTree = "<group>"; };
 		7555FF8C242A565B00829871 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		89D8416F2779CFB200D08BC0 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		89D841722779D83600D08BC0 /* GithubTrendingVM.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GithubTrendingVM.swift; sourceTree = "<group>"; };
-		89D841742779D8CD00D08BC0 /* UiRepo.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UiRepo.swift; sourceTree = "<group>"; };
 		95A4C568919CD765F48B4C71 /* Pods-iosApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.debug.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.debug.xcconfig"; sourceTree = "<group>"; };
 		C000B12582D1C9BAAF385E15 /* Pods-iosApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-iosApp.release.xcconfig"; path = "Target Support Files/Pods-iosApp/Pods-iosApp.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -203,7 +197,6 @@
 		7555FF7D242A565900829871 /* iosApp */ = {
 			isa = PBXGroup;
 			children = (
-				89D841712779D5E300D08BC0 /* githubtrending */,
 				058557BA273AAA24004C7B11 /* Assets.xcassets */,
 				7555FF8C242A565B00829871 /* Info.plist */,
 				2152FB032600AC8F00CF470E /* iOSApp.swift */,
@@ -214,16 +207,6 @@
 				313E37CD28379EF800CA7E57 /* Resources */,
 			);
 			path = iosApp;
-			sourceTree = "<group>";
-		};
-		89D841712779D5E300D08BC0 /* githubtrending */ = {
-			isa = PBXGroup;
-			children = (
-				7555FF82242A565900829871 /* GithubTrendingUI.swift */,
-				89D841722779D83600D08BC0 /* GithubTrendingVM.swift */,
-				89D841742779D8CD00D08BC0 /* UiRepo.swift */,
-			);
-			path = githubtrending;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -352,7 +335,6 @@
 				312A6929284A4249000A2CD9 /* LaunchView.swift in Sources */,
 				312A6936284F635A000A2CD9 /* WeekView.swift in Sources */,
 				313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */,
-				89D841752779D8CD00D08BC0 /* UiRepo.swift in Sources */,
 				312A6928284A4249000A2CD9 /* LoginView.swift in Sources */,
 				312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */,
 				312A6921284A4234000A2CD9 /* AppError.swift in Sources */,
@@ -360,9 +342,7 @@
 				312A693A284F646D000A2CD9 /* ReportSheetView.swift in Sources */,
 				313DE4A328509290004CC0B0 /* DateHandler.swift in Sources */,
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
-				89D841732779D83600D08BC0 /* GithubTrendingVM.swift in Sources */,
 				312A692D284A4FB8000A2CD9 /* SignupView.swift in Sources */,
-				7555FF83242A565900829871 /* GithubTrendingUI.swift in Sources */,
 				312A6931284F44D0000A2CD9 /* RootView.swift in Sources */,
 				312A6938284F6454000A2CD9 /* TimeSheetView.swift in Sources */,
 			);
