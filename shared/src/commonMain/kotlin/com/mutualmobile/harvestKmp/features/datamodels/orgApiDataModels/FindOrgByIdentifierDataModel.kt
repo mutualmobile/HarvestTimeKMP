@@ -21,18 +21,16 @@ import org.koin.core.component.KoinComponent
 
 class FindOrgByIdentifierDataModel() :
     PraxisDataModel(), KoinComponent {
-  private val _dataFlow = MutableSharedFlow<DataState>()
+    private val _dataFlow = MutableSharedFlow<DataState>()
     val dataFlow = _dataFlow.asSharedFlow()
 
-    private var currentLoadingJob: Job? = null
     private val useCasesComponent = UseCasesComponent()
     private val userLoggedInUseCase = useCasesComponent.providerUserLoggedInUseCase()
     private val orgApiUseCasesComponent = OrgApiUseCaseComponent()
     private val findOrgByIdentifierUseCase = orgApiUseCasesComponent.provideFindOrgByIdentifier()
 
     fun findOrgByIdentifier(identifier: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
+        dataModelScope.launch {
             _dataFlow.emit(LoadingState)
 
             when (val response = findOrgByIdentifierUseCase(
@@ -48,7 +46,6 @@ class FindOrgByIdentifierDataModel() :
                             )
                         )
                     )
-                    println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
                     _dataFlow.emit(ErrorState(response.throwable))
@@ -58,7 +55,6 @@ class FindOrgByIdentifierDataModel() :
                             response.throwable.message ?: "Failed to find workspace"
                         )
                     )
-                    println("FAILED, ${response.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
