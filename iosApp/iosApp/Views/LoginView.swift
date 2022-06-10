@@ -19,7 +19,8 @@ class AuthStore: ObservableObject {
 }
 
 struct LoginView: View {
-    
+    @EnvironmentObject var rootStore: RootStore
+
     @ObservedObject private var store = AuthStore()
     
     @Environment(\.dismiss) var dismiss
@@ -145,19 +146,19 @@ struct LoginView: View {
                        store.loginError = AppError(title: "Error",
                                                    message: error.throwable.message ?? "Login failure")
                    } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
-                       
+                       rootStore.isAuthenticateUser = true
                    }
                }
         }
 
         loginDataModel.login(email: email, password: password)
         
-        loginDataModel.praxisCommand = { command in
-            print("command \(command)  \(type(of: command)) ")
-            if let navigationCommand = (command as? NavigationPraxisCommand) {
-                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
-            }
-        }
+//        loginDataModel.praxisCommand = { command in
+//            print("command \(command)  \(type(of: command)) ")
+//            if let navigationCommand = (command as? NavigationPraxisCommand) {
+//                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
+//            }
+//        }
     }
 }
 
