@@ -86,7 +86,7 @@ struct TimeEntryView: View {
         ZStack(alignment: .topLeading) {
             if notes.isEmpty && !focusedField {
                 Text("Notes (Optional)")
-                    .foregroundColor(.secondary)
+                    .foregroundColor(ColorAssets.secondary.color)
                     .padding(EdgeInsets(top: 5, leading: 0, bottom: 0, trailing:0))
             }
             TextEditor(text: $notes)
@@ -108,6 +108,7 @@ struct TimeEntryView: View {
                     } label: {
                         Text(store.dateString).foregroundColor(ColorAssets.primary.color)
                     }
+                    .buttonStyle(BorderlessButtonStyle())
                 }
                 
                 HStack {
@@ -123,7 +124,7 @@ struct TimeEntryView: View {
             Spacer()
             Text("Leave blank to start timer")
                 .font(.footnote)
-                .foregroundColor(.secondary)
+                .foregroundColor(ColorAssets.secondary.color)
             Spacer()
         }
     }
