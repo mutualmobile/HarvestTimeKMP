@@ -40,10 +40,10 @@ struct ProjectListView: View {
             VStack {
                 if store.isSelected {
                     // TODO: Pass selected data here
-                    let timEntryStore = TimeEntryStore(Date())
-                    TimeEntryView(store: timEntryStore,
-                                  selectedProject: store.selectedProject ?? "",
-                                  selectedTask: store.selectedTask ?? "")
+                    let timEntryStore = TimeEntryStore(Date(),
+                                                       selectedProject: store.selectedProject ?? "",
+                                                       selectedTask: store.selectedTask ?? "")
+                    TimeEntryView(store: timEntryStore)
                 } else {
                     List {
                         Section("Mutual Mobile") {
@@ -76,14 +76,12 @@ struct ProjectListView: View {
                 
                 ToolbarItem(placement: .confirmationAction) {
                     return store.isSelected
-                    ? nil
-                    : Button(action: {
+                    ? Button(action: {
                         // TODO: Handle Start action
                     }, label: {
                         Text("Start")
                             .defaultAppColor()
-                    })
-                    
+                    }) : nil
                 }
             }
             .navigationTitle(store.isSelected

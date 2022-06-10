@@ -10,22 +10,32 @@ import SwiftUI
 
 struct TimeEntryView_Previews: PreviewProvider {
     static var previews: some View {
-        let store = TimeEntryStore(Date())
-        TimeEntryView(store: store, selectedProject: "", selectedTask: "")
+        let store = TimeEntryStore(Date(), selectedProject: "", selectedTask: "")
+        TimeEntryView(store: store)
     }
 }
 
 class TimeEntryStore: ObservableObject {
+    @Published var durationField = ""
+
     @DateHandler var selectedDate: Date
+    let selectedProject: String
+    let selectedTask: String
     
-    init(_ selectedDate: Date) {
+    init(_ selectedDate: Date, selectedProject: String, selectedTask: String) {
         self.selectedDate = selectedDate
+        self.selectedProject = selectedProject
+        self.selectedTask = selectedTask
     }
     
     func update(to date: Date) {
         // objectWillChange required to force the body redraw
         objectWillChange.send()
         selectedDate = date
+    }
+    
+    func validateEntry(for duration: String) {
+        // TODO: Perform validation so that user must not enter any random stuff
     }
 }
 
@@ -34,16 +44,17 @@ struct TimeEntryView: View {
     @ObservedObject var store: TimeEntryStore
     
     @State private var notes = ""
-    @State private var durationField = ""
     @FocusState private var focusedField: Bool
-    
-    let selectedProject: String
-    let selectedTask: String
     
     // To Update the date from picker,
     private var seletedDateBinding: Binding<String> {
         Binding { store.$selectedDate }
         set: { _ = $0 }
+    }
+    
+    private var durationFieldBinding: Binding<String> {
+        Binding { store.durationField }
+        set: { store.validateEntry(for: $0) }
     }
     
     var body: some View {
@@ -73,7 +84,7 @@ struct TimeEntryView: View {
                         // TODO: Handle Project selection action
                     } label: {
                         HStack {
-                            Text(selectedProject)
+                            Text(store.selectedProject)
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
@@ -87,7 +98,7 @@ struct TimeEntryView: View {
                         // TODO: Handle Project type selection action
                     } label: {
                         HStack {
-                            Text(selectedTask)
+                            Text(store.selectedTask)
                             Spacer()
                             Image(systemName: "chevron.right")
                         }
@@ -132,7 +143,9 @@ struct TimeEntryView: View {
                 
                 HStack {
                     Text("Duration")
-                    TextField("", text: $durationField)
+                    TextField("", text: durationFieldBinding)
+                        .multilineTextAlignment(.trailing)
+                        .keyboardType(.decimalPad)
                 }
             }
         }
