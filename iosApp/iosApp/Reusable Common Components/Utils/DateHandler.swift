@@ -11,12 +11,16 @@ import Foundation
 
 @propertyWrapper
 struct DateHandler {
+    enum DateFormat: String {
+        case EEEEddMMM = "EEEE, dd MMM"
+    }
+    
     private var date: Date
     @StringTrimmer var format: String
         
-    init(wrappedValue: Date, format: String = "EEEE, dd MMM") {
+    init(wrappedValue: Date, format: DateFormat = .EEEEddMMM) {
         self.date = wrappedValue
-        self.format = format
+        self.format = format.rawValue
     }
     
     var wrappedValue: Date {
