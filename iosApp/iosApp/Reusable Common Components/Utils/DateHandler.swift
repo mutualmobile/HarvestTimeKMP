@@ -11,29 +11,29 @@ import Foundation
 
 @propertyWrapper
 struct DateHandler {
-    private var _date: Date
+    private var date: Date
     @StringTrimmer var format: String
         
     init(wrappedValue: Date, format: String = "EEEE, dd MMM") {
-        self._date = wrappedValue
+        self.date = wrappedValue
         self.format = format
     }
     
     var wrappedValue: Date {
         get {
-            _date
+            date
         } set {
-            _date = newValue
+            date = newValue
         }
     }
     
     var projectedValue: String {
-        let formatter = DateHandler._dateFormatter
+        let formatter = DateHandler.dateFormatter
         formatter.dateFormat = format
-        return formatter.string(from: _date)
+        return formatter.string(from: date)
     }
     
-    static private let _dateFormatter: DateFormatter = {
+    static private let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
         return formatter
     }()
