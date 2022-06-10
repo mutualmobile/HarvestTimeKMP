@@ -14,6 +14,11 @@ enum ColorAssets: String {
     case black
     case primary
     case secondary
+    case tertiary
+    case quarternary
+    case weekCircleFilled
+    case weekCircleText
+    case weekText
     
     var color: Color {
         Color(self.rawValue)

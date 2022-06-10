@@ -100,7 +100,7 @@ struct TimeSheetView: View {
             }
         }
         .padding(.vertical)
-        .background(.quaternary)
+        .background(ColorAssets.quarternary.color)
     }
 }
 
