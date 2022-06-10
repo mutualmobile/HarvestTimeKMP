@@ -29,7 +29,7 @@
 		313DE4A328509290004CC0B0 /* DateHandler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A228509290004CC0B0 /* DateHandler.swift */; };
 		313DE4A6285092B6004CC0B0 /* StringTrimmer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A5285092B6004CC0B0 /* StringTrimmer.swift */; };
 		313DE4A828522B07004CC0B0 /* ProjectListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A728522B07004CC0B0 /* ProjectListView.swift */; };
-		313DE4AA28530B85004CC0B0 /* ProjectTypeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A928530B85004CC0B0 /* ProjectTypeView.swift */; };
+		313DE4AA28530B85004CC0B0 /* ProjectTaskView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4A928530B85004CC0B0 /* ProjectTaskView.swift */; };
 		313DE4AC28531234004CC0B0 /* TimeEntryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313DE4AB28531234004CC0B0 /* TimeEntryView.swift */; };
 		313E37C92837996E00CA7E57 /* Colors.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 313E37C82837996E00CA7E57 /* Colors.xcassets */; };
 		313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 313E37CA283799CF00CA7E57 /* ColorAssets.swift */; };
@@ -59,7 +59,7 @@
 		313DE4A228509290004CC0B0 /* DateHandler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DateHandler.swift; sourceTree = "<group>"; };
 		313DE4A5285092B6004CC0B0 /* StringTrimmer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringTrimmer.swift; sourceTree = "<group>"; };
 		313DE4A728522B07004CC0B0 /* ProjectListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectListView.swift; sourceTree = "<group>"; };
-		313DE4A928530B85004CC0B0 /* ProjectTypeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTypeView.swift; sourceTree = "<group>"; };
+		313DE4A928530B85004CC0B0 /* ProjectTaskView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProjectTaskView.swift; sourceTree = "<group>"; };
 		313DE4AB28531234004CC0B0 /* TimeEntryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeEntryView.swift; sourceTree = "<group>"; };
 		313E37C82837996E00CA7E57 /* Colors.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Colors.xcassets; sourceTree = "<group>"; };
 		313E37CA283799CF00CA7E57 /* ColorAssets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorAssets.swift; sourceTree = "<group>"; };
@@ -138,7 +138,7 @@
 				312A6932284F589E000A2CD9 /* DashboardView.swift */,
 				312A6937284F6454000A2CD9 /* TimeSheetView.swift */,
 				313DE4A728522B07004CC0B0 /* ProjectListView.swift */,
-				313DE4A928530B85004CC0B0 /* ProjectTypeView.swift */,
+				313DE4A928530B85004CC0B0 /* ProjectTaskView.swift */,
 				313DE4AB28531234004CC0B0 /* TimeEntryView.swift */,
 				312A6939284F646D000A2CD9 /* ReportSheetView.swift */,
 				312A693B284F6476000A2CD9 /* AccountView.swift */,
@@ -343,7 +343,7 @@
 				312A6936284F635A000A2CD9 /* WeekView.swift in Sources */,
 				313E37CB283799CF00CA7E57 /* ColorAssets.swift in Sources */,
 				312A6928284A4249000A2CD9 /* LoginView.swift in Sources */,
-				313DE4AA28530B85004CC0B0 /* ProjectTypeView.swift in Sources */,
+				313DE4AA28530B85004CC0B0 /* ProjectTaskView.swift in Sources */,
 				312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */,
 				312A6921284A4234000A2CD9 /* AppError.swift in Sources */,
 				313DE4A6285092B6004CC0B0 /* StringTrimmer.swift in Sources */,

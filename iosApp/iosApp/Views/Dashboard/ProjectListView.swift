@@ -40,13 +40,12 @@ struct ProjectListView: View {
                             
                             ForEach(searchedResult, id:\.self) { item in
                                 NavigationLink {
-                                    ProjectTypeView(selectedItem: $selectedItem)
+                                    ProjectTaskView(selectedItem: $selectedItem)
                                 } label: {
                                     Text(item)
                                 }
                             }
                         }
-                        
                     }
                     .searchable(text: $searchText,
                                 placement: .navigationBarDrawer(displayMode: .always),

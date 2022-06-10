@@ -1,5 +1,5 @@
 //
-//  ProjectTypeView.swift
+//  ProjectTaskView.swift
 //  iosApp
 //
 //  Created by Nasir Ahmed Momin on 10/06/22.
@@ -8,13 +8,13 @@
 
 import SwiftUI
 
-struct ProjectTypeView_Previews: PreviewProvider {
+struct ProjectTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        ProjectTypeView(selectedItem: .constant(""))
+        ProjectTaskView(selectedItem: .constant(""))
     }
 }
 
-class ProjectTypeStore: ObservableObject {
+class ProjectTaskStore: ObservableObject {
     
     var billableList = ["Work"]
     var nonBillableList = ["Non-Billable"]
@@ -22,11 +22,13 @@ class ProjectTypeStore: ObservableObject {
     init() { }
 }
 
-struct ProjectTypeView: View {
+// TODO: Searching for Project Task Item is yet to be implemented
+struct ProjectTaskView: View {
     
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var store = ProjectTypeStore()
+    @ObservedObject var store = ProjectTaskStore()
     
+    @State private var searchText = ""
     @Binding var selectedItem: String?
     
     var body: some View {
@@ -55,5 +57,7 @@ struct ProjectTypeView: View {
                 }
             }
         }
+        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search for project task"))
+        .navigationTitle(Text("Task"))
     }
 }

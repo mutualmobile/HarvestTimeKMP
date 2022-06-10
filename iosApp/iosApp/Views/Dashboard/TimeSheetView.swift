@@ -43,7 +43,7 @@ class TimeSheetStore: ObservableObject {
 
 struct TimeSheetView: View {
     
-    @ObservedObject var store = TimeSheetStore()
+    @StateObject var store = TimeSheetStore()
     
     @State private var calenderTapped = false
     @State private var infoTapped = false
