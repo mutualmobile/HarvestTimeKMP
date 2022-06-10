@@ -12,6 +12,9 @@ import com.mutualmobile.harvestKmp.di.SharedComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
@@ -20,6 +23,7 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
 
     private var currentLoadingJob: Job? = null
     private val orgProjectsUseCaseComponent = OrgProjectsUseCaseComponent()
+    private val getProjectsUseCase = orgProjectsUseCaseComponent.provideGetProjectsFromIdsUseCase()
     private val createProjectUseCase = orgProjectsUseCaseComponent.provideCreateProjectUseCase()
     private val updateProjectUseCase = orgProjectsUseCaseComponent.provideUpdateProjectUseCase()
     private val deleteProjectUseCase = orgProjectsUseCaseComponent.provideDeleteProjectUseCase()
@@ -127,5 +131,36 @@ class OrgProjectsDataModel(private val onDataState: (DataState) -> Unit) :
                 }
             }
         }
+    }
+
+    fun getProjectsForProjectIds(
+        projectIds: List<String>
+    ): Flow<DataState> = flow {
+        emit(LoadingState)
+        when(
+            val response = getProjectsUseCase(projectIds = projectIds)
+        ) {
+            is NetworkResponse.Success -> {
+                emit(SuccessState(response.data))
+            }
+            is NetworkResponse.Failure -> {
+                emit(ErrorState(response.throwable))
+            }
+            is NetworkResponse.Unauthorized -> {
+                settings.clear()
+                praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                praxisCommand(NavigationPraxisCommand(""))
+            }
+        }
+    }.catch {
+        emit(ErrorState(it))
+        println(it)
+        it.printStackTrace()
+        praxisCommand(
+            ModalPraxisCommand(
+                title = "Error",
+                it.message ?: "An Unknown error has happened"
+            )
+        )
     }
 }

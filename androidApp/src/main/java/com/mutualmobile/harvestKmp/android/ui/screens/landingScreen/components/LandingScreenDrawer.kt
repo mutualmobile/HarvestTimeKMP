@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.datamodel.DataState
 import com.mutualmobile.harvestKmp.datamodel.EmptyState
@@ -28,6 +29,7 @@ import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgB
 
 @Composable
 fun LandingScreenDrawer(
+    navController: NavController,
     currentDrawerScreen: LandingScreenDrawerItemType,
     closeDrawer: () -> Unit,
     onScreenChanged: (LandingScreenDrawerItemType) -> Unit,

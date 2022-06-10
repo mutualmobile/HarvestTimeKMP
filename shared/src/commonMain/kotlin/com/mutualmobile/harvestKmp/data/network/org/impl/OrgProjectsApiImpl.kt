@@ -4,6 +4,7 @@ import com.mutualmobile.harvestKmp.data.network.Endpoint
 import com.mutualmobile.harvestKmp.data.network.getSafeNetworkResponse
 import com.mutualmobile.harvestKmp.data.network.org.OrgProjectsApi
 import com.mutualmobile.harvestKmp.domain.model.request.CreateProject
+import com.mutualmobile.harvestKmp.domain.model.request.OrgProjectsRequest
 import com.mutualmobile.harvestKmp.domain.model.request.UpdateProjectRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
@@ -98,6 +99,16 @@ class OrgProjectsApiImpl(private val httpClient: HttpClient) : OrgProjectsApi {
             httpClient.get("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.LIST_USERS_IN_PROJECT}") {
                 contentType(ContentType.Application.Json)
                 parameter("projectId", projectId)
+            }
+        }
+
+    override suspend fun getListOfProjectsForProjectIds(projectIds: List<String>): NetworkResponse<ApiResponse<List<OrgProjectResponse>>> =
+        getSafeNetworkResponse {
+            httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.PROJECTS}") {
+                contentType(ContentType.Application.Json)
+                setBody(
+                    OrgProjectsRequest(projectIds = projectIds)
+                )
             }
         }
 

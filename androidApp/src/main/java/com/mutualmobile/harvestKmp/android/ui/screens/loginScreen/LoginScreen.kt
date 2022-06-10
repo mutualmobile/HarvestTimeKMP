@@ -130,6 +130,11 @@ fun LoginScreen(
                 placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
+            SurfaceTextButton(
+                text = stringResource(MR.strings.forgot_password.resourceId),
+                fontWeight = FontWeight.Medium,
+                onClick = { navController.navigate(HarvestRoutes.Screen.FORGOT_PASSWORD) }
+            )
             IconLabelButton(
                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
                 onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) },

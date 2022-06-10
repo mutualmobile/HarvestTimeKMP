@@ -65,4 +65,8 @@
     <string name="view_tour">View Tour</string>
     <string name="sign_up_form">Sign up Form</string>
     <string name="choose_project">Choose Project</string>
+    <string name="save">Save</string>
+    <string name="forgot_password">Forgot Password</string>
+    <string name="request_reset_password">Request Reset Password</string>
+    <string name="change_password">Change Password</string>
 </resources>
