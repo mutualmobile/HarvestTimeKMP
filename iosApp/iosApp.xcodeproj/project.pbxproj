@@ -13,7 +13,6 @@
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
 		312A6921284A4234000A2CD9 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691C284A4234000A2CD9 /* AppError.swift */; };
 		312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691E284A4234000A2CD9 /* HarvestButton.swift */; };
-		312A6923284A4234000A2CD9 /* LabelledDivider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691F284A4234000A2CD9 /* LabelledDivider.swift */; };
 		312A6924284A4234000A2CD9 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6920284A4234000A2CD9 /* LoadingIndicator.swift */; };
 		312A6928284A4249000A2CD9 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6926284A4248000A2CD9 /* LoginView.swift */; };
 		312A6929284A4249000A2CD9 /* LaunchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6927284A4248000A2CD9 /* LaunchView.swift */; };
@@ -43,7 +42,6 @@
 		2653B26BCBC847F765B563C5 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		312A691C284A4234000A2CD9 /* AppError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 		312A691E284A4234000A2CD9 /* HarvestButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HarvestButton.swift; sourceTree = "<group>"; };
-		312A691F284A4234000A2CD9 /* LabelledDivider.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelledDivider.swift; sourceTree = "<group>"; };
 		312A6920284A4234000A2CD9 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
 		312A6926284A4248000A2CD9 /* LoginView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		312A6927284A4248000A2CD9 /* LaunchView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LaunchView.swift; sourceTree = "<group>"; };
@@ -112,7 +110,6 @@
 			isa = PBXGroup;
 			children = (
 				312A691E284A4234000A2CD9 /* HarvestButton.swift */,
-				312A691F284A4234000A2CD9 /* LabelledDivider.swift */,
 				312A6920284A4234000A2CD9 /* LoadingIndicator.swift */,
 				312A6935284F635A000A2CD9 /* WeekView.swift */,
 			);
@@ -333,7 +330,6 @@
 			files = (
 				312A6924284A4234000A2CD9 /* LoadingIndicator.swift in Sources */,
 				312A6933284F589E000A2CD9 /* DashboardView.swift in Sources */,
-				312A6923284A4234000A2CD9 /* LabelledDivider.swift in Sources */,
 				312A692F284F0424000A2CD9 /* WorkspaceView.swift in Sources */,
 				313DE4AC28531234004CC0B0 /* TimeEntryView.swift in Sources */,
 				312A693C284F6476000A2CD9 /* AccountView.swift in Sources */,
