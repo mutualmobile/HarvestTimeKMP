@@ -23,6 +23,10 @@ class ViewModel : ObservableObject{
     @Published  var workspaceFindError: AppError?
     var anyCancellable:AnyCancellable?
     
+    init() {
+        dataModel.activate()
+    }
+    
     func call(orgIdentifier : String,callback:@escaping  (Bool) -> (Void))  {
         anyCancellable?.cancel()
         anyCancellable = createPublisher(for: dataModel.dataFlowNative).receive(on: DispatchQueue.main).sink(receiveCompletion: { completion in

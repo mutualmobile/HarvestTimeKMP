@@ -16,12 +16,19 @@ class AuthStore: ObservableObject {
     @Published var hasFocus: Bool = true
     @Published var showLoading = false
     @Published var loginError: AppError?
+    
+    @Published var email = "anmol.verma4@gmail.com"
+    @Published var password = "password"
+    
     var anyCancellable: AnyCancellable? = nil
 
     let loginDataModel = LoginDataModel()
     
     init() {
         loginDataModel.activate()
+    }
+    
+    func login(callback:@escaping  () -> (Void))  {
         anyCancellable =  createPublisher(for: loginDataModel.dataFlowNative).sink { completion in
             debugPrint(completion)
         } receiveValue: { [self] state in
@@ -35,10 +42,11 @@ class AuthStore: ObservableObject {
                        loginError = AppError(title: "Error",
                                                    message: error.throwable.message ?? "Login failure")
                    } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
-                       rootStore.isAuthenticateUser = true
+                      callback()
                    }
                }
         }
+        loginDataModel.login(email: email, password: password)
     }
 
 }
@@ -51,8 +59,7 @@ struct LoginView: View {
     @Environment(\.dismiss) var dismiss
     
     @State private var signupPresented = false
-    @State private var email = "anmol.verma4@gmail.com"
-    @State private var password = "password"
+  
     
     @FocusState private var focusedField: Bool
     
@@ -97,11 +104,11 @@ struct LoginView: View {
     private var credentialView: some View {
         VStack {
             VStack {
-                TextField("Work Email", text: $email)
+                TextField("Work Email", text: $store.email)
                     .padding(.bottom)
                     .focused($focusedField)
                 
-                SecureField("Password", text: $password)
+                SecureField("Password", text: $store.password)
             }
             .padding(.horizontal)
             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -160,8 +167,9 @@ struct LoginView: View {
     
     private func performLogin() {
         
-
-        store.loginDataModel.login(email: email, password: password)
+        store.login() {
+            rootStore.isAuthenticateUser = true
+        }
         
 //        loginDataModel.praxisCommand = { command in
 //            print("command \(command)  \(type(of: command)) ")
