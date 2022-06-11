@@ -12,14 +12,14 @@ import org.koin.core.component.KoinComponent
 
 class AssignProjectsToUsersDataModel :
     PraxisDataModel(), KoinComponent {
-  private val _dataFlow = MutableSharedFlow<DataState>()
+    private val _dataFlow = MutableSharedFlow<DataState>()
     val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val userProjectUseCaseComponent = UserProjectUseCaseComponent()
     private val assignProjectsToUsersUseCase =
         userProjectUseCaseComponent.provideAssignProjectsToUsersUseCase()
-    
+
     override fun activate() {
     }
 
@@ -42,7 +42,7 @@ class AssignProjectsToUsersDataModel :
                 )) {
                 is NetworkResponse.Success -> {
                     _dataFlow.emit(SuccessState(response.data))
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             "Message",
                             response.data.message ?: "Success!"
@@ -51,7 +51,7 @@ class AssignProjectsToUsersDataModel :
                 }
                 is NetworkResponse.Failure -> {
                     _dataFlow.emit(ErrorState(response.throwable))
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             "Message",
                             response.throwable.message ?: "Failed!"
@@ -60,8 +60,8 @@ class AssignProjectsToUsersDataModel :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }

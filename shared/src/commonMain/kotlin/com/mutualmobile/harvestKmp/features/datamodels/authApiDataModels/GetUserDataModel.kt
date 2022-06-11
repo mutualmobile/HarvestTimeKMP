@@ -56,7 +56,7 @@ class GetUserDataModel() :
                     print("GetUser Successful, ${getUserResponse.data}")
                     harvestLocal.saveUser(getUserResponse.data)
                     _dataFlow.emit(SuccessState(getUserResponse.data))
-                    praxisCommand(NavigationPraxisCommand(HarvestRoutes.Screen.ORG_USER_DASHBOARD))
+                    intPraxisCommand.emit(NavigationPraxisCommand(HarvestRoutes.Screen.ORG_USER_DASHBOARD))
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
@@ -64,8 +64,8 @@ class GetUserDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                     _dataFlow.emit(ErrorState(getUserResponse.throwable))
                 }
             }

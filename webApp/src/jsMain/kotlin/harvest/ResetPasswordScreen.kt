@@ -47,7 +47,7 @@ val ResetPasswordScreen = FC<Props> {
             } }.launchIn(this.dataModelScope)
     }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -56,7 +56,8 @@ val ResetPasswordScreen = FC<Props> {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
+
 
     TopAppBar {
         title = "Reset Password Form"

@@ -52,7 +52,7 @@ val JSUserProjectList = VFC {
             } }.launchIn(dataModelScope)
     }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -61,7 +61,7 @@ val JSUserProjectList = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffectOnce {
         dataModel.activate()

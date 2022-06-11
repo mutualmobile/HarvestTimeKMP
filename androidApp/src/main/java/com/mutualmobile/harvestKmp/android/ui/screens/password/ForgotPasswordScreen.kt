@@ -56,7 +56,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                 this.dataFlow.onEach { passwordState ->
                     forgotPasswordState = passwordState
                 }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach {  newCommand ->
                     forgotPasswordNavigationCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
@@ -64,8 +64,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                                 navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
                             }
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }
         )
     }

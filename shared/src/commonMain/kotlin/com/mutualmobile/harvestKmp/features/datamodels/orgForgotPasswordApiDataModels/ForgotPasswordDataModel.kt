@@ -28,7 +28,7 @@ class ForgotPasswordDataModel() :
                     email = email
                 )) {
                     is NetworkResponse.Success -> {
-                        praxisCommand(
+                        intPraxisCommand.emit(
                             ModalPraxisCommand(
                                 "Response",
                                 response.data.message ?: "Woah!"
@@ -43,8 +43,8 @@ class ForgotPasswordDataModel() :
                     }
                     is NetworkResponse.Unauthorized -> {
                         settings.clear()
-                        praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                        praxisCommand(NavigationPraxisCommand(""))
+                        intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                        intPraxisCommand.emit(NavigationPraxisCommand(""))
                     }
                 }
             }

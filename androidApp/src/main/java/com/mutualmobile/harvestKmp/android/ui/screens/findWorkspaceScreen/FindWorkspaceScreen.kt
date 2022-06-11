@@ -70,14 +70,14 @@ fun FindWorkspaceScreen(
                 this.dataFlow.onEach { updatedState ->
                     findOrgState = updatedState
                 }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach { newCommand ->
                     currentFindOrgNavigationCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
                             navController.navigate(newCommand.screen)
                         }
                     }
-                }
+                }.launchIn(dataModelScope)
             }
         )
     }

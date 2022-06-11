@@ -44,7 +44,7 @@ class FindOrgByIdentifierDataModel() :
             )) {
                 is NetworkResponse.Success -> {
                     _dataFlow.emit(SuccessState(response.data)) // TODO redundant
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.LOGIN.withOrgId(
                                 response.data.data?.identifier,
@@ -55,7 +55,7 @@ class FindOrgByIdentifierDataModel() :
                 }
                 is NetworkResponse.Failure -> {
                     _dataFlow.emit(ErrorState(response.throwable))
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             "Failed",
                             response.throwable.message ?: "Failed to find workspace"
@@ -64,8 +64,8 @@ class FindOrgByIdentifierDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -73,11 +73,13 @@ class FindOrgByIdentifierDataModel() :
 
     override fun activate() {
         if (isUserTokenAvailable()) {
-            praxisCommand(
-                NavigationPraxisCommand(
-                    screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD
+            dataModelScope.launch {
+                intPraxisCommand.emit(
+                    NavigationPraxisCommand(
+                        screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD
+                    )
                 )
-            )
+            }
         }
     }
 

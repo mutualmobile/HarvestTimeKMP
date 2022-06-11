@@ -121,9 +121,9 @@ fun NewEntryScreen(
     val logWorkTimeDataModel by remember {
         mutableStateOf(
             TimeLogginDataModel().apply {
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach { newCommand ->
                     logWorkTimeNavigationCommands = newCommand
-                }
+                }.launchIn(dataModelScope)
             }
         )
     }

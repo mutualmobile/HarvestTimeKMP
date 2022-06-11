@@ -70,8 +70,8 @@ class OrgProjectsDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -106,8 +106,8 @@ class OrgProjectsDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -130,8 +130,8 @@ class OrgProjectsDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -152,15 +152,15 @@ class OrgProjectsDataModel() :
             }
             is NetworkResponse.Unauthorized -> {
                 settings.clear()
-                praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                praxisCommand(NavigationPraxisCommand(""))
+                intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                intPraxisCommand.emit(NavigationPraxisCommand(""))
             }
         }
     }.catch {
         emit(ErrorState(it))
         println(it)
         it.printStackTrace()
-        praxisCommand(
+        intPraxisCommand.emit(
             ModalPraxisCommand(
                 title = "Error",
                 it.message ?: "An Unknown error has happened"

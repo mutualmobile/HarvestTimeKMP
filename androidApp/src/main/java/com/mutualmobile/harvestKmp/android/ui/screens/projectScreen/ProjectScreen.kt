@@ -80,7 +80,7 @@ fun ProjectScreen(
                         }
                         else -> Unit
                     } }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach {  newCommand ->
                     projectScreenNavigationCommands = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
@@ -88,8 +88,7 @@ fun ProjectScreen(
                                 navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
                             }
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }
         )
     }
@@ -107,7 +106,7 @@ fun ProjectScreen(
                         else -> Unit
                     }
                 }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach {  newCommand ->
                     projectScreenNavigationCommands = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
@@ -115,8 +114,7 @@ fun ProjectScreen(
                                 navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
                             }
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }.activate()
         )
     }

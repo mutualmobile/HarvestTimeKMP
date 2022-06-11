@@ -54,8 +54,8 @@ class GetListOfUsersForAProjectDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }

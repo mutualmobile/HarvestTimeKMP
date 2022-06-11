@@ -46,7 +46,7 @@ val ForgotPasswordUI = VFC {
         }.launchIn(this.dataModelScope)
     }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -55,7 +55,8 @@ val ForgotPasswordUI = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
+
 
     useEffectOnce {
         dataModel.activate()

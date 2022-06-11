@@ -9,6 +9,7 @@ import harvest.material.TopAppBar
 import kotlinx.browser.window
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import mainScope
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
@@ -30,7 +31,7 @@ val JsWorkspaceFindScreen = VFC {
                     status = "Loading..."
                 }
                 is PraxisDataModel.SuccessState<*> -> {
-                    val organization = (dataState.data as ApiResponse<HarvestOrganization>).data
+                    val organization = (dataState.data.unsafeCast<ApiResponse<HarvestOrganization>>()).data
                     status = "Found organization! ${organization?.name}"
                 }
                 is PraxisDataModel.ErrorState -> {
@@ -38,19 +39,21 @@ val JsWorkspaceFindScreen = VFC {
                 }else -> {}
             }
         }.launchIn(dataModelScope)
+
+        praxisCommand.onEach { newCommand ->
+            when (newCommand) {
+                is NavigationPraxisCommand -> {
+                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+                }
+                is ModalPraxisCommand -> {
+                    window.alert(newCommand.title + "\n" + newCommand.message)
+                }
+            }
+        }.launchIn(mainScope)
     }
 
 
-    dataModel.praxisCommand = { newCommand ->
-        when (newCommand) {
-            is NavigationPraxisCommand -> {
-                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
-            }
-            is ModalPraxisCommand -> {
-                window.alert(newCommand.title + "\n" + newCommand.message)
-            }
-        }
-    }
+
 
 
     useEffectOnce {

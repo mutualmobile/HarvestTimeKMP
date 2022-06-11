@@ -95,7 +95,7 @@ class SignUpDataModel() :
 
     private suspend fun handleFailure(signUpResponse: NetworkResponse.Failure) {
         _dataFlow.emit(ErrorState(signUpResponse.throwable))
-        praxisCommand(
+        intPraxisCommand.emit(
             ModalPraxisCommand(
                 "Error",
                 signUpResponse.throwable.message ?: "Error"
@@ -107,7 +107,7 @@ class SignUpDataModel() :
     private suspend fun handleSuccessSignup(signUpResponse: NetworkResponse.Success<ApiResponse<HarvestOrganization>>) {
         _dataFlow.emit(SuccessState(signUpResponse.data))
         signUpResponse.data.data?.let {
-            this.praxisCommand(
+            this.intPraxisCommand.emit(
                 NavigationPraxisCommand(
                     HarvestRoutes.Screen.LOGIN.withOrgId(
                         signUpResponse.data.data.identifier,

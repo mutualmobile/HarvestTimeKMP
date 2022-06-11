@@ -49,7 +49,7 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
             this.dataFlow.onEach { newState ->
                 signUpState = newState
             }.launchIn(this.dataModelScope)
-            praxisCommand = { newCommand ->
+            praxisCommand.onEach { newCommand ->
                 println("Command is: $newCommand")
                 currentPraxisCommand = newCommand
                 when (newCommand) {
@@ -57,7 +57,7 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                         navController.navigate(newCommand.screen)
                     }
                 }
-            }
+            }.launchIn(dataModelScope)
         })
     }
     var currentWorkEmail by remember { mutableStateOf("") }
