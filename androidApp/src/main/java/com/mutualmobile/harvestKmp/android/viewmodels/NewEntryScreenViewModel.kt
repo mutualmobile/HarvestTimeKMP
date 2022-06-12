@@ -16,6 +16,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.OrgProjectsDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import java.util.Date
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 enum class WorkRequestType {
@@ -49,9 +51,9 @@ class NewEntryScreenViewModel : ViewModel() {
     var logWorkTimeNavigationCommands: PraxisCommand? by mutableStateOf(null)
 
     val logWorkTimeDataModel = TimeLogginDataModel().apply {
-        praxisCommand = { newCommand ->
+        praxisCommand.onEach { newCommand ->
             logWorkTimeNavigationCommands = newCommand
-        }
+        }.launchIn(dataModelScope)
     }
 
     fun updateCurrentWorkRequest(
