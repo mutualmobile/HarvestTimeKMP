@@ -61,14 +61,13 @@ fun LoginScreen(
                 this.dataFlow.onEach { loginState ->
                     currentLoginState = loginState
                 }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach {  newCommand ->
                     currentNavigationCommand = newCommand
                     when (currentNavigationCommand) {
                         is NavigationPraxisCommand -> {
                             onLoginSuccess()
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }
         )
     }

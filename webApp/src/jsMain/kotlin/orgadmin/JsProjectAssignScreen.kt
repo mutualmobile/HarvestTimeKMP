@@ -57,7 +57,7 @@ val JsProjectAssignScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }
@@ -74,7 +74,7 @@ val JsProjectAssignScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }
@@ -90,12 +90,13 @@ val JsProjectAssignScreen = VFC {
                     } catch (ex: Exception) {
                         ex.printStackTrace()
                     }
-                }
+                }else -> {}
             }
         }.launchIn(dataModelScope)
     }
 
-    findProjectsInOrgDataModel.praxisCommand = { newCommand: PraxisCommand ->
+
+    findProjectsInOrgDataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -104,8 +105,9 @@ val JsProjectAssignScreen = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
-    usersInOrgDataModel.praxisCommand = { newCommand: PraxisCommand ->
+    }.launchIn(findProjectsInOrgDataModel.dataModelScope)
+
+    usersInOrgDataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -114,8 +116,9 @@ val JsProjectAssignScreen = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
-    assignDataModel.praxisCommand = { newCommand: PraxisCommand ->
+    }.launchIn(usersInOrgDataModel.dataModelScope)
+
+    assignDataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -124,7 +127,7 @@ val JsProjectAssignScreen = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(assignDataModel.dataModelScope)
 
 
 

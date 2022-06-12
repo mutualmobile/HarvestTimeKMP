@@ -52,7 +52,7 @@ class ResetPasswordDataModel() :
                 )) {
                 is NetworkResponse.Success<*> -> {
                     if (changePasswordResponse.data is ApiResponse<*>) {
-                        praxisCommand(
+                        intPraxisCommand.emit(
                             ModalPraxisCommand(
                                 "Response",
                                 changePasswordResponse.data.message ?: "Woah!"
@@ -60,7 +60,7 @@ class ResetPasswordDataModel() :
                         )
                     }
                     _dataFlow.emit(SuccessState(changePasswordResponse.data))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
                 is NetworkResponse.Failure -> {
                     _dataFlow.emit(ErrorState(changePasswordResponse.throwable))

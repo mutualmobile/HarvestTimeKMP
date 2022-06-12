@@ -45,14 +45,13 @@ fun SignUpScreen(navController: NavHostController) {
             SignUpDataModel().apply {
                 this.dataFlow.onEach {  signUpState ->
                     currentSignUpState = signUpState }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach { newCommand ->
                     signUpPraxisCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
                             navController clearBackStackAndNavigateTo newCommand.screen
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }
         )
     }

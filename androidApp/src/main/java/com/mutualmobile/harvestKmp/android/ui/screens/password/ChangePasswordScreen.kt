@@ -45,6 +45,8 @@ import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.ChangePasswordDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 @Composable
@@ -57,7 +59,7 @@ fun ChangePasswordScreen(navController: NavHostController) {
     val changePasswordDataModel by remember {
         mutableStateOf(
             ChangePasswordDataModel().apply {
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach { newCommand ->
                     changePasswordPraxisCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
@@ -66,7 +68,7 @@ fun ChangePasswordScreen(navController: NavHostController) {
                             }
                         }
                     }
-                }
+                }.launchIn(dataModelScope)
             }
         )
     }

@@ -34,7 +34,7 @@ fun AccountSection(navController: NavHostController) {
                 this.dataFlow.onEach { newState ->
                     userLogoutState = newState
                 }.launchIn(this.dataModelScope)
-                praxisCommand = { newCommand ->
+                praxisCommand.onEach { newCommand ->
                     currentPraxisCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
@@ -43,7 +43,7 @@ fun AccountSection(navController: NavHostController) {
                             }
                         }
                     }
-                }
+                }.launchIn(dataModelScope)
             }
         )
     }

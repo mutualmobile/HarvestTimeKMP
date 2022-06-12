@@ -51,7 +51,7 @@ val JsTimeLoggingScreen = FC<Props> {
 
     val userId = dataModel.userId
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -60,7 +60,7 @@ val JsTimeLoggingScreen = FC<Props> {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffect(dependencies = arrayOf(week, showTimeLogDialog), effect = {
         if (showTimeLogDialog) {

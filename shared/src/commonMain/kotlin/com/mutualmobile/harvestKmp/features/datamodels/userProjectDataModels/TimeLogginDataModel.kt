@@ -67,15 +67,15 @@ class TimeLogginDataModel() :
                 )) {
                 is NetworkResponse.Success -> {
                     this.emit(SuccessState(response.data))
-                    praxisCommand(ModalPraxisCommand("Success", response.data.message ?: ""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Success", response.data.message ?: ""))
                 }
                 is NetworkResponse.Failure -> {
                     this.emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -98,8 +98,8 @@ class TimeLogginDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -126,8 +126,8 @@ class TimeLogginDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -142,15 +142,15 @@ class TimeLogginDataModel() :
                 )) {
                 is NetworkResponse.Success -> {
                     this.emit(SuccessState(response.data))
-                    praxisCommand(ModalPraxisCommand("Success", response.data.message ?: ""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Success", response.data.message ?: ""))
                 }
                 is NetworkResponse.Failure -> {
                     this.emit(ErrorState(response.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }

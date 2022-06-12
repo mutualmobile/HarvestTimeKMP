@@ -15,7 +15,7 @@ import org.koin.core.component.KoinComponent
 
 class UserDashboardDataModel() :
     PraxisDataModel(), KoinComponent {
-  private val _dataFlow = MutableSharedFlow<DataState>()
+    private val _dataFlow = MutableSharedFlow<DataState>()
     val dataFlow = _dataFlow.asSharedFlow()
 
     private val useCasesComponent = UseCasesComponent()
@@ -27,7 +27,7 @@ class UserDashboardDataModel() :
 
     override fun activate() {
         if (!userLoggedInUseCase.invoke()) {
-            praxisCommand(NavigationPraxisCommand(""))//take to root
+            dataModelScope.launch { intPraxisCommand.emit(NavigationPraxisCommand("")) }//take to root
         } else {
             fetchUserInternal()
         }
@@ -47,8 +47,8 @@ class UserDashboardDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -69,12 +69,12 @@ class UserDashboardDataModel() :
                 is Success<*> -> {
                     println("logged out!")
                     _dataFlow.emit(SuccessState(result.data))
-                    praxisCommand(NavigationPraxisCommand(screen = ""))
+                    intPraxisCommand.emit(NavigationPraxisCommand(screen = ""))
                 }
                 is Failure -> {
                     println("logg out failed!")
                     _dataFlow.emit(ErrorState(result.throwable))
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             title = "Error",
                             result.throwable.message ?: "An Unknown error has happened"
@@ -82,7 +82,7 @@ class UserDashboardDataModel() :
                     )
                 }
                 is NetworkResponse.Unauthorized -> {
-                    praxisCommand(NavigationPraxisCommand(screen = ""))
+                    intPraxisCommand.emit(NavigationPraxisCommand(screen = ""))
                 }
             }
         }

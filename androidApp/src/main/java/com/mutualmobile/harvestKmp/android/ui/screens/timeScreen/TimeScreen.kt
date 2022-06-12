@@ -117,7 +117,7 @@ fun TimeScreen(
     }
     var timeLoggingPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val timeLoggingDataModel by remember { mutableStateOf(TimeLogginDataModel().apply {
-        praxisCommand = { newCommand ->
+        praxisCommand.onEach { newCommand ->
             timeLoggingPraxisCommand = newCommand
             when (newCommand) {
                 is NavigationPraxisCommand -> {
@@ -125,8 +125,7 @@ fun TimeScreen(
                         navigateToFindWorkspaceScreen()
                     }
                 }
-            }
-        }
+            } }.launchIn(dataModelScope)
     }) }
 
     val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)

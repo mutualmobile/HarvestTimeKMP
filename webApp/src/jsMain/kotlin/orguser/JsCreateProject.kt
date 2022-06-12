@@ -61,11 +61,11 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                     message = "${response.message}"
                     window.alert(message)
                     props.onClose()
-                }
+                }else -> {}
             } }.launchIn(dataModelScope)
     }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -74,7 +74,7 @@ val JsCreateProject = FC<CreateProjectProps> { props ->
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffectOnce {
         message = ""

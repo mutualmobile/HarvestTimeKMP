@@ -49,7 +49,7 @@ class LoginDataModel() :
                 is NetworkResponse.Success -> {
                     _dataFlow.emit(SuccessState(loginResponse.data))
                     saveToken(loginResponse)
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD,
                             ""
@@ -58,7 +58,7 @@ class LoginDataModel() :
                 }
                 is NetworkResponse.Failure -> {
                     _dataFlow.emit(ErrorState(loginResponse.throwable))
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             title = "Error",
                             loginResponse.throwable.message ?: "An Unknown error has happened"
@@ -67,7 +67,7 @@ class LoginDataModel() :
                 }
                 is NetworkResponse.Unauthorized -> {
                     _dataFlow.emit(ErrorState(loginResponse.throwable))
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             title = "Error",
                             loginResponse.throwable.message ?: "An Unknown error has happened"
