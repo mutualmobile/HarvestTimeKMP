@@ -7,73 +7,27 @@ import androidx.compose.material.Divider
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.navigation.NavController
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
-import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
-import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
-import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun LandingScreenDrawer(
-    navController: NavController,
     currentDrawerScreen: LandingScreenDrawerItemType,
     closeDrawer: () -> Unit,
     onScreenChanged: (LandingScreenDrawerItemType) -> Unit,
     goToSettingsScreen: () -> Unit,
-    orgIdentifier: String?,
+    orgName: String?,
+    userState: DataState
 ) {
-    var userState: DataState by remember { mutableStateOf(EmptyState) }
-    remember {
-        mutableStateOf(
-            GetUserDataModel().apply {
-                this.dataFlow.onEach { newState ->
-                    userState = newState
-                }.launchIn(this.dataModelScope)
-            }.activate()
-        )
-    }
-
-    var organizationState: DataState by remember { mutableStateOf(EmptyState) }
-    val findOrgByIdentifierDataModel by remember {
-        mutableStateOf(
-            FindOrgByIdentifierDataModel().apply {
-                this.dataFlow.onEach { newState ->
-                    organizationState = newState
-                }.launchIn(this.dataModelScope)
-            }.apply {
-                activate()
-            }
-        )
-    }
-
-    LaunchedEffect(userState) {
-        if (userState is SuccessState<*>) {
-            orgIdentifier?.let { nnOrganizationName ->
-                println("Org is: $nnOrganizationName")
-                findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = nnOrganizationName)
-            }
-        }
-    }
-
     UserInfoSection(
         userName = (userState as? SuccessState<GetUserResponse>)?.data?.firstName,
-        organisationName = (organizationState as? SuccessState<ApiResponse<HarvestOrganization>>)?.data?.data?.name
+        organisationName = orgName
     )
 
     LandingScreenDrawerItemType.values().forEach { drawerItem ->

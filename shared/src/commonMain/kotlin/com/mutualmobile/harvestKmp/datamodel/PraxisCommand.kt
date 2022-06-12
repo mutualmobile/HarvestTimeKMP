@@ -35,11 +35,6 @@ object HarvestRoutes {
         const val SETTINGS = "settings"
         const val USER_REPORT = "user-reports"
         const val ORG_USER_DASHBOARD = "user-dashboard"
-        const val DASHBOARD_WITH_ORG_ID_IDENTIFIER = ORG_USER_DASHBOARD
-            .plus(BROWSER_QUERY)
-            .plus("${Keys.orgId}={${Keys.orgId}}")
-            .plus(BROWSER_AND)
-            .plus("${Keys.orgIdentifier}={${Keys.orgIdentifier}}")
         const val LIST_USERS_PROJECT = "list-user-project"
         const val LIST_PROJECTS_USER = "list-projects-user"
         const val ON_BOARDING = "on_boarding"

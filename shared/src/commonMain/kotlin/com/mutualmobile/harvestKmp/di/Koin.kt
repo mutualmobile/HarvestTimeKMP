@@ -29,6 +29,7 @@ import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.GetUserUseCas
 import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.LoginUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.LogoutUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.authApiUseCases.NewOrgSignUpUseCase
+import com.mutualmobile.harvestKmp.domain.usecases.orgApiUseCases.FindOrgByIdUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgApiUseCases.FindOrgByIdentifierUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.CreateProjectUseCase
 import com.mutualmobile.harvestKmp.domain.usecases.orgProjectsUseCases.DeleteProjectUseCase
@@ -64,8 +65,6 @@ import io.ktor.http.contentType
 import io.ktor.http.encodedPath
 import io.ktor.serialization.kotlinx.json.json
 import kotlinx.serialization.json.Json
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.get
 import org.koin.core.context.startKoin
@@ -147,6 +146,7 @@ val authApiUseCaseModule = module {
 
 val orgApiUseCaseModule = module {
     single { FindOrgByIdentifierUseCase(get()) }
+    single { FindOrgByIdUseCase(get()) }
 }
 
 val orgProjectsUseCaseModule = module {
@@ -201,6 +201,7 @@ class AuthApiUseCaseComponent : KoinComponent {
 
 class OrgApiUseCaseComponent : KoinComponent {
     fun provideFindOrgByIdentifier(): FindOrgByIdentifierUseCase = get()
+    fun provideFindOrgById(): FindOrgByIdUseCase = get()
 }
 
 class OrgProjectsUseCaseComponent : KoinComponent {

@@ -12,10 +12,6 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -37,17 +33,15 @@ import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpS
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.android.viewmodels.MainActivityViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
-    var getUserState: DataState by mutableStateOf(EmptyState)
+    val mainActivityViewModel: MainActivityViewModel = get()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setupSplashScreen()
@@ -60,22 +54,12 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    remember {
-                        mutableStateOf(
-                            GetUserDataModel().apply {
-                                this.dataFlow.onEach { newState ->
-                                    getUserState = newState
-                                }.launchIn(this.dataModelScope)
-                            }.activate()
-                        )
-                    }
-
                     val navController = rememberNavController()
                     NavHost(
                         navController = navController,
                         startDestination =
-                        if (getUserState is SuccessState<*>) {
-                            HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER
+                        if (mainActivityViewModel.getUserState is SuccessState<*>) {
+                            HarvestRoutes.Screen.ORG_USER_DASHBOARD
                         } else {
                             HarvestRoutes.Screen.ON_BOARDING
                         },
@@ -95,24 +79,20 @@ class MainActivity : ComponentActivity() {
                                 navArgument(HarvestRoutes.Keys.orgId) { nullable = true },
                                 navArgument(HarvestRoutes.Keys.orgIdentifier) { nullable = true },
                             ),
-                        ) { backStackEntry ->
+                        ) {
                             LoginScreen(
                                 navController = navController,
-                                orgIdentifier = backStackEntry
-                                    .arguments?.getString(HarvestRoutes.Keys.orgIdentifier)
+                                userState = mainActivityViewModel.getUserState,
+                                onLoginSuccess = {
+                                    mainActivityViewModel.fetchUser()
+                                }
                             )
                         }
-                        composable(
-                            HarvestRoutes.Screen.DASHBOARD_WITH_ORG_ID_IDENTIFIER,
-                            arguments = listOf(
-                                navArgument(HarvestRoutes.Keys.orgId) { nullable = true },
-                                navArgument(HarvestRoutes.Keys.orgIdentifier) { nullable = true },
-                            ),
-                        ) { backStackEntry ->
+                        composable(HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
                             LandingScreen(
                                 navController = navController,
-                                orgIdentifier = backStackEntry
-                                    .arguments?.getString(HarvestRoutes.Keys.orgIdentifier)
+                                userOrganization = mainActivityViewModel.userOrganization,
+                                userState = mainActivityViewModel.getUserState
                             )
                         }
                         composable(HarvestRoutes.Screen.FIND_WORKSPACE) {
@@ -122,7 +102,7 @@ class MainActivity : ComponentActivity() {
                             ProjectScreen(navController = navController)
                         }
                         composable(HarvestRoutes.Screen.WORK_ENTRY) {
-                            NewEntryScreen(navController = navController)
+                            NewEntryScreen(navController = navController, user = mainActivityViewModel.user)
                         }
                         composable(HarvestRoutes.Screen.SETTINGS) {
                             SettingsScreen(navController = navController)
@@ -150,7 +130,7 @@ class MainActivity : ComponentActivity() {
             object : ViewTreeObserver.OnPreDrawListener {
                 override fun onPreDraw(): Boolean {
                     // Check if the initial data is ready.
-                    return if (getUserState !is EmptyState && getUserState !is LoadingState) {
+                    return if (mainActivityViewModel.getUserState !is EmptyState && mainActivityViewModel.getUserState !is LoadingState) {
                         // The content is ready; start drawing.
                         content.viewTreeObserver.removeOnPreDrawListener(this)
                         true

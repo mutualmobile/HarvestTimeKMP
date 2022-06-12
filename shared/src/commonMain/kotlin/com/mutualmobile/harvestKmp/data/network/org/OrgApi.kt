@@ -7,5 +7,6 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 interface OrgApi {
 
     suspend fun findOrgByIdentifier(identifier: String): NetworkResponse<ApiResponse<HarvestOrganization>>
+    suspend fun findOrgById(orgId: String): NetworkResponse<ApiResponse<HarvestOrganization>>
 
 }
