@@ -80,8 +80,8 @@ class NewEntryScreenViewModel : ViewModel() {
                     when (newState) {
                         is SuccessState<*> -> {
                             (newState as SuccessState<ApiResponse<List<OrgProjectResponse>>>)
-                                .data.data?.let { nnOrgList ->
-                                    nnOrgList.find { org -> org.id == projectId }?.let { nnOrg ->
+                                .data.data?.let { nnProjList ->
+                                    nnProjList.find { proj -> proj.id == projectId }?.let { nnOrg ->
                                         currentProjectName = nnOrg.name.orEmpty()
                                     }
                                 }
