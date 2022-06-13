@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun NewOrgSignUpScreen(navController: NavHostController) {
+    val coroutineScope = rememberCoroutineScope()
     var currentPraxisCommand: PraxisCommand? by remember {
         mutableStateOf(null)
     }
@@ -55,7 +57,7 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
         mutableStateOf(SignUpDataModel().apply {
             this.dataFlow.onEach { newState ->
                 signUpState = newState
-            }.launchIn(this.dataModelScope)
+            }.launchIn(coroutineScope)
             praxisCommand.onEach { newCommand ->
                 println("Command is: $newCommand")
                 currentPraxisCommand = newCommand
@@ -64,7 +66,7 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                         navController.navigate(newCommand.screen)
                     }
                 }
-            }.launchIn(dataModelScope)
+            }.launchIn(coroutineScope)
         })
     }
     var currentWorkEmail by remember { mutableStateOf("") }

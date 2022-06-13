@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -34,12 +35,12 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataModels.ForgotPasswordDataModel
 import kotlinx.coroutines.flow.launchIn
@@ -47,6 +48,7 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun ForgotPasswordScreen(navController: NavHostController) {
+    val coroutineScope = rememberCoroutineScope()
     var forgotPasswordState: DataState by remember { mutableStateOf(EmptyState) }
 
     var forgotPasswordNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
@@ -55,7 +57,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             ForgotPasswordDataModel().apply {
                 this.dataFlow.onEach { passwordState ->
                     forgotPasswordState = passwordState
-                }.launchIn(this.dataModelScope)
+                }.launchIn(coroutineScope)
                 praxisCommand.onEach {  newCommand ->
                     forgotPasswordNavigationCommand = newCommand
                     when (newCommand) {
@@ -64,7 +66,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                                 navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
                             }
                         }
-                    } }.launchIn(dataModelScope)
+                    } }.launchIn(coroutineScope)
             }
         )
     }

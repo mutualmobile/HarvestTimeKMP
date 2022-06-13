@@ -29,6 +29,7 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,13 +46,13 @@ import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.FindWorkspaceScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.get
+import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -61,6 +62,7 @@ fun FindWorkspaceScreen(
     navController: NavHostController
 ) {
     var tfValue by remember { mutableStateOf("") }
+    val coroutineScope = rememberCoroutineScope()
 
     var currentFindOrgNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
     var findOrgState: DataState by remember { mutableStateOf(EmptyState) }
@@ -69,7 +71,7 @@ fun FindWorkspaceScreen(
             FindOrgByIdentifierDataModel().apply {
                 this.dataFlow.onEach { updatedState ->
                     findOrgState = updatedState
-                }.launchIn(this.dataModelScope)
+                }.launchIn(coroutineScope)
                 praxisCommand.onEach { newCommand ->
                     currentFindOrgNavigationCommand = newCommand
                     when (newCommand) {
@@ -77,7 +79,7 @@ fun FindWorkspaceScreen(
                             navController.navigate(newCommand.screen)
                         }
                     }
-                }.launchIn(dataModelScope)
+                }.launchIn(coroutineScope)
             }
         )
     }

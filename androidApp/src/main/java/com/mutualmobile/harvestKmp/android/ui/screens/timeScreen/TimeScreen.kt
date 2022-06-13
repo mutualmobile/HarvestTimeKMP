@@ -21,6 +21,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -89,13 +90,14 @@ fun TimeScreen(
     tsVm: TimeScreenViewModel = get(),
     userOrgName: String?,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     var getUserState: DataState by remember { mutableStateOf(EmptyState) }
     val getUserDataModel by remember { mutableStateOf(
         GetUserDataModel ().apply {
             this.dataFlow.onEach {
                     newState ->
                 getUserState = newState
-            }.launchIn(this.dataModelScope)
+            }.launchIn(coroutineScope)
             this.activate()
         }
     ) }
@@ -129,7 +131,7 @@ fun TimeScreen(
                         navigateToFindWorkspaceScreen()
                     }
                 }
-            } }.launchIn(dataModelScope)
+            } }.launchIn(coroutineScope)
     }) }
 
     val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)

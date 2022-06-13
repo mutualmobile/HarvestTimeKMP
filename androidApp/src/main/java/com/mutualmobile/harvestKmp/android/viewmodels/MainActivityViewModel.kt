@@ -4,6 +4,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
@@ -34,7 +35,7 @@ class MainActivityViewModel : ViewModel() {
                     user = newUserState.data as? GetUserResponse
                     fetchUserOrganization()
                 }
-            }.launchIn(dataModelScope)
+            }.launchIn(viewModelScope)
             activate()
         }
     }
@@ -45,7 +46,7 @@ class MainActivityViewModel : ViewModel() {
                 if (newOrgState is PraxisDataModel.SuccessState<*>) {
                     userOrganization = (newOrgState.data as? ApiResponse<HarvestOrganization>)?.data
                 }
-            }.launchIn(dataModelScope)
+            }.launchIn(viewModelScope)
             user?.orgId?.let { nnOrgId ->
                 findOrgById(orgId = nnOrgId)
             }

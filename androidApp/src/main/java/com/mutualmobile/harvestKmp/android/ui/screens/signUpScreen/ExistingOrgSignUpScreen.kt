@@ -21,6 +21,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -45,6 +46,7 @@ import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
+    val coroutineScope = rememberCoroutineScope()
     var currentWorkEmail by remember { mutableStateOf("test@gmail.com") }
     var currentPassword by remember { mutableStateOf("testpassword") }
     var currentConfirmPassword by remember { mutableStateOf("testpassword") }
@@ -60,14 +62,14 @@ fun SignUpScreen(navController: NavHostController) {
         mutableStateOf(
             SignUpDataModel().apply {
                 this.dataFlow.onEach {  signUpState ->
-                    currentSignUpState = signUpState }.launchIn(this.dataModelScope)
+                    currentSignUpState = signUpState }.launchIn(coroutineScope)
                 praxisCommand.onEach { newCommand ->
                     signUpPraxisCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
                             navController clearBackStackAndNavigateTo newCommand.screen
                         }
-                    } }.launchIn(dataModelScope)
+                    } }.launchIn(coroutineScope)
             }
         )
     }

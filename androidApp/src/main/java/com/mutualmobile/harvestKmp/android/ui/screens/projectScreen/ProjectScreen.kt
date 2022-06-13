@@ -19,6 +19,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -58,6 +59,7 @@ fun ProjectScreen(
     navController: NavHostController,
     newEntryScreenViewModel: NewEntryScreenViewModel = get()
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val projectListMap = remember { mutableStateOf(emptyList<OrgProjectResponse>()) }
     var filteredProjectListMap: List<OrgProjectResponse>
     val textState = remember { mutableStateOf(TextFieldValue("")) }
@@ -79,7 +81,7 @@ fun ProjectScreen(
                                 (projectState.data as ApiResponse<*>).data as List<OrgProjectResponse>
                         }
                         else -> Unit
-                    } }.launchIn(this.dataModelScope)
+                    } }.launchIn(coroutineScope)
                 praxisCommand.onEach {  newCommand ->
                     projectScreenNavigationCommands = newCommand
                     when (newCommand) {
@@ -88,7 +90,7 @@ fun ProjectScreen(
                                 navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
                             }
                         }
-                    } }.launchIn(dataModelScope)
+                    } }.launchIn(coroutineScope)
             }
         )
     }
@@ -105,7 +107,7 @@ fun ProjectScreen(
                         }
                         else -> Unit
                     }
-                }.launchIn(this.dataModelScope)
+                }.launchIn(coroutineScope)
                 praxisCommand.onEach {  newCommand ->
                     projectScreenNavigationCommands = newCommand
                     when (newCommand) {
@@ -114,7 +116,7 @@ fun ProjectScreen(
                                 navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
                             }
                         }
-                    } }.launchIn(dataModelScope)
+                    } }.launchIn(coroutineScope)
             }.activate()
         )
     }

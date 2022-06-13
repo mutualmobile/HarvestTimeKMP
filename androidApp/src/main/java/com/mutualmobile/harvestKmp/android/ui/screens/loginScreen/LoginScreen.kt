@@ -16,6 +16,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,6 +54,7 @@ fun LoginScreen(
     userState: DataState,
     onLoginSuccess: () -> Unit
 ) {
+    val coroutineScope = rememberCoroutineScope()
     val ctx = LocalContext.current
     var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
@@ -67,7 +69,7 @@ fun LoginScreen(
             LoginDataModel().apply {
                 this.dataFlow.onEach { loginState ->
                     currentLoginState = loginState
-                }.launchIn(this.dataModelScope)
+                }.launchIn(coroutineScope)
                 praxisCommand.onEach {  newCommand ->
                     currentNavigationCommand = newCommand
                     println("newCommand is: $newCommand")
@@ -75,7 +77,7 @@ fun LoginScreen(
                         is NavigationPraxisCommand -> {
                             onLoginSuccess()
                         }
-                    } }.launchIn(dataModelScope)
+                    } }.launchIn(coroutineScope)
             }
         )
     }

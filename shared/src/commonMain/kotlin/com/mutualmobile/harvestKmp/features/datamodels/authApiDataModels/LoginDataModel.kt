@@ -89,13 +89,13 @@ class LoginDataModel :
     }
 
     fun logoutUser() {
-        praxisCommand(
-            ModalPraxisCommand(
-                title = "Work in Progress",
-                message = "The mobile client app is currently made for organization users only, if you're an Admin or a SuperAdmin, you can click on OK and go to the Harvest Web App which supports Admin sign-in"
-            )
-        )
         dataModelScope.launch {
+            intPraxisCommand.emit(
+                ModalPraxisCommand(
+                    title = "Work in Progress",
+                    message = "The mobile client app is currently made for organization users only, if you're an Admin or a SuperAdmin, you can click on OK and go to the Harvest Web App which supports Admin sign-in"
+                )
+            )
             provideLogoutUseCase()
         }
     }
