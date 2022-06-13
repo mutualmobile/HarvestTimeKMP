@@ -8,6 +8,8 @@ import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.js.jso
 import mui.material.*
 import mui.system.sx
@@ -33,28 +35,29 @@ val JSLoginScreen = VFC {
     var isLoading by useState(false)
     val navigator = useNavigate()
 
-    val dataModel = LoginDataModel(onDataState = { stateNew ->
-        isLoading = stateNew is LoadingState
-        when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            is SuccessState<*> -> {
-                message = (stateNew.data as LoginResponse).message ?: "Some message"
-            }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
-        }
-    })
+    val dataModel = LoginDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            isLoading = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.LoadingState -> {
+                    message = "Loading..."
+                }
+                is PraxisDataModel.SuccessState<*> -> {
+                    message = (stateNew.data as LoginResponse).message ?: "Some message"
+                }
+                PraxisDataModel.Complete -> {
+                    message = "Completed loading!"
+                }
+                PraxisDataModel.EmptyState -> {
+                    message = "Empty state"
+                }
+                is PraxisDataModel.ErrorState -> {
+                    message = stateNew.throwable.message ?: "Error"
+                }else -> {}
+            } }.launchIn(this.dataModelScope)
+    }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -64,7 +67,8 @@ val JSLoginScreen = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
+
 
 
     useEffectOnce {

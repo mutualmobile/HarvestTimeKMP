@@ -38,9 +38,9 @@ class AuthApiImpl(private val httpClient: HttpClient) : AuthApi {
     override suspend fun existingOrgSignUp(
         firstName: String,
         lastName: String,
-        company: String,
         email: String,
-        password: String
+        password: String,
+        company: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
         return getSafeNetworkResponse {
             httpClient.post("${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.SIGNUP}") {

@@ -75,12 +75,12 @@ val SaveTimeButton = FC<SaveTimeButtonProps> { props ->
                                 props.note
                             )
                         ).onEach {
-                            isSaving = it is LoadingState
+                            isSaving = it is PraxisDataModel.LoadingState
                             println(it)
                             when (it) {
-                                is SuccessState<*> -> {
+                                is PraxisDataModel.SuccessState<*> -> {
                                     props.onDone.invoke()
-                                }
+                                }else -> {}
                             }
                         }.launchIn(props.dataModel.dataModelScope)
                     } ?: run {

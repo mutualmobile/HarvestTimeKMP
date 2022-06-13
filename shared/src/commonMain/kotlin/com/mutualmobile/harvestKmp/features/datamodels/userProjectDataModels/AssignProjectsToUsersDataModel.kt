@@ -6,10 +6,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class AssignProjectsToUsersDataModel :
+    PraxisDataModel(), KoinComponent {
+    private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val userProjectUseCaseComponent = UserProjectUseCaseComponent()
@@ -31,14 +35,14 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
     ) {
         currentLoadingJob?.cancel()
         currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val response =
                 assignProjectsToUsersUseCase(
                     projectMap = projectMap
                 )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data))
-                    praxisCommand(
+                    _dataFlow.emit(SuccessState(response.data))
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             "Message",
                             response.data.message ?: "Success!"
@@ -46,8 +50,8 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
                     )
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
-                    praxisCommand(
+                    _dataFlow.emit(ErrorState(response.throwable))
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             "Message",
                             response.throwable.message ?: "Failed!"
@@ -56,8 +60,8 @@ class AssignProjectsToUsersDataModel(private val onDataState: (DataState) -> Uni
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }

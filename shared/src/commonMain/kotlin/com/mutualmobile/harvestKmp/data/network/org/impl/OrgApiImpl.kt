@@ -26,4 +26,14 @@ class OrgApiImpl(private val httpClient: HttpClient) : OrgApi{
             }
         }
 
+    override suspend fun findOrgById(orgId: String): NetworkResponse<ApiResponse<HarvestOrganization>> =
+        getSafeNetworkResponse {
+            httpClient.get(
+                urlString = "${Endpoint.SPRING_BOOT_BASE_URL}${Endpoint.FIND_ORGANIZATION}"
+            ) {
+                contentType(ContentType.Application.Json)
+                parameter("orgId", orgId)
+            }
+        }
+
 }

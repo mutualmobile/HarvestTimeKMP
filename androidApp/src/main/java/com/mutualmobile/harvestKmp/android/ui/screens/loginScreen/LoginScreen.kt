@@ -29,78 +29,60 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Sig
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.android.ui.utils.get
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
-    orgIdentifier: String?,
+    userState: DataState,
+    onLoginSuccess: () -> Unit
 ) {
     var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
 
     var currentNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
 
-    var userState: DataState by remember { mutableStateOf(EmptyState) }
-    val userDataModel by remember {
-        mutableStateOf(
-            GetUserDataModel { newState ->
-                userState = newState
-            }.apply {
-                praxisCommand = { newCommand ->
-                    currentNavigationCommand = newCommand
-                }
-            }
-        )
-    }
-
     var currentLoginState: DataState by remember {
         mutableStateOf(EmptyState)
     }
     val loginDataModel by remember {
         mutableStateOf(
-            LoginDataModel { loginState ->
-                currentLoginState = loginState
-                when (loginState) {
-                    is SuccessState<*> -> {
-                        userDataModel.activate()
-                    }
-                    else -> Unit
-                }
-            }.apply {
-                praxisCommand = { newCommand ->
+            LoginDataModel().apply {
+                this.dataFlow.onEach { loginState ->
+                    currentLoginState = loginState
+                }.launchIn(this.dataModelScope)
+                praxisCommand.onEach {  newCommand ->
                     currentNavigationCommand = newCommand
-                    when (newCommand) {
+                    when (currentNavigationCommand) {
                         is NavigationPraxisCommand -> {
-                            if (newCommand.screen == HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
-                                navController clearBackStackAndNavigateTo newCommand.screen.withOrgId(
-                                    identifier = orgIdentifier,
-                                    id = null
-                                )
-                            }
+                            onLoginSuccess()
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }
         )
     }
 
     var currentErrorMsg: String? by remember { mutableStateOf(null) }
 
-    LaunchedEffect(key1 = currentLoginState, key2 = userState) {
-        currentErrorMsg = when {
-            currentLoginState is ErrorState -> (currentLoginState as ErrorState).throwable.message
-            userState is ErrorState -> (userState as ErrorState).throwable.message
+    LaunchedEffect(userState) {
+        if (userState is PraxisDataModel.SuccessState<*> && currentNavigationCommand is NavigationPraxisCommand) {
+            navController clearBackStackAndNavigateTo (currentNavigationCommand as NavigationPraxisCommand).screen
+        }
+    }
+
+    LaunchedEffect(currentLoginState) {
+        currentErrorMsg = when (currentLoginState) {
+            is ErrorState -> (currentLoginState as ErrorState).throwable.message
             else -> null
         }
     }
@@ -130,6 +112,11 @@ fun LoginScreen(
                 placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
+            SurfaceTextButton(
+                text = stringResource(MR.strings.forgot_password.resourceId),
+                fontWeight = FontWeight.Medium,
+                onClick = { navController.navigate(HarvestRoutes.Screen.FORGOT_PASSWORD) }
+            )
             IconLabelButton(
                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
                 onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) },
@@ -156,4 +143,3 @@ fun LoginScreen(
         )
     }
 }
-

@@ -47,12 +47,14 @@ import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.dateWithoutTimeZone
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
@@ -60,6 +62,8 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUser
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
@@ -75,7 +79,7 @@ fun TimeScreen(
     startIndex: Int,
     onWeekScrolled: (Int) -> Unit,
     onDayScrolled: (Int) -> Unit,
-    goToNewEntryScreen: () -> Unit,
+    goToNewEntryScreen: (workRequest: HarvestUserWorkRequest?, workRequestType: WorkRequestType) -> Unit,
     isWorkLoading: (Boolean) -> Unit,
     navigateToFindWorkspaceScreen: () -> Unit,
     onWeekOffsetChanged: (Int) -> Unit,
@@ -83,9 +87,13 @@ fun TimeScreen(
 ) {
     var getUserState: DataState by remember { mutableStateOf(EmptyState) }
     val getUserDataModel by remember { mutableStateOf(
-        GetUserDataModel { newState ->
-            getUserState = newState
-        }.activate()
+        GetUserDataModel ().apply {
+            this.dataFlow.onEach {
+                    newState ->
+                getUserState = newState
+            }.launchIn(this.dataModelScope)
+            this.activate()
+        }
     ) }
 
     //TODO: Make this business logic common/shared
@@ -109,7 +117,7 @@ fun TimeScreen(
     }
     var timeLoggingPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val timeLoggingDataModel by remember { mutableStateOf(TimeLogginDataModel().apply {
-        praxisCommand = { newCommand ->
+        praxisCommand.onEach { newCommand ->
             timeLoggingPraxisCommand = newCommand
             when (newCommand) {
                 is NavigationPraxisCommand -> {
@@ -117,8 +125,7 @@ fun TimeScreen(
                         navigateToFindWorkspaceScreen()
                     }
                 }
-            }
-        }
+            } }.launchIn(dataModelScope)
     }) }
 
     val lazyRowState = rememberLazyListState(initialFirstVisibleItemIndex = 1)
@@ -242,7 +249,9 @@ fun TimeScreen(
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = goToNewEntryScreen,
+                onClick = {
+                    goToNewEntryScreen(null, WorkRequestType.CREATE)
+                },
                 modifier = Modifier.navigationBarsPadding()
             ) {
                 Icon(
@@ -305,7 +314,20 @@ fun TimeScreen(
                                         organisationName = "Mutual Mobile",
                                         bucketName = "Android Department Work HYD",
                                         time = workLog.workHours,
-                                        taskType = "Work"
+                                        taskType = "Work",
+                                        onClick = {
+                                            goToNewEntryScreen(
+                                                HarvestUserWorkRequest(
+                                                    id = workLog.id,
+                                                    projectId = workLog.projectId,
+                                                    userId = workLog.userId,
+                                                    workDate = workLog.workDate,
+                                                    workHours = workLog.workHours,
+                                                    note = workLog.note
+                                                ),
+                                                WorkRequestType.UPDATE
+                                            )
+                                        }
                                     )
                                 }
                             }

@@ -3,7 +3,7 @@ object AppDependencyVersions {
     const val androidGradle = "7.2.0"
     const val kotlinxSerialization = kotlinGradle
     const val sqlDelight = "1.5.3"
-    const val nativeCoroutines = "0.12.1-new-mm"
+    const val nativeCoroutines = "0.12.2-new-mm"
     const val googleServices = "4.3.10"
     const val mokoResources = "0.20.1"
 }

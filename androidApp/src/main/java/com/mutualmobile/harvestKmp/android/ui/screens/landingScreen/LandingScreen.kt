@@ -28,7 +28,6 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,18 +56,22 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.Week
 import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.viewmodels.LandingScreenViewModel
+import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import kotlin.time.Duration.Companion.days
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
+import com.mutualmobile.harvestKmp.domain.model.request.HarvestOrganization
 import kotlinx.coroutines.launch
-import kotlinx.datetime.Clock
-import kotlinx.datetime.TimeZone
-import kotlinx.datetime.toLocalDateTime
+import org.koin.androidx.compose.get
 
 @OptIn(ExperimentalAnimationApi::class, ExperimentalPagerApi::class)
 @Composable
 fun LandingScreen(
     navController: NavHostController,
-    orgIdentifier: String?,
+    newEntryScreenViewModel: NewEntryScreenViewModel = get(),
+    lsVm: LandingScreenViewModel = get(),
+    userOrganization: HarvestOrganization? = null,
+    userState: PraxisDataModel.DataState
 ) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val snackBarHostState = remember { SnackbarHostState() }
@@ -77,26 +80,10 @@ fun LandingScreen(
         snackbarHostState = snackBarHostState
     )
     val coroutineScope = rememberCoroutineScope()
-    var currentDrawerScreen by remember { mutableStateOf(LandingScreenDrawerItemType.Time) }
-    var currentDayOffset by remember { mutableStateOf(0) }
-    var localWeekOffset by remember { mutableStateOf(0) }
 
-    val currentDay by remember(currentDayOffset) {
-        derivedStateOf {
-            val currentDateTime = Clock.System.now().plus(
-                currentDayOffset.days
-            ).toLocalDateTime(TimeZone.currentSystemDefault())
-            "${currentDateTime.dayOfWeek.name}, ${currentDateTime.dayOfMonth} ${currentDateTime.month.name}"
-        }
-    }
     var isDropDownMenuShown by remember { mutableStateOf(false) }
 
-    val timeScreenStartIndex by remember { mutableStateOf(Int.MAX_VALUE.div(2)) }
-    val timeScreenPagerState = rememberPagerState(initialPage = timeScreenStartIndex)
-
-    var isWorkLoading by remember { mutableStateOf(false) }
-
-    var currentWeekLogsTotalTime by remember { mutableStateOf("0.00") }
+    val timeScreenPagerState = rememberPagerState(initialPage = lsVm.timeScreenStartIndex)
 
     BackHandler(enabled = scaffoldDrawerState.isOpen) {
         coroutineScope.launch { scaffoldDrawerState.close() }
@@ -107,11 +94,11 @@ fun LandingScreen(
             TopAppBar(
                 title = {
                     Column {
-                        Text(text = currentDrawerScreen.name)
-                        when (currentDrawerScreen) {
+                        Text(text = lsVm.currentDrawerScreen.name)
+                        when (lsVm.currentDrawerScreen) {
                             LandingScreenDrawerItemType.Time -> {
                                 Text(
-                                    text = currentDay,
+                                    text = lsVm.currentDay,
                                     style = MaterialTheme.typography.body2.copy(
                                         color = MaterialTheme.colors.surface.copy(alpha = 0.5f)
                                     )
@@ -139,18 +126,18 @@ fun LandingScreen(
                     }
                 },
                 actions = {
-                    when (currentDrawerScreen) {
+                    when (lsVm.currentDrawerScreen) {
                         LandingScreenDrawerItemType.Time -> {
-                            if (isWorkLoading) {
+                            if (lsVm.isWorkLoading) {
                                 CircularProgressIndicator(
                                     color = Color.White
                                 )
                             }
-                            if (timeScreenPagerState.currentPage != timeScreenStartIndex) {
+                            if (timeScreenPagerState.currentPage != lsVm.timeScreenStartIndex) {
                                 IconButton(onClick = {
-                                    localWeekOffset = 0
+                                    lsVm.localWeekOffset = 0
                                     coroutineScope.launch {
-                                        timeScreenPagerState.scrollToPage(timeScreenStartIndex)
+                                        timeScreenPagerState.scrollToPage(lsVm.timeScreenStartIndex)
                                     }
                                 }) {
                                     Icon(
@@ -182,7 +169,7 @@ fun LandingScreen(
                                     Text(
                                         text = stringResource(
                                             MR.strings.landing_screen_dropdown_week_total_option.resourceId,
-                                            currentWeekLogsTotalTime
+                                            lsVm.currentWeekLogsTotalTime
                                         ),
                                         color = MaterialTheme.colors.onSurface.copy(alpha = 0.25f)
                                     )
@@ -197,15 +184,16 @@ fun LandingScreen(
         drawerShape = landingScreenDrawerShape(),
         drawerContent = {
             LandingScreenDrawer(
-                currentDrawerScreen = currentDrawerScreen,
+                currentDrawerScreen = lsVm.currentDrawerScreen,
                 closeDrawer = { coroutineScope.launch { scaffoldState.drawerState.close() } },
                 onScreenChanged = { newScreen: LandingScreenDrawerItemType ->
-                    currentDrawerScreen = newScreen
+                    lsVm.currentDrawerScreen = newScreen
                 },
                 goToSettingsScreen = {
                     navController.navigate(HarvestRoutes.Screen.SETTINGS)
                 },
-                orgIdentifier = orgIdentifier
+                orgName = userOrganization?.name,
+                userState = userState
             )
         },
         drawerBackgroundColor = DrawerBgColor,
@@ -213,7 +201,7 @@ fun LandingScreen(
         backgroundColor = SurfaceColor
     ) { bodyPadding ->
         AnimatedContent(
-            targetState = currentDrawerScreen,
+            targetState = lsVm.currentDrawerScreen,
             transitionSpec = { fadeIn() + fadeIn() with fadeOut() },
             modifier = Modifier
                 .fillMaxSize()
@@ -222,26 +210,35 @@ fun LandingScreen(
             when (drawerScreenState) {
                 LandingScreenDrawerItemType.Time -> TimeScreen(
                     pagerState = timeScreenPagerState,
-                    startIndex = timeScreenStartIndex,
+                    startIndex = lsVm.timeScreenStartIndex,
                     onWeekScrolled = { weekOffset ->
-                        currentDayOffset += weekOffset.times(WeekDays.values().size)
+                        lsVm.currentDayOffset += weekOffset.times(WeekDays.values().size)
                     },
                     onDayScrolled = { dayOffset ->
-                        currentDayOffset = dayOffset
+                        lsVm.currentDayOffset = dayOffset
                     },
-                    goToNewEntryScreen = {
-                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                    goToNewEntryScreen = { workRequest, requestType ->
+                        newEntryScreenViewModel.updateCurrentWorkRequestType(
+                            workRequestType = requestType,
+                            onUpdateCompleted = {
+                                newEntryScreenViewModel.updateCurrentWorkRequest(
+                                    update = { workRequest },
+                                    onUpdateCompleted = {
+                                        navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
+                                    })
+                            }
+                        )
                     },
                     isWorkLoading = { isLoading ->
-                        isWorkLoading = isLoading
+                        lsVm.isWorkLoading = isLoading
                     },
                     navigateToFindWorkspaceScreen = { navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE },
-                    localWeekOffset = localWeekOffset,
+                    localWeekOffset = lsVm.localWeekOffset,
                     onWeekOffsetChanged = { updatedOffset ->
-                        localWeekOffset += updatedOffset
+                        lsVm.localWeekOffset += updatedOffset
                     },
                     onUpdateWeekLogsTotalTime = { updatedTime ->
-                        currentWeekLogsTotalTime = updatedTime
+                        lsVm.currentWeekLogsTotalTime = updatedTime
                     }
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()

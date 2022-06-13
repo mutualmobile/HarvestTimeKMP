@@ -1,18 +1,20 @@
 package project
 
 import com.mutualmobile.harvestKmp.datamodel.BROWSER_SCREEN_ROUTE_SEPARATOR
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.GetListOfUsersForAProjectDataModel
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.Box
 import mui.material.CircularProgress
 import mui.material.ListItem
@@ -34,29 +36,31 @@ val JSOrgProjectUsersList = VFC {
     var users by useState<List<GetUserResponse>>()
     val navigator = useNavigate()
 
-    val dataModel = GetListOfUsersForAProjectDataModel(onDataState = { dataState: DataState ->
-        isLoading = dataState is LoadingState
-        when (dataState) {
-            is SuccessState<*> -> {
-                try {
-                    val response = (dataState.data as ApiResponse<List<GetUserResponse>>)
-                    users = response.data
-                    message = "There are ${response.data?.size.toString()} users assigned to this project"
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val dataModel = GetListOfUsersForAProjectDataModel().apply{
+        this.dataFlow.onEach { dataState: DataState ->
+            isLoading = dataState is LoadingState
+            when (dataState) {
+                is SuccessState<*> -> {
+                    try {
+                        val response = (dataState.data as ApiResponse<List<GetUserResponse>>)
+                        users = response.data
+                        message = "There are ${response.data?.size.toString()} users assigned to this project"
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
+                is ErrorState -> {
+                    message = dataState.throwable.message.toString()
+                }
+                is LoadingState -> {
+                    message = "Loading..."
+                }
+                else -> {}
             }
-            is ErrorState -> {
-                message = dataState.throwable.message.toString()
-            }
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            else -> {}
-        }
-    })
+        }.launchIn(dataModelScope)
+    }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -65,7 +69,7 @@ val JSOrgProjectUsersList = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffectOnce {
         dataModel.activate()

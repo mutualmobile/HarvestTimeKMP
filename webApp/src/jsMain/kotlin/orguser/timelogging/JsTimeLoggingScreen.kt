@@ -51,7 +51,7 @@ val JsTimeLoggingScreen = FC<Props> {
 
     val userId = dataModel.userId
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -60,7 +60,7 @@ val JsTimeLoggingScreen = FC<Props> {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffect(dependencies = arrayOf(week, showTimeLogDialog), effect = {
         if (showTimeLogDialog) {
@@ -76,9 +76,9 @@ val JsTimeLoggingScreen = FC<Props> {
                     Date(week.last().toString()),
                     "yyyy-MM-dd"
                 ) as String, userId
-            ) { dataState: DataState ->
-                isLoadingWeekRecords = dataState is LoadingState
-                if (dataState is SuccessState<*>) {
+            ) { dataState: PraxisDataModel.DataState ->
+                isLoadingWeekRecords = dataState is PraxisDataModel.LoadingState
+                if (dataState is PraxisDataModel.SuccessState<*>) {
                     val data = dataState.data
                     if (data is ApiResponse<*>) {
                         work = data.data as MutableList<HarvestUserWorkResponse>
@@ -90,9 +90,9 @@ val JsTimeLoggingScreen = FC<Props> {
 
     useEffectOnce {
         dataModel.activate()
-        dataModel.getUserAssignedProjects(userId).onEach { dataState: DataState ->
+        dataModel.getUserAssignedProjects(userId).onEach { dataState: PraxisDataModel.DataState ->
             when (dataState) {
-                is SuccessState<*> -> {
+                is PraxisDataModel.SuccessState<*> -> {
                     val successData = dataState.data
                     if (successData is ApiResponse<*>) {
                         if (successData.data is List<*>) {
@@ -153,8 +153,8 @@ val JsTimeLoggingScreen = FC<Props> {
                     }
                     this.onDeleteRequested = {
                         dataModel.deleteWork(it).onEach { dataState ->
-                            isLoadingWeekRecords = dataState is LoadingState
-                            if (dataState is SuccessState<*>) {
+                            isLoadingWeekRecords = dataState is PraxisDataModel.LoadingState
+                            if (dataState is PraxisDataModel.SuccessState<*>) {
                                 showTimeLogDialog = false
                                 work?.remove(it)
                             }
@@ -221,7 +221,7 @@ fun fetchWeekRecords(
     first: String,
     last: String,
     userId: String,
-    function: (DataState) -> Unit
+    function: (PraxisDataModel.DataState) -> Unit
 ) {
     dataModel.getWorkLogsForDateRange(first, last, listOf(userId)).onEach {
         function(it)

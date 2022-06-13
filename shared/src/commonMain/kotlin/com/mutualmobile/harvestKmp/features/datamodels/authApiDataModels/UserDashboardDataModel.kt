@@ -9,10 +9,14 @@ import com.mutualmobile.harvestKmp.features.NetworkResponse.Failure
 import com.mutualmobile.harvestKmp.features.NetworkResponse.Success
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class UserDashboardDataModel() :
+    PraxisDataModel(), KoinComponent {
+    private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private val useCasesComponent = UseCasesComponent()
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
@@ -23,7 +27,7 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
 
     override fun activate() {
         if (!userLoggedInUseCase.invoke()) {
-            praxisCommand(NavigationPraxisCommand(""))//take to root
+            dataModelScope.launch { intPraxisCommand.emit(NavigationPraxisCommand("")) }//take to root
         } else {
             fetchUserInternal()
         }
@@ -31,20 +35,20 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
 
     private fun fetchUserInternal() {
         dataModelScope.launch(exceptionHandler) {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val getUserResponse = getUserUseCase()) {
                 is NetworkResponse.Success -> {
                     harvestUserLocal.saveUser(getUserResponse.data)
-                    onDataState(SuccessState(getUserResponse.data))
+                    _dataFlow.emit(SuccessState(getUserResponse.data))
                 }
                 is NetworkResponse.Failure -> {
                     print("GetUser Failed, ${getUserResponse.throwable.message}")
-                    onDataState(ErrorState(getUserResponse.throwable))
+                    _dataFlow.emit(ErrorState(getUserResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -60,17 +64,17 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun logout() {
         dataModelScope.launch(exceptionHandler) {
-            onDataState(LogoutInProgress)
+            _dataFlow.emit(LogoutInProgress)
             when (val result = logoutUseCase.invoke()) {
                 is Success<*> -> {
                     println("logged out!")
-                    onDataState(SuccessState(result.data))
-                    praxisCommand(NavigationPraxisCommand(screen = ""))
+                    _dataFlow.emit(SuccessState(result.data))
+                    intPraxisCommand.emit(NavigationPraxisCommand(screen = ""))
                 }
                 is Failure -> {
                     println("logg out failed!")
-                    onDataState(ErrorState(result.throwable))
-                    praxisCommand(
+                    _dataFlow.emit(ErrorState(result.throwable))
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             title = "Error",
                             result.throwable.message ?: "An Unknown error has happened"
@@ -78,7 +82,7 @@ class UserDashboardDataModel(private val onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Unauthorized -> {
-                    praxisCommand(NavigationPraxisCommand(screen = ""))
+                    intPraxisCommand.emit(NavigationPraxisCommand(screen = ""))
                 }
             }
         }

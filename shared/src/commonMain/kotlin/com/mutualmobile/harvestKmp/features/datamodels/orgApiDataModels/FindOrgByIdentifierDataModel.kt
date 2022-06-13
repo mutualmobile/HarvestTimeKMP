@@ -1,42 +1,50 @@
 package com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes.Screen.withOrgId
 import com.mutualmobile.harvestKmp.di.OrgApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
-class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class FindOrgByIdentifierDataModel() :
+    PraxisDataModel(), KoinComponent {
+    private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
-    private var currentLoadingJob: Job? = null
     private val useCasesComponent = UseCasesComponent()
     private val userLoggedInUseCase = useCasesComponent.providerUserLoggedInUseCase()
     private val orgApiUseCasesComponent = OrgApiUseCaseComponent()
     private val findOrgByIdentifierUseCase = orgApiUseCasesComponent.provideFindOrgByIdentifier()
 
+    suspend fun doSomething(): Int {
+        return 1
+    }
+
     fun findOrgByIdentifier(identifier: String) {
-        currentLoadingJob?.cancel()
-        currentLoadingJob = dataModelScope.launch {
-            onDataState(LoadingState)
+        dataModelScope.launch(exceptionHandler) {
+            _dataFlow.emit(LoadingState)
 
             when (val response = findOrgByIdentifierUseCase(
                 identifier = identifier
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(response.data)) // TODO redundant
-                    praxisCommand(
+                    _dataFlow.emit(SuccessState(response.data)) // TODO redundant
+                    intPraxisCommand.emit(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.LOGIN.withOrgId(
                                 response.data.data?.identifier,
@@ -44,22 +52,20 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
                             )
                         )
                     )
-                    println("SUCCESS, ${response.data.message}")
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(response.throwable))
-                    praxisCommand(
+                    _dataFlow.emit(ErrorState(response.throwable))
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             "Failed",
                             response.throwable.message ?: "Failed to find workspace"
                         )
                     )
-                    println("FAILED, ${response.throwable.message}")
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
         }
@@ -67,11 +73,13 @@ class FindOrgByIdentifierDataModel(private val onDataState: (DataState) -> Unit)
 
     override fun activate() {
         if (isUserTokenAvailable()) {
-            praxisCommand(
-                NavigationPraxisCommand(
-                    screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD
+            dataModelScope.launch {
+                intPraxisCommand.emit(
+                    NavigationPraxisCommand(
+                        screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD
+                    )
                 )
-            )
+            }
         }
     }
 

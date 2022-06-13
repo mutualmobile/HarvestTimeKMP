@@ -7,6 +7,8 @@ import csstype.Margin
 import csstype.px
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.*
 import mui.system.sx
 import org.w3c.dom.HTMLInputElement
@@ -20,33 +22,36 @@ import react.useState
 val ChangePasswordUI = VFC {
     var message by useState("")
     var changePassword by useState("")
-    var state by useState<DataState>()
+    var state by useState<PraxisDataModel.DataState>()
     var password by useState("")
     val navigator = useNavigate()
 
-    val dataModel = ChangePasswordDataModel(onDataState = { stateNew ->
-        when (stateNew) {
-            is LoadingState -> {
-                message = "Loading..."
+    val dataModel = ChangePasswordDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            when (stateNew) {
+                is PraxisDataModel.LoadingState -> {
+                    message = "Loading..."
+                }
+                is PraxisDataModel.SuccessState<*> -> {
+                    message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
+                    changePassword = ""
+                    password = ""
+                }
+                PraxisDataModel.Complete -> {
+                    message = "Completed loading!"
+                }
+                PraxisDataModel.EmptyState -> {
+                    message = "Empty state"
+                }
+                is PraxisDataModel.ErrorState -> {
+                    message = stateNew.throwable.message ?: "Error"
+                }
+                PraxisDataModel.LogoutInProgress -> TODO()
             }
-            is SuccessState<*> -> {
-                message = (stateNew.data as ApiResponse<*>).message ?: "Success state"
-                changePassword = ""
-                password = ""
-            }
-            Complete -> {
-                message = "Completed loading!"
-            }
-            EmptyState -> {
-                message = "Empty state"
-            }
-            is ErrorState -> {
-                message = stateNew.throwable.message ?: "Error"
-            }
-        }
-    })
+        }.launchIn(this.dataModelScope)
+    }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -55,7 +60,7 @@ val ChangePasswordUI = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
 
     Box {

@@ -7,6 +7,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.FindProjectsInOrgDataModel
 import csstype.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.*
 import mui.icons.material.Add
 import mui.system.sx
@@ -26,25 +28,27 @@ val JsOrgProjectsScreen = VFC {
     var totalPages by useState(0)
     var isLoading by useState(false)
     var searchProject by useState<String>()
-    val dataState = { stateNew: DataState ->
-        isLoading = stateNew is LoadingState
-        when (stateNew) {
-            is SuccessState<*> -> {
-                try {
-                    val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
-                    projects = response.data?.second
-                    totalPages = response.data?.first ?: 0
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+
+
+    val dataModel = FindProjectsInOrgDataModel().apply {
+        dataFlow.onEach { stateNew: PraxisDataModel.DataState ->
+            isLoading = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        val response =
+                            (stateNew.data as ApiResponse<Pair<Int, List<OrgProjectResponse>>>)
+                        projects = response.data?.second
+                        totalPages = response.data?.first ?: 0
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }else -> {}
             }
-        }
+        }.launchIn(dataModelScope)
     }
 
-    val dataModel = FindProjectsInOrgDataModel(onDataState = dataState)
-
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -53,7 +57,7 @@ val JsOrgProjectsScreen = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
 
     useEffectOnce {

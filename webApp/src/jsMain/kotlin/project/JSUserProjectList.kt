@@ -6,6 +6,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.material.Box
 import mui.material.CircularProgress
 import mui.material.ListItem
@@ -26,30 +28,31 @@ val JSUserProjectList = VFC {
     var projects by useState<List<OrgProjectResponse>>()
     val navigator = useNavigate()
 
-    val dataModel = GetUserAssignedProjectsDataModel(onDataState = { dataState: DataState ->
-        isLoading = dataState is LoadingState
-        when (dataState) {
-            is SuccessState<*> -> {
-                try {
-                    val response = (dataState.data as ApiResponse<List<OrgProjectResponse>>)
-                    projects = response.data
-                    message =
-                        "There are ${response.data?.size.toString()} projects assigned to this user"
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
+    val dataModel = GetUserAssignedProjectsDataModel().apply {
+        dataFlow.onEach {  dataState: PraxisDataModel.DataState ->
+            isLoading = dataState is PraxisDataModel.LoadingState
+            when (dataState) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        val response = (dataState.data as ApiResponse<List<OrgProjectResponse>>)
+                        projects = response.data
+                        message =
+                            "There are ${response.data?.size.toString()} projects assigned to this user"
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
                 }
-            }
-            is ErrorState -> {
-                message = dataState.throwable.message.toString()
-            }
-            is LoadingState -> {
-                message = "Loading..."
-            }
-            else -> {}
-        }
-    })
+                is PraxisDataModel.ErrorState -> {
+                    message = dataState.throwable.message.toString()
+                }
+                is PraxisDataModel.LoadingState -> {
+                    message = "Loading..."
+                }
+                else -> {}
+            } }.launchIn(dataModelScope)
+    }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -58,7 +61,7 @@ val JSUserProjectList = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffectOnce {
         dataModel.activate()

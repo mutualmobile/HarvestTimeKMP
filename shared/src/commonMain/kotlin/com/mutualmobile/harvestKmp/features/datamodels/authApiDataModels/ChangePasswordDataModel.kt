@@ -1,23 +1,19 @@
 package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.*
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.callbackFlow
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class ChangePasswordDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private var currentLoadingJob: Job? = null
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
@@ -51,10 +47,20 @@ class ChangePasswordDataModel(private val onDataState: (DataState) -> Unit) :
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()
-                    praxisCommand(ModalPraxisCommand("Unauthorized", "Please login again!"))
-                    praxisCommand(NavigationPraxisCommand(""))
+                    intPraxisCommand.emit(ModalPraxisCommand("Unauthorized", "Please login again!"))
+                    intPraxisCommand.emit(NavigationPraxisCommand(""))
                 }
             }
+        }.catch {
+            this.emit(ErrorState(it))
+            println(it)
+            it.printStackTrace()
+            intPraxisCommand.emit(
+                ModalPraxisCommand(
+                    title = "Error",
+                    it.message ?: "An Unknown error has happened"
+                )
+            )
         }
     }
 }

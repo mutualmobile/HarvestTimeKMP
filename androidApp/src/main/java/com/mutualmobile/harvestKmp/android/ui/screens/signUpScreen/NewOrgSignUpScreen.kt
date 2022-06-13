@@ -28,13 +28,15 @@ import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun NewOrgSignUpScreen(navController: NavHostController) {
@@ -43,10 +45,11 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
     }
     var signUpState: DataState by remember { mutableStateOf(EmptyState) }
     val signUpDataModel by remember {
-        mutableStateOf(SignUpDataModel { newState ->
-            signUpState = newState
-        }.apply {
-            praxisCommand = { newCommand ->
+        mutableStateOf(SignUpDataModel().apply {
+            this.dataFlow.onEach { newState ->
+                signUpState = newState
+            }.launchIn(this.dataModelScope)
+            praxisCommand.onEach { newCommand ->
                 println("Command is: $newCommand")
                 currentPraxisCommand = newCommand
                 when (newCommand) {
@@ -54,7 +57,7 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                         navController.navigate(newCommand.screen)
                     }
                 }
-            }
+            }.launchIn(dataModelScope)
         })
     }
     var currentWorkEmail by remember { mutableStateOf("") }

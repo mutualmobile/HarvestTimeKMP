@@ -1,23 +1,27 @@
 package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.SuccessState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import org.koin.core.component.KoinComponent
 
-class LoginDataModel(private val onDataState: (DataState) -> Unit) :
-    PraxisDataModel(onDataState), KoinComponent {
+class LoginDataModel() :
+    PraxisDataModel(), KoinComponent {
+  private val _dataFlow = MutableSharedFlow<DataState>()
+    val dataFlow = _dataFlow.asSharedFlow()
 
     private val useCasesComponent = UseCasesComponent()
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
@@ -37,15 +41,15 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
 
     fun login(email: String, password: String) {
         dataModelScope.launch(exceptionHandler) {
-            onDataState(LoadingState)
+            _dataFlow.emit(LoadingState)
             when (val loginResponse = loginUseCase(
                 email = email,
                 password = password
             )) {
                 is NetworkResponse.Success -> {
-                    onDataState(SuccessState(loginResponse.data))
+                    _dataFlow.emit(SuccessState(loginResponse.data))
                     saveToken(loginResponse)
-                    praxisCommand(
+                    intPraxisCommand.emit(
                         NavigationPraxisCommand(
                             screen = HarvestRoutes.Screen.ORG_USER_DASHBOARD,
                             ""
@@ -53,8 +57,8 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Failure -> {
-                    onDataState(ErrorState(loginResponse.throwable))
-                    praxisCommand(
+                    _dataFlow.emit(ErrorState(loginResponse.throwable))
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             title = "Error",
                             loginResponse.throwable.message ?: "An Unknown error has happened"
@@ -62,8 +66,8 @@ class LoginDataModel(private val onDataState: (DataState) -> Unit) :
                     )
                 }
                 is NetworkResponse.Unauthorized -> {
-                    onDataState(ErrorState(loginResponse.throwable))
-                    praxisCommand(
+                    _dataFlow.emit(ErrorState(loginResponse.throwable))
+                    intPraxisCommand.emit(
                         ModalPraxisCommand(
                             title = "Error",
                             loginResponse.throwable.message ?: "An Unknown error has happened"

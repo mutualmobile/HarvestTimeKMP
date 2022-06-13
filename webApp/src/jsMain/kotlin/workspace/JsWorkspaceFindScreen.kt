@@ -7,6 +7,9 @@ import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgB
 import csstype.*
 import harvest.material.TopAppBar
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import mainScope
 import mui.material.*
 import mui.material.styles.TypographyVariant
 import mui.system.responsive
@@ -21,32 +24,36 @@ val JsWorkspaceFindScreen = VFC {
     var status by useState("")
     var workspaceName by useState("")
     val navigator = useNavigate()
-    val dataModel = FindOrgByIdentifierDataModel(onDataState = { dataState: DataState ->
-        when (dataState) {
-            is LoadingState -> {
-                status = "Loading..."
+    val dataModel = FindOrgByIdentifierDataModel().apply {
+        this.dataFlow.onEach { dataState: PraxisDataModel.DataState ->
+            when (dataState) {
+                is PraxisDataModel.LoadingState -> {
+                    status = "Loading..."
+                }
+                is PraxisDataModel.SuccessState<*> -> {
+                    val organization = (dataState.data.unsafeCast<ApiResponse<HarvestOrganization>>()).data
+                    status = "Found organization! ${organization?.name}"
+                }
+                is PraxisDataModel.ErrorState -> {
+                    status = dataState.throwable.message.toString()
+                }else -> {}
             }
-            is SuccessState<*> -> {
-                val organization = (dataState.data as ApiResponse<HarvestOrganization>).data
-                status = "Found organization! ${organization?.name}"
-            }
-            is ErrorState -> {
-                status = dataState.throwable.message.toString()
-            }
-        }
-    })
+        }.launchIn(dataModelScope)
 
-
-    dataModel.praxisCommand = { newCommand ->
-        when (newCommand) {
-            is NavigationPraxisCommand -> {
-                navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+        praxisCommand.onEach { newCommand ->
+            when (newCommand) {
+                is NavigationPraxisCommand -> {
+                    navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
+                }
+                is ModalPraxisCommand -> {
+                    window.alert(newCommand.title + "\n" + newCommand.message)
+                }
             }
-            is ModalPraxisCommand -> {
-                window.alert(newCommand.title + "\n" + newCommand.message)
-            }
-        }
+        }.launchIn(mainScope)
     }
+
+
+
 
 
     useEffectOnce {
@@ -60,7 +67,7 @@ val JsWorkspaceFindScreen = VFC {
         subtitle = status
     }
 
-    Card{
+    Card {
         sx {
             padding = 12.px
             margin = 12.px

@@ -17,13 +17,15 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
-import com.mutualmobile.harvestKmp.datamodel.DataState
-import com.mutualmobile.harvestKmp.datamodel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.ErrorState
-import com.mutualmobile.harvestKmp.datamodel.LoadingState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 
 @Composable
 fun SignUpScreen(navController: NavHostController) {
@@ -40,17 +42,16 @@ fun SignUpScreen(navController: NavHostController) {
     var signUpPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
     val signUpDataModel by remember {
         mutableStateOf(
-            SignUpDataModel { signUpState ->
-                currentSignUpState = signUpState
-            }.apply {
-                praxisCommand = { newCommand ->
+            SignUpDataModel().apply {
+                this.dataFlow.onEach {  signUpState ->
+                    currentSignUpState = signUpState }.launchIn(this.dataModelScope)
+                praxisCommand.onEach { newCommand ->
                     signUpPraxisCommand = newCommand
                     when (newCommand) {
                         is NavigationPraxisCommand -> {
                             navController clearBackStackAndNavigateTo newCommand.screen
                         }
-                    }
-                }
+                    } }.launchIn(dataModelScope)
             }
         )
     }

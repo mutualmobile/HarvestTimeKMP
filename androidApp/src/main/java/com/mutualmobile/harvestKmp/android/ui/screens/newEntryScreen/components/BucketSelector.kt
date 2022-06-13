@@ -45,10 +45,11 @@ import com.mutualmobile.harvestKmp.MR
 fun BucketSelector(
     currentProject: String,
     onWorkClick: () -> Unit,
-    onDepartmentClick: () -> Unit = {}
+    onDepartmentClick: () -> Unit = {},
+    note: String,
+    onNoteChanged: (String) -> Unit
 ) {
     val screenConfig = LocalConfiguration.current
-    var notesEtText by remember { mutableStateOf("") }
     var isStarClicked by remember { mutableStateOf(false) }
     val starButtonTint by animateColorAsState(
         targetValue = if (isStarClicked) MaterialTheme.colors.primary.copy(alpha = 0.75f)
@@ -98,8 +99,8 @@ fun BucketSelector(
             val keyboardController = LocalSoftwareKeyboardController.current
             val focusManager = LocalFocusManager.current
             TextField(
-                value = notesEtText,
-                onValueChange = { updatedText -> notesEtText = updatedText },
+                value = note,
+                onValueChange = onNoteChanged,
                 placeholder = {
                     Text(
                         text = stringResource(MR.strings.new_entry_screen_notes_et_hint.resourceId),

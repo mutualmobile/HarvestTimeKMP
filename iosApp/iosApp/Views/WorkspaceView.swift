@@ -8,11 +8,48 @@
 
 import shared
 import SwiftUI
+import KMPNativeCoroutinesCombine
+import Combine
 
 struct WorkspaceView_Previews: PreviewProvider {
     static var previews: some View {
         WorkspaceView(foundWorkspace: .constant(true))
     }
+}
+
+class ViewModel : ObservableObject{
+    let dataModel = FindOrgByIdentifierDataModel()
+    @Published  var showLoader = false
+    @Published  var workspaceFindError: AppError?
+    var anyCancellable:AnyCancellable?
+    
+    init() {
+        dataModel.activate()
+    }
+    
+    func call(orgIdentifier : String,callback:@escaping  (Bool) -> (Void))  {
+        anyCancellable?.cancel()
+        anyCancellable = createPublisher(for: dataModel.dataFlowNative).receive(on: DispatchQueue.main).sink(receiveCompletion: { completion in
+              debugPrint(completion)
+          }, receiveValue: { [weak self] state in
+              print("state \(state)")
+              if state is PraxisDataModel.LoadingState {
+                  
+                  self?.showLoader = true
+                                  } else {
+                                      self?.showLoader = false
+                                      if let error = state as? PraxisDataModel.ErrorState {
+                                          self?.workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
+                                      } else if let networkResponse = state as? PraxisDataModelSuccessState<NetworkResponse<AnyObject>> {
+                                          print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
+                                          callback(true)
+                                      }
+                                  }
+          })
+
+          dataModel.findOrgByIdentifier(identifier: orgIdentifier)
+    }
+
 }
 
 struct WorkspaceView: View {
@@ -21,17 +58,18 @@ struct WorkspaceView: View {
     @Environment(\.dismiss) private var dismiss
     
     @Binding var foundWorkspace: Bool
+ 
     
+    @ObservedObject var vm = ViewModel()
+
     @State private var workspaceURLText = "MutualMobile"
-    @State private var showLoader = false
-    @State private var workspaceFindError: AppError?
     @State private var presentLogin = false
     
     private var workspaceError: Binding<Bool> {
         Binding {
-            workspaceFindError != nil
+            vm.workspaceFindError != nil
         } set: { _ in
-            workspaceFindError = nil
+            vm.workspaceFindError = nil
         }
     }
         
@@ -65,37 +103,24 @@ struct WorkspaceView: View {
                 Text("Find Workspace")
                     .harvestButton(color: ColorAssets.colorBackground.color)
             }
-            .alert(isPresented: workspaceError, error: workspaceFindError) {
-                Text(workspaceFindError?.errorDescription ?? "")
+            .alert(isPresented: workspaceError, error: vm.workspaceFindError) {
+                Text(vm.workspaceFindError?.errorDescription ?? "")
             }
         }
         .frame(width: UIScreen.main.bounds.width,
                height: UIScreen.main.bounds.height,
                alignment: .center)
-        .loadingIndicator(show: showLoader)
+        .loadingIndicator(show: vm.showLoader)
     }
     
-    private func findWorkspace() {
+    func findWorkspace() {
         if !workspaceURLText.isEmpty {
-            let dataModel = FindOrgByIdentifierDataModel { state in
-                print("state \(state)")
-                if state is LoadingState {
-                    showLoader = true
-                } else {
-                    showLoader = false
-                    if let error = state as? ErrorState {
-                        workspaceFindError = AppError(message: error.throwable.message ?? "Error while finding workspace")
-                    } else if let networkResponse = state as? SuccessState<NetworkResponse<AnyObject>> {
-                        print("networkResponse \(networkResponse)  \(type(of: networkResponse))")
-                        dismiss()
-                        foundWorkspace = true
-                    }
-                }
+            vm.call(orgIdentifier:orgIdentifier) { value in
+                dismiss()
+                foundWorkspace = value
             }
-            
-            dataModel.findOrgByIdentifier(identifier: orgIdentifier)
         } else {
-            workspaceFindError = AppError(message: "Please a enter your workspace")
+            vm.workspaceFindError = AppError(message: "Please a enter your workspace")
         }
     }
 }

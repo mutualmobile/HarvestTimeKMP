@@ -8,6 +8,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.FindUsersInOrgResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgUsersApiDataModels.FindUsersInOrgDataModel
 import csstype.*
 import kotlinx.browser.window
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import mui.icons.material.Add
 import mui.material.*
 import mui.system.sx
@@ -25,23 +27,25 @@ val JsOrgUsersScreen = VFC {
     var isLoading by useState(false)
     var searchName by useState<String>()
 
-    val dataModel = FindUsersInOrgDataModel(onDataState = { stateNew ->
-        isLoading = stateNew is LoadingState
-        when (stateNew) {
-            is SuccessState<*> -> {
-                try {
-                    val response =
-                        (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
-                    users = response.data?.second
-                    totalPages = response.data?.first ?: 0
-                } catch (ex: Exception) {
-                    ex.printStackTrace()
-                }
+    val dataModel = FindUsersInOrgDataModel().apply {
+        this.dataFlow.onEach { stateNew ->
+            isLoading = stateNew is PraxisDataModel.LoadingState
+            when (stateNew) {
+                is PraxisDataModel.SuccessState<*> -> {
+                    try {
+                        val response =
+                            (stateNew.data as ApiResponse<Pair<Int, List<FindUsersInOrgResponse>>>)
+                        users = response.data?.second
+                        totalPages = response.data?.first ?: 0
+                    } catch (ex: Exception) {
+                        ex.printStackTrace()
+                    }
+                }else -> {}
             }
-        }
-    })
+        }.launchIn(this.dataModelScope)
+    }
 
-    dataModel.praxisCommand = { newCommand ->
+    dataModel.praxisCommand.onEach { newCommand ->
         when (newCommand) {
             is NavigationPraxisCommand -> {
                 navigator(BROWSER_SCREEN_ROUTE_SEPARATOR + newCommand.screen)
@@ -50,7 +54,7 @@ val JsOrgUsersScreen = VFC {
                 window.alert(newCommand.title + "\n" + newCommand.message)
             }
         }
-    }
+    }.launchIn(dataModel.dataModelScope)
 
     useEffectOnce {
         dataModel.activate()
