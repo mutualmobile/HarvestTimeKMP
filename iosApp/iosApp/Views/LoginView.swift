@@ -29,23 +29,25 @@ class AuthStore: ObservableObject {
     }
     
     func login(callback:@escaping  () -> (Void))  {
-        anyCancellable =  createPublisher(for: loginDataModel.dataFlowNative).sink { completion in
-            debugPrint(completion)
-        } receiveValue: { [self] state in
-               if state is PraxisDataModel.LoadingState {
-                   showLoading = true
-                   hasFocus = false
-               } else {
-                   showLoading = false
-                   
-                   if let error = state as? PraxisDataModel.ErrorState {
-                       loginError = AppError(title: "Error",
-                                                   message: error.throwable.message ?? "Login failure")
-                   } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
-                      callback()
-                   }
-               }
-        }
+        anyCancellable = createPublisher(for: loginDataModel.dataFlowNative)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                debugPrint(completion)
+            } receiveValue: { [self] state in
+                if state is PraxisDataModel.LoadingState {
+                    showLoading = true
+                    hasFocus = false
+                } else {
+                    showLoading = false
+                    
+                    if let error = state as? PraxisDataModel.ErrorState {
+                        loginError = AppError(title: "Error",
+                                              message: error.throwable.message ?? "Login failure")
+                    } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
+                        callback()
+                    }
+                }
+            }
         loginDataModel.login(email: email, password: password)
     }
 
@@ -60,7 +62,7 @@ struct LoginView: View {
     @State private var signupPresented = false
     @FocusState private var focusedField: Bool
     
-    private var loginError: Binding<Bool> {
+    private var loginErrorBinding: Binding<Bool> {
         Binding {
             store.loginError != nil
         } set: { _ in
@@ -106,7 +108,7 @@ struct LoginView: View {
                 focusedField = self.store.hasFocus
             }
         }
-        .alert(isPresented: loginError, error: store.loginError) {
+        .alert(isPresented: loginErrorBinding, error: store.loginError) {
             Text(store.loginError?.errorDescription ?? "")
         }
     }
