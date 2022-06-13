@@ -101,7 +101,10 @@ class MainActivity : ComponentActivity() {
                             FindWorkspaceScreen(navController = navController)
                         }
                         composable(HarvestRoutes.Screen.ORG_PROJECTS) {
-                            ProjectScreen(navController = navController)
+                            ProjectScreen(
+                                navController = navController,
+                                userState = mainActivityViewModel.getUserState
+                            )
                         }
                         composable(HarvestRoutes.Screen.WORK_ENTRY) {
                             NewEntryScreen(navController = navController, user = mainActivityViewModel.user)

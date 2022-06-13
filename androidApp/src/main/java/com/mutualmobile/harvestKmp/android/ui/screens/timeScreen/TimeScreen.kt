@@ -53,14 +53,12 @@ import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.HarvestUserWorkResponse
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
@@ -89,18 +87,9 @@ fun TimeScreen(
     onUpdateWeekLogsTotalTime: (String) -> Unit,
     tsVm: TimeScreenViewModel = get(),
     userOrgName: String?,
+    getUserState: DataState
 ) {
     val coroutineScope = rememberCoroutineScope()
-    var getUserState: DataState by remember { mutableStateOf(EmptyState) }
-    val getUserDataModel by remember { mutableStateOf(
-        GetUserDataModel ().apply {
-            this.dataFlow.onEach {
-                    newState ->
-                getUserState = newState
-            }.launchIn(coroutineScope)
-            this.activate()
-        }
-    ) }
 
     //TODO: Make this business logic common/shared
     val dateRangeStart by remember(localWeekOffset) {

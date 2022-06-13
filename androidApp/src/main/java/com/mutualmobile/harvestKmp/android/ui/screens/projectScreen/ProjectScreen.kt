@@ -16,6 +16,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -46,7 +47,6 @@ import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.GetUserAssignedProjectsDataModel
 import java.util.Date
 import kotlinx.coroutines.flow.launchIn
@@ -57,14 +57,14 @@ import org.koin.androidx.compose.get
 @Composable
 fun ProjectScreen(
     navController: NavHostController,
-    newEntryScreenViewModel: NewEntryScreenViewModel = get()
+    newEntryScreenViewModel: NewEntryScreenViewModel = get(),
+    userState: DataState
 ) {
     val coroutineScope = rememberCoroutineScope()
     val projectListMap = remember { mutableStateOf(emptyList<OrgProjectResponse>()) }
     var filteredProjectListMap: List<OrgProjectResponse>
     val textState = remember { mutableStateOf(TextFieldValue("")) }
 
-    var currentUserState: DataState by remember { mutableStateOf(EmptyState) }
     var currentProjectScreenState: DataState by remember {
         mutableStateOf(EmptyState)
     }
@@ -94,31 +94,16 @@ fun ProjectScreen(
             }
         )
     }
-    val userStateModel by remember {
-        mutableStateOf(
-            GetUserDataModel().apply {
-                this.dataFlow.onEach { userState ->
-                    currentUserState = userState
-                    when (userState) {
-                        is SuccessState<*> -> {
-                            getUserAssignedProjectsDataModel.getUserAssignedProjects(
-                                (userState.data as GetUserResponse).id ?: ""
-                            )
-                        }
-                        else -> Unit
-                    }
-                }.launchIn(coroutineScope)
-                praxisCommand.onEach {  newCommand ->
-                    projectScreenNavigationCommands = newCommand
-                    when (newCommand) {
-                        is NavigationPraxisCommand -> {
-                            if (newCommand.screen.isBlank()) {
-                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
-                            }
-                        }
-                    } }.launchIn(coroutineScope)
-            }.activate()
-        )
+
+    LaunchedEffect(userState) {
+        when (userState) {
+            is SuccessState<*> -> {
+                getUserAssignedProjectsDataModel.getUserAssignedProjects(
+                    (userState.data as GetUserResponse).id ?: ""
+                )
+            }
+            else -> Unit
+        }
     }
 
     Scaffold(

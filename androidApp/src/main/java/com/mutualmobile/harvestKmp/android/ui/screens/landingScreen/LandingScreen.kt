@@ -242,7 +242,8 @@ fun LandingScreen(
                     onUpdateWeekLogsTotalTime = { updatedTime ->
                         lsVm.currentWeekLogsTotalTime = updatedTime
                     },
-                    userOrgName = mainActivityViewModel.userOrganization?.name
+                    userOrgName = mainActivityViewModel.userOrganization?.name,
+                    getUserState = userState
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }
