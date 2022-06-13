@@ -1,36 +1,40 @@
 package com.mutualmobile.harvestKmp.domain.model
 
+import com.mutualmobile.harvestKmp.MR
+import dev.icerock.moko.resources.ImageResource
+import dev.icerock.moko.resources.StringResource
+
 
 data class OnBoardingItem(
-    val image: Int,
+    val image: ImageResource,
     val color: Long,
-    val title: String,
+    val title: StringResource,
     val colorBottom: Long
 )
 
-val onBoardingItem = listOf(
+val onBoardingItems = listOf(
     OnBoardingItem(
-        image = 0,
+        image = MR.images.onboarding_screen_1,
         color = 0xFFF06808,
-        title = "Simple, powerful time tracking, reporting, and invoicing",
+        title = MR.strings.onboarding_text_1,
         colorBottom = 0xFF95d00
     ),
     OnBoardingItem(
-        image = 0,
+        image = MR.images.onboarding_screen_2,
         color = 0xFF34aca8,
-        title = "Track time easily, wherever you are",
+        title = MR.strings.onboarding_text_2,
         colorBottom = 0xFF21a5a0
     ),
     OnBoardingItem(
-        image = 0,
+        image = MR.images.onboarding_screen_3,
         color = 0xFFce6665,
-        title = "Enter expense on the go",
+        title = MR.strings.onboarding_text_3,
         colorBottom = 0xFFcb5c5b
     ),
     OnBoardingItem(
-        image = 0,
+        image = MR.images.onboarding_screen_4,
         color = 0xFF4ca5c5,
-        title = "Report on time for powerful insights",
+        title = MR.strings.onboarding_text_4,
         colorBottom = 0xFF3589a6
     )
 )

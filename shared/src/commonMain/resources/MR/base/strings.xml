@@ -71,4 +71,8 @@
     <string name="change_password">Change Password</string>
     <string name="delete_work_dialog_title">Confirm Deletion?</string>
     <string name="delete_work_dialog_bodyText">Are you sure you want to delete this workLog?</string>
+    <string name="onboarding_text_1">Simple, powerful time tracking, reporting, and invoicing</string>
+    <string name="onboarding_text_2">Track time easily, wherever you are</string>
+    <string name="onboarding_text_3">Enter expense on the go</string>
+    <string name="onboarding_text_4">Report on time for powerful insights</string>
 </resources>
