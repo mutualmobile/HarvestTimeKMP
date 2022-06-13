@@ -88,11 +88,10 @@ fun LoginScreen(
             if ((userState.data as? GetUserResponse) != null) {
                 if ((userState.data as? GetUserResponse)?.role != UserRole.ORG_USER.role) {
                     loginDataModel.logoutUser()
-                }
-            }
-            else {
-                if (currentNavigationCommand is NavigationPraxisCommand) {
-                    navController clearBackStackAndNavigateTo (currentNavigationCommand as NavigationPraxisCommand).screen
+                } else {
+                    if (currentNavigationCommand is NavigationPraxisCommand) {
+                        navController clearBackStackAndNavigateTo (currentNavigationCommand as NavigationPraxisCommand).screen
+                    }
                 }
             }
         }

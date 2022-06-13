@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.LinearProgressIndicator
@@ -25,6 +26,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
@@ -40,11 +42,14 @@ import androidx.navigation.NavController
 import com.google.accompanist.insets.ui.Scaffold
 import com.google.accompanist.insets.ui.TopAppBar
 import com.mutualmobile.harvestKmp.MR
+import com.mutualmobile.harvestKmp.android.ui.screens.common.CommonAlertDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
+import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.android.ui.utils.isAFloat
+import com.mutualmobile.harvestKmp.android.ui.utils.showToast
 import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
@@ -98,6 +103,27 @@ fun NewEntryScreen(
                     }
                 },
                 contentPadding = WindowInsets.Companion.statusBars.asPaddingValues(),
+                actions = {
+                    if (nesVm.currentWorkRequestType == WorkRequestType.UPDATE) {
+                        if (nesVm.deleteWorkState is LoadingState) {
+                            CircularProgressIndicator(color = Color.White)
+                        } else {
+                            IconButton(
+                                onClick = { nesVm.isDeleteDialogVisible = true },
+                            ) {
+                                Icon(imageVector = Icons.Default.Delete, contentDescription = null)
+                            }
+                            when (nesVm.deleteWorkState) {
+                                is SuccessState<*> -> navController.navigateUp()
+                                is ErrorState -> activity.showToast(
+                                    (nesVm.deleteWorkState as ErrorState).throwable.message
+                                        ?: "Unexpected Error Occurred!"
+                                )
+                                else -> Unit
+                            }
+                        }
+                    }
+                }
             )
         },
         bottomBar = {
@@ -128,10 +154,10 @@ fun NewEntryScreen(
                                                             note = nesVm.noteEtText
                                                         )
                                                     ).collect { logWorkTimeState ->
-                                                        nesVm.currentLogWorkTimeState = logWorkTimeState
+                                                        nesVm.currentLogWorkTimeState =
+                                                            logWorkTimeState
                                                     }
                                                 }
-                                                // TODO: Check why UPDATE is not working while CREATE is
                                                 WorkRequestType.UPDATE -> {
                                                     nesVm.currentWorkRequest?.let { nnCurrentWorkRequest ->
                                                         nesVm.logWorkTimeDataModel.logWorkTime(
@@ -228,5 +254,13 @@ fun NewEntryScreen(
                 else -> Unit
             }
         })
+    }
+    if (nesVm.isDeleteDialogVisible) {
+        CommonAlertDialog(
+            onDismiss = { nesVm.isDeleteDialogVisible = false },
+            onConfirm = { nesVm.deleteWork(onCompleted = { nesVm.isDeleteDialogVisible = false }) },
+            titleProvider = { MR.strings.delete_work_dialog_title.get() },
+            bodyTextProvider = { MR.strings.delete_work_dialog_bodyText.get() }
+        )
     }
 }
