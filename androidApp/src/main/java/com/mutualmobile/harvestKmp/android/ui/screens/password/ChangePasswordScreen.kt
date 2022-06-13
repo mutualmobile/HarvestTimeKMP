@@ -18,11 +18,8 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -36,45 +33,33 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Ico
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.android.ui.utils.showToast
+import com.mutualmobile.harvestKmp.android.viewmodels.ChangePasswordViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.ChangePasswordDataModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlinx.coroutines.launch
+import org.koin.androidx.compose.get
 
 @Composable
-fun ChangePasswordScreen(navController: NavHostController) {
+fun ChangePasswordScreen(
+    navController: NavHostController,
+    cpVm: ChangePasswordViewModel = get()
+) {
     val coroutineScope = rememberCoroutineScope()
     val ctx = LocalContext.current
-    var changePasswordState: DataState by remember { mutableStateOf(EmptyState) }
-    val scope = rememberCoroutineScope()
-
-    var changePasswordPraxisCommand: PraxisCommand? by remember { mutableStateOf(null) }
-    val changePasswordDataModel by remember {
-        mutableStateOf(
-            ChangePasswordDataModel().apply {
-                praxisCommand.onEach { newCommand ->
-                    changePasswordPraxisCommand = newCommand
-                    when (newCommand) {
-                        is NavigationPraxisCommand -> {
-                            if (newCommand.screen.isBlank()) {
-                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
-                            }
-                        }
-                    }
-                }.launchIn(coroutineScope)
+    
+    LaunchedEffect(cpVm.changePasswordPraxisCommand) {
+        when (cpVm.changePasswordPraxisCommand) {
+            is NavigationPraxisCommand -> {
+                if ((cpVm.changePasswordPraxisCommand as NavigationPraxisCommand).screen.isBlank()) {
+                    navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                }
             }
-        )
+        }
     }
-    var currentPassword by remember { mutableStateOf("") }
-    var currentConfirmPassword by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -113,45 +98,45 @@ fun ChangePasswordScreen(navController: NavHostController) {
             ) {
 
                 SignUpTextField(
-                    value = currentPassword,
-                    onValueChange = { updatedString -> currentPassword = updatedString },
-                    placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId)
+                    value = cpVm.oldPassword,
+                    onValueChange = { updatedString -> cpVm.oldPassword = updatedString },
+                    placeholderText = stringResource(MR.strings.old_password_et_title.resourceId),
+                    isPasswordTextField = true
                 )
                 SignUpTextField(
-                    value = currentConfirmPassword,
-                    onValueChange = { updatedString -> currentConfirmPassword = updatedString },
-                    placeholderText = stringResource(MR.strings.signup_screen_confirm_password_et_placeholder.resourceId)
+                    value = cpVm.newPassword,
+                    onValueChange = { updatedString -> cpVm.newPassword = updatedString },
+                    placeholderText = stringResource(MR.strings.new_password_et_title.resourceId),
+                    isPasswordTextField = true
                 )
 
                 IconLabelButton(
                     label = stringResource(MR.strings.request_reset_password.resourceId),
-                    errorMsg = (changePasswordState as? ErrorState)?.throwable?.message,
-                    isLoading = changePasswordState is LoadingState,
+                    errorMsg = (cpVm.changePasswordState as? ErrorState)?.throwable?.message,
+                    isLoading = cpVm.changePasswordState is LoadingState,
                     onClick =
                     {
-                        scope.launch {
-                            changePasswordDataModel.changePassWord(
-                                currentPassword.trim(),
-                                currentConfirmPassword.trim()
-                            ).collect { passwordState ->
-                                changePasswordState = passwordState
-                                when (passwordState) {
-                                    is SuccessState<*> -> {
-                                        ctx.showToast("Change password successful!")
+                        cpVm.changePasswordDataModel.changePassWord(
+                            cpVm.newPassword.trim(),
+                            cpVm.oldPassword.trim(),
+                        ).onEach { passwordState ->
+                            cpVm.changePasswordState = passwordState
+                            when (passwordState) {
+                                is SuccessState<*> -> {
+                                    ctx.showToast("Change password successful!")
+                                    cpVm.resetAll {
                                         navController.navigateUp()
                                     }
-                                    else -> Unit
                                 }
+                                else -> Unit
                             }
-
-                        }
-
+                        }.launchIn(coroutineScope)
                     })
             }
             HarvestDialog(
-                praxisCommand = changePasswordPraxisCommand,
+                praxisCommand = cpVm.changePasswordPraxisCommand,
                 onConfirm = {
-                    changePasswordPraxisCommand = null
+                    cpVm.changePasswordPraxisCommand = null
                 },
             )
         }

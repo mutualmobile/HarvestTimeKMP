@@ -65,6 +65,13 @@ fun AccountSection(navController: NavHostController) {
         showTopDivider = true
     )
     SettingsListItem(
+        title = stringResource(MR.strings.account_section_change_password_item_title.resourceId),
+        showTopDivider = true,
+        onClick = {
+            navController.navigate(HarvestRoutes.Screen.CHANGE_PASSWORD)
+        }
+    )
+    SettingsListItem(
         title = stringResource(MR.strings.account_section_signout_item_title.resourceId),
         showTopDivider = true,
         onClick = {

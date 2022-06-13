@@ -1,13 +1,17 @@
 package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.*
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flow
 import org.koin.core.component.KoinComponent
 
 class ChangePasswordDataModel() :
@@ -31,19 +35,19 @@ class ChangePasswordDataModel() :
     }
 
     fun changePassWord(password: String, oldPassword: String): Flow<DataState> {
-        return callbackFlow {
-            this.send(LoadingState)
+        return flow {
+            emit(LoadingState)
             when (val changePasswordResponse = changePasswordUseCase(
                 password = password,
                 oldPassword = oldPassword
             )) {
                 is NetworkResponse.Success -> {
                     print("ChangePassword Successful, ${changePasswordResponse.data.message}")
-                    this.send(SuccessState(changePasswordResponse.data))
+                    emit(SuccessState(changePasswordResponse.data))
                 }
                 is NetworkResponse.Failure -> {
                     print("ChangePassword Failed, ${changePasswordResponse.throwable.message}")
-                    this.send(ErrorState(changePasswordResponse.throwable))
+                    emit(ErrorState(changePasswordResponse.throwable))
                 }
                 is NetworkResponse.Unauthorized -> {
                     settings.clear()

@@ -2,26 +2,27 @@ package com.mutualmobile.harvestKmp.validators
 
 import com.mutualmobile.harvestKmp.validators.exceptions.EmptyFieldException
 import com.mutualmobile.harvestKmp.validators.exceptions.InvalidPasswordException
-import com.mutualmobile.harvestKmp.validators.exceptions.PasswordMismatchException
+import com.mutualmobile.harvestKmp.validators.exceptions.SamePasswordException
 
 class ChangePasswordFormValidator {
 
-    operator fun invoke(password: String, confirmPassword: String) {
+    operator fun invoke(password: String, oldPassword: String) {
         if (password.isEmpty()) {
             throw EmptyFieldException("Password")
         }
-        if (confirmPassword.isEmpty()) {
+        if (oldPassword.isEmpty()) {
             throw EmptyFieldException("Confirm Password")
         }
         if (!isValidPassword(password)) {
             throw InvalidPasswordException()
         }
-        if (!isValidPassword(confirmPassword)) {
-            throw InvalidPasswordException()
-        }
+        // Commenting the code because some initial sign-up passwords might not match this criteria
+//        if (!isValidPassword(oldPassword)) {
+//            throw InvalidPasswordException()
+//        }
 
-        if (!password.equals(confirmPassword)) {
-            throw PasswordMismatchException()
+        if (password == oldPassword) {
+            throw SamePasswordException()
         }
     }
 

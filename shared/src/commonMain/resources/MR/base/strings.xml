@@ -17,6 +17,7 @@
     <string name="account_section_email_support_item_title">Email support</string>
     <string name="account_section_help_center_item_title">Help center</string>
     <string name="account_section_switch_accounts_item_title">Switch accounts</string>
+    <string name="account_section_change_password_item_title">Change password</string>
     <string name="account_section_signout_item_title">Sign out</string>
     <string name="about_harvest_section_title">About Harvest</string>
     <string name="about_harvest_section_open_source_item_title">Open source licenses</string>
@@ -75,4 +76,6 @@
     <string name="onboarding_text_2">Track time easily, wherever you are</string>
     <string name="onboarding_text_3">Enter expense on the go</string>
     <string name="onboarding_text_4">Report on time for powerful insights</string>
+    <string name="old_password_et_title">Old Password</string>
+    <string name="new_password_et_title">New Password</string>
 </resources>
