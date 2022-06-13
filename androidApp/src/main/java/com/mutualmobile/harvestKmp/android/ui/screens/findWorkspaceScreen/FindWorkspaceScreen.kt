@@ -26,11 +26,7 @@ import androidx.compose.material.LocalTextStyle
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -46,42 +42,25 @@ import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.FindWorkspaceScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.get
+import com.mutualmobile.harvestKmp.android.viewmodels.FindWorkspaceViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.features.datamodels.orgApiDataModels.FindOrgByIdentifierDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.compose.get
 
 @Composable
 fun FindWorkspaceScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    fwVm: FindWorkspaceViewModel = get()
 ) {
-    var tfValue by remember { mutableStateOf("") }
-    val coroutineScope = rememberCoroutineScope()
-
-    var currentFindOrgNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
-    var findOrgState: DataState by remember { mutableStateOf(EmptyState) }
-    val findOrgByIdentifierDataModel by remember {
-        mutableStateOf(
-            FindOrgByIdentifierDataModel().apply {
-                this.dataFlow.onEach { updatedState ->
-                    findOrgState = updatedState
-                }.launchIn(coroutineScope)
-                praxisCommand.onEach { newCommand ->
-                    currentFindOrgNavigationCommand = newCommand
-                    when (newCommand) {
-                        is NavigationPraxisCommand -> {
-                            navController.navigate(newCommand.screen)
-                        }
-                    }
-                }.launchIn(coroutineScope)
+    LaunchedEffect(fwVm.currentFindOrgNavigationCommand) {
+        when (fwVm.currentFindOrgNavigationCommand) {
+            is NavigationPraxisCommand -> {
+                val destination = (fwVm.currentFindOrgNavigationCommand as NavigationPraxisCommand).screen
+                fwVm.resetAll { navController.navigate(destination) }
             }
-        )
+        }
     }
 
     CompositionLocalProvider(LocalContentColor provides Color.White) {
@@ -108,8 +87,10 @@ fun FindWorkspaceScreen(
                     ) {
                         Text(text = "https://")
                         WorkspaceTextField(
-                            value = tfValue,
-                            onValueChanged = { updatedString -> tfValue = updatedString }
+                            value = fwVm.tfValue,
+                            onValueChanged = { updatedString ->
+                                fwVm.tfValue = updatedString
+                            }
                         )
                         Text(text = ".harvestclone.com")
                     }
@@ -129,23 +110,23 @@ fun FindWorkspaceScreen(
                 IconLabelButton(
                     label = MR.strings.find_workspace_screen_btn_txt.get(),
                     modifier = Modifier
-                        .fillMaxWidth(if (findOrgState is ErrorState) 0.45f else 1f)
+                        .fillMaxWidth(if (fwVm.findOrgState is ErrorState) 0.45f else 1f)
                         .padding(vertical = 4.dp),
-                    isLoading = findOrgState is LoadingState,
-                    errorMsg = when (findOrgState) {
-                        is ErrorState -> (findOrgState as ErrorState).throwable.message
+                    isLoading = fwVm.findOrgState is LoadingState,
+                    errorMsg = when (fwVm.findOrgState) {
+                        is ErrorState -> (fwVm.findOrgState as ErrorState).throwable.message
                             ?: MR.strings.generic_error_msg.get()
                         else -> null
                     },
                     onClick = {
-                        findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = tfValue)
+                        fwVm.findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = fwVm.tfValue)
                     },
                 )
-                if (findOrgState is ErrorState) {
+                if (fwVm.findOrgState is ErrorState) {
                     IconLabelButton(
                         label = MR.strings.find_workspace_screen_signup_btn_txt.get(),
                         modifier = Modifier
-                            .fillMaxWidth(if (findOrgState is ErrorState) 0.9f else 0f)
+                            .fillMaxWidth(if (fwVm.findOrgState is ErrorState) 0.9f else 0f)
                             .padding(vertical = 4.dp),
                         onClick = {
                             navController.navigate(HarvestRoutes.Screen.NEW_ORG_SIGNUP)
@@ -154,9 +135,9 @@ fun FindWorkspaceScreen(
                 }
             }
             HarvestDialog(
-                praxisCommand = currentFindOrgNavigationCommand,
+                praxisCommand = fwVm.currentFindOrgNavigationCommand,
                 onConfirm = {
-                    currentFindOrgNavigationCommand = null
+                    fwVm.currentFindOrgNavigationCommand = null
                 },
             )
         }
