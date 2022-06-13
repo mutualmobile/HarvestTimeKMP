@@ -69,4 +69,6 @@
     <string name="forgot_password">Forgot Password</string>
     <string name="request_reset_password">Request Reset Password</string>
     <string name="change_password">Change Password</string>
+    <string name="delete_work_dialog_title">Confirm Deletion?</string>
+    <string name="delete_work_dialog_bodyText">Are you sure you want to delete this workLog?</string>
 </resources>

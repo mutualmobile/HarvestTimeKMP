@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
+import com.mutualmobile.harvestKmp.data.mappers.toWorkResponse
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
@@ -16,6 +17,8 @@ import com.mutualmobile.harvestKmp.domain.model.response.OrgProjectResponse
 import com.mutualmobile.harvestKmp.features.datamodels.orgProjectsDataModels.OrgProjectsDataModel
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import java.util.Date
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 
 enum class WorkRequestType {
@@ -53,6 +56,10 @@ class NewEntryScreenViewModel : ViewModel() {
             logWorkTimeNavigationCommands = newCommand
         }
     }
+
+    var deleteWorkState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)
+        private set
+    var isDeleteDialogVisible by mutableStateOf(false)
 
     fun updateCurrentWorkRequest(
         update: (existing: HarvestUserWorkRequest?) -> HarvestUserWorkRequest?,
@@ -93,10 +100,22 @@ class NewEntryScreenViewModel : ViewModel() {
         }
     }
 
+    fun deleteWork(onCompleted: () -> Unit) {
+        currentWorkRequest?.let { nnWorkRequest ->
+            logWorkTimeDataModel.deleteWork(
+                harvestUserWorkResponse = nnWorkRequest.toWorkResponse()
+            ).onEach { newState ->
+                deleteWorkState = newState
+            }.launchIn(logWorkTimeDataModel.dataModelScope)
+        }
+        onCompleted()
+    }
+
     fun resetAllItems(onResetCompleted: () -> Unit = {}) {
         currentWorkRequest = null
         currentProjectName = ""
         currentWorkRequestType = WorkRequestType.CREATE
+        deleteWorkState = PraxisDataModel.EmptyState
         onResetCompleted()
     }
 }
