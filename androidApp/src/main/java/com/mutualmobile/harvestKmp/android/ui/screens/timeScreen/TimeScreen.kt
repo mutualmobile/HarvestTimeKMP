@@ -47,12 +47,13 @@ import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.dateWithoutTimeZone
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
+import com.mutualmobile.harvestKmp.android.viewmodels.TimeScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
+import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
+import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.ApiResponse
@@ -62,12 +63,13 @@ import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUser
 import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
 import dev.chrisbanes.snapper.ExperimentalSnapperApi
 import dev.chrisbanes.snapper.rememberSnapperFlingBehavior
+import kotlin.time.Duration.Companion.days
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
-import kotlin.time.Duration.Companion.days
 import kotlinx.datetime.Clock
 import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
+import org.koin.androidx.compose.get
 
 const val MaxItemFling = 1
 
@@ -83,7 +85,9 @@ fun TimeScreen(
     isWorkLoading: (Boolean) -> Unit,
     navigateToFindWorkspaceScreen: () -> Unit,
     onWeekOffsetChanged: (Int) -> Unit,
-    onUpdateWeekLogsTotalTime: (String) -> Unit
+    onUpdateWeekLogsTotalTime: (String) -> Unit,
+    tsVm: TimeScreenViewModel = get(),
+    userOrgName: String?,
 ) {
     var getUserState: DataState by remember { mutableStateOf(EmptyState) }
     val getUserDataModel by remember { mutableStateOf(
@@ -171,16 +175,18 @@ fun TimeScreen(
                         userIds = listOf(nnUserId)
                     ).collect { newState ->
                         currentWeekWorkLogs = emptyList()
+                        tsVm.currentWeekWorkLogsOrgList = emptyList()
                         isWorkLoading(newState is LoadingState)
                         when (newState) {
                             is SuccessState<*> -> {
                                 (newState as? SuccessState<ApiResponse<List<HarvestUserWorkResponse>>>)
                                     ?.data?.data?.let { apiWorkLogs ->
                                         currentWeekWorkLogs = apiWorkLogs
-                                        var totalWeekTime = 0f
-                                        apiWorkLogs.forEach { apiWorkLog ->
-                                            totalWeekTime += apiWorkLog.workHours
-                                        }
+                                            tsVm.getProjects(
+                                                projectIds = apiWorkLogs.map { apiWorkLog ->
+                                                    apiWorkLog.projectId
+                                                }.distinct()
+                                            )
                                     }
                             }
                             else -> Unit
@@ -311,8 +317,10 @@ fun TimeScreen(
                             currentPageWorkLogs.forEach { workLog ->
                                 item {
                                     TimeCard(
-                                        organisationName = "Mutual Mobile",
-                                        bucketName = "Android Department Work HYD",
+                                        organisationName = userOrgName ?: "Mutual Mobile",
+                                        bucketName = tsVm.currentWeekWorkLogsOrgList.find { proj ->
+                                            proj.id == workLog.projectId
+                                        }?.name ?: "Android Department Work HYD",
                                         time = workLog.workHours,
                                         taskType = "Work",
                                         onClick = {

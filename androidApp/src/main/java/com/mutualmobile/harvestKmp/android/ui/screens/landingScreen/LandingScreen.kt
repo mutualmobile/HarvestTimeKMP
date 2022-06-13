@@ -57,6 +57,7 @@ import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
 import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.android.viewmodels.LandingScreenViewModel
+import com.mutualmobile.harvestKmp.android.viewmodels.MainActivityViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
@@ -70,6 +71,7 @@ fun LandingScreen(
     navController: NavHostController,
     newEntryScreenViewModel: NewEntryScreenViewModel = get(),
     lsVm: LandingScreenViewModel = get(),
+    mainActivityViewModel: MainActivityViewModel = get(),
     userOrganization: HarvestOrganization? = null,
     userState: PraxisDataModel.DataState
 ) {
@@ -239,7 +241,8 @@ fun LandingScreen(
                     },
                     onUpdateWeekLogsTotalTime = { updatedTime ->
                         lsVm.currentWeekLogsTotalTime = updatedTime
-                    }
+                    },
+                    userOrgName = mainActivityViewModel.userOrganization?.name
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
             }

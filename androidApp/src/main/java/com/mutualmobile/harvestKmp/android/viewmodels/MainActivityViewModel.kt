@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class MainActivityViewModel : ViewModel() {
-    private val getUserDataModel = GetUserDataModel()
+    val getUserDataModel = GetUserDataModel()
     private val findOrgByIdDataModel = FindOrgByIdDataModel()
 
     var getUserState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)

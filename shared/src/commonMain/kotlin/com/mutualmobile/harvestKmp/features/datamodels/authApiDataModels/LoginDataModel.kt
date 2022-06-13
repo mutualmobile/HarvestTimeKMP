@@ -1,24 +1,20 @@
 package com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels
 
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.di.AuthApiUseCaseComponent
 import com.mutualmobile.harvestKmp.di.UseCasesComponent
 import com.mutualmobile.harvestKmp.domain.model.response.LoginResponse
 import com.mutualmobile.harvestKmp.features.NetworkResponse
 import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 
-class LoginDataModel() :
+class LoginDataModel :
     PraxisDataModel(), KoinComponent {
   private val _dataFlow = MutableSharedFlow<DataState>()
     val dataFlow = _dataFlow.asSharedFlow()
@@ -27,6 +23,7 @@ class LoginDataModel() :
     private val authApiUseCasesComponent = AuthApiUseCaseComponent()
     private val loginUseCase = authApiUseCasesComponent.provideLoginUseCase()
     private val saveSettingsUseCase = useCasesComponent.provideSaveSettingsUseCase()
+    private val provideLogoutUseCase = authApiUseCasesComponent.provideLogoutUseCase()
 
     override fun activate() {
     }
@@ -88,6 +85,18 @@ class LoginDataModel() :
                     refreshToken
                 )
             }
+        }
+    }
+
+    fun logoutUser() {
+        praxisCommand(
+            ModalPraxisCommand(
+                title = "Work in Progress",
+                message = "The mobile client app is currently made for organization users only, if you're an Admin or a SuperAdmin, you can click on OK and go to the Harvest Web App which supports Admin sign-in"
+            )
+        )
+        dataModelScope.launch {
+            provideLogoutUseCase()
         }
     }
 }

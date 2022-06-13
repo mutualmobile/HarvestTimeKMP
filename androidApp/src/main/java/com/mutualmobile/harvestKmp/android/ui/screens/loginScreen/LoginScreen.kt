@@ -1,5 +1,7 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.loginScreen
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +19,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -29,7 +32,9 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Sig
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.android.ui.utils.get
+import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
@@ -37,6 +42,7 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
+import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -47,6 +53,7 @@ fun LoginScreen(
     userState: DataState,
     onLoginSuccess: () -> Unit
 ) {
+    val ctx = LocalContext.current
     var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
     var currentPassword by remember { mutableStateOf("password") }
 
@@ -63,6 +70,7 @@ fun LoginScreen(
                 }.launchIn(this.dataModelScope)
                 praxisCommand.onEach {  newCommand ->
                     currentNavigationCommand = newCommand
+                    println("newCommand is: $newCommand")
                     when (currentNavigationCommand) {
                         is NavigationPraxisCommand -> {
                             onLoginSuccess()
@@ -75,8 +83,16 @@ fun LoginScreen(
     var currentErrorMsg: String? by remember { mutableStateOf(null) }
 
     LaunchedEffect(userState) {
-        if (userState is PraxisDataModel.SuccessState<*> && currentNavigationCommand is NavigationPraxisCommand) {
-            navController clearBackStackAndNavigateTo (currentNavigationCommand as NavigationPraxisCommand).screen
+        if (userState is PraxisDataModel.SuccessState<*>) {
+            if ((userState.data as? GetUserResponse) != null) {
+                if ((userState.data as? GetUserResponse)?.role != UserRole.ORG_USER.role) {
+                    loginDataModel.logoutUser()
+                } else {
+                    if (currentNavigationCommand is NavigationPraxisCommand) {
+                        navController clearBackStackAndNavigateTo (currentNavigationCommand as NavigationPraxisCommand).screen
+                    }
+                }
+            }
         }
     }
 
@@ -138,8 +154,19 @@ fun LoginScreen(
         HarvestDialog(
             praxisCommand = currentNavigationCommand,
             onConfirm = {
+                if (currentNavigationCommand is ModalPraxisCommand) {
+                    if ((currentNavigationCommand as ModalPraxisCommand).title == "Work in Progress") {
+                        val intent = Intent(Intent.ACTION_VIEW).apply {
+                            data = Uri.parse("https://harvestkmp.web.app/")
+                        }
+                        ctx.startActivity(intent)
+                    }
+                }
                 currentNavigationCommand = null
             },
+            onDismiss = {
+                currentNavigationCommand = null
+            }
         )
     }
 }

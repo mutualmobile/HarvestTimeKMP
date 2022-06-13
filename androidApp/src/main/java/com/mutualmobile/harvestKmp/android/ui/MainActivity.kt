@@ -12,6 +12,7 @@ import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.core.animation.doOnEnd
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
@@ -37,7 +38,6 @@ import com.mutualmobile.harvestKmp.android.viewmodels.MainActivityViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import org.koin.android.ext.android.get
 
 class MainActivity : ComponentActivity() {
@@ -54,15 +54,17 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colors.background
                 ) {
-                    val navController = rememberNavController()
-                    NavHost(
-                        navController = navController,
-                        startDestination =
-                        if (mainActivityViewModel.getUserState is SuccessState<*>) {
+                    val startDestination = remember {
+                        if (mainActivityViewModel.getUserDataModel.getLocalUser() != null) {
                             HarvestRoutes.Screen.ORG_USER_DASHBOARD
                         } else {
                             HarvestRoutes.Screen.ON_BOARDING
-                        },
+                        }
+                    }
+                    val navController = rememberNavController()
+                    NavHost(
+                        navController = navController,
+                        startDestination = startDestination,
                     ) {
                         composable(HarvestRoutes.Screen.ON_BOARDING) {
                             OnBoardingScreen(navController = navController)
@@ -85,7 +87,7 @@ class MainActivity : ComponentActivity() {
                                 userState = mainActivityViewModel.getUserState,
                                 onLoginSuccess = {
                                     mainActivityViewModel.fetchUser()
-                                }
+                                },
                             )
                         }
                         composable(HarvestRoutes.Screen.ORG_USER_DASHBOARD) {
