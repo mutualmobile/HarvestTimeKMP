@@ -11,82 +11,49 @@ import SwiftUI
 
 struct ProjectListView_Previews: PreviewProvider {
     static var previews: some View {
-        ProjectListView()
+        ProjectListView(store: ProjectListStore(selectedProject: .constant(nil),
+                                                selectedTask: .constant(nil)))
     }
 }
 
 class ProjectListStore: ObservableObject {
     let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
     
-    @Published var selectedProject: String?
-    @Published var selectedTask: String?
+    var selectedProject: Binding<String?>
+    var selectedTask: Binding<String?>
     
-    var isSelected: Bool {
-        selectedTask != nil && selectedProject != nil
+    init(selectedProject: Binding<String?>, selectedTask: Binding<String?>) {
+        self.selectedProject = selectedProject
+        self.selectedTask = selectedTask
     }
-    
-    init() { }
 }
 
 struct ProjectListView: View {
     
     @Environment(\.dismiss) private var dismiss
-    @ObservedObject var store = ProjectListStore()
-
+    @ObservedObject var store: ProjectListStore
+    
     @State private var searchText = ""
     
     var body: some View {
-        NavigationView {
-            VStack {
-                if store.isSelected {
-                    // TODO: Pass selected data here
-                    let timEntryStore = TimeEntryStore(Date(),
-                                                       selectedProject: store.selectedProject ?? "",
-                                                       selectedTask: store.selectedTask ?? "")
-                    TimeEntryView(store: timEntryStore)
-                } else {
-                    List {
-                        Section("Mutual Mobile") {
-                            
-                            ForEach(searchedResult, id:\.self) { project in
-                                NavigationLink {
-                                    ProjectTaskView(selectedProject: $store.selectedProject,
-                                                    selectedTask: $store.selectedTask,
-                                                    project: project)
-                                } label: {
-                                    Text(project)
-                                }
-                            }
+        VStack {
+            List {
+                Section("Mutual Mobile") {
+                    
+                    ForEach(searchedResult, id:\.self) { project in
+                        NavigationLink {
+                            ProjectTaskView(selectedProject: store.selectedProject,
+                                            selectedTask: store.selectedTask,
+                                            project: project)
+                        } label: {
+                            Text(project)
                         }
                     }
-                    .searchable(text: $searchText,
-                                placement: .navigationBarDrawer(displayMode: .always),
-                                prompt: Text("Search here..."))
                 }
             }
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                            .defaultAppColor()
-                    }
-                }
-                
-                ToolbarItem(placement: .confirmationAction) {
-                    return store.isSelected
-                    ? Button(action: {
-                        // TODO: Handle Start action
-                    }, label: {
-                        Text("Start")
-                            .defaultAppColor()
-                    }) : nil
-                }
-            }
-            .navigationTitle(store.isSelected
-                             ? Text("Projects")
-                             : Text("New Time Entry"))
+            .searchable(text: $searchText,
+                        placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: Text("Search here..."))
         }
     }
     

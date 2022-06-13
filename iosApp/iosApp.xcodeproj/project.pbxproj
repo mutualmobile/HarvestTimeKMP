@@ -11,6 +11,7 @@
 		058557D9273AAEEB004C7B11 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */; };
 		12F72EEE657317AD0347C1FB /* Pods_iosApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2653B26BCBC847F765B563C5 /* Pods_iosApp.framework */; };
 		2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2152FB032600AC8F00CF470E /* iOSApp.swift */; };
+		311F9E3C2856DC3C00F08219 /* TimeEntryContainerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 311F9E3B2856DC3C00F08219 /* TimeEntryContainerView.swift */; };
 		312A6921284A4234000A2CD9 /* AppError.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691C284A4234000A2CD9 /* AppError.swift */; };
 		312A6922284A4234000A2CD9 /* HarvestButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A691E284A4234000A2CD9 /* HarvestButton.swift */; };
 		312A6924284A4234000A2CD9 /* LoadingIndicator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 312A6920284A4234000A2CD9 /* LoadingIndicator.swift */; };
@@ -40,6 +41,7 @@
 		058557D8273AAEEB004C7B11 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		2152FB032600AC8F00CF470E /* iOSApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = iOSApp.swift; sourceTree = "<group>"; };
 		2653B26BCBC847F765B563C5 /* Pods_iosApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_iosApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		311F9E3B2856DC3C00F08219 /* TimeEntryContainerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimeEntryContainerView.swift; sourceTree = "<group>"; };
 		312A691C284A4234000A2CD9 /* AppError.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppError.swift; sourceTree = "<group>"; };
 		312A691E284A4234000A2CD9 /* HarvestButton.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = HarvestButton.swift; sourceTree = "<group>"; };
 		312A6920284A4234000A2CD9 /* LoadingIndicator.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LoadingIndicator.swift; sourceTree = "<group>"; };
@@ -134,6 +136,7 @@
 			children = (
 				312A6932284F589E000A2CD9 /* DashboardView.swift */,
 				312A6937284F6454000A2CD9 /* TimeSheetView.swift */,
+				311F9E3B2856DC3C00F08219 /* TimeEntryContainerView.swift */,
 				313DE4A728522B07004CC0B0 /* ProjectListView.swift */,
 				313DE4A928530B85004CC0B0 /* ProjectTaskView.swift */,
 				313DE4AB28531234004CC0B0 /* TimeEntryView.swift */,
@@ -348,6 +351,7 @@
 				2152FB042600AC8F00CF470E /* iOSApp.swift in Sources */,
 				312A692D284A4FB8000A2CD9 /* SignupView.swift in Sources */,
 				312A6931284F44D0000A2CD9 /* RootView.swift in Sources */,
+				311F9E3C2856DC3C00F08219 /* TimeEntryContainerView.swift in Sources */,
 				312A6938284F6454000A2CD9 /* TimeSheetView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
