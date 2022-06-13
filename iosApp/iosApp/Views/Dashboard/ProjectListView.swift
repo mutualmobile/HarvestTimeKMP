@@ -11,47 +11,77 @@ import SwiftUI
 
 struct ProjectListView_Previews: PreviewProvider {
     static var previews: some View {
-        ProjectListView()
+        ProjectListView(store: ProjectListStore(selectedProject: .constant(nil),
+                                                selectedTask: .constant(nil)))
+    }
+}
+
+class ProjectListStore: ObservableObject {
+    let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
+    
+    var selectedProject: Binding<String?>
+    var selectedTask: Binding<String?>
+    
+    init(selectedProject: Binding<String?>, selectedTask: Binding<String?>) {
+        self.selectedProject = selectedProject
+        self.selectedTask = selectedTask
+        UIBarButtonItem.appearance().tintColor = UIColor(ColorAssets.colorBackground.color)
     }
 }
 
 struct ProjectListView: View {
     
     @Environment(\.dismiss) private var dismiss
+    @ObservedObject var store: ProjectListStore
     
     @State private var searchText = ""
+    @State private var activateTaskSelection = false
     
-    let projects = ["iOS Department work", "iOS Department work Hyd", "iOS Department work Blore", "PTO Holidays,", "Etc"]
+    @State var isTaskSelected = false
     
     var body: some View {
-        NavigationView {
+        VStack(alignment: .leading) {
             List {
                 Section("Mutual Mobile") {
-                    ForEach(searchedResult, id:\.self) { item in
-                        Text(item)
-                    }
-                }
-            }
-            .searchable(text: $searchText, prompt: Text("Search here..."))
-            .toolbar {
-                ToolbarItem(placement: .cancellationAction) {
-                    Button {
-                        dismiss()
-                    } label: {
-                        Text("Cancel")
-                    }
                     
+                    ForEach(searchedResult, id:\.self) { project in
+                        
+                        HStack {
+                            Button {
+                                store.selectedProject.wrappedValue = project
+                                
+                                if !isTaskSelected {
+                                    activateTaskSelection = true
+                                } else {
+                                    dismiss()
+                                }
+                            } label: {
+                                Text(project)
+                                Spacer()
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            
+                            NavigationLink(destination: ProjectTaskView(selectedTask: store.selectedTask),
+                                           isActive: $activateTaskSelection) {
+                                EmptyView()
+                            }.frame(width: 40)
+                        }
+                        .foregroundColor(.primary)
+                    }
                 }
             }
-            .navigationTitle(Text("Projects"))
+            .searchable(text: $searchText,
+                        placement: .navigationBarDrawer(displayMode: .always),
+                        prompt: Text("Search here..."))
+            
         }
     }
     
     private var searchedResult: [String] {
         if searchText.isEmpty {
-            return projects
+            return store.projects
         } else {
-            return projects.filter { $0.contains(searchText) }
+            return store.projects.filter { $0.contains(searchText) }
         }
     }
 }

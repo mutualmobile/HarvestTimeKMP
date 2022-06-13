@@ -29,23 +29,25 @@ class AuthStore: ObservableObject {
     }
     
     func login(callback:@escaping  () -> (Void))  {
-        anyCancellable =  createPublisher(for: loginDataModel.dataFlowNative).sink { completion in
-            debugPrint(completion)
-        } receiveValue: { [self] state in
-               if state is PraxisDataModel.LoadingState {
-                   showLoading = true
-                   hasFocus = false
-               } else {
-                   showLoading = false
-                   
-                   if let error = state as? PraxisDataModel.ErrorState {
-                       loginError = AppError(title: "Error",
-                                                   message: error.throwable.message ?? "Login failure")
-                   } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
-                      callback()
-                   }
-               }
-        }
+        anyCancellable = createPublisher(for: loginDataModel.dataFlowNative)
+            .receive(on: DispatchQueue.main)
+            .sink { completion in
+                debugPrint(completion)
+            } receiveValue: { [self] state in
+                if state is PraxisDataModel.LoadingState {
+                    showLoading = true
+                    hasFocus = false
+                } else {
+                    showLoading = false
+                    
+                    if let error = state as? PraxisDataModel.ErrorState {
+                        loginError = AppError(title: "Error",
+                                              message: error.throwable.message ?? "Login failure")
+                    } else if let responseState = state as? PraxisDataModelSuccessState<ApiResponse<HarvestOrganization>> {
+                        callback()
+                    }
+                }
+            }
         loginDataModel.login(email: email, password: password)
     }
 
@@ -53,17 +55,14 @@ class AuthStore: ObservableObject {
 
 struct LoginView: View {
 
-    @ObservedObject private var store = AuthStore()
     @EnvironmentObject var rootStore: RootStore
-
     @Environment(\.dismiss) var dismiss
+    @StateObject private var store = AuthStore()
     
     @State private var signupPresented = false
-  
-    
     @FocusState private var focusedField: Bool
     
-    private var loginError: Binding<Bool> {
+    private var loginErrorBinding: Binding<Bool> {
         Binding {
             store.loginError != nil
         } set: { _ in
@@ -73,8 +72,6 @@ struct LoginView: View {
     
     var body: some View {
         VStack {
-//            googleSignInButton
-//            LabelledDivider(label: "or", color: ColorAssets.white.color)
             credentialView
             footerView
         }
@@ -85,20 +82,6 @@ struct LoginView: View {
         .loadingIndicator(show: store.showLoading).onDisappear {
             self.store.anyCancellable?.cancel()
         }
-    }
-    
-    private var googleSignInButton: some View {
-        Button {
-            // TODO: (Nasir) Need to handle
-        } label: {
-            // TODO: (Nasir) Need to remove this entire HStack for Google Sign In, Must use button provided by Google pod
-            HStack {
-                Image("Google-Icon").padding(.trailing)
-                Text("Sign In with Google").padding(.leading)
-            }
-            .harvestButton()
-        }
-        .padding(.bottom)
     }
     
     private var credentialView: some View {
@@ -125,7 +108,7 @@ struct LoginView: View {
                 focusedField = self.store.hasFocus
             }
         }
-        .alert(isPresented: loginError, error: store.loginError) {
+        .alert(isPresented: loginErrorBinding, error: store.loginError) {
             Text(store.loginError?.errorDescription ?? "")
         }
     }
@@ -166,17 +149,9 @@ struct LoginView: View {
     }
     
     private func performLogin() {
-        
         store.login() {
             rootStore.isAuthenticateUser = true
         }
-        
-//        loginDataModel.praxisCommand = { command in
-//            print("command \(command)  \(type(of: command)) ")
-//            if let navigationCommand = (command as? NavigationPraxisCommand) {
-//                print("command .route \(navigationCommand.screen) \(navigationCommand.component1())  \(navigationCommand.route) ")
-//            }
-//        }
     }
 }
 

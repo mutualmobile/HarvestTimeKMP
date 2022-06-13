@@ -29,9 +29,7 @@ struct WeekView_Previews: PreviewProvider {
 }
 
 struct WeekView: View {
-    
-    @Environment(\.colorScheme) var colorScheme
-    
+        
     let logHours: WeekLogHour
     var daySelection: (WeekLogHour.Day) -> Void
 
@@ -51,10 +49,8 @@ struct WeekView: View {
                 } label: {
                     VStack {
                         Text(day.tuple.name)
-                            .padding(EdgeInsets(top: verticalPadding,
-                                                leading: horizontalPadding,
-                                                bottom: verticalPadding,
-                                                trailing: horizontalPadding))
+                            .padding(.vertical, verticalPadding)
+                            .padding(.horizontal, horizontalPadding)
                             .background(circleFilledColor(for: day))
                             .clipShape(Circle())
                             .foregroundColor(cicleTextColor(for: day))
@@ -75,7 +71,7 @@ struct WeekView: View {
         if let today = logHours.today, today == day {
             return ColorAssets.colorBackground.color
         } else if let selectedDay = logHours.selectedDay, selectedDay == day {
-            return colorScheme == .dark ? ColorAssets.white.color : ColorAssets.black.color
+            return ColorAssets.weekCircleFilled.color
         }
         return nil
     }
@@ -83,9 +79,9 @@ struct WeekView: View {
     private func cicleTextColor(for day: WeekLogHour.Day) -> Color? {
         
         if let today = logHours.today, today == day {
-            return colorScheme == .dark ? ColorAssets.white.color : ColorAssets.black.color
+            return ColorAssets.weekText.color
         } else if let selectedDay = logHours.selectedDay, selectedDay == day {
-            return colorScheme == .dark ? ColorAssets.black.color : ColorAssets.white.color
+            return ColorAssets.weekCircleText.color
         }
         return nil
     }
@@ -94,7 +90,7 @@ struct WeekView: View {
         if let today = logHours.today, today == day {
             return ColorAssets.colorBackground.color
         }
-        return colorScheme == .dark ? ColorAssets.white.color : ColorAssets.black.color
+        return ColorAssets.weekText.color
     }
 }
 

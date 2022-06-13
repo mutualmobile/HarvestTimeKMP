@@ -11,16 +11,16 @@ import Foundation
 
 @propertyWrapper
 struct StringTrimmer {
-    private var _value: String
+    private var value: String
     var wrappedValue: String {
         get {
-            _value.trimmingCharacters(in: .whitespacesAndNewlines)
+            value.trimmingCharacters(in: .whitespacesAndNewlines)
         } set {
-            _value = newValue
+            value = newValue
         }
     }
     
     init(wrappedValue: String) {
-        _value = wrappedValue
+        value = wrappedValue
     }
 }

@@ -31,3 +31,17 @@ extension View {
         modifier(HarvestButton(color: color))
     }
 }
+
+
+struct DefaultAppColor: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .foregroundColor(ColorAssets.colorBackground.color)
+    }
+}
+
+extension View {
+    func defaultAppColor() -> some View {
+        modifier(DefaultAppColor())
+    }
+}

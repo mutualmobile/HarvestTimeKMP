@@ -14,8 +14,9 @@ struct TimeSheetView_Previews: PreviewProvider {
     }
 }
 
-
 class TimeSheetStore: ObservableObject {
+    
+    // TODO: This value can be later updated based on swipe of days
     var logHour: WeekLogHour
 
     init() {
@@ -43,7 +44,7 @@ class TimeSheetStore: ObservableObject {
 
 struct TimeSheetView: View {
     
-    @ObservedObject var store = TimeSheetStore()
+    @StateObject var store = TimeSheetStore()
     
     @State private var calenderTapped = false
     @State private var infoTapped = false
@@ -58,7 +59,7 @@ struct TimeSheetView: View {
             Spacer()
             ContainerView(presentTimeEntrySheet: $presentTimeEntrySheet, quoteText: "Here goes some of great quote from data model")
                 .sheet(isPresented: $presentTimeEntrySheet) {
-                    ProjectListView()
+                    TimeEntryContainerView()
                 }
             Spacer()
         }
@@ -100,14 +101,14 @@ struct TimeSheetView: View {
             }
         }
         .padding(.vertical)
-        .background(.quaternary)
+        .background(ColorAssets.quarternary.color)
     }
 }
 
 struct ContainerView: View {
     
     @Binding var presentTimeEntrySheet: Bool
-    var quoteText: String
+    let quoteText: String
     
     var body: some View {
         VStack() {
