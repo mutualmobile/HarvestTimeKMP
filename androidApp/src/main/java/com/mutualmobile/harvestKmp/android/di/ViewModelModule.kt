@@ -1,6 +1,7 @@
 package com.mutualmobile.harvestKmp.android.di
 
 import com.mutualmobile.harvestKmp.android.viewmodels.ChangePasswordViewModel
+import com.mutualmobile.harvestKmp.android.viewmodels.ExistingOrgSignUpScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.FindWorkspaceViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.ForgotPasswordViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.LandingScreenViewModel
@@ -21,4 +22,5 @@ val viewModelModule = module {
     single { ChangePasswordViewModel() }
     single { ForgotPasswordViewModel() }
     single { ProjectScreenViewModel() }
+    single { ExistingOrgSignUpScreenViewModel() }
 }
