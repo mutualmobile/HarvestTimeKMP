@@ -27,11 +27,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -49,88 +45,36 @@ import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
 import com.mutualmobile.harvestKmp.android.ui.utils.isAFloat
-import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.WorkRequestType
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.GetUserDataModel
-import com.mutualmobile.harvestKmp.features.datamodels.userProjectDataModels.TimeLogginDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
-import java.util.Date
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
 
 @Composable
 fun NewEntryScreen(
     navController: NavController,
-    newEntryScreenViewModel: NewEntryScreenViewModel = get()
+    nesVm: NewEntryScreenViewModel = get(),
+    user: GetUserResponse?
 ) {
     val activity = LocalContext.current as Activity
     val coroutineScope = rememberCoroutineScope()
-    val currentWorkRequest = newEntryScreenViewModel.currentWorkRequest
-
-    var durationEtText: String by remember {
-        mutableStateOf(
-            currentWorkRequest?.workHours?.toDecimalString() ?: ""
-        )
-    }
-    var selectedWorkDate: Date by remember {
-        mutableStateOf(currentWorkRequest?.workDate?.let { nnWorkDate ->
-            serverDateFormatter.parse(nnWorkDate)
-        } ?: Date())
-    }
-    var noteEtText: String by remember { mutableStateOf(currentWorkRequest?.note.orEmpty()) }
-
-    val selectedProjectName = newEntryScreenViewModel.currentProjectName
+    val currentWorkRequest = nesVm.currentWorkRequest
+    val selectedProjectName = nesVm.currentProjectName
     val selectedProjectId: String? = currentWorkRequest?.projectId
 
     BackHandler {
-        newEntryScreenViewModel.resetAllItems {
-            navController.navigateUp()
-        }
-    }
-
-    var user: GetUserResponse? by remember { mutableStateOf(null) }
-    remember {
-        mutableStateOf(
-            GetUserDataModel().apply {
-                this.dataFlow.onEach { userState ->
-                    when (userState) {
-                        is SuccessState<*> -> {
-                            user = (userState.data) as GetUserResponse
-                        }
-                        else -> Unit
-                    }
-                }.launchIn(this.dataModelScope)
-                activate()
-            }
-        )
-    }
-
-    var currentLogWorkTimeState: DataState by remember { mutableStateOf(EmptyState) }
-    var logWorkTimeNavigationCommands: PraxisCommand? by remember { mutableStateOf(null) }
-    val logWorkTimeDataModel by remember {
-        mutableStateOf(
-            TimeLogginDataModel().apply {
-                praxisCommand.onEach { newCommand ->
-                    logWorkTimeNavigationCommands = newCommand
-                }.launchIn(dataModelScope)
-            }
-        )
+        nesVm.resetAllItems { navController.navigateUp() }
     }
 
     LaunchedEffect(Unit) {
         if (selectedProjectName.isBlank() && currentWorkRequest != null) {
-            newEntryScreenViewModel.fetchProjectName(currentWorkRequest.projectId)
+            nesVm.fetchProjectName(currentWorkRequest.projectId)
         }
     }
 
@@ -171,38 +115,38 @@ fun NewEntryScreen(
                                 user?.let { nnUser ->
                                     nnUser.id?.let { nnUserId ->
                                         selectedProjectId?.let { nnSelectedProjectId ->
-                                            when (newEntryScreenViewModel.currentWorkRequestType) {
+                                            when (nesVm.currentWorkRequestType) {
                                                 WorkRequestType.CREATE -> {
-                                                    logWorkTimeDataModel.logWorkTime(
+                                                    nesVm.logWorkTimeDataModel.logWorkTime(
                                                         HarvestUserWorkRequest(
                                                             projectId = nnSelectedProjectId,
                                                             userId = nnUserId,
                                                             workDate = serverDateFormatter.format(
-                                                                selectedWorkDate
+                                                                nesVm.selectedWorkDate
                                                             ),
-                                                            workHours = durationEtText.toFloat(),
-                                                            note = noteEtText
+                                                            workHours = nesVm.durationEtText.toFloat(),
+                                                            note = nesVm.noteEtText
                                                         )
                                                     ).collect { logWorkTimeState ->
-                                                        currentLogWorkTimeState = logWorkTimeState
+                                                        nesVm.currentLogWorkTimeState = logWorkTimeState
                                                     }
                                                 }
                                                 // TODO: Check why UPDATE is not working while CREATE is
                                                 WorkRequestType.UPDATE -> {
-                                                    newEntryScreenViewModel.currentWorkRequest?.let { nnCurrentWorkRequest ->
-                                                        logWorkTimeDataModel.logWorkTime(
+                                                    nesVm.currentWorkRequest?.let { nnCurrentWorkRequest ->
+                                                        nesVm.logWorkTimeDataModel.logWorkTime(
                                                             HarvestUserWorkRequest(
                                                                 id = nnCurrentWorkRequest.id,
                                                                 projectId = nnSelectedProjectId,
                                                                 userId = nnUserId,
                                                                 workDate = serverDateFormatter.format(
-                                                                    selectedWorkDate
+                                                                    nesVm.selectedWorkDate
                                                                 ),
-                                                                workHours = durationEtText.toFloat(),
-                                                                note = noteEtText
+                                                                workHours = nesVm.durationEtText.toFloat(),
+                                                                note = nesVm.noteEtText
                                                             )
                                                         ).collect { logWorkTimeState ->
-                                                            currentLogWorkTimeState =
+                                                            nesVm.currentLogWorkTimeState =
                                                                 logWorkTimeState
                                                         }
                                                     }
@@ -239,31 +183,31 @@ fun NewEntryScreen(
                     navController.navigate(HarvestRoutes.Screen.ORG_PROJECTS)
                 },
                 onWorkClick = {},
-                note = noteEtText,
-                onNoteChanged = { updatedText -> noteEtText = updatedText }
+                note = nesVm.noteEtText,
+                onNoteChanged = { updatedText -> nesVm.noteEtText = updatedText }
             )
             Spacer(modifier = Modifier.padding(vertical = 12.dp))
             DateDurationSelector(
-                durationEtText = durationEtText,
+                durationEtText = nesVm.durationEtText,
                 onDurationChange = { duration ->
-                    durationEtText = if (duration.isNotBlank() && duration.isAFloat()) {
+                    nesVm.durationEtText = if (duration.isNotBlank() && duration.isAFloat()) {
                         duration
                     } else {
                         ""
                     }
                 },
-                currentDate = selectedWorkDate,
+                currentDate = nesVm.selectedWorkDate,
                 onWorkDateChange = { newDate ->
-                    selectedWorkDate = newDate
+                    nesVm.selectedWorkDate = newDate
                 }
             )
-            AnimatedVisibility(visible = currentLogWorkTimeState is LoadingState) {
+            AnimatedVisibility(visible = nesVm.currentLogWorkTimeState is LoadingState) {
                 LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
             }
             Spacer(modifier = Modifier.padding(vertical = 6.dp))
-            AnimatedVisibility(visible = currentLogWorkTimeState is ErrorState) {
+            AnimatedVisibility(visible = nesVm.currentLogWorkTimeState is ErrorState) {
                 Text(
-                    text = (currentLogWorkTimeState as ErrorState).throwable.message.orEmpty(),
+                    text = (nesVm.currentLogWorkTimeState as ErrorState).throwable.message.orEmpty(),
                     style = MaterialTheme.typography.body2.copy(color = Color.Red)
                 )
             }
@@ -273,11 +217,11 @@ fun NewEntryScreen(
                 modifier = Modifier.alpha(0.5f)
             )
         }
-        HarvestDialog(praxisCommand = logWorkTimeNavigationCommands, onConfirm = {
-            logWorkTimeNavigationCommands = null
-            when (currentLogWorkTimeState) {
+        HarvestDialog(praxisCommand = nesVm.logWorkTimeNavigationCommands, onConfirm = {
+            nesVm.logWorkTimeNavigationCommands = null
+            when (nesVm.currentLogWorkTimeState) {
                 is SuccessState<*> -> {
-                    newEntryScreenViewModel.resetAllItems {
+                    nesVm.resetAllItems {
                         navController.navigateUp()
                     }
                 }
