@@ -12,7 +12,7 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class FindWorkspaceViewModel : ViewModel() {
-    val findOrgByIdentifierDataModel = FindOrgByIdentifierDataModel()
+    private val findOrgByIdentifierDataModel = FindOrgByIdentifierDataModel()
 
     var tfValue by mutableStateOf("")
 
@@ -22,23 +22,27 @@ class FindWorkspaceViewModel : ViewModel() {
 
     init {
         with(findOrgByIdentifierDataModel) {
-            observeFindOrgDataFlow()
-            observeFindOrgNavigationCommands()
+            observeDataState()
+            observeNavigationCommands()
             activate()
         }
     }
 
-    private fun FindOrgByIdentifierDataModel.observeFindOrgNavigationCommands() {
+    private fun FindOrgByIdentifierDataModel.observeNavigationCommands() {
         praxisCommand.onEach { newCommand ->
             currentFindOrgNavigationCommand = newCommand
         }.launchIn(viewModelScope)
     }
 
-    private fun FindOrgByIdentifierDataModel.observeFindOrgDataFlow() {
+    private fun FindOrgByIdentifierDataModel.observeDataState() {
         dataFlow.onEach { updatedState ->
             println("updatedState is $updatedState")
             findOrgState = updatedState
         }.launchIn(viewModelScope)
+    }
+
+    fun findOrgByIdentifier() {
+        findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = tfValue)
     }
 
     fun resetAll(onComplete: () -> Unit = {}) {

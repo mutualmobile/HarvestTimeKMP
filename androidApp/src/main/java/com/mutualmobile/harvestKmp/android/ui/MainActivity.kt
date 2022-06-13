@@ -55,7 +55,7 @@ class MainActivity : ComponentActivity() {
                     color = MaterialTheme.colors.background
                 ) {
                     val startDestination = remember {
-                        if (mainActivityViewModel.getUserDataModel.getLocalUser() != null) {
+                        if (mainActivityViewModel.doesLocalUserExist) {
                             HarvestRoutes.Screen.ORG_USER_DASHBOARD
                         } else {
                             HarvestRoutes.Screen.ON_BOARDING

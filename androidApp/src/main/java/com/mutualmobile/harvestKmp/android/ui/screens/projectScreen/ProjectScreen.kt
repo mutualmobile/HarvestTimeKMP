@@ -37,7 +37,6 @@ import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
 import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
-import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import java.util.Date
 import org.koin.androidx.compose.get
 
@@ -61,11 +60,7 @@ fun ProjectScreen(
 
     LaunchedEffect(userState) {
         when (userState) {
-            is SuccessState<*> -> {
-                psVm.getUserAssignedProjectsDataModel.getUserAssignedProjects(
-                    (userState.data as GetUserResponse).id ?: ""
-                )
-            }
+            is SuccessState<*> -> { psVm.getUserAssignedProjects(userState = userState) }
             else -> Unit
         }
     }

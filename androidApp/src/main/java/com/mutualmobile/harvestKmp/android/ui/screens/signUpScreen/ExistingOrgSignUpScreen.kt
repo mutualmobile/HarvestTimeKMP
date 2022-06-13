@@ -118,15 +118,7 @@ fun SignUpScreen(
                     label = stringResource(MR.strings.signup_screen_signup_btn_txt.resourceId),
                     isLoading = eossVm.currentSignUpState is LoadingState,
                     errorMsg = (eossVm.currentSignUpState as? ErrorState)?.throwable?.message,
-                    onClick = {
-                        eossVm.signUpDataModel.signUp(
-                            firstName = eossVm.currentFirstName,
-                            lastName = eossVm.currentLastName,
-                            company = eossVm.currentConfirmPassword,
-                            email = eossVm.currentWorkEmail,
-                            password = eossVm.currentPassword
-                        )
-                    }
+                    onClick = { eossVm.signUp() }
                 )
             }
         }

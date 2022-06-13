@@ -138,17 +138,7 @@ fun NewOrgSignUpScreen(
                         top = 12.dp
                     ),
                     label = stringResource(MR.strings.signup_screen_signup_btn_txt.resourceId),
-                    onClick = {
-                        nossVm.signUpDataModel.signUp(
-                            firstName = nossVm.currentFirstName,
-                            lastName = nossVm.currentLastName,
-                            email = nossVm.currentWorkEmail,
-                            password = nossVm.currentPassword,
-                            orgName = nossVm.companyName,
-                            orgWebsite = nossVm.companyWebsite,
-                            orgIdentifier = nossVm.companyIdentifier
-                        )
-                    },
+                    onClick = { nossVm.signUp() },
                     isLoading = nossVm.signUpState is LoadingState,
                     errorMsg = (nossVm.signUpState as? ErrorState)?.throwable?.message
                 )

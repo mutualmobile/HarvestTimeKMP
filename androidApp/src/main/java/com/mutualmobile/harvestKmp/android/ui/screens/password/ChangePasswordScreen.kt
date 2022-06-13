@@ -19,7 +19,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,15 +31,11 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
-import com.mutualmobile.harvestKmp.android.ui.utils.showToast
 import com.mutualmobile.harvestKmp.android.viewmodels.ChangePasswordViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
 import org.koin.androidx.compose.get
 
 @Composable
@@ -48,9 +43,8 @@ fun ChangePasswordScreen(
     navController: NavHostController,
     cpVm: ChangePasswordViewModel = get()
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val ctx = LocalContext.current
-    
+
     LaunchedEffect(cpVm.changePasswordPraxisCommand) {
         when (cpVm.changePasswordPraxisCommand) {
             is NavigationPraxisCommand -> {
@@ -114,24 +108,8 @@ fun ChangePasswordScreen(
                     label = stringResource(MR.strings.request_reset_password.resourceId),
                     errorMsg = (cpVm.changePasswordState as? ErrorState)?.throwable?.message,
                     isLoading = cpVm.changePasswordState is LoadingState,
-                    onClick =
-                    {
-                        cpVm.changePasswordDataModel.changePassWord(
-                            cpVm.newPassword.trim(),
-                            cpVm.oldPassword.trim(),
-                        ).onEach { passwordState ->
-                            cpVm.changePasswordState = passwordState
-                            when (passwordState) {
-                                is SuccessState<*> -> {
-                                    ctx.showToast("Change password successful!")
-                                    cpVm.resetAll {
-                                        navController.navigateUp()
-                                    }
-                                }
-                                else -> Unit
-                            }
-                        }.launchIn(coroutineScope)
-                    })
+                    onClick = { cpVm.changePassword(ctx = ctx, navController = navController) },
+                )
             }
             HarvestDialog(
                 praxisCommand = cpVm.changePasswordPraxisCommand,

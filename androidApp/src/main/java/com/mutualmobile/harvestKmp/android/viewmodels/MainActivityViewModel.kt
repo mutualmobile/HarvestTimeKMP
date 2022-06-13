@@ -15,13 +15,15 @@ import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
 class MainActivityViewModel : ViewModel() {
-    val getUserDataModel = GetUserDataModel()
+    private val getUserDataModel = GetUserDataModel()
     private val findOrgByIdDataModel = FindOrgByIdDataModel()
 
     var getUserState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)
         private set
     var user: GetUserResponse? by mutableStateOf(null)
     var userOrganization: HarvestOrganization? by mutableStateOf(null)
+
+    val doesLocalUserExist: Boolean = getUserDataModel.getLocalUser() != null
 
     init {
         fetchUser()

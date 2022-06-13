@@ -61,7 +61,7 @@ fun LoginScreen(
         if (userState is PraxisDataModel.SuccessState<*>) {
             if ((userState.data as? GetUserResponse) != null) {
                 if ((userState.data as? GetUserResponse)?.role != UserRole.ORG_USER.role) {
-                    lVm.loginDataModel.logoutUser()
+                    lVm.logout()
                 } else {
                     if (lVm.currentNavigationCommand is NavigationPraxisCommand) {
                         val destination = (lVm.currentNavigationCommand as NavigationPraxisCommand).screen
@@ -113,12 +113,7 @@ fun LoginScreen(
             )
             IconLabelButton(
                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
-                onClick = {
-                    lVm.loginDataModel.login(
-                        lVm.currentWorkEmail.trim(),
-                        lVm.currentPassword.trim()
-                    )
-                },
+                onClick = { lVm.login() },
                 isLoading = lVm.currentLoginState is LoadingState || userState is LoadingState,
                 errorMsg = lVm.currentErrorMsg,
             )

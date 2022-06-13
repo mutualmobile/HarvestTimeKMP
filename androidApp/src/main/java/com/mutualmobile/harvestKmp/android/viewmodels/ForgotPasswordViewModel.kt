@@ -16,26 +16,30 @@ class ForgotPasswordViewModel : ViewModel() {
 
     var forgotPasswordNavigationCommand: PraxisCommand? by mutableStateOf(null)
 
-    val forgotPasswordDataModel = ForgotPasswordDataModel()
+    private val forgotPasswordDataModel = ForgotPasswordDataModel()
 
     var currentWorkEmail by mutableStateOf("")
 
     init {
         with(forgotPasswordDataModel) {
-            observeForgotPasswordState()
-            observeForgotPasswordNavigationCommands()
+            observeDataState()
+            observeNavigationCommands()
         }
     }
 
-    private fun ForgotPasswordDataModel.observeForgotPasswordNavigationCommands() =
+    private fun ForgotPasswordDataModel.observeNavigationCommands() =
         praxisCommand.onEach { newCommand ->
             forgotPasswordNavigationCommand = newCommand
         }.launchIn(viewModelScope)
 
-    private fun ForgotPasswordDataModel.observeForgotPasswordState() {
+    private fun ForgotPasswordDataModel.observeDataState() {
         dataFlow.onEach { passwordState ->
             forgotPasswordState = passwordState
         }.launchIn(viewModelScope)
+    }
+
+    fun forgotPassword() {
+        forgotPasswordDataModel.forgotPassword(email = currentWorkEmail.trim())
     }
 
     fun resetAll(onComplete: () -> Unit = {}) {

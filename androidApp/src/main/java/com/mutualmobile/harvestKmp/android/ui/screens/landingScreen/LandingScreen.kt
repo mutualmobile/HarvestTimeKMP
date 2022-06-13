@@ -27,6 +27,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
@@ -72,10 +73,12 @@ fun LandingScreen(
 ) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
 
-    val scaffoldState = ScaffoldState(
-        drawerState = scaffoldDrawerState,
-        snackbarHostState = lsVm.snackBarHostState
-    )
+    val scaffoldState = remember {
+        ScaffoldState(
+            drawerState = scaffoldDrawerState,
+            snackbarHostState = lsVm.snackBarHostState
+        )
+    }
     val coroutineScope = rememberCoroutineScope()
 
     val timeScreenPagerState = rememberPagerState(initialPage = lsVm.timeScreenStartIndex)

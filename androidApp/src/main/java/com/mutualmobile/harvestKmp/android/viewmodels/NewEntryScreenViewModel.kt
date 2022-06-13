@@ -52,14 +52,20 @@ class NewEntryScreenViewModel : ViewModel() {
     var logWorkTimeNavigationCommands: PraxisCommand? by mutableStateOf(null)
 
     val logWorkTimeDataModel = TimeLogginDataModel().apply {
-        praxisCommand.onEach { newCommand ->
-            logWorkTimeNavigationCommands = newCommand
-        }.launchIn(dataModelScope)
+        observeNavigationCommands()
     }
+
+    private val orgProjectsDataModel = OrgProjectsDataModel()
 
     var deleteWorkState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)
         private set
     var isDeleteDialogVisible by mutableStateOf(false)
+
+    private fun TimeLogginDataModel.observeNavigationCommands() {
+        praxisCommand.onEach { newCommand ->
+            logWorkTimeNavigationCommands = newCommand
+        }.launchIn(dataModelScope)
+    }
 
     fun updateCurrentWorkRequest(
         update: (existing: HarvestUserWorkRequest?) -> HarvestUserWorkRequest?,
@@ -82,8 +88,8 @@ class NewEntryScreenViewModel : ViewModel() {
     fun fetchProjectName(projectId: String) {
         currentProjectName = "Loading..."
         viewModelScope.launch {
-            OrgProjectsDataModel().apply {
-                getProjectsForProjectIds(projectIds = listOf(projectId)).collect { newState ->
+            orgProjectsDataModel.apply {
+                getProjectsForProjectIds(projectIds = listOf(projectId)).onEach { newState ->
                     when (newState) {
                         is SuccessState<*> -> {
                             (newState as SuccessState<ApiResponse<List<OrgProjectResponse>>>)
@@ -95,7 +101,7 @@ class NewEntryScreenViewModel : ViewModel() {
                         }
                         else -> Unit
                     }
-                }
+                }.launchIn(viewModelScope)
             }
         }
     }

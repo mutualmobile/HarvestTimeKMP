@@ -102,11 +102,7 @@ fun ForgotPasswordScreen(
                 IconLabelButton(
                     errorMsg = (fpVm.forgotPasswordState as? ErrorState)?.throwable?.message,
                     label = stringResource(MR.strings.request_reset_password.resourceId),
-                    onClick = {
-                        fpVm.forgotPasswordDataModel.forgotPassword(
-                            fpVm.currentWorkEmail.trim()
-                        )
-                    },
+                    onClick = { fpVm.forgotPassword() },
                     isLoading = fpVm.forgotPasswordState is PraxisDataModel.LoadingState
                 )
             }

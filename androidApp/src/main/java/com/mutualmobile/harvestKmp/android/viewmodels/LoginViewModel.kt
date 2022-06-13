@@ -19,26 +19,37 @@ class LoginViewModel : ViewModel() {
 
     var currentLoginState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)
 
-    val loginDataModel = LoginDataModel()
+    private val loginDataModel = LoginDataModel()
 
     var currentErrorMsg: String? by mutableStateOf(null)
 
     init {
         with(loginDataModel) {
-            observeLoginDataFlow()
-            observeLoginNavigationCommands()
+            observeDataState()
+            observeNavigationCommands()
         }
     }
 
-    private fun LoginDataModel.observeLoginNavigationCommands() =
+    private fun LoginDataModel.observeNavigationCommands() =
         praxisCommand.onEach { newCommand ->
             currentNavigationCommand = newCommand
         }.launchIn(viewModelScope)
 
-    private fun LoginDataModel.observeLoginDataFlow() {
+    private fun LoginDataModel.observeDataState() {
         dataFlow.onEach { loginState ->
             currentLoginState = loginState
         }.launchIn(viewModelScope)
+    }
+
+    fun login() {
+        loginDataModel.login(
+            currentWorkEmail.trim(),
+            currentPassword.trim()
+        )
+    }
+
+    fun logout() {
+        loginDataModel.logoutUser()
     }
 
     fun resetAll(onComplete: () -> Unit = {}) {

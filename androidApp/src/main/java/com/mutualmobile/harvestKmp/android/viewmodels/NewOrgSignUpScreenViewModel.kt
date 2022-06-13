@@ -16,7 +16,7 @@ class NewOrgSignUpScreenViewModel : ViewModel() {
 
     var signUpState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)
 
-    val signUpDataModel = SignUpDataModel()
+    private val signUpDataModel = SignUpDataModel()
 
     var currentWorkEmail by mutableStateOf("")
     var currentPassword by mutableStateOf("")
@@ -30,16 +30,31 @@ class NewOrgSignUpScreenViewModel : ViewModel() {
     init {
         with(signUpDataModel) {
             observeDataState()
-            praxisCommand.onEach { newCommand ->
-                currentPraxisCommand = newCommand
-            }.launchIn(viewModelScope)
+            observeNavigationCommands()
         }
     }
+
+    private fun SignUpDataModel.observeNavigationCommands() =
+        praxisCommand.onEach { newCommand ->
+            currentPraxisCommand = newCommand
+        }.launchIn(viewModelScope)
 
     private fun SignUpDataModel.observeDataState() {
         dataFlow.onEach { newState ->
             signUpState = newState
         }.launchIn(viewModelScope)
+    }
+
+    fun signUp() {
+        signUpDataModel.signUp(
+            firstName = currentFirstName,
+            lastName = currentLastName,
+            email = currentWorkEmail,
+            password = currentPassword,
+            orgName = companyName,
+            orgWebsite = companyWebsite,
+            orgIdentifier = companyIdentifier
+        )
     }
 
     fun resetAll(onComplete: () -> Unit) {

@@ -118,9 +118,7 @@ fun FindWorkspaceScreen(
                             ?: MR.strings.generic_error_msg.get()
                         else -> null
                     },
-                    onClick = {
-                        fwVm.findOrgByIdentifierDataModel.findOrgByIdentifier(identifier = fwVm.tfValue)
-                    },
+                    onClick = { fwVm.findOrgByIdentifier() },
                 )
                 if (fwVm.findOrgState is ErrorState) {
                     IconLabelButton(
