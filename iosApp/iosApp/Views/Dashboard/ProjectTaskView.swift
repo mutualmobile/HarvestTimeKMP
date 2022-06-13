@@ -10,7 +10,7 @@ import SwiftUI
 
 struct ProjectTaskView_Previews: PreviewProvider {
     static var previews: some View {
-        ProjectTaskView(selectedProject: .constant(""), selectedTask: .constant(""), project: "")
+        ProjectTaskView(selectedTask: .constant(""))
     }
 }
 
@@ -29,17 +29,19 @@ struct ProjectTaskView: View {
     @ObservedObject var store = ProjectTaskStore()
     
     @State private var searchText = ""
-    @Binding var selectedProject: String?
-    @Binding var selectedTask: String?
-    var project: String
+    var selectedTask: Binding<String?>
+    
+    init(selectedTask: Binding<String?>) {
+        self.selectedTask = selectedTask
+        UIBarButtonItem.appearance().tintColor = UIColor(ColorAssets.colorBackground.color)
+    }
     
     var body: some View {
         List {
             Section("Billable") {
                 ForEach(store.billableList, id: \.self) { item in
                     Button {
-                        selectedTask = item
-                        selectedProject = project
+                        selectedTask.wrappedValue = item
                         dismiss()
                     } label: {
                         Text(item)
@@ -51,8 +53,7 @@ struct ProjectTaskView: View {
             Section("Non-Billable") {
                 ForEach(store.nonBillableList, id: \.self) { item in
                     Button {
-                        selectedTask = item
-                        selectedProject = project
+                        selectedTask.wrappedValue = item
                         dismiss()
                     } label: {
                         Text(item)
@@ -61,7 +62,9 @@ struct ProjectTaskView: View {
                 }
             }
         }
-        .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always), prompt: Text("Search for project task"))
+        .searchable(text: $searchText,
+                    placement: .navigationBarDrawer(displayMode: .always),
+                    prompt: Text("Search for project task"))
         .navigationTitle(Text("Task"))
     }
 }

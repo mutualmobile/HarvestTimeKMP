@@ -10,19 +10,23 @@ import SwiftUI
 
 struct TimeEntryView_Previews: PreviewProvider {
     static var previews: some View {
-        let store = TimeEntryStore(Date(), selectedProject: "", selectedTask: "")
+        let store = TimeEntryStore(Date(),
+                                   selectedProject: .constant(nil),
+                                   selectedTask: .constant(nil))
         TimeEntryView(store: store)
     }
 }
 
 class TimeEntryStore: ObservableObject {
     @Published var durationField = ""
-
-    @DateHandler var selectedDate: Date
-    let selectedProject: String
-    let selectedTask: String
     
-    init(_ selectedDate: Date, selectedProject: String, selectedTask: String) {
+    @DateHandler var selectedDate: Date
+    let selectedProject: Binding<String?>
+    let selectedTask: Binding<String?>
+    
+    init(_ selectedDate: Date,
+         selectedProject: Binding<String?>,
+         selectedTask: Binding<String?>) {
         self.selectedDate = selectedDate
         self.selectedProject = selectedProject
         self.selectedTask = selectedTask
@@ -44,7 +48,12 @@ struct TimeEntryView: View {
     @ObservedObject var store: TimeEntryStore
     
     @State private var notes = ""
+    @State private var isProjectTapped = false
+    @State private var isTaskTapped = false
     @FocusState private var focusedField: Bool
+    
+    private let verticalPadding = 5.0
+    private let navigationLinkWidth = 20.0
     
     // To Update the date from picker,
     private var seletedDateBinding: Binding<String> {
@@ -79,35 +88,48 @@ struct TimeEntryView: View {
                 }
                 
                 VStack(alignment: .leading) {
-                    
-                    Button {
-                        // TODO: Handle Project selection action
-                    } label: {
-                        HStack {
-                            Text(store.selectedProject)
-                            Spacer()
-                            Image(systemName: "chevron.right")
+                    HStack {
+                        Button {
+                            isProjectTapped = true
+                        } label: {
+                            HStack {
+                                Text(store.selectedProject.wrappedValue ?? "")
+                            }
+                            .foregroundColor(.primary)
                         }
-                        .foregroundColor(.primary)
+                        .buttonStyle(BorderlessButtonStyle())
+                        Spacer()
+                        NavigationLink(destination: ProjectListView(store: ProjectListStore(selectedProject: store.selectedProject,
+                                                                                            selectedTask: store.selectedTask),
+                                                                    isTaskSelected: true),
+                                       isActive: $isProjectTapped) {
+                            EmptyView()
+                        }.frame(width: navigationLinkWidth)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
                     
-                    Divider()
+                    Divider().padding(.vertical, verticalPadding)
                     
-                    Button {
-                        // TODO: Handle Project type selection action
-                    } label: {
-                        HStack {
-                            Text(store.selectedTask)
-                            Spacer()
-                            Image(systemName: "chevron.right")
+                    HStack {
+                        Button {
+                            isTaskTapped = true
+                        } label: {
+                            HStack {
+                                Text(store.selectedTask.wrappedValue ?? "")
+                            }
+                            .foregroundColor(.primary)
                         }
-                        .foregroundColor(.primary)
+                        .buttonStyle(BorderlessButtonStyle())
+                        
+                        Spacer()
+                        
+                        NavigationLink(destination: ProjectTaskView(selectedTask: store.selectedTask),
+                                       isActive: $isTaskTapped) {
+                            EmptyView()
+                        }.frame(width: navigationLinkWidth)
                     }
-                    .buttonStyle(BorderlessButtonStyle())
                 }
             }
-            .padding(.vertical)
+            .padding(.vertical, verticalPadding)
         }
     }
     

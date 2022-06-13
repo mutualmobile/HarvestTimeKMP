@@ -25,6 +25,7 @@ class ProjectListStore: ObservableObject {
     init(selectedProject: Binding<String?>, selectedTask: Binding<String?>) {
         self.selectedProject = selectedProject
         self.selectedTask = selectedTask
+        UIBarButtonItem.appearance().tintColor = UIColor(ColorAssets.colorBackground.color)
     }
 }
 
@@ -34,26 +35,45 @@ struct ProjectListView: View {
     @ObservedObject var store: ProjectListStore
     
     @State private var searchText = ""
+    @State private var activateTaskSelection = false
+    
+    @State var isTaskSelected = false
     
     var body: some View {
-        VStack {
+        VStack(alignment: .leading) {
             List {
                 Section("Mutual Mobile") {
                     
                     ForEach(searchedResult, id:\.self) { project in
-                        NavigationLink {
-                            ProjectTaskView(selectedProject: store.selectedProject,
-                                            selectedTask: store.selectedTask,
-                                            project: project)
-                        } label: {
-                            Text(project)
+                        
+                        HStack {
+                            Button {
+                                store.selectedProject.wrappedValue = project
+                                
+                                if !isTaskSelected {
+                                    activateTaskSelection = true
+                                } else {
+                                    dismiss()
+                                }
+                            } label: {
+                                Text(project)
+                                Spacer()
+                            }
+                            .buttonStyle(BorderlessButtonStyle())
+                            
+                            NavigationLink(destination: ProjectTaskView(selectedTask: store.selectedTask),
+                                           isActive: $activateTaskSelection) {
+                                EmptyView()
+                            }.frame(width: 40)
                         }
+                        .foregroundColor(.primary)
                     }
                 }
             }
             .searchable(text: $searchText,
                         placement: .navigationBarDrawer(displayMode: .always),
                         prompt: Text("Search here..."))
+            
         }
     }
     

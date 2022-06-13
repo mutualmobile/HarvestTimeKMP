@@ -37,8 +37,8 @@ struct TimeEntryContainerView: View {
                 if store.isSelected {
                     // TODO: Pass selected data here
                     let timEntryStore = TimeEntryStore(Date(),
-                                                       selectedProject: store.selectedProject ?? "",
-                                                       selectedTask: store.selectedTask ?? "")
+                                                       selectedProject: $store.selectedProject,
+                                                       selectedTask: $store.selectedTask)
                     TimeEntryView(store: timEntryStore)
                 } else {
                     ProjectListView(store: ProjectListStore(selectedProject: $store.selectedProject,
