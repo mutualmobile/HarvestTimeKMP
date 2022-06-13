@@ -13,11 +13,6 @@ import androidx.compose.foundation.layout.systemBarsPadding
 import androidx.compose.material.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -33,74 +28,55 @@ import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.Sig
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.android.ui.utils.get
+import com.mutualmobile.harvestKmp.android.viewmodels.LoginViewModel
 import com.mutualmobile.harvestKmp.data.network.UserRole
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.ModalPraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.LoginDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.compose.get
 
 @Composable
 fun LoginScreen(
     navController: NavHostController,
     userState: DataState,
+    lVm: LoginViewModel = get(),
     onLoginSuccess: () -> Unit
 ) {
-    val coroutineScope = rememberCoroutineScope()
     val ctx = LocalContext.current
-    var currentWorkEmail by remember { mutableStateOf("anmol.verma4@gmail.com") }
-    var currentPassword by remember { mutableStateOf("password") }
-
-    var currentNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
-
-    var currentLoginState: DataState by remember {
-        mutableStateOf(EmptyState)
-    }
-    val loginDataModel by remember {
-        mutableStateOf(
-            LoginDataModel().apply {
-                this.dataFlow.onEach { loginState ->
-                    currentLoginState = loginState
-                }.launchIn(coroutineScope)
-                praxisCommand.onEach {  newCommand ->
-                    currentNavigationCommand = newCommand
-                    println("newCommand is: $newCommand")
-                    when (currentNavigationCommand) {
-                        is NavigationPraxisCommand -> {
-                            onLoginSuccess()
-                        }
-                    } }.launchIn(coroutineScope)
+    
+    LaunchedEffect(lVm.currentNavigationCommand) {
+        when (lVm.currentNavigationCommand) {
+            is NavigationPraxisCommand -> {
+                onLoginSuccess()
             }
-        )
+        }
     }
-
-    var currentErrorMsg: String? by remember { mutableStateOf(null) }
 
     LaunchedEffect(userState) {
         if (userState is PraxisDataModel.SuccessState<*>) {
             if ((userState.data as? GetUserResponse) != null) {
                 if ((userState.data as? GetUserResponse)?.role != UserRole.ORG_USER.role) {
-                    loginDataModel.logoutUser()
+                    lVm.loginDataModel.logoutUser()
                 } else {
-                    if (currentNavigationCommand is NavigationPraxisCommand) {
-                        navController clearBackStackAndNavigateTo (currentNavigationCommand as NavigationPraxisCommand).screen
+                    if (lVm.currentNavigationCommand is NavigationPraxisCommand) {
+                        val destination = (lVm.currentNavigationCommand as NavigationPraxisCommand).screen
+                        lVm.resetAll {
+                            navController clearBackStackAndNavigateTo destination
+                        }
                     }
                 }
             }
         }
     }
 
-    LaunchedEffect(currentLoginState) {
-        currentErrorMsg = when (currentLoginState) {
-            is ErrorState -> (currentLoginState as ErrorState).throwable.message
+    LaunchedEffect(lVm.currentLoginState) {
+        lVm.currentErrorMsg = when (lVm.currentLoginState) {
+            is ErrorState -> (lVm.currentLoginState as ErrorState).throwable.message
             else -> null
         }
     }
@@ -120,13 +96,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             SignInTextField(
-                value = currentWorkEmail,
-                onValueChange = { updatedString -> currentWorkEmail = updatedString },
+                value = lVm.currentWorkEmail,
+                onValueChange = { updatedString -> lVm.currentWorkEmail = updatedString },
                 placeholderText = stringResource(MR.strings.login_screen_email_et_placeholder.resourceId)
             )
             SignInTextField(
-                value = currentPassword,
-                onValueChange = { updatedString -> currentPassword = updatedString },
+                value = lVm.currentPassword,
+                onValueChange = { updatedString -> lVm.currentPassword = updatedString },
                 placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                 isPasswordTextField = true
             )
@@ -137,9 +113,14 @@ fun LoginScreen(
             )
             IconLabelButton(
                 label = stringResource(MR.strings.login_screen_signIn_btn_txt.resourceId),
-                onClick = { loginDataModel.login(currentWorkEmail.trim(), currentPassword.trim()) },
-                isLoading = currentLoginState is LoadingState || userState is LoadingState,
-                errorMsg = currentErrorMsg,
+                onClick = {
+                    lVm.loginDataModel.login(
+                        lVm.currentWorkEmail.trim(),
+                        lVm.currentPassword.trim()
+                    )
+                },
+                isLoading = lVm.currentLoginState is LoadingState || userState is LoadingState,
+                errorMsg = lVm.currentErrorMsg,
             )
             SurfaceTextButton(
                 text = noAccountAnnotatedString(),
@@ -154,20 +135,20 @@ fun LoginScreen(
             )
         }
         HarvestDialog(
-            praxisCommand = currentNavigationCommand,
+            praxisCommand = lVm.currentNavigationCommand,
             onConfirm = {
-                if (currentNavigationCommand is ModalPraxisCommand) {
-                    if ((currentNavigationCommand as ModalPraxisCommand).title == "Work in Progress") {
+                if (lVm.currentNavigationCommand is ModalPraxisCommand) {
+                    if ((lVm.currentNavigationCommand as ModalPraxisCommand).title == "Work in Progress") {
                         val intent = Intent(Intent.ACTION_VIEW).apply {
                             data = Uri.parse("https://harvestkmp.web.app/")
                         }
                         ctx.startActivity(intent)
                     }
                 }
-                currentNavigationCommand = null
+                lVm.currentNavigationCommand = null
             },
             onDismiss = {
-                currentNavigationCommand = null
+                lVm.currentNavigationCommand = null
             }
         )
     }

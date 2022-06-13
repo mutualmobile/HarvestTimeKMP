@@ -2,6 +2,7 @@ package com.mutualmobile.harvestKmp.android.di
 
 import com.mutualmobile.harvestKmp.android.viewmodels.FindWorkspaceViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.LandingScreenViewModel
+import com.mutualmobile.harvestKmp.android.viewmodels.LoginViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.MainActivityViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.TimeScreenViewModel
@@ -13,4 +14,5 @@ val viewModelModule = module {
     single { LandingScreenViewModel() }
     single { TimeScreenViewModel() }
     single { FindWorkspaceViewModel() }
+    single { LoginViewModel() }
 }

@@ -20,7 +20,6 @@ import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.ScaffoldState
-import androidx.compose.material.SnackbarHostState
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.DateRange
@@ -28,11 +27,7 @@ import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.rememberDrawerState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.geometry.Size
@@ -69,21 +64,19 @@ import org.koin.androidx.compose.get
 @Composable
 fun LandingScreen(
     navController: NavHostController,
-    newEntryScreenViewModel: NewEntryScreenViewModel = get(),
+    nesVm: NewEntryScreenViewModel = get(),
     lsVm: LandingScreenViewModel = get(),
-    mainActivityViewModel: MainActivityViewModel = get(),
+    maVm: MainActivityViewModel = get(),
     userOrganization: HarvestOrganization? = null,
     userState: PraxisDataModel.DataState
 ) {
     val scaffoldDrawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-    val snackBarHostState = remember { SnackbarHostState() }
+
     val scaffoldState = ScaffoldState(
         drawerState = scaffoldDrawerState,
-        snackbarHostState = snackBarHostState
+        snackbarHostState = lsVm.snackBarHostState
     )
     val coroutineScope = rememberCoroutineScope()
-
-    var isDropDownMenuShown by remember { mutableStateOf(false) }
 
     val timeScreenPagerState = rememberPagerState(initialPage = lsVm.timeScreenStartIndex)
 
@@ -149,7 +142,7 @@ fun LandingScreen(
                                 }
                             }
                             IconButton(
-                                onClick = { isDropDownMenuShown = true },
+                                onClick = { lsVm.isDropDownMenuShown = true },
                             ) {
                                 Icon(
                                     imageVector = Icons.Default.MoreVert,
@@ -158,8 +151,8 @@ fun LandingScreen(
                                 )
                             }
                             DropdownMenu(
-                                expanded = isDropDownMenuShown,
-                                onDismissRequest = { isDropDownMenuShown = false },
+                                expanded = lsVm.isDropDownMenuShown,
+                                onDismissRequest = { lsVm.isDropDownMenuShown = false },
                             ) {
                                 DropdownMenuItem(onClick = {}) {
                                     Text(text = stringResource(MR.strings.landing_screen_dropdown_jump_to_date_option.resourceId))
@@ -220,10 +213,10 @@ fun LandingScreen(
                         lsVm.currentDayOffset = dayOffset
                     },
                     goToNewEntryScreen = { workRequest, requestType ->
-                        newEntryScreenViewModel.updateCurrentWorkRequestType(
+                        nesVm.updateCurrentWorkRequestType(
                             workRequestType = requestType,
                             onUpdateCompleted = {
-                                newEntryScreenViewModel.updateCurrentWorkRequest(
+                                nesVm.updateCurrentWorkRequest(
                                     update = { workRequest },
                                     onUpdateCompleted = {
                                         navController.navigate(HarvestRoutes.Screen.WORK_ENTRY)
@@ -242,7 +235,7 @@ fun LandingScreen(
                     onUpdateWeekLogsTotalTime = { updatedTime ->
                         lsVm.currentWeekLogsTotalTime = updatedTime
                     },
-                    userOrgName = mainActivityViewModel.userOrganization?.name,
+                    userOrgName = maVm.userOrganization?.name,
                     getUserState = userState
                 )
                 LandingScreenDrawerItemType.Reports -> ReportsScreen()
