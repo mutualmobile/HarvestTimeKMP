@@ -1,17 +1,23 @@
 package com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.components
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.defaultMinSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
+import androidx.compose.material.Text
 import androidx.compose.material.TextField
 import androidx.compose.material.TextFieldDefaults
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
@@ -21,21 +27,21 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.R
+import com.mutualmobile.harvestKmp.android.ui.utils.get
 
 @Composable
-fun SearchView(state: MutableState<TextFieldValue>) {
-    val stateSearch = remember { mutableStateOf(false) }
+fun SearchView(state: TextFieldValue, onStateChanged: (TextFieldValue) -> Unit) {
+    var stateSearch by remember { mutableStateOf(false) }
 
     TextField(
-        value = state.value,
-        onValueChange = { value ->
-            state.value = value
-        },
-        readOnly = stateSearch.value.not(),
+        value = state,
+        onValueChange = onStateChanged,
+        readOnly = stateSearch.not(),
         modifier = Modifier
             .then(
-                if (stateSearch.value) {
+                if (stateSearch) {
                     Modifier.fillMaxWidth()
                 } else {
                     Modifier.width(100.dp)
@@ -46,12 +52,11 @@ fun SearchView(state: MutableState<TextFieldValue>) {
             ),
         textStyle = TextStyle(color = Color.White, fontSize = 18.sp),
         trailingIcon = {
-            if (state.value != TextFieldValue("")) {
+            if (state != TextFieldValue("")) {
                 IconButton(
                     onClick = {
-                        stateSearch.value = false
-                        state.value =
-                            TextFieldValue("") // Remove text from TextField when you press the 'X' icon
+                        stateSearch = false
+                        onStateChanged(TextFieldValue("")) // Remove text from TextField when you press the 'X' icon
                     }
                 ) {
                     Icon(
@@ -66,9 +71,8 @@ fun SearchView(state: MutableState<TextFieldValue>) {
 
                 IconButton(
                     onClick = {
-                        stateSearch.value = true
-                        state.value =
-                            TextFieldValue("") // Remove text from TextField when you press the 'X' icon
+                        stateSearch = true
+                        onStateChanged(TextFieldValue("")) // Remove text from TextField when you press the 'X' icon
                     }
                 ) {
                     Icon(
@@ -93,13 +97,23 @@ fun SearchView(state: MutableState<TextFieldValue>) {
             focusedIndicatorColor = Color.Transparent,
             unfocusedIndicatorColor = Color.Transparent,
             disabledIndicatorColor = Color.Transparent
-        )
+        ),
+        placeholder = {
+            if (stateSearch) {
+                Text(
+                    text = MR.strings.project_screen_placeholder_txt.get(),
+                    color = Color.White.copy(alpha = 0.5f)
+                )
+            }
+        }
     )
 }
 
 @Preview(showBackground = true)
 @Composable
-fun SearchViewPreview() {
-    val textState = remember { mutableStateOf(TextFieldValue("")) }
-    SearchView(textState)
+private fun SearchViewPreview() {
+    var textState by remember { mutableStateOf(TextFieldValue("")) }
+    SearchView(textState) {
+        textState = it
+    }
 }

@@ -78,4 +78,5 @@
     <string name="onboarding_text_4">Report on time for powerful insights</string>
     <string name="old_password_et_title">Old Password</string>
     <string name="new_password_et_title">New Password</string>
+    <string name="project_screen_placeholder_txt">Search projects</string>
 </resources>
