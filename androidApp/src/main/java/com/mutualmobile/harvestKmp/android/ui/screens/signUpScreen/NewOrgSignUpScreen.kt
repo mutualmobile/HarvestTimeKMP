@@ -3,6 +3,7 @@ package com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -74,13 +75,11 @@ fun NewOrgSignUpScreen(
                 }
             )
         },
-    ) { bodyPadding ->
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.surface)
-                .navigationBarsPadding()
-                .padding(bodyPadding),
+                .background(MaterialTheme.colors.surface),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -134,14 +133,13 @@ fun NewOrgSignUpScreen(
                     placeholderText = stringResource(MR.strings.signup_screen_company_identifier_et_placeholder.resourceId)
                 )
                 IconLabelButton(
-                    modifier = Modifier.padding(
-                        top = 12.dp
-                    ),
+                    modifier = Modifier.padding(top = 16.dp),
                     label = stringResource(MR.strings.signup_screen_signup_btn_txt.resourceId),
                     onClick = { nossVm.signUp() },
                     isLoading = nossVm.signUpState is LoadingState,
                     errorMsg = (nossVm.signUpState as? ErrorState)?.throwable?.message
                 )
+                Spacer(modifier = Modifier.navigationBarsPadding())
             }
             HarvestDialog(praxisCommand = nossVm.currentPraxisCommand, onConfirm = {
                 nossVm.currentPraxisCommand = null
