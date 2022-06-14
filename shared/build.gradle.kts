@@ -1,4 +1,5 @@
 plugins {
+    id("org.jetbrains.compose") version CommonPlugins.composeGradlePlugin
     CommonPlugins.plugins.forEach { dependency ->
         id(dependency)
     }
@@ -45,6 +46,9 @@ kotlin {
     sourceSets {
         val commonMain by getting {
             dependencies {
+                api(compose.runtime)
+                api(compose.foundation)
+                api(compose.material)
                 CommonMainDependencies.implementation.forEach(::implementation)
                 CommonMainDependencies.api.forEach(::api)
             }

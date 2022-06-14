@@ -1,8 +1,3 @@
-object ComposeDesktopDependencyVersions {
-  const val composeDesktopWeb = "1.2.0-alpha01-dev686"
-
-}
-
 object ComposeDesktopDependencies {
   val implementation = listOf(
     "com.squareup.sqldelight:sqlite-driver:${CommonDependencyVersions.sqlDelight}",
@@ -12,7 +7,7 @@ object ComposeDesktopDependencies {
 
 object ComposeDesktopPlugins {
   val plugins = listOf(
-    "org.jetbrains.compose" to ComposeDesktopDependencyVersions.composeDesktopWeb,
+    "org.jetbrains.compose" to CommonPlugins.composeGradlePlugin,
   )
   val kotlin = listOf("jvm" to AppDependencyVersions.kotlinGradle)
 }

@@ -1,4 +1,5 @@
 plugins {
+    id("org.jetbrains.compose") version CommonPlugins.composeGradlePlugin
     AndroidPluginDependencies.plugins.forEach { (lib, v) ->
         if (v.isNotBlank()) {
             id(lib) version v

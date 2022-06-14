@@ -55,4 +55,5 @@ object CommonPlugins {
         "multiplatform",
         "native.cocoapods"
     )
+    const val composeGradlePlugin = "1.2.0-alpha01-dev709"
 }
