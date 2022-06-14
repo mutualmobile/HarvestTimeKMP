@@ -7,7 +7,7 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import com.mutualmobile.harvestKmp.android.ui.theme.ReportCardTypography
+import com.mutualmobile.harvestKmp.ui.theme.ReportCardTypography
 
 @Composable
 fun UnInvoicedAmountCard() {

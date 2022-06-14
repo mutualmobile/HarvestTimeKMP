@@ -28,7 +28,7 @@ import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.ui.theme.WeekSwitchButtonBgColor
+import com.mutualmobile.harvestKmp.ui.theme.WeekSwitchButtonBgColor
 
 enum class WeekSwitcherType {
     Week, Semimonth, Month, Quarter, Year

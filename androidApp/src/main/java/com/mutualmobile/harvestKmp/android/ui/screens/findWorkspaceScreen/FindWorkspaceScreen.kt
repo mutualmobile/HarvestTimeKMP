@@ -38,9 +38,9 @@ import androidx.navigation.compose.rememberNavController
 import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
-import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
-import com.mutualmobile.harvestKmp.android.ui.theme.FindWorkspaceScreenTypography
-import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
+import com.mutualmobile.harvestKmp.ui.theme.DrawerBgColor
+import com.mutualmobile.harvestKmp.ui.theme.FindWorkspaceScreenTypography
+import com.mutualmobile.harvestKmp.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.android.viewmodels.FindWorkspaceViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes

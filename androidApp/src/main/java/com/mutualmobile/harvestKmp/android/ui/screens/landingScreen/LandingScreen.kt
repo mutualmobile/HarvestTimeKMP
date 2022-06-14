@@ -49,8 +49,8 @@ import com.mutualmobile.harvestKmp.android.ui.screens.landingScreen.components.L
 import com.mutualmobile.harvestKmp.android.ui.screens.reportsScreen.ReportsScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.TimeScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.components.WeekDays
-import com.mutualmobile.harvestKmp.android.ui.theme.DrawerBgColor
-import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.ui.theme.DrawerBgColor
+import com.mutualmobile.harvestKmp.ui.theme.SurfaceColor
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
 import com.mutualmobile.harvestKmp.android.viewmodels.LandingScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.MainActivityViewModel

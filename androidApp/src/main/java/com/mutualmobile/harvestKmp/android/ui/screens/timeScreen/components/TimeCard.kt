@@ -14,7 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
+import com.mutualmobile.harvestKmp.ui.theme.TimeScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 
 @Composable

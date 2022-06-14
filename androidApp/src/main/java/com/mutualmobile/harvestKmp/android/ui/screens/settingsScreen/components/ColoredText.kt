@@ -7,7 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.ui.theme.PrimaryLightColor
+import com.mutualmobile.harvestKmp.ui.theme.PrimaryLightColor
 
 @Composable
 fun ColoredText(text: String) {

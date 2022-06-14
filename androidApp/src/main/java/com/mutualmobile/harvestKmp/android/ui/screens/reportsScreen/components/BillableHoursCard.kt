@@ -23,9 +23,9 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.theme.ReportCardTypography
-import com.mutualmobile.harvestKmp.android.ui.theme.TertiaryColor
-import com.mutualmobile.harvestKmp.android.ui.theme.TertiaryInverseColor
+import com.mutualmobile.harvestKmp.ui.theme.ReportCardTypography
+import com.mutualmobile.harvestKmp.ui.theme.TertiaryColor
+import com.mutualmobile.harvestKmp.ui.theme.TertiaryInverseColor
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 
 @Composable

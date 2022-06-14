@@ -1,4 +1,4 @@
-package com.mutualmobile.harvestKmp.android.ui.theme
+package com.mutualmobile.harvestKmp.ui.theme
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.graphics.Color

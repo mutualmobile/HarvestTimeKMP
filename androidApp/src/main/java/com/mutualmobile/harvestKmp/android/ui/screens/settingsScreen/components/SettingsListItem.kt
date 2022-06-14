@@ -19,10 +19,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.mutualmobile.harvestKmp.android.ui.theme.PrimaryLightColor
-import com.mutualmobile.harvestKmp.android.ui.theme.SwitchCheckedTrackColor
-import com.mutualmobile.harvestKmp.android.ui.theme.SwitchUncheckedThumbColor
-import com.mutualmobile.harvestKmp.android.ui.theme.SwitchUncheckedTrackColor
+import com.mutualmobile.harvestKmp.ui.theme.PrimaryLightColor
+import com.mutualmobile.harvestKmp.ui.theme.SwitchCheckedTrackColor
+import com.mutualmobile.harvestKmp.ui.theme.SwitchUncheckedThumbColor
+import com.mutualmobile.harvestKmp.ui.theme.SwitchUncheckedTrackColor
 
 @Composable
 fun SettingsListItem(

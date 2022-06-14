@@ -9,7 +9,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.ui.theme.ReportCardTypography
+import com.mutualmobile.harvestKmp.ui.theme.ReportCardTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 
 @Composable

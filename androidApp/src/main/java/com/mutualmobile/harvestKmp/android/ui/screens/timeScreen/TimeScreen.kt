@@ -44,8 +44,8 @@ import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.currentPa
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.floorMod
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.numberOfWeekDays
 import com.mutualmobile.harvestKmp.android.ui.screens.timeScreen.utils.targetPageIndex
-import com.mutualmobile.harvestKmp.android.ui.theme.SurfaceColor
-import com.mutualmobile.harvestKmp.android.ui.theme.TimeScreenTypography
+import com.mutualmobile.harvestKmp.ui.theme.SurfaceColor
+import com.mutualmobile.harvestKmp.ui.theme.TimeScreenTypography
 import com.mutualmobile.harvestKmp.android.ui.utils.dateWithoutTimeZone
 import com.mutualmobile.harvestKmp.android.ui.utils.toDecimalString
 import com.mutualmobile.harvestKmp.android.viewmodels.TimeScreenViewModel
