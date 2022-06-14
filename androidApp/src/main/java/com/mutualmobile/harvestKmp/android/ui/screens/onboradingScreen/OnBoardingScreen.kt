@@ -20,8 +20,6 @@ import androidx.compose.material.rememberScaffoldState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -41,20 +39,13 @@ import com.google.accompanist.pager.PagerState
 import com.google.accompanist.pager.VerticalPager
 import com.google.accompanist.pager.rememberPagerState
 import com.mutualmobile.harvestKmp.MR
-import com.mutualmobile.harvestKmp.android.R
 import com.mutualmobile.harvestKmp.android.ui.screens.common.noAccountAnnotatedString
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.SurfaceTextButton
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
+import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
-import com.mutualmobile.harvestKmp.features.datamodels.OnBoardingDataModel
-
-val OnBoardingImages = listOf(
-    R.drawable.onboarding_screen_1,
-    R.drawable.onboarding_screen_2,
-    R.drawable.onboarding_screen_3,
-    R.drawable.onboarding_screen_4,
-)
+import com.mutualmobile.harvestKmp.domain.model.onBoardingItems
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
@@ -65,15 +56,9 @@ fun OnBoardingScreen(navController: NavHostController) {
         initialPage = 0,
     )
 
-    val onBoardingDataModel by remember {
-        mutableStateOf(
-            OnBoardingDataModel()
-        )
-    }
-
     val color by animateColorAsState(
         targetValue = Color(
-            onBoardingDataModel.getOnBoardingItemList()[pagerState.currentPage].color
+            onBoardingItems[pagerState.currentPage].color
         ),
     )
 
@@ -110,7 +95,6 @@ fun OnBoardingScreen(navController: NavHostController) {
                     )
 
                     ScrollingText(
-                        onBoardingDataModel = onBoardingDataModel,
                         pagerState = pagerState
                     )
                 }
@@ -118,7 +102,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                 Column {
                     HorizontalPager(
                         state = pagerState,
-                        count = onBoardingDataModel.getOnBoardingItemList().size,
+                        count = onBoardingItems.size,
                         verticalAlignment = Alignment.Bottom,
                     ) { page ->
                         Column(
@@ -129,7 +113,7 @@ fun OnBoardingScreen(navController: NavHostController) {
                             verticalArrangement = Arrangement.Bottom
                         ) {
                             Image(
-                                painter = painterResource(id = OnBoardingImages[page]),
+                                painter = painterResource(id = onBoardingItems[page].image.drawableResId),
                                 contentDescription = null,
                                 modifier = Modifier.fillMaxSize()
                             )
@@ -175,19 +159,16 @@ fun OnBoardingScreen(navController: NavHostController) {
 
 @Composable
 @OptIn(ExperimentalPagerApi::class)
-private fun ScrollingText(
-    onBoardingDataModel: OnBoardingDataModel,
-    pagerState: PagerState
-) {
+private fun ScrollingText(pagerState: PagerState) {
     val textPagerState = rememberPagerState()
     VerticalPager(
-        count = onBoardingDataModel.getOnBoardingItemList().size,
+        count = onBoardingItems.size,
         state = textPagerState,
         modifier = Modifier.height(50.dp),
         userScrollEnabled = false
     ) { index ->
         Text(
-            text = onBoardingDataModel.getOnBoardingItemList()[index].title,
+            text = onBoardingItems[index].title.get(),
             color = Color.White,
             textAlign = TextAlign.Center,
             fontWeight = FontWeight.Normal,

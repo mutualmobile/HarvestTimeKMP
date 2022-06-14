@@ -1,5 +1,6 @@
 package com.mutualmobile.harvestKmp.android.viewmodels
 
+import androidx.compose.material.SnackbarHostState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -26,4 +27,7 @@ class LandingScreenViewModel : ViewModel() {
     val timeScreenStartIndex = Int.MAX_VALUE.div(2)
     var currentWeekLogsTotalTime by mutableStateOf("0.00")
     var isWorkLoading by mutableStateOf(false)
+
+    var isDropDownMenuShown by mutableStateOf(false)
+    val snackBarHostState = SnackbarHostState()
 }

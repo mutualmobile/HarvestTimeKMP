@@ -35,15 +35,15 @@ class NewEntryScreenViewModel : ViewModel() {
     var currentWorkRequestType by mutableStateOf(WorkRequestType.CREATE)
         private set
 
-    var durationEtText: String by mutableStateOf(
-        currentWorkRequest?.workHours?.toDecimalString() ?: ""
-    )
-
     var selectedWorkDate: Date by mutableStateOf(currentWorkRequest?.workDate?.let { nnWorkDate ->
         serverDateFormatter.parse(nnWorkDate)
     } ?: Date())
 
     var noteEtText: String by mutableStateOf(currentWorkRequest?.note.orEmpty())
+
+    var durationEtText: String by mutableStateOf(
+        currentWorkRequest?.workHours?.toDecimalString().orEmpty()
+    )
 
     var currentLogWorkTimeState: PraxisDataModel.DataState by mutableStateOf(
         PraxisDataModel.EmptyState
@@ -51,15 +51,25 @@ class NewEntryScreenViewModel : ViewModel() {
 
     var logWorkTimeNavigationCommands: PraxisCommand? by mutableStateOf(null)
 
-    val logWorkTimeDataModel = TimeLogginDataModel().apply {
-        praxisCommand.onEach { newCommand ->
-            logWorkTimeNavigationCommands = newCommand
-        }.launchIn(dataModelScope)
-    }
+    private val logWorkTimeDataModel = TimeLogginDataModel()
+
+    private val orgProjectsDataModel = OrgProjectsDataModel()
 
     var deleteWorkState: PraxisDataModel.DataState by mutableStateOf(PraxisDataModel.EmptyState)
         private set
     var isDeleteDialogVisible by mutableStateOf(false)
+
+    init {
+        with(logWorkTimeDataModel) {
+            observeNavigationCommands()
+        }
+    }
+
+    private fun TimeLogginDataModel.observeNavigationCommands() {
+        praxisCommand.onEach { newCommand ->
+            logWorkTimeNavigationCommands = newCommand
+        }.launchIn(dataModelScope)
+    }
 
     fun updateCurrentWorkRequest(
         update: (existing: HarvestUserWorkRequest?) -> HarvestUserWorkRequest?,
@@ -74,7 +84,10 @@ class NewEntryScreenViewModel : ViewModel() {
         onUpdateCompleted()
     }
 
-    fun updateCurrentWorkRequestType(workRequestType: WorkRequestType, onUpdateCompleted: () -> Unit = {}) {
+    fun updateCurrentWorkRequestType(
+        workRequestType: WorkRequestType,
+        onUpdateCompleted: () -> Unit = {}
+    ) {
         currentWorkRequestType = workRequestType
         onUpdateCompleted()
     }
@@ -82,8 +95,8 @@ class NewEntryScreenViewModel : ViewModel() {
     fun fetchProjectName(projectId: String) {
         currentProjectName = "Loading..."
         viewModelScope.launch {
-            OrgProjectsDataModel().apply {
-                getProjectsForProjectIds(projectIds = listOf(projectId)).collect { newState ->
+            orgProjectsDataModel.apply {
+                getProjectsForProjectIds(projectIds = listOf(projectId)).onEach { newState ->
                     when (newState) {
                         is SuccessState<*> -> {
                             (newState as SuccessState<ApiResponse<List<OrgProjectResponse>>>)
@@ -95,12 +108,12 @@ class NewEntryScreenViewModel : ViewModel() {
                         }
                         else -> Unit
                     }
-                }
+                }.launchIn(viewModelScope)
             }
         }
     }
 
-    fun deleteWork(onCompleted: () -> Unit) {
+    fun deleteWork(onCompleted: () -> Unit = {}) {
         currentWorkRequest?.let { nnWorkRequest ->
             logWorkTimeDataModel.deleteWork(
                 harvestUserWorkResponse = nnWorkRequest.toWorkResponse()
@@ -111,11 +124,64 @@ class NewEntryScreenViewModel : ViewModel() {
         onCompleted()
     }
 
+    fun logWorkTime(
+        nnSelectedProjectId: String,
+        nnUserId: String,
+    ) {
+        when (currentWorkRequestType) {
+            WorkRequestType.CREATE -> {
+                logWorkTimeDataModel.logWorkTime(
+                    HarvestUserWorkRequest(
+                        projectId = nnSelectedProjectId,
+                        userId = nnUserId,
+                        workDate = serverDateFormatter.format(selectedWorkDate),
+                        workHours = durationEtText.toFloat(),
+                        note = noteEtText
+                    )
+                )
+                    .onEach { logWorkTimeState -> currentLogWorkTimeState = logWorkTimeState }
+                    .launchIn(viewModelScope)
+            }
+            WorkRequestType.UPDATE -> {
+                currentWorkRequest?.let { nnCurrentWorkRequest ->
+                    logWorkTimeDataModel.logWorkTime(
+                        HarvestUserWorkRequest(
+                            id = nnCurrentWorkRequest.id,
+                            projectId = nnSelectedProjectId,
+                            userId = nnUserId,
+                            workDate = serverDateFormatter.format(selectedWorkDate),
+                            workHours = durationEtText.toFloat(),
+                            note = noteEtText
+                        )
+                    )
+                        .onEach { logWorkTimeState -> currentLogWorkTimeState = logWorkTimeState }
+                        .launchIn(viewModelScope)
+                }
+            }
+        }
+    }
+
     fun resetAllItems(onResetCompleted: () -> Unit = {}) {
         currentWorkRequest = null
+        logWorkTimeNavigationCommands = null
+        durationEtText = ""
         currentProjectName = ""
+        noteEtText = ""
+        selectedWorkDate = Date()
         currentWorkRequestType = WorkRequestType.CREATE
         deleteWorkState = PraxisDataModel.EmptyState
+        currentLogWorkTimeState = PraxisDataModel.EmptyState
+        isDeleteDialogVisible = false
         onResetCompleted()
+    }
+
+    fun updateComponents() {
+        currentWorkRequest?.let { nnWorkRequest ->
+            durationEtText = nnWorkRequest.workHours.toDecimalString()
+            noteEtText = nnWorkRequest.note.orEmpty()
+            serverDateFormatter.parse(nnWorkRequest.workDate)?.let { nnWorkDate ->
+                selectedWorkDate = nnWorkDate
+            }
+        }
     }
 }

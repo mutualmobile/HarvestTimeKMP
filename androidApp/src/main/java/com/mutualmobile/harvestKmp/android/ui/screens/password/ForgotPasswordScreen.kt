@@ -18,11 +18,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,42 +31,29 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
 import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.viewmodels.ForgotPasswordViewModel
 import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
+import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
-import com.mutualmobile.harvestKmp.features.datamodels.orgForgotPasswordApiDataModels.ForgotPasswordDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.compose.get
 
 @Composable
-fun ForgotPasswordScreen(navController: NavHostController) {
-    val coroutineScope = rememberCoroutineScope()
-    var forgotPasswordState: DataState by remember { mutableStateOf(EmptyState) }
-
-    var forgotPasswordNavigationCommand: PraxisCommand? by remember { mutableStateOf(null) }
-    val forgotPasswordDataModel by remember {
-        mutableStateOf(
-            ForgotPasswordDataModel().apply {
-                this.dataFlow.onEach { passwordState ->
-                    forgotPasswordState = passwordState
-                }.launchIn(coroutineScope)
-                praxisCommand.onEach {  newCommand ->
-                    forgotPasswordNavigationCommand = newCommand
-                    when (newCommand) {
-                        is NavigationPraxisCommand -> {
-                            if (newCommand.screen.isBlank()) {
-                                navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
-                            }
-                        }
-                    } }.launchIn(coroutineScope)
+fun ForgotPasswordScreen(
+    navController: NavHostController,
+    fpVm: ForgotPasswordViewModel = get()
+) {
+    LaunchedEffect(fpVm.forgotPasswordNavigationCommand) {
+        when (fpVm.forgotPasswordNavigationCommand) {
+            is NavigationPraxisCommand -> {
+                if ((fpVm.forgotPasswordNavigationCommand as NavigationPraxisCommand).screen.isBlank()) {
+                    navController clearBackStackAndNavigateTo HarvestRoutes.Screen.FIND_WORKSPACE
+                }
             }
-        )
+        }
     }
-    var currentWorkEmail by remember { mutableStateOf("") }
+
     Scaffold(
         topBar = {
             TopAppBar(
@@ -90,8 +73,7 @@ fun ForgotPasswordScreen(navController: NavHostController) {
                 contentPadding = WindowInsets.Companion.statusBars.asPaddingValues(),
 
                 backgroundColor = MaterialTheme.colors.primary,
-
-                )
+            )
 
         },
     ) { bodyPadding ->
@@ -112,26 +94,25 @@ fun ForgotPasswordScreen(navController: NavHostController) {
             ) {
 
                 SignUpTextField(
-                    value = currentWorkEmail,
-                    onValueChange = { updatedString -> currentWorkEmail = updatedString },
+                    value = fpVm.currentWorkEmail,
+                    onValueChange = { updatedString -> fpVm.currentWorkEmail = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_email_et_placeholder.resourceId)
                 )
 
                 IconLabelButton(
-                    errorMsg = (forgotPasswordState as? ErrorState)?.throwable?.message,
+                    errorMsg = (fpVm.forgotPasswordState as? ErrorState)?.throwable?.message,
                     label = stringResource(MR.strings.request_reset_password.resourceId),
-                    onClick = {
-                        forgotPasswordDataModel.forgotPassword(
-                            currentWorkEmail.trim()
-                        )
-                    }
+                    onClick = { fpVm.forgotPassword() },
+                    isLoading = fpVm.forgotPasswordState is PraxisDataModel.LoadingState
                 )
             }
-            HarvestDialog(praxisCommand = forgotPasswordNavigationCommand, onConfirm = {
-                forgotPasswordNavigationCommand = null
-                when (forgotPasswordState) {
+            HarvestDialog(praxisCommand = fpVm.forgotPasswordNavigationCommand, onConfirm = {
+                fpVm.forgotPasswordNavigationCommand = null
+                when (fpVm.forgotPasswordState) {
                     is SuccessState<*> -> {
-                        navController.navigateUp()
+                        fpVm.resetAll {
+                            navController.navigateUp()
+                        }
                     }
                     else -> Unit
                 }

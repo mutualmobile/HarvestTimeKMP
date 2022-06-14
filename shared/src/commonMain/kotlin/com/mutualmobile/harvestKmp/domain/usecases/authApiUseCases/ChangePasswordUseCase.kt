@@ -11,7 +11,7 @@ class ChangePasswordUseCase(private val authApi: AuthApi) {
         password: String,
         oldPassword: String
     ): NetworkResponse<ApiResponse<HarvestOrganization>> {
-        ChangePasswordFormValidator()(password = password, confirmPassword = oldPassword)
+        ChangePasswordFormValidator()(password = password, oldPassword = oldPassword)
         return authApi.changePassword(password = password, oldPassword = oldPassword)
     }
 }

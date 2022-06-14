@@ -57,7 +57,7 @@ fun DateDurationSelector(
     currentDate: Date
 ) {
     var isDatePickerVisible by remember { mutableStateOf(false) }
-    var selectedDate by remember { mutableStateOf(formatter.format(currentDate)) }
+    var selectedDate by remember(currentDate) { mutableStateOf(formatter.format(currentDate)) }
     Card(
         modifier = Modifier.fillMaxWidth(),
         elevation = 2.dp

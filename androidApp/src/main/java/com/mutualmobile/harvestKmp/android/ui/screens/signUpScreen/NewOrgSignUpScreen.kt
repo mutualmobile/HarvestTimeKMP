@@ -3,6 +3,7 @@ package com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -20,11 +21,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -36,47 +33,28 @@ import com.mutualmobile.harvestKmp.MR
 import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.loginScreen.components.IconLabelButton
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.components.SignUpTextField
+import com.mutualmobile.harvestKmp.android.ui.utils.clearBackStackAndNavigateTo
+import com.mutualmobile.harvestKmp.android.viewmodels.NewOrgSignUpScreenViewModel
 import com.mutualmobile.harvestKmp.datamodel.NavigationPraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisCommand
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.DataState
-import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.EmptyState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
-import com.mutualmobile.harvestKmp.features.datamodels.authApiDataModels.SignUpDataModel
-import kotlinx.coroutines.flow.launchIn
-import kotlinx.coroutines.flow.onEach
+import org.koin.androidx.compose.get
 
 @Composable
-fun NewOrgSignUpScreen(navController: NavHostController) {
-    val coroutineScope = rememberCoroutineScope()
-    var currentPraxisCommand: PraxisCommand? by remember {
-        mutableStateOf(null)
-    }
-    var signUpState: DataState by remember { mutableStateOf(EmptyState) }
-    val signUpDataModel by remember {
-        mutableStateOf(SignUpDataModel().apply {
-            this.dataFlow.onEach { newState ->
-                signUpState = newState
-            }.launchIn(coroutineScope)
-            praxisCommand.onEach { newCommand ->
-                println("Command is: $newCommand")
-                currentPraxisCommand = newCommand
-                when (newCommand) {
-                    is NavigationPraxisCommand -> {
-                        navController.navigate(newCommand.screen)
-                    }
+fun NewOrgSignUpScreen(
+    navController: NavHostController,
+    nossVm: NewOrgSignUpScreenViewModel = get()
+) {
+    LaunchedEffect(nossVm.currentPraxisCommand) {
+        when (nossVm.currentPraxisCommand) {
+            is NavigationPraxisCommand -> {
+                val destination = (nossVm.currentPraxisCommand as NavigationPraxisCommand).screen
+                nossVm.resetAll {
+                    navController clearBackStackAndNavigateTo destination
                 }
-            }.launchIn(coroutineScope)
-        })
+            }
+        }
     }
-    var currentWorkEmail by remember { mutableStateOf("") }
-    var currentPassword by remember { mutableStateOf("") }
-    var confirmPassword by remember { mutableStateOf("") }
-    var currentFirstName by remember { mutableStateOf("") }
-    var currentLastName by remember { mutableStateOf("") }
-    var companyName by remember { mutableStateOf("") }
-    var companyWebsite by remember { mutableStateOf("") }
-    var companyIdentifier by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
@@ -97,13 +75,11 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                 }
             )
         },
-    ) { bodyPadding ->
+    ) {
         Box(
             modifier = Modifier
                 .fillMaxSize()
-                .background(MaterialTheme.colors.surface)
-                .navigationBarsPadding()
-                .padding(bodyPadding),
+                .background(MaterialTheme.colors.surface),
             contentAlignment = Alignment.Center
         ) {
             Column(
@@ -114,70 +90,59 @@ fun NewOrgSignUpScreen(navController: NavHostController) {
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 SignUpTextField(
-                    value = currentFirstName,
-                    onValueChange = { updatedString -> currentFirstName = updatedString },
+                    value = nossVm.currentFirstName,
+                    onValueChange = { updatedString -> nossVm.currentFirstName = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_first_name_et_placeholder.resourceId),
                 )
                 SignUpTextField(
-                    value = currentLastName,
-                    onValueChange = { updatedString -> currentLastName = updatedString },
+                    value = nossVm.currentLastName,
+                    onValueChange = { updatedString -> nossVm.currentLastName = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_last_name_et_placeholder.resourceId)
                 )
 
                 SignUpTextField(
-                    value = currentWorkEmail,
-                    onValueChange = { updatedString -> currentWorkEmail = updatedString },
+                    value = nossVm.currentWorkEmail,
+                    onValueChange = { updatedString -> nossVm.currentWorkEmail = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_email_et_placeholder.resourceId)
                 )
                 SignUpTextField(
-                    value = currentPassword,
-                    onValueChange = { updatedString -> currentPassword = updatedString },
+                    value = nossVm.currentPassword,
+                    onValueChange = { updatedString -> nossVm.currentPassword = updatedString },
                     placeholderText = stringResource(MR.strings.password_et_placeholder.resourceId),
                     isPasswordTextField = true
                 )
                 SignUpTextField(
-                    value = confirmPassword,
-                    onValueChange = { updatedString -> confirmPassword = updatedString },
+                    value = nossVm.confirmPassword,
+                    onValueChange = { updatedString -> nossVm.confirmPassword = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_confirm_password_et_placeholder.resourceId),
                     isPasswordTextField = true
                 )
                 SignUpTextField(
-                    value = companyName,
-                    onValueChange = { updatedString -> companyName = updatedString },
+                    value = nossVm.companyName,
+                    onValueChange = { updatedString -> nossVm.companyName = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_company_name_et_placeholder.resourceId)
                 )
                 SignUpTextField(
-                    value = companyWebsite,
-                    onValueChange = { updatedString -> companyWebsite = updatedString },
+                    value = nossVm.companyWebsite,
+                    onValueChange = { updatedString -> nossVm.companyWebsite = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_company_website_et_placeholder.resourceId)
                 )
                 SignUpTextField(
-                    value = companyIdentifier,
-                    onValueChange = { updatedString -> companyIdentifier = updatedString },
+                    value = nossVm.companyIdentifier,
+                    onValueChange = { updatedString -> nossVm.companyIdentifier = updatedString },
                     placeholderText = stringResource(MR.strings.signup_screen_company_identifier_et_placeholder.resourceId)
                 )
                 IconLabelButton(
-                    modifier = Modifier.padding(
-                        top = 12.dp
-                    ),
+                    modifier = Modifier.padding(top = 16.dp),
                     label = stringResource(MR.strings.signup_screen_signup_btn_txt.resourceId),
-                    onClick = {
-                        signUpDataModel.signUp(
-                            firstName = currentFirstName,
-                            lastName = currentLastName,
-                            email = currentWorkEmail,
-                            password = currentPassword,
-                            orgName = companyName,
-                            orgWebsite = companyWebsite,
-                            orgIdentifier = companyIdentifier
-                        )
-                    },
-                    isLoading = signUpState is LoadingState,
-                    errorMsg = (signUpState as? ErrorState)?.throwable?.message
+                    onClick = { nossVm.signUp() },
+                    isLoading = nossVm.signUpState is LoadingState,
+                    errorMsg = (nossVm.signUpState as? ErrorState)?.throwable?.message
                 )
+                Spacer(modifier = Modifier.navigationBarsPadding())
             }
-            HarvestDialog(praxisCommand = currentPraxisCommand, onConfirm = {
-                currentPraxisCommand = null
+            HarvestDialog(praxisCommand = nossVm.currentPraxisCommand, onConfirm = {
+                nossVm.currentPraxisCommand = null
             })
         }
     }

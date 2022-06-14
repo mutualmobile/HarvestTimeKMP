@@ -46,7 +46,6 @@ import com.mutualmobile.harvestKmp.android.ui.screens.common.CommonAlertDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.common.HarvestDialog
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.BucketSelector
 import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.DateDurationSelector
-import com.mutualmobile.harvestKmp.android.ui.screens.newEntryScreen.components.serverDateFormatter
 import com.mutualmobile.harvestKmp.android.ui.utils.get
 import com.mutualmobile.harvestKmp.android.ui.utils.isAFloat
 import com.mutualmobile.harvestKmp.android.ui.utils.showToast
@@ -56,7 +55,6 @@ import com.mutualmobile.harvestKmp.datamodel.HarvestRoutes
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.ErrorState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.LoadingState
 import com.mutualmobile.harvestKmp.datamodel.PraxisDataModel.SuccessState
-import com.mutualmobile.harvestKmp.domain.model.request.HarvestUserWorkRequest
 import com.mutualmobile.harvestKmp.domain.model.response.GetUserResponse
 import kotlinx.coroutines.launch
 import org.koin.androidx.compose.get
@@ -75,6 +73,26 @@ fun NewEntryScreen(
 
     BackHandler {
         nesVm.resetAllItems { navController.navigateUp() }
+    }
+
+    LaunchedEffect(nesVm.currentWorkRequest) {
+        nesVm.updateComponents()
+    }
+
+    LaunchedEffect(nesVm.deleteWorkState) {
+        when (nesVm.deleteWorkState) {
+            is SuccessState<*> -> {
+                nesVm.resetAllItems {
+                    activity.showToast("Deleted successfully!")
+                    navController.navigateUp()
+                }
+            }
+            is ErrorState -> activity.showToast(
+                (nesVm.deleteWorkState as ErrorState).throwable.message
+                    ?: "Unexpected Error Occurred!"
+            )
+            else -> Unit
+        }
     }
 
     LaunchedEffect(Unit) {
@@ -113,14 +131,6 @@ fun NewEntryScreen(
                             ) {
                                 Icon(imageVector = Icons.Default.Delete, contentDescription = null)
                             }
-                            when (nesVm.deleteWorkState) {
-                                is SuccessState<*> -> navController.navigateUp()
-                                is ErrorState -> activity.showToast(
-                                    (nesVm.deleteWorkState as ErrorState).throwable.message
-                                        ?: "Unexpected Error Occurred!"
-                                )
-                                else -> Unit
-                            }
                         }
                     }
                 }
@@ -141,43 +151,10 @@ fun NewEntryScreen(
                                 user?.let { nnUser ->
                                     nnUser.id?.let { nnUserId ->
                                         selectedProjectId?.let { nnSelectedProjectId ->
-                                            when (nesVm.currentWorkRequestType) {
-                                                WorkRequestType.CREATE -> {
-                                                    nesVm.logWorkTimeDataModel.logWorkTime(
-                                                        HarvestUserWorkRequest(
-                                                            projectId = nnSelectedProjectId,
-                                                            userId = nnUserId,
-                                                            workDate = serverDateFormatter.format(
-                                                                nesVm.selectedWorkDate
-                                                            ),
-                                                            workHours = nesVm.durationEtText.toFloat(),
-                                                            note = nesVm.noteEtText
-                                                        )
-                                                    ).collect { logWorkTimeState ->
-                                                        nesVm.currentLogWorkTimeState =
-                                                            logWorkTimeState
-                                                    }
-                                                }
-                                                WorkRequestType.UPDATE -> {
-                                                    nesVm.currentWorkRequest?.let { nnCurrentWorkRequest ->
-                                                        nesVm.logWorkTimeDataModel.logWorkTime(
-                                                            HarvestUserWorkRequest(
-                                                                id = nnCurrentWorkRequest.id,
-                                                                projectId = nnSelectedProjectId,
-                                                                userId = nnUserId,
-                                                                workDate = serverDateFormatter.format(
-                                                                    nesVm.selectedWorkDate
-                                                                ),
-                                                                workHours = nesVm.durationEtText.toFloat(),
-                                                                note = nesVm.noteEtText
-                                                            )
-                                                        ).collect { logWorkTimeState ->
-                                                            nesVm.currentLogWorkTimeState =
-                                                                logWorkTimeState
-                                                        }
-                                                    }
-                                                }
-                                            }
+                                            nesVm.logWorkTime(
+                                                nnSelectedProjectId = nnSelectedProjectId,
+                                                nnUserId = nnUserId
+                                            )
                                         }
                                     }
                                 }
@@ -244,21 +221,19 @@ fun NewEntryScreen(
             )
         }
         HarvestDialog(praxisCommand = nesVm.logWorkTimeNavigationCommands, onConfirm = {
-            nesVm.logWorkTimeNavigationCommands = null
-            when (nesVm.currentLogWorkTimeState) {
-                is SuccessState<*> -> {
-                    nesVm.resetAllItems {
-                        navController.navigateUp()
-                    }
+            if (nesVm.currentLogWorkTimeState is SuccessState<*>) {
+                nesVm.resetAllItems {
+                    navController.navigateUp()
                 }
-                else -> Unit
             }
         })
     }
     if (nesVm.isDeleteDialogVisible) {
         CommonAlertDialog(
             onDismiss = { nesVm.isDeleteDialogVisible = false },
-            onConfirm = { nesVm.deleteWork(onCompleted = { nesVm.isDeleteDialogVisible = false }) },
+            onConfirm = {
+                nesVm.deleteWork()
+            },
             titleProvider = { MR.strings.delete_work_dialog_title.get() },
             bodyTextProvider = { MR.strings.delete_work_dialog_bodyText.get() }
         )
