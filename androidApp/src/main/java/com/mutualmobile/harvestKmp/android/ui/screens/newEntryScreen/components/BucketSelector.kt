@@ -44,6 +44,7 @@ import com.mutualmobile.harvestKmp.MR
 @Composable
 fun BucketSelector(
     currentProject: String,
+    currentWork: String,
     onWorkClick: () -> Unit,
     onDepartmentClick: () -> Unit = {},
     note: String,
@@ -82,7 +83,7 @@ fun BucketSelector(
                         modifier = Modifier.alpha(0.5f),
                         startIndent = screenConfig.screenWidthDp.times(0.1f).dp,
                     )
-                    BucketItem(title = "Work")
+                    BucketItem(title = currentWork, onClick = onWorkClick)
                     Divider(
                         modifier = Modifier.alpha(0.5f),
                         startIndent = 16.dp,

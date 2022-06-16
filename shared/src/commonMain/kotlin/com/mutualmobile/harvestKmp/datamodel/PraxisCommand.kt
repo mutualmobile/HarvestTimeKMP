@@ -40,6 +40,7 @@ object HarvestRoutes {
         const val ON_BOARDING = "on_boarding"
         const val FIND_WORKSPACE = "find-workspace"
         const val WORK_ENTRY = "work-entry"
+        const val SELECT_WORK_TYPE = "select-work-type"
 
         fun String.listUsersWithProjectId(projectId: String?): String {
             return this.plus(
