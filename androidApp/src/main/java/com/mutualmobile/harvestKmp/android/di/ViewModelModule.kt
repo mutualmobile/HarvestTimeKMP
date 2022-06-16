@@ -11,6 +11,7 @@ import com.mutualmobile.harvestKmp.android.viewmodels.NewEntryScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.NewOrgSignUpScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.ProjectScreenViewModel
 import com.mutualmobile.harvestKmp.android.viewmodels.TimeScreenViewModel
+import com.mutualmobile.harvestKmp.android.viewmodels.WorkTypeScreenViewModel
 import org.koin.dsl.module
 
 val viewModelModule = module {
@@ -25,4 +26,5 @@ val viewModelModule = module {
     single { ProjectScreenViewModel() }
     single { ExistingOrgSignUpScreenViewModel() }
     single { NewOrgSignUpScreenViewModel() }
+    single { WorkTypeScreenViewModel() }
 }

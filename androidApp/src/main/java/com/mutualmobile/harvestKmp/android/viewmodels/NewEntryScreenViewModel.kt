@@ -32,6 +32,8 @@ class NewEntryScreenViewModel : ViewModel() {
     var currentProjectName: String by mutableStateOf("")
         private set
 
+    var currentProjectType: String by mutableStateOf("")
+
     var currentWorkRequestType by mutableStateOf(WorkRequestType.CREATE)
         private set
 

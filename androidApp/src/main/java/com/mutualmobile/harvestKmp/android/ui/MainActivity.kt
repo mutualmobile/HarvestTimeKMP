@@ -32,6 +32,7 @@ import com.mutualmobile.harvestKmp.android.ui.screens.projectScreen.ProjectScree
 import com.mutualmobile.harvestKmp.android.ui.screens.settingsScreen.SettingsScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.NewOrgSignUpScreen
 import com.mutualmobile.harvestKmp.android.ui.screens.signUpScreen.SignUpScreen
+import com.mutualmobile.harvestKmp.android.ui.screens.workTypeScreen.WorkTypeScreen
 import com.mutualmobile.harvestKmp.android.ui.theme.HarvestKmpTheme
 import com.mutualmobile.harvestKmp.android.ui.utils.SetupSystemUiController
 import com.mutualmobile.harvestKmp.android.viewmodels.MainActivityViewModel
@@ -120,6 +121,9 @@ class MainActivity : ComponentActivity() {
                         }
                         composable(HarvestRoutes.Screen.SETTINGS) {
                             SettingsScreen(navController = navController)
+                        }
+                        composable(HarvestRoutes.Screen.SELECT_WORK_TYPE) {
+                            WorkTypeScreen(navController = navController)
                         }
                     }
                 }

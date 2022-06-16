@@ -185,7 +185,10 @@ fun NewEntryScreen(
                 onDepartmentClick = {
                     navController.navigate(HarvestRoutes.Screen.ORG_PROJECTS)
                 },
-                onWorkClick = {},
+                currentWork = nesVm.currentProjectType,
+                onWorkClick = {
+                    navController.navigate(HarvestRoutes.Screen.SELECT_WORK_TYPE)
+                },
                 note = nesVm.noteEtText,
                 onNoteChanged = { updatedText -> nesVm.noteEtText = updatedText }
             )
