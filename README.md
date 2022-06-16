@@ -304,6 +304,7 @@ The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https
 
 ### iOS Screenshots
 - [Authentications](#ios-authentications-screen)
+- [Home](#ios-home-screens)
 
 #### iOS Authentications Screen
 
@@ -319,6 +320,21 @@ The Harvest API is written in Kotlin with SpringBoot. Find the repo [here](https
 </table>
 
 <p align="right">[<a href="#top">Back to top</a>]</p>
+
+#### iOS Home Screens
+
+<table style="width:100%">
+  <tr>
+    <th>Home Screen</th>
+    <th>New Entry List</th> 
+    <th>New Entry Time</th> 
+  </tr>
+  <tr>
+    <td><img src = "art/ios/ios_main_home_screen.png" width=240/></td> 
+    <td><img src = "art/ios/ios_new_entry_list_screen.png" width=240/></td>
+    <td><img src = "art/ios/ios_new_entry_screen.png" width=240/></td>
+  </tr>
+</table>
 
 ### 🪪 License
 ```
